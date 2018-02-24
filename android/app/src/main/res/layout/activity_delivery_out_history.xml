@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="bjc.shoperp.DeliveryOutHistoryActivity">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="开始时间:" />
+
+        <EditText
+            android:id="@+id/deliveryouthistory_starttime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:text="到:" />
+
+        <EditText
+            android:id="@+id/deliveryouthistory_endtime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="店铺:" />
+
+        <Spinner
+            android:id="@+id/deliveryouthistory_shops"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"></Spinner>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="单号:" />
+
+        <EditText
+            android:id="@+id/deliveryouthistory_deliverynumber"
+            android:layout_width="200px"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/deliveryouthistory_query"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="查询" />
+
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/delivery_out_history_suminfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="统计信息" />
+
+
+</LinearLayout>
