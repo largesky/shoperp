@@ -21,7 +21,6 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,7 +30,6 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -110,13 +108,18 @@ public final class DeliveryOutScanActivity extends Activity implements SurfaceHo
         lastResult = null;
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-        if (prefs.getBoolean(PreferencesActivity.KEY_DISABLE_AUTO_ORIENTATION, true)) {
-            setRequestedOrientation(getCurrentOrientation());
-        } else {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+        String oriStr = prefs.getString(PreferencesActivity.KEY_AUTO_ORIENTATION, "垂直");
+        int ori = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        if ("垂直".equalsIgnoreCase(oriStr)) {
+            ori = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        } else if ("水平".equalsIgnoreCase(oriStr)) {
+            ori = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+        } else if ("自动旋转".equalsIgnoreCase(oriStr)) {
+            ori = ActivityInfo.SCREEN_ORIENTATION_SENSOR;
+        } else if ("跟随系统".equalsIgnoreCase(oriStr)) {
+            ori = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
         }
-
+        setRequestedOrientation(ori);
         resetStatusView();
 
         beepManager.updatePrefs();
@@ -238,35 +241,10 @@ public final class DeliveryOutScanActivity extends Activity implements SurfaceHo
      */
     public void handleDecode(Result rawResult, Bitmap barcode, float scaleFactor) {
         lastResult = rawResult;
-        boolean fromLiveScan = barcode != null;
-        if (fromLiveScan) {
-            // Then not from history, so beep/vibrate and we have an image to draw on
-            beepManager.playBeepSoundAndVibrate();
-        }
+        beepManager.playBeepSoundAndVibrate();
         viewfinderView.setVisibility(View.GONE);
         CharSequence displayContents = rawResult.getText();
         statusView.setText(displayContents);
-    }
-
-    private int getCurrentOrientation() {
-        int rotation = getWindowManager().getDefaultDisplay().getRotation();
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            switch (rotation) {
-                case Surface.ROTATION_0:
-                case Surface.ROTATION_90:
-                    return ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
-                default:
-                    return ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
-            }
-        } else {
-            switch (rotation) {
-                case Surface.ROTATION_0:
-                case Surface.ROTATION_270:
-                    return ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
-                default:
-                    return ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
-            }
-        }
     }
 
     private void initCamera(SurfaceHolder surfaceHolder) {

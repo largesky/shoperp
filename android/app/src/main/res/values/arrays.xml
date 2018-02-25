@@ -44,4 +44,12 @@
         <item>自动</item>
         <item>关闭</item>
     </string-array>
+
+    <string-array name="preferences_screen_orientation_options">
+        <item>垂直</item>
+        <item>水平</item>
+        <item>自动旋转</item>
+        <item>跟随系统</item>
+    </string-array>
+
 </resources>

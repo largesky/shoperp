@@ -21,12 +21,13 @@ public class OrderService extends ServiceBase<Order> {
         return DoPost(OrderDownloadCollectionResponse.class, para, null);
     }
 
-    public OrderCollectionResponse markDelivery(String deliveryNumber, float weight, boolean ingonrePopError, boolean ingonreWeightDetect) throws Exception {
+    public OrderCollectionResponse markDelivery(String deliveryNumber, float weight, boolean ingorePopError, boolean ingoreWeightDetect, boolean ingoreStateCheck) throws Exception {
         HashMap<String, Object> para = new HashMap<String, Object>();
         para.put("deliveryNumber", deliveryNumber);
         para.put("weight", weight);
-        para.put("ingonrePopError", ingonrePopError);
-        para.put("ingonreWeightDetect", ingonreWeightDetect);
+        para.put("ingorePopError", ingorePopError);
+        para.put("ingoreWeightDetect", ingoreWeightDetect);
+        para.put("ingoreStateCheck", ingoreStateCheck);
         return DoPost(OrderCollectionResponse.class, para, null);
     }
 }

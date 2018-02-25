@@ -31,6 +31,12 @@
             android:entryValues="@array/preferences_front_light_values"
             android:key="preferences_front_light_mode"
             android:title="闪光灯模式" />
+        <ListPreference
+            android:defaultValue="垂直"
+            android:entries="@array/preferences_screen_orientation_options"
+            android:entryValues="@array/preferences_screen_orientation_options"
+            android:key="preferences_orientation"
+            android:title="屏幕模式" />
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="preferences_auto_focus"
@@ -39,10 +45,6 @@
             android:defaultValue="false"
             android:key="preferences_invert_scan"
             android:title="黑白反色条码" />
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="preferences_orientation"
-            android:title="不自动旋转" />
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="preferences_disable_continuous_focus"
