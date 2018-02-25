@@ -1,0 +1,100 @@
+﻿<UserControl x:Class="ShopErp.App.Views.Delivery.DeliveryTemplateUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:ShopErp.App.Views.Delivery"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="1200">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <Button Name="btnRefresh" Margin="3" Click="btnRefresh_Click" Content="获取运费模板" Width="100"
+                    HorizontalAlignment="Left" />
+            <Button Name="btnAdd" Margin="3" Click="btnAdd_Click" Content="新增运费模板" Width="100"
+                    HorizontalAlignment="Left" />
+            <TextBlock Text="测试运费模板:" Margin="3" VerticalAlignment="Center" />
+            <ComboBox Name="cbbDeliveryCompanies" Margin="3" VerticalAlignment="Center" Width="150"
+                      DisplayMemberPath="Name" />
+            <TextBlock Text="测试订单编号:" Margin="3" VerticalAlignment="Center" />
+            <TextBox Name="tbOrderId" Margin="3" VerticalAlignment="Center" Width="150" />
+            <Button Name="btnTest" Content="测试" Width="60" Click="btnTest_Click" VerticalAlignment="Center" />
+        </StackPanel>
+
+        <ListBox Grid.Row="1" Name="lstDeliveryTemplates" ScrollViewer.CanContentScroll="False">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <GroupBox Margin="0,0,0,35">
+                                    <GroupBox.Header>
+
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                            <TextBlock Margin="3" Text="{Binding Name}" Width="200"
+                                                       VerticalAlignment="Center" />
+                                            <TextBlock Margin="3" Text="电子面单:" VerticalAlignment="Center" />
+                                            <TextBlock Margin="3,3,30,3"
+                                                       Text="{Binding HotPaperUse,Converter={StaticResource boolConverter},ConverterParameter=否|是}"
+                                                       VerticalAlignment="Center" />
+                                            <TextBlock Margin="3" Text="普通面单:" VerticalAlignment="Center" />
+                                            <TextBlock Margin="3,3,30,3"
+                                                       Text="{Binding NormalPaperUse,Converter={StaticResource boolConverter},ConverterParameter=否|是}"
+                                                       VerticalAlignment="Center" />
+                                            <TextBlock Margin="3" Text="在线支付:" VerticalAlignment="Center" />
+                                            <TextBlock Margin="3,3,30,3"
+                                                       Text="{Binding OnlinePayTypeUse,Converter={StaticResource boolConverter},ConverterParameter=否|是}"
+                                                       VerticalAlignment="Center" />
+                                            <TextBlock Margin="3" Text="货到付款:" VerticalAlignment="Center" />
+                                            <TextBlock Margin="3,3,30,3"
+                                                       Text="{Binding CodPayTypeUse,Converter={StaticResource boolConverter},ConverterParameter=否|是}"
+                                                       VerticalAlignment="Center" />
+                                            <TextBlock Margin="3" Text="电子面单空包价格:" VerticalAlignment="Center" />
+                                            <TextBlock Margin="3,3,30,3"
+                                                       Text="{Binding EmptyHotPaperMoney,StringFormat=F2}"
+                                                       VerticalAlignment="Center" />
+                                            <TextBlock Margin="3" Text="普通面单空包价格:" VerticalAlignment="Center" />
+                                            <TextBlock Margin="3,3,30,3"
+                                                       Text="{Binding EmptyNormalPaperMoney,StringFormat=F2}"
+                                                       VerticalAlignment="Center" />
+                                            <TextBlock Text="最后更新于:" Margin="3" VerticalAlignment="Center" />
+                                            <TextBlock
+                                                Text="{Binding UpdateTime,Converter={StaticResource datetimeConverter}}"
+                                                Margin="3" VerticalAlignment="Center" />
+                                            <TextBlock Text="最后更新人员:" Margin="3" VerticalAlignment="Center" />
+                                            <TextBlock Text="{Binding UpdateOperator}" Margin="3"
+                                                       VerticalAlignment="Center" />
+                                            <Button Name="btnEdit" Content="编辑" Width="60" Click="btnEdit_Click"
+                                                    Margin="3" />
+                                            <Button Name="btnDelete" Content="删除" Width="60" Click="btnDelete_Click"
+                                                    Margin="3" />
+                                        </StackPanel>
+                                    </GroupBox.Header>
+
+                                    <DataGrid ItemsSource="{Binding Areas}" IsReadOnly="True" HeadersVisibility="All"
+                                              GridLinesVisibility="All" AutoGenerateColumns="False"
+                                              CanUserAddRows="False" CanUserDeleteRows="False" SelectionMode="Single"
+                                              SelectionUnit="CellOrRowHeader">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="目地城市" Binding="{Binding Areas}" Width="550" />
+                                            <DataGridTextColumn Header="首重" Binding="{Binding StartWeight}"
+                                                                Width="Auto" />
+                                            <DataGridTextColumn Header="首重运费" Binding="{Binding StartPrice}"
+                                                                Width="Auto" />
+                                            <DataGridTextColumn Header="续重" Binding="{Binding StepWeight}" Width="Auto" />
+                                            <DataGridTextColumn Header="续重运费" Binding="{Binding StepPrice}"
+                                                                Width="Auto" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </GroupBox>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
+    </Grid>
+</UserControl>

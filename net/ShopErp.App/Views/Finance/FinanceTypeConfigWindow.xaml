@@ -1,0 +1,34 @@
+﻿<Window x:Class="ShopErp.App.Views.Finance.FinanceTypeConfigWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="财务类型配置" MinHeight="300" Width="300" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen"
+        Loaded="Window_Loaded">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <DataGrid Grid.Row="0" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+                  Name="dgvFinaceTypes">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="名称" Binding="{Binding Name}" />
+                <DataGridTextColumn Header="收入/支出" Binding="{Binding Mode,Converter={StaticResource descriptionConverter}}" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <TextBlock Text="名称:" Margin="3" VerticalAlignment="Center" />
+            <TextBox Name="tbName" Margin="3" VerticalAlignment="Center" Width="100" />
+            <TextBlock Text="类型:" Margin="3" VerticalAlignment="Center" />
+            <ComboBox Name="cbbTypes" Margin="3" VerticalAlignment="Center" Width="100">
+            </ComboBox>
+        </StackPanel>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Name="btnAdd" Content="添加" Width="60" Margin="3" VerticalAlignment="Center" Click="btnAdd_Click" />
+            <Button Name="btnDelete" Content="删除" Width="60" Margin="3" VerticalAlignment="Center"
+                    Click="btnDelete_Click" />
+        </StackPanel>
+    </Grid>
+</Window>

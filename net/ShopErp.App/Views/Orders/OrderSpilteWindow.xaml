@@ -1,0 +1,54 @@
+﻿<Window x:Class="ShopErp.App.Views.Orders.OrderSpilteWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="订单拆分合并" Height="300" Width="500"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
+        WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
+    <Window.Resources>
+        <Style x:Key="GroupHeaderStyle" TargetType="{x:Type GroupItem}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type GroupItem}">
+                        <Expander x:Name="exp" IsExpanded="True" Background="#99225566">
+                            <Expander.Header>
+                                <TextBlock Text="{Binding Path=Name}" Foreground="White" />
+                            </Expander.Header>
+                            <ItemsPresenter />
+                        </Expander>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <DataGrid AutoGenerateColumns="False" Name="dgvOrderGoods" GridLinesVisibility="All"
+                  SelectionUnit="CellOrRowHeader">
+            <DataGrid.Columns>
+                <DataGridTextColumn Width="Auto" Header="商品信息" Binding="{Binding OrderGoodsInfo}" IsReadOnly="True" />
+                <DataGridTextColumn Width="Auto" Header="当前状态"
+                                    Binding="{Binding State,Converter={StaticResource descriptionConverter}}"
+                                    IsReadOnly="True" />
+                <DataGridTextColumn Width="Auto" Header="缺货描述" Binding="{Binding StockingComment}" IsReadOnly="True" />
+                <DataGridTextColumn Width="Auto" Header="当前数量" Binding="{Binding Count}" IsReadOnly="True" />
+                <DataGridTextColumn Width="Auto" Header="拆分数量" Binding="{Binding SpilteCount}" IsReadOnly="False" />
+            </DataGrid.Columns>
+            <DataGrid.GroupStyle>
+                <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">
+                    <GroupStyle.Panel>
+                        <ItemsPanelTemplate>
+                            <DataGridRowsPresenter />
+                        </ItemsPanelTemplate>
+                    </GroupStyle.Panel>
+                </GroupStyle>
+            </DataGrid.GroupStyle>
+        </DataGrid>
+
+        <Button Grid.Row="1" Name="btnSave" Content="保存" Width="80" HorizontalAlignment="Center" Click="btnSave_Click" />
+    </Grid>
+</Window>

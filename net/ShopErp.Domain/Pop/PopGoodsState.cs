@@ -1,0 +1,14 @@
+﻿namespace ShopErp.Domain.Pop
+{
+    public enum PopGoodsState
+    {
+        [EnumDescription("所有")]
+        NONE = 0,
+        [EnumDescription("在售")]
+        ONSALE = 1,
+        [EnumDescription("下架")]
+        NOTSALE = 2,
+        [EnumDescription("从未上架")]
+        NEVERSALE = 3,
+    }
+}

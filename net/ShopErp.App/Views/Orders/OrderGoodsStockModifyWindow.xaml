@@ -1,0 +1,33 @@
+﻿<Window x:Class="ShopErp.App.Views.Orders.OrderGoodsStockModifyWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="修改商品详情" Height="300" Width="300" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen"
+        Loaded="Window_Loaded">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="200" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="状态:" Margin="3" VerticalAlignment="Center" />
+        <ComboBox Grid.Row="0" Grid.Column="1" Name="cbbStates" Margin="3" VerticalAlignment="Center"
+                  SelectionChanged="cbbStates_SelectionChanged">
+            <ComboBoxItem>未拿到货</ComboBoxItem>
+            <ComboBoxItem>检查未过</ComboBoxItem>
+            <ComboBoxItem>定做中</ComboBoxItem>
+            <ComboBoxItem>商品下架</ComboBoxItem>
+            <ComboBoxItem>已拿货</ComboBoxItem>
+            <ComboBoxItem>只修改描述</ComboBoxItem>
+        </ComboBox>
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="描述:" Margin="3" VerticalAlignment="Center" />
+        <ComboBox Grid.Row="1" Grid.Column="1" Name="cbbComment" Margin="3" VerticalAlignment="Center"
+                  IsEditable="True" />
+        <Button Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right" Name="btnSave" Width="60" Content="保存"
+                VerticalAlignment="Center" Click="btnSave_Click" />
+    </Grid>
+</Window>

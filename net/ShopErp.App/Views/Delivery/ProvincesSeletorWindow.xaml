@@ -1,0 +1,81 @@
+﻿<Window x:Class="ShopErp.App.Views.Delivery.ProvincesSeletorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ShopErp.App.Views.Delivery"
+        mc:Ignorable="d"
+        Title="请选择相应省" Height="300" Width="800" SizeToContent="WidthAndHeight" Loaded="Window_Loaded"
+        WindowStartupLocation="CenterScreen">
+    <StackPanel Orientation="Vertical" Name="dpHost">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="特殊:" Margin="3,3,15,3" VerticalAlignment="Center" />
+            <CheckBox Content="凉山" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="甘孜" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="阿坝" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="克拉玛依市" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="阿拉善右旗" Margin="3" VerticalAlignment="Center" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="华东:" Margin="3,3,15,3" VerticalAlignment="Center" />
+            <CheckBox Content="上海" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="江苏" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="浙江" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="安徽" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="江西" Margin="3" VerticalAlignment="Center" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="华北:" Margin="3,3,15,3" VerticalAlignment="Center" />
+            <CheckBox Content="北京" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="天津" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="山东" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="河北" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="内蒙古" Margin="3" VerticalAlignment="Center" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="华中:" Margin="3,3,15,3" VerticalAlignment="Center" />
+            <CheckBox Content="湖南" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="湖北" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="河南" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="山西" Margin="3" VerticalAlignment="Center" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="华南:" Margin="3,3,15,3" VerticalAlignment="Center" />
+            <CheckBox Content="广东" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="广西" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="福建" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="海南" Margin="3" VerticalAlignment="Center" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="东北:" Margin="3,3,15,3" VerticalAlignment="Center" />
+            <CheckBox Content="吉林" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="辽宁" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="黑龙江" Margin="3" VerticalAlignment="Center" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="西北:" Margin="3,3,15,3" VerticalAlignment="Center" />
+            <CheckBox Content="陕西" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="新疆" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="甘肃" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="宁夏" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="青海" Margin="3" VerticalAlignment="Center" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="西南:" Margin="3,3,15,3" VerticalAlignment="Center" />
+            <CheckBox Content="重庆" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="四川" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="云南" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="贵州" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="西藏" Margin="3" VerticalAlignment="Center" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="行政:" Margin="3,3,15,3" VerticalAlignment="Center" />
+            <CheckBox Content="香港" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="澳门" Margin="3" VerticalAlignment="Center" />
+            <CheckBox Content="台湾" Margin="3" VerticalAlignment="Center" />
+        </StackPanel>
+
+        <Button Name="btnOK" Content="保存" Click="btnOK_Click" VerticalAlignment="Center" HorizontalAlignment="Left"
+                Margin="100,3,3,3" Width="80" />
+    </StackPanel>
+</Window>

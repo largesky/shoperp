@@ -1,0 +1,87 @@
+﻿<Window x:Class="ShopErp.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="网店ERP" Height="350" Width="1400" WindowState="Maximized" Loaded="Window_Loaded" FontSize="13"
+        Closed="Window_Closed">
+    <Grid Name="gHost">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0">
+            <MenuItem Header="订单">
+                <MenuItem Header="所有订单" Click="MenuItem_Click" Tag="OrderAllUserControl" />
+                <MenuItem Header="订单同步" Click="MenuItem_Click" Tag="OrderSyncUserControl" />
+                <MenuItem Header="退货管理" Click="MenuItem_Click" Tag="OrderReturnUserControl" />
+                <MenuItem Header="退货出单" Click="MenuItem_Click" Tag="OrderReturnOutUserControl" />
+                <MenuItem Header="货物统计" Click="MenuItem_Click" Tag="GoodsCountUserControl" />
+                <MenuItem Header="拿货扫描" Click="MenuItem_Click" Tag="OrderGetedMarkUserControl" />
+            </MenuItem>
+            <MenuItem Header="商品与厂家">
+                <MenuItem Header="商品管理" Click="MenuItem_Click" Tag="GoodsUserControl" />
+                <MenuItem Header="厂家管理" Click="MenuItem_Click" Tag="VendorUserControl" />
+                <MenuItem Header="店铺商品" Click="MenuItem_Click" Tag="PopGoodsUserControl" />
+                <MenuItem Header="厂家更新" Click="MenuItem_Click" Tag="VendorSyncUserControl" />
+            </MenuItem>
+            <MenuItem Header="物流">
+                <MenuItem Header="快递分配" Click="MenuItem_Click" Tag="DeliveryDistributionUserControl" />
+                <MenuItem Header="发货扫描" Click="MenuItem_Click" Tag="DeliveryScanUserControl" />
+                <MenuItem Header="发货记录" Click="MenuItem_Click" Tag="DeliveryOutQueryUserControl" />
+                <MenuItem Header="收件扫描" Click="MenuItem_Click" Tag="DeliveryInUserControl" />
+                <MenuItem Header="收件记录" Click="MenuItem_Click" Tag="DeliveryInQueryUserControl" />
+                <MenuItem Header="发货时限" Click="MenuItem_Click" Tag="ShippingCheckUserControl" />
+                <MenuItem Header="物流时限" Click="MenuItem_Click" Tag="DeliveryCheckUserControl" />
+                <MenuItem Header="快递配置" Click="MenuItem_Click" Tag="DeliveryCompanyUserControl" />
+                <MenuItem Header="运费模板" Click="MenuItem_Click" Tag="DeliveryTemplateUserControl" />
+            </MenuItem>
+            <MenuItem Header="打印">
+                <MenuItem Header="打印订单" Click="MenuItem_Click" Tag="PrintUserControl" />
+                <MenuItem Header="打印历史" Click="MenuItem_Click" Tag="PrintHistoryUserControl" />
+                <MenuItem Header="打印模板" Click="MenuItem_Click" Tag="PrintTemplateUserControl" />
+                <MenuItem Header="物流记录" Click="MenuItem_Click" Tag="WuliuNumberUserControl" />
+            </MenuItem>
+            <MenuItem Header="数据">
+                <MenuItem Header="销售汇总" Click="MenuItem_Click" Tag="SaleUserControl" />
+                <MenuItem Header="淘宝关键词管理" Click="MenuItem_Click" Tag="TaobaoKeywordUserControl" />
+                <MenuItem Header="淘宝关键词统计与导入" Click="MenuItem_Click" Tag="TaobaoKeywordCountUserControl" />
+                <MenuItem Header="淘宝关键分日趋势" Click="MenuItem_Click" Tag="TaobaoKeywordStateUserControl" />
+            </MenuItem>
+            <MenuItem Header="财务">
+                <MenuItem Header="好评返现" Click="MenuItem_Click" Tag="ReturnCashUserControl" />
+                <MenuItem Header="时常记账" Click="MenuItem_Click" Tag="FinanceUserControl" />
+                <MenuItem Header="账户管理" Click="MenuItem_Click" Tag="FinanceAccountUserControl" />
+            </MenuItem>
+
+            <MenuItem Header="选项">
+                <MenuItem Header="系统配置" Click="MenuItem_Click" Tag="ConfigUserControl" />
+                <MenuItem Header="用户管理" Click="MenuItem_Click" Tag="UsersUserControl" />
+                <MenuItem Header="店铺管理" Click="MenuItem_Click" Tag="ShopUserControl" />
+                <MenuItem Header="数据清理" Click="MenuItem_Click" Tag="SystemCleanUserControl" />
+                <MenuItem Header="图片清理" Click="MenuItem_Click" Tag="ImgCleanUserControl" />
+            </MenuItem>
+        </Menu>
+
+        <ToolBar Grid.Row="1" FontSize="14">
+            <Button Content="所有订单" Margin="3" Click="MenuItem_Click" Tag="OrderAllUserControl" />
+            <Button Content="订单同步" Margin="3" Click="MenuItem_Click" Tag="OrderSyncUserControl" />
+            <Button Content="订单下载(网页)" Margin="3" Click="MenuItem_Click" Tag="OrderDownloadHtmlUserControl" />
+            <Button Content="订单同步(网页)" Margin="3" Click="MenuItem_Click" Tag="OrderSyncHtmlUserControl" />
+            <Button Content="商品管理" Margin="3" Click="MenuItem_Click" Tag="GoodsUserControl" />
+            <!--<Button Content="好评返现" Margin="3" Click="MenuItem_Click" Tag="ReturnCashUserControl"/>-->
+            <Button Content="货物统计" Margin="3" Click="MenuItem_Click" Tag="GoodsCountUserControl" />
+            <Button Content="打印订单" Margin="3" Click="MenuItem_Click" Tag="PrintUserControl" />
+            <Button Content="打印历史" Margin="3" Click="MenuItem_Click" Tag="PrintHistoryUserControl" />
+            <Button Content="快递分配" Click="MenuItem_Click" Tag="DeliveryDistributionUserControl" />
+            <Button Content="发货扫描" Margin="3" Click="MenuItem_Click" Tag="DeliveryScanUserControl" />
+            <Button Content="发货时限" Margin="3" Click="MenuItem_Click" Tag="ShippingCheckUserControl" />
+            <Button Content="标记发货(天猫)" Margin="3" Click="MenuItem_Click" Tag="ShippingCheckHtmlUserControl" />
+            <Button Content="物流时限" Margin="3" Click="MenuItem_Click" Tag="DeliveryCheckUserControl" />
+            <Button Content="退货管理" Margin="3" Click="MenuItem_Click" Tag="OrderReturnUserControl" />
+            <TextBlock Name="tbOperator" Grid.Row="3" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Right" />
+            <TextBlock Name="tbDeliveryProcess" Grid.Row="3" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Right" />
+        </ToolBar>
+    </Grid>
+</Window>

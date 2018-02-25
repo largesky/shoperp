@@ -1,0 +1,45 @@
+﻿<UserControl xmlns:PageBar="clr-namespace:ShopErp.App.Views.PageBar"
+             x:Class="ShopErp.App.Views.Delivery.DeliveryInQueryUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             d:DesignHeight="300" d:DesignWidth="1200" Loaded="UserControl_Loaded">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <TextBlock Text="快递公司:" Margin="3" VerticalAlignment="Center" />
+            <ComboBox Name="cbbDeliveryCompany" Margin="3" VerticalAlignment="Center" Width="100" />
+            <TextBlock Text="快递单号:" Margin="3" VerticalAlignment="Center" />
+            <TextBox Name="tbDeliveryNumber" Margin="3" VerticalAlignment="Center" Width="100" />
+            <TextBlock Text="接收时间:" Margin="3" VerticalAlignment="Center" />
+            <xctk:DateTimePicker Name="tbStart" Margin="3" VerticalAlignment="Center" Width="150" xctk:Format="Custom"
+                                 xctk:TimeFormatString="yyyy-MM-dd HH:mm:ss" />
+            <TextBlock Text="到:" Margin="3" VerticalAlignment="Center" />
+            <xctk:DateTimePicker Name="tbEnd" Margin="3" VerticalAlignment="Center" Width="150" xctk:Format="Custom"
+                                 xctk:TimeFormatString="yyyy-MM-dd HH:mm:ss" />
+            <Button Name="btnSearch" Content="查询" Margin="3" VerticalAlignment="Center" Width="60"
+                    Click="btnSearch_Click" />
+            <Button Name="btnUpdate" Content="更新" Margin="3" VerticalAlignment="Center" Width="60"
+                    Click="btnUpdate_Click" />
+        </StackPanel>
+        <DataGrid Grid.Row="1" AutoGenerateColumns="False" GridLinesVisibility="All" CanUserAddRows="False"
+                  Name="dgvItems" SelectionMode="Extended" SelectionUnit="CellOrRowHeader">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="快递公司" Binding="{Binding DeliveryCompany}" IsReadOnly="True" />
+                <DataGridTextColumn Header="快递单号" Binding="{Binding DeliveryNumber}" IsReadOnly="True" />
+                <DataGridTextColumn Header="接收时间" Binding="{Binding CreateTime,Converter={StaticResource datetimeConverter}}" IsReadOnly="True" />
+                <DataGridTextColumn Header="描述" Binding="{Binding Comment}" Width="*" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <PageBar:PageBarUserControl Grid.Row="2" x:Name="pgBar" PageSize="200" PageChanging="pgBar_PageChanging" />
+    </Grid>
+</UserControl>

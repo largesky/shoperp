@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3AB0B4E1-4CE3-414D-91B1-CFA98B5B6941}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ShopErp.Domain</RootNamespace>
+    <AssemblyName>ShopErp.Domain</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AddressNode.cs" />
+    <Compile Include="DeliveryCompany.cs" />
+    <Compile Include="DeliveryIn.cs" />
+    <Compile Include="DeliveryOut.cs" />
+    <Compile Include="DeliveryTemplate.cs" />
+    <Compile Include="DeliveryTemplateArea.cs" />
+    <Compile Include="EnumDescriptionAttribute.cs" />
+    <Compile Include="Finance.cs" />
+    <Compile Include="FinanceAccount.cs" />
+    <Compile Include="FinanceAccountType.cs" />
+    <Compile Include="FinanceType.cs" />
+    <Compile Include="FinanceTypeMode.cs" />
+    <Compile Include="Goods.cs" />
+    <Compile Include="GoodsCount.cs" />
+    <Compile Include="GoodsMap.cs" />
+    <Compile Include="GoodsShop.cs" />
+    <Compile Include="GoodsState.cs" />
+    <Compile Include="GoodsTask.cs" />
+    <Compile Include="GoodsType.cs" />
+    <Compile Include="RestfulResponse\DataOneResponse.cs" />
+    <Compile Include="RestfulResponse\DomainResponse\LoginResponse.cs" />
+    <Compile Include="Operator.cs" />
+    <Compile Include="Order.cs" />
+    <Compile Include="OrderCreateType.cs" />
+    <Compile Include="ColorFlag.cs" />
+    <Compile Include="OrderGoods.cs" />
+    <Compile Include="OrderModifyHistory.cs" />
+    <Compile Include="OrderReturn.cs" />
+    <Compile Include="OrderReturnReason.cs" />
+    <Compile Include="OrderReturnState.cs" />
+    <Compile Include="OrderReturnType.cs" />
+    <Compile Include="OrderSpilteInfo.cs" />
+    <Compile Include="OrderState.cs" />
+    <Compile Include="OrderType.cs" />
+    <Compile Include="OrderUpdate.cs" />
+    <Compile Include="PaperType.cs" />
+    <Compile Include="Pop\PopDeliveryInfo.cs" />
+    <Compile Include="PopPayType.cs" />
+    <Compile Include="PopRefundState.cs" />
+    <Compile Include="PopType.cs" />
+    <Compile Include="Pop\OrderDownloadError.cs" />
+    <Compile Include="Pop\OrderDownload.cs" />
+    <Compile Include="Pop\PopGoods.cs" />
+    <Compile Include="Pop\PopGoodsSku.cs" />
+    <Compile Include="Pop\PopGoodsState.cs" />
+    <Compile Include="Pop\PopOrderGetFunction.cs" />
+    <Compile Include="Pop\PopOrderState.cs" />
+    <Compile Include="PrintHistory.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="RestfulResponse\DataCollectionResponse.cs" />
+    <Compile Include="RestfulResponse\DateTimeResponse.cs" />
+    <Compile Include="RestfulResponse\DomainResponse\OrderDownloadCollectionResponse.cs" />
+    <Compile Include="RestfulResponse\FloatResponse.cs" />
+    <Compile Include="RestfulResponse\LongResponse.cs" />
+    <Compile Include="RestfulResponse\ResponseBase.cs" />
+    <Compile Include="RestfulResponse\StringResponse.cs" />
+    <Compile Include="ReturnCash.cs" />
+    <Compile Include="ReturnCashState.cs" />
+    <Compile Include="SaleCount.cs" />
+    <Compile Include="Shop.cs" />
+    <Compile Include="SystemConfig.cs" />
+    <Compile Include="SystemNames.cs" />
+    <Compile Include="TaobaoKeyword.cs" />
+    <Compile Include="TaobaoKeywordDetail.cs" />
+    <Compile Include="Vendor.cs" />
+    <Compile Include="WuliuNumber.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

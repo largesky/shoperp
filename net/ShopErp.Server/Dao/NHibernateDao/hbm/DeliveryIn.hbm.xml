@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ShopErp.Domain" namespace="ShopErp.Domain">
+  <class name="DeliveryIn" table="deliveryin" lazy="false" >
+    <id name="Id" column="Id">
+      <generator class="identity" />
+    </id>
+    <property name="DeliveryCompany">
+      <column name="DeliveryCompany" sql-type="string" not-null="true" />
+    </property>
+    <property name="DeliveryNumber">
+      <column name="DeliveryNumber" sql-type="string" not-null="true" />
+    </property>
+    <property name="CreateTime">
+      <column name="CreateTime" sql-type="datetime" not-null="true" />
+    </property>
+    <property name="CreateOperator">
+      <column name="CreateOperator" sql-type="string" not-null="true" />
+    </property>
+    <property name="Comment">
+      <column name="Comment" sql-type="string" not-null="true" />
+    </property>
+  </class>
+</hibernate-mapping>

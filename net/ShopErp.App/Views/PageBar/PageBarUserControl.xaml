@@ -1,0 +1,48 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ShopErp.App.Views.PageBar" x:Class="ShopErp.App.Views.PageBar.PageBarUserControl"
+    mc:Ignorable="d"
+    d:DesignHeight="23" d:DesignWidth="700">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Name="tbPBMessage" Margin="3" VerticalAlignment="Center"
+                   Text="{Binding Path=TitleMessage, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PageBarUserControl}}}" />
+        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+            <TextBlock Text="记录条数:" VerticalAlignment="Center" />
+            <TextBlock
+                Text="{Binding Path=Total, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PageBarUserControl}}}"
+                Width="50" VerticalAlignment="Center" />
+            <TextBlock Text="当前页条数:" VerticalAlignment="Center" />
+            <TextBlock
+                Text="{Binding Path=CurrentCount, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PageBarUserControl}}}"
+                Width="50" VerticalAlignment="Center" />
+            <TextBlock Text="分页信息:" VerticalAlignment="Center" />
+            <TextBlock
+                Text="{Binding Path=CurrentPage, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PageBarUserControl}}}"
+                VerticalAlignment="Center" />
+            <TextBlock Text="/" VerticalAlignment="Center" />
+            <TextBlock
+                Text="{Binding Path=TotalPage, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PageBarUserControl}}}"
+                VerticalAlignment="Center" />
+            <TextBlock Text="  每页记录:" VerticalAlignment="Center" />
+            <TextBox
+                Text="{Binding Path=PageSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PageBarUserControl}}}"
+                VerticalAlignment="Center" Width="40" />
+            <Button Content="|&lt;" VerticalAlignment="Center" Width="30" Name="btnFirst" Click="btnFirst_Click" />
+            <Button Content="&lt;" VerticalAlignment="Center" Width="30" Name="btnPre" Click="btnPre_Click" />
+            <Button Content="&gt;" VerticalAlignment="Center" Width="30" Name="btnNext" Click="btnNext_Click" />
+            <Button Content="&gt;|" VerticalAlignment="Center" Width="30" Name="btnLast" Click="btnLast_Click" />
+            <TextBox x:Name="tbGoToPgae" Width="50" VerticalAlignment="Center" />
+            <Button Content="前往" VerticalAlignment="Center" Width="50" Name="btnGoTo" Click="btnGoTo_Click" />
+        </StackPanel>
+
+    </Grid>
+
+</UserControl>

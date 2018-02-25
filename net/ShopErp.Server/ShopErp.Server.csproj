@@ -1,0 +1,256 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{CF6FA3A4-E097-4448-889A-FD5F506F32AF}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ShopErp.Server</RootNamespace>
+    <AssemblyName>ShopErp.Server</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Iesi.Collections.4.0.0.4000\lib\net40\Iesi.Collections.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NHibernate, Version=4.1.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\packages\NHibernate.4.1.1.4000\lib\net40\NHibernate.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Xml" />
+    <Reference Include="TopSdk, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\TopSdk.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Dao\IDao.cs" />
+    <Compile Include="Dao\NHibernateDao\DeliveryCompanyDao.cs" />
+    <Compile Include="Dao\NHibernateDao\DeliveryInDao.cs" />
+    <Compile Include="Dao\NHibernateDao\DeliveryOutDao.cs" />
+    <Compile Include="Dao\NHibernateDao\DeliveryTemplateAreaDao.cs" />
+    <Compile Include="Dao\NHibernateDao\DeliveryTemplateDao.cs" />
+    <Compile Include="Dao\NHibernateDao\FinanceAccountDao.cs" />
+    <Compile Include="Dao\NHibernateDao\FinanceDao.cs" />
+    <Compile Include="Dao\NHibernateDao\FinanceTypeDao.cs" />
+    <Compile Include="Dao\NHibernateDao\GoodsMapDao.cs" />
+    <Compile Include="Dao\NHibernateDao\GoodsTaskDao.cs" />
+    <Compile Include="Dao\NHibernateDao\GoodsDao.cs" />
+    <Compile Include="Dao\NHibernateDao\GoodsShopDao.cs" />
+    <Compile Include="Dao\NHibernateDao\NHibernateDaoBase.cs" />
+    <Compile Include="Dao\NHibernateDao\NHibernateHelper.cs" />
+    <Compile Include="Dao\NHibernateDao\OperatorDao.cs" />
+    <Compile Include="Dao\NHibernateDao\OrderDao.cs" />
+    <Compile Include="Dao\NHibernateDao\OrderGoodsDao.cs" />
+    <Compile Include="Dao\NHibernateDao\OrderModifyHistoryDao.cs" />
+    <Compile Include="Dao\NHibernateDao\OrderReturnDao.cs" />
+    <Compile Include="Dao\NHibernateDao\OrderUpdateDao.cs" />
+    <Compile Include="Dao\NHibernateDao\PrintHistoryDao.cs" />
+    <Compile Include="Dao\NHibernateDao\ReturnCashDao.cs" />
+    <Compile Include="Dao\NHibernateDao\ShopDao.cs" />
+    <Compile Include="Dao\NHibernateDao\SystemConfigDao.cs" />
+    <Compile Include="Dao\NHibernateDao\TaobaoKeywordDao.cs" />
+    <Compile Include="Dao\NHibernateDao\TaobaoKeywordDetailDao.cs" />
+    <Compile Include="Dao\NHibernateDao\VendorDao.cs" />
+    <Compile Include="Dao\NHibernateDao\WuliuNumberDao.cs" />
+    <Compile Include="Log\Logger.cs" />
+    <Compile Include="ProjectInstaller.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ProjectInstaller.Designer.cs">
+      <DependentUpon>ProjectInstaller.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Service\AddressService.cs" />
+    <Compile Include="Service\Net\MsHttpRestful.cs" />
+    <Compile Include="Service\Pop\Chuchujie\ChuchujieGetOrderResponse.cs" />
+    <Compile Include="Service\Pop\Chuchujie\ChuchujieGoodsResponse.cs" />
+    <Compile Include="Service\Pop\Chuchujie\ChuchujieGoodsResponseGoods.cs" />
+    <Compile Include="Service\Pop\Chuchujie\ChuchujieGoodsResponseGoodsSku.cs" />
+    <Compile Include="Service\Pop\Chuchujie\ChuchujieMarkDeliveryResponse.cs" />
+    <Compile Include="Service\Pop\Chuchujie\ChuchujieOrder.cs" />
+    <Compile Include="Service\Pop\Chuchujie\ChuchujieOrderAddress.cs" />
+    <Compile Include="Service\Pop\Chuchujie\ChuchujieOrderDetail.cs" />
+    <Compile Include="Service\Pop\Chuchujie\ChuchujieOrderGoods.cs" />
+    <Compile Include="Service\Pop\Chuchujie\ChuchujieOrderGoodsProp.cs" />
+    <Compile Include="Service\Pop\Chuchujie\ChuchujiePop.cs" />
+    <Compile Include="Service\Pop\Chuchujie\ChuchujieResponseBase.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PingduoduoRspAccessToken.cs" />
+    <Compile Include="Service\Pop\PopAccesstokenTimeOutException.cs" />
+    <Compile Include="Service\Pop\PopBase.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PingduoduoRspGetOrder.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PingduoduoRspGetOrderGoods.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PingduoduoRspGetOrderState.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PingduoduoRspGetOrderStateOrder.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PingduoduoRspGoods.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PingduoduoRspGoodsItem.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PingduoduoRspGoodsItemSku.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PingduoduoRspOrder.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PingduoduoRspOrderSN.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PingduoduoPop.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PingduoduoRspBase.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PingduoduoRspShipping.cs" />
+    <Compile Include="Service\Pop\PopService.cs" />
+    <Compile Include="Service\Pop\Taobao\TaobaoPop.cs" />
+    <Compile Include="Service\Restful\DeliveryCompanyService.cs" />
+    <Compile Include="Service\Restful\DeliveryInService.cs" />
+    <Compile Include="Service\Restful\DeliveryOutService.cs" />
+    <Compile Include="Service\Restful\DeliveryTemplateAreaService.cs" />
+    <Compile Include="Service\Restful\DeliveryTemplateService.cs" />
+    <Compile Include="Service\Restful\FinanceAccountService.cs" />
+    <Compile Include="Service\Restful\FinanceService.cs" />
+    <Compile Include="Service\Restful\FinanceTypeService.cs" />
+    <Compile Include="Service\Restful\GoodsMapService.cs" />
+    <Compile Include="Service\Restful\GoodsService.cs" />
+    <Compile Include="Service\Restful\GoodsShopService.cs" />
+    <Compile Include="Service\Restful\GoodsTaskService.cs" />
+    <Compile Include="Service\LocalConfigService.cs" />
+    <Compile Include="Service\Restful\ImageService.cs" />
+    <Compile Include="Service\Restful\SystemCleanService.cs" />
+    <Compile Include="Service\Restful\SystemConfigService.cs" />
+    <Compile Include="Service\Restful\OperatorService.cs" />
+    <Compile Include="Service\Restful\OrderGoodsService.cs" />
+    <Compile Include="Service\Restful\OrderModifyHistoryService.cs" />
+    <Compile Include="Service\Restful\OrderReturnService.cs" />
+    <Compile Include="Service\Restful\OrderService.cs" />
+    <Compile Include="Service\Restful\OrderUpdateService.cs" />
+    <Compile Include="Service\Restful\PrintHistoryService.cs" />
+    <Compile Include="Service\Restful\ReturnCashService.cs" />
+    <Compile Include="Service\Restful\ServiceBase.cs" />
+    <Compile Include="Service\Restful\ServiceContainer.cs" />
+    <Compile Include="Service\Restful\ShopService.cs" />
+    <Compile Include="Service\Restful\TaobaoKeywordDetailService.cs" />
+    <Compile Include="Service\Restful\VendorService.cs" />
+    <Compile Include="Service\Restful\WuliuNumberService.cs" />
+    <Compile Include="Service\Restful\TaobaoKeywordService.cs" />
+    <Compile Include="ShopErpService.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ShopErpService.Designer.cs">
+      <DependentUpon>ShopErpService.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\CollectionsSpilteUtil.cs" />
+    <Compile Include="Utils\EnvironmentDirHelper.cs" />
+    <Compile Include="Utils\FileUtil.cs" />
+    <Compile Include="Utils\Md5Util.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Dao\NHibernateDao\hbm\DeliveryCompany.hbm.xml" />
+    <EmbeddedResource Include="Dao\NHibernateDao\hbm\DeliveryIn.hbm.xml" />
+    <EmbeddedResource Include="Dao\NHibernateDao\hbm\DeliveryOut.hbm.xml" />
+    <EmbeddedResource Include="Dao\NHibernateDao\hbm\DeliveryTemplate.hbm.xml" />
+    <EmbeddedResource Include="Dao\NHibernateDao\hbm\DeliveryTemplateArea.hbm.xml" />
+    <EmbeddedResource Include="Dao\NHibernateDao\hbm\Finance.hbm.xml" />
+    <EmbeddedResource Include="Dao\NHibernateDao\hbm\Goods.hbm.xml" />
+    <EmbeddedResource Include="Dao\NHibernateDao\hbm\GoodsMap.hbm.xml" />
+    <EmbeddedResource Include="Dao\NHibernateDao\hbm\GoodsShop.hbm.xml" />
+    <EmbeddedResource Include="Dao\NHibernateDao\hbm\GoodsTask.hbm.xml" />
+    <EmbeddedResource Include="Dao\NHibernateDao\hbm\Operator.hbm.xml" />
+    <EmbeddedResource Include="Dao\NHibernateDao\hbm\Order.hbm.xml" />
+    <EmbeddedResource Include="Dao\NHibernateDao\hbm\OrderGoods.hbm.xml" />
+    <EmbeddedResource Include="Dao\NHibernateDao\hbm\OrderModifyHistory.hbm.xml" />
+    <EmbeddedResource Include="Dao\NHibernateDao\hbm\OrderReturn.hbm.xml" />
+    <EmbeddedResource Include="Dao\NHibernateDao\hbm\OrderUpdate.hbm.xml" />
+    <EmbeddedResource Include="Dao\NHibernateDao\hbm\PrintHistory.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dao\NHibernateDao\hbm\ReturnCash.hbm.xml" />
+    <EmbeddedResource Include="Dao\NHibernateDao\hbm\Shop.hbm.xml" />
+    <EmbeddedResource Include="Dao\NHibernateDao\hbm\SystemConfig.hbm.xml" />
+    <EmbeddedResource Include="Dao\NHibernateDao\hbm\Vendor.hbm.xml" />
+    <EmbeddedResource Include="Dao\NHibernateDao\hbm\FinanceAccount.hbm.xml" />
+    <EmbeddedResource Include="Dao\NHibernateDao\hbm\FinanceType.hbm.xml" />
+    <EmbeddedResource Include="Dao\NHibernateDao\hbm\WuliuNumber.hbm.xml" />
+    <EmbeddedResource Include="Dao\NHibernateDao\hbm\TaobaoKeyword.hbm.xml" />
+    <EmbeddedResource Include="Dao\NHibernateDao\hbm\TaobaoKeywordDetail.hbm.xml" />
+    <Content Include="hibernate.cfg.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ShopErp.Domain\ShopErp.Domain.csproj">
+      <Project>{3ab0b4e1-4ce3-414d-91b1-cfa98b5b6941}</Project>
+      <Name>ShopErp.Domain</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

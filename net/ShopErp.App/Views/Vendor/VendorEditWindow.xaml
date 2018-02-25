@@ -1,0 +1,52 @@
+﻿<Window x:Class="ShopErp.App.Views.Vendor.VendorEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="厂家工具" Height="600" Width="300" SizeToContent="Height" ResizeMode="CanResize" Loaded="Window_Loaded"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="厂家名称:" Margin="3" VerticalAlignment="Center" />
+        <TextBox Grid.Row="0" Grid.Column="1" Name="tbName" Text="{Binding Name}" Margin="3" VerticalAlignment="Center" />
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="拼音名称:" Margin="3" VerticalAlignment="Center" />
+        <TextBox Grid.Row="1" Grid.Column="1" Name="tbPingyingName" Text="{Binding PingyingName}" Margin="3"
+                 VerticalAlignment="Center" />
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="联系电话:" Margin="3" VerticalAlignment="Center" />
+        <TextBox Grid.Row="2" Grid.Column="1" Name="tbPhone" Margin="3" Text="{Binding Phone}"
+                 VerticalAlignment="Center" />
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="拿货地址:" Margin="3" VerticalAlignment="Center" />
+        <TextBox Grid.Row="3" Grid.Column="1" Name="tbMarketAddress" Text="{Binding MarketAddress}" Margin="3"
+                 VerticalAlignment="Center" />
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="厂家主页" Margin="3" VerticalAlignment="Center" />
+        <TextBox Grid.Row="4" Grid.Column="1" Name="tbHomePage" Margin="3" Text="{Binding HomePage}"
+                 VerticalAlignment="Center" />
+        <TextBlock Grid.Row="5" Grid.Column="0" Text="是否关注" Margin="3" VerticalAlignment="Center" />
+        <CheckBox Grid.Row="5" Grid.Column="1" Name="chkWatch" Margin="3" IsChecked="{Binding Watch}"
+                  VerticalAlignment="Center" />
+        <Button Grid.Row="11" Grid.Column="1" Name="btnSave" Content="保存" Click="btnSave_Click" Width="60" />
+    </Grid>
+</Window>

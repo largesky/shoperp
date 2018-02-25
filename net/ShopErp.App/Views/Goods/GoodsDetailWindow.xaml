@@ -1,0 +1,31 @@
+﻿<Window x:Class="ShopErp.App.Views.Goods.GoodsDetailWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ShopErp.App.Views.Goods"
+        mc:Ignorable="d"
+        Title="商品详细信息" Height="300" Width="600" Loaded="Window_Loaded">
+    <Grid>
+        <DataGrid AutoGenerateColumns="False" HorizontalScrollBarVisibility="Auto" Name="dgvUploadShops"
+                  CanUserAddRows="False" SelectionMode="Extended" SelectionUnit="CellOrRowHeader">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Id" Binding="{Binding Id}" />
+                <DataGridTextColumn Header="店铺" Binding="{Binding ShopId,Converter={StaticResource shopMarkConverter}}" />
+                <DataGridTextColumn Header="处图时间"
+                                    Binding="{Binding ProcessImageTime,Converter={StaticResource datetimeConverter}}" />
+                <DataGridTextColumn Header="处理人员" Binding="{Binding ProcessImageOperator}" />
+                <DataGridTextColumn Header="上货时间"
+                                    Binding="{Binding UploadTime,Converter={StaticResource datetimeConverter}}" />
+                <DataGridTextColumn Header="上货人员" Binding="{Binding UploadOperator}" />
+                <DataGridTextColumn Header="状态"
+                                    Binding="{Binding State,Converter={StaticResource descriptionConverter}}" />
+                <DataGridTextColumn Header="价格" Binding="{Binding SalePrice}" />
+                <DataGridTextColumn Header="销量" Binding="{Binding SaleCount}" />
+                <DataGridTextColumn Header="店铺连接" Binding="{Binding PopGoodsId}" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+
+    </Grid>
+</Window>

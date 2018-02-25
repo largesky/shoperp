@@ -1,0 +1,80 @@
+﻿<Window x:Class="ShopErp.App.Views.Orders.OrderEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        Title="手动创建订单" Height="300" Width="900" ResizeMode="CanMinimize" SizeToContent="Height" Loaded="Window_Loaded"
+        WindowStartupLocation="CenterScreen">
+    <StackPanel Orientation="Vertical">
+        <GroupBox Header="平台信息">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="店铺:" Margin="3" VerticalAlignment="Center" />
+                <ComboBox Name="cbbShops" Margin="3" VerticalAlignment="Center" Width="100" DisplayMemberPath="Mark" />
+                <TextBlock Text="买家账号:" Margin="3" VerticalAlignment="Center" />
+                <TextBox Name="tbQQ" Margin="3" VerticalAlignment="Center" Width="100" />
+                <TextBlock Text="付款时间:" Margin="3" VerticalAlignment="Center" />
+                <xctk:DateTimePicker xctk:Format="Custom" xctk:TimeFormatString="yyyy-MM-dd HH:mm:ss" Grid.Row="1"
+                                     Grid.Column="3" Name="dpPayTime" Margin="3" VerticalAlignment="Center"
+                                     MinWidth="150" />
+                <TextBlock Text="订单编号:" Margin="3" VerticalAlignment="Center" />
+                <TextBox Name="tbPopOrderId" Margin="3" VerticalAlignment="Center" Width="150" />
+                <TextBlock Text="订单编号可以为空" VerticalAlignment="Center" Foreground="Red" />
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Header="收货人信息">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="收货人姓名:" Margin="3" VerticalAlignment="Center" />
+                <TextBox Grid.Row="0" Grid.Column="1" Name="tbReceiverName" Margin="3" VerticalAlignment="Center"
+                         Width="100" />
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="收货人手机:" Margin="3" VerticalAlignment="Center" />
+                <TextBox Grid.Row="0" Grid.Column="3" Name="tbReceiverMobile" Margin="3" VerticalAlignment="Center" Width="100" />
+                <TextBlock Grid.Row="0" Grid.Column="4" Text="收货人电话:" Margin="3" VerticalAlignment="Center" />
+                <TextBox Grid.Row="0" Grid.Column="5" Name="tbReceiverPhone" Margin="3" VerticalAlignment="Center" Width="100" />
+                <TextBlock Grid.Row="0" Grid.Column="6" Text="是否空包:" Margin="3" VerticalAlignment="Center"/>
+                <CheckBox Grid.Row="0" Grid.Column="7" x:Name="chkEmpty" Margin="3,0,3,4" VerticalAlignment="Bottom"/>
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="收货人地址:" Margin="3" VerticalAlignment="Center" />
+                <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="5" Name="tbReceiverAddress" Margin="3" VerticalAlignment="Center" />
+                <TextBlock Grid.Row="1" Grid.Column="6" Text="快递公司:" Margin="3" VerticalAlignment="Center"/>
+                <ComboBox Grid.Row="1" Grid.Column="7" Grid.ColumnSpan="5" x:Name="cbbDeliveryTemplate" Margin="3" VerticalAlignment="Center" Width="150" DisplayMemberPath="Name"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="商品信息" Padding="0">
+            <DataGrid Name="dgvOrderGoods" Padding="0" AutoGenerateColumns="False" CanUserAddRows="False"
+                      CanUserDeleteRows="False" MinHeight="100"
+                      SelectionMode="Extended" SelectionUnit="CellOrRowHeader">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="厂家名称" Binding="{Binding Vendor}" Width="*" />
+                    <DataGridTextColumn Header="厂家货号" Binding="{Binding Number}" Width="*" />
+                    <DataGridTextColumn Header="商品版本" Binding="{Binding Edtion}" Width="*" />
+                    <DataGridTextColumn Header="商品颜色" Binding="{Binding Color}" Width="*" />
+                    <DataGridTextColumn Header="商品尺码" Binding="{Binding Size}" Width="*" />
+                    <DataGridTextColumn Header="商品数量" Binding="{Binding Count}" Width="*" />
+                    <DataGridTextColumn Header="出售价格" Binding="{Binding PopPrice}" Width="*" />
+                    <DataGridCheckBoxColumn Header="是否配件" Binding="{Binding IsPeijian}" Width="*" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </GroupBox>
+        <StackPanel Orientation="Horizontal">
+            <Button Name="btnAdd" Content="添加商品" Margin="3" VerticalAlignment="Center" Width="60"
+                    HorizontalAlignment="Left" Click="btnAdd_Click" />
+            <Button Name="btnDelete" Content="删除商品" Margin="3" VerticalAlignment="Center" Width="60"
+                    HorizontalAlignment="Left" Click="btnDelete_Click" />
+            <Button Name="btnSave" Content="保存" Margin="160,3,3,3" VerticalAlignment="Center" Width="60"
+                    HorizontalAlignment="Center" Click="btnSave_Click" />
+            <TextBlock VerticalAlignment="Center" Margin="3" Text="如果订单中不包含任何商品，删除空白行后，再保存"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

@@ -1,0 +1,46 @@
+﻿<Window x:Class="ShopErp.App.Views.Finance.FinanceCreateBatchWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ShopErp.App.Views.Finance"
+        mc:Ignorable="d"
+          xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        Title="批量添加" Height="300" Width="900" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <TextBlock Text="时间：" Margin="3" VerticalAlignment="Center"/>
+            <xctk:DateTimePicker Grid.Row="1" Grid.Column="1" xctk:Format="Custom" xctk:TimeFormatString="yyyy-MM-dd HH:mm:ss" Name="dpTime" Margin="3" VerticalAlignment="Center" MinWidth="140"/>
+            <Button Name="btnSave" Content="保存" Margin="3" VerticalAlignment="Center" Width="60" Click="btnSave_Click"/>
+            <Button Name="btnAdd" Content="添加一行" Margin="3" VerticalAlignment="Center" Width="60" Click="btnAdd_Click"/>
+            <Button Name="btnDel" Content="删除一行" Margin="3" VerticalAlignment="Center" Width="60" Click="btnDel_Click"/>
+        </StackPanel>
+
+        <DataGrid Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" SelectionUnit="Cell" Name="dgvItems">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="类型" Width="200">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox SelectedValuePath="Name" SelectedValue="{Binding Type,Mode=TwoWay,UpdateSourceTrigger=LostFocus}" DisplayMemberPath="Name" ItemsSource="{Binding Types, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:FinanceCreateBatchWindow}}}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="金额" Binding="{Binding Money,StringFormat=F2,Mode=TwoWay,UpdateSourceTrigger=LostFocus}" Width="150"/>
+                <DataGridTemplateColumn Header="账户" Width="250">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox SelectedValuePath="Id" SelectedValue="{Binding FinaceAccountId,Mode=TwoWay,UpdateSourceTrigger=LostFocus}" DisplayMemberPath="ShortInfo" ItemsSource="{Binding Accounts, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:FinanceCreateBatchWindow}}}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="对方" Binding="{Binding Opposite}" Width="200"/>
+                <DataGridTextColumn Header="备注" Binding="{Binding Comment}" Width="200*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

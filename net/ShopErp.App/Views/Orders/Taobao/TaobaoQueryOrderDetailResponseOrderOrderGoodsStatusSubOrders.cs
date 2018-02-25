@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ShopErp.App.Views.Orders.Taobao
+{
+    public class TaobaoQueryOrderDetailResponseOrderOrderGoodsStatusSubOrders
+    {
+        public TaobaoQueryOrderDetailResponseOrderOrderGoodsStatusSubOrdersPriceInfo[] priceInfo;
+
+        public TaobaoQueryOrderDetailResponseOrderOrderGoodsStatusSubOrdersItemInfo itemInfo;
+    }
+}

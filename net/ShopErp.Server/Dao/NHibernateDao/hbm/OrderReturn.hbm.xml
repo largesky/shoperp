@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ShopErp.Domain" namespace="ShopErp.Domain">
+  <class name="OrderReturn" table="orderreturn" lazy="false" >
+    <id name="Id" column="Id">
+      <generator class="identity" />
+    </id>
+    <property name="NewOrderId">
+      <column name="NewOrderId" sql-type="bigint(20)" not-null="true" />
+    </property>
+    <property name="OrderId">
+      <column name="OrderId" sql-type="bigint(20)" not-null="true" />
+    </property>
+    <property name="OrderGoodsId">
+      <column name="OrderGoodsId" sql-type="bigint(20)" not-null="true" />
+    </property>
+    <property name="GoodsInfo">
+      <column name="GoodsInfo" sql-type="string" not-null="true" />
+    </property>
+    <property name="Count">
+      <column name="Count" sql-type="int" not-null="true" />
+    </property>
+    <property name="Type">
+      <column name="Type" sql-type="int" not-null="true" />
+    </property>
+    <property name="Reason">
+      <column name="Reason" sql-type="int" not-null="true" />
+    </property>
+    <property name="DeliveryCompany">
+      <column name="DeliveryCompany" sql-type="string" not-null="true" />
+    </property>
+    <property name="DeliveryNumber">
+      <column name="DeliveryNumber" sql-type="string" not-null="true" />
+    </property>
+    <property name="Comment">
+      <column name="Comment" sql-type="string" not-null="true" />
+    </property>
+    <property name="CreateTime">
+      <column name="CreateTime" sql-type="datetime" not-null="true" />
+    </property>
+    <property name="ProcessTime">
+      <column name="ProcessTime" sql-type="datetime" not-null="true" />
+    </property>
+    <property name="CreateOperator">
+      <column name="CreateOperator" sql-type="string" not-null="true" />
+    </property>
+    <property name="ProcessOperator">
+      <column name="ProcessOperator" sql-type="string" not-null="true" />
+    </property>
+    <property name="GoodsMoney">
+      <column name="GoodsMoney" sql-type="DECIMAL(22,2)" not-null="true" />
+    </property>
+    <property name="State">
+      <column name="State" sql-type="int" not-null="true" />
+    </property>
+  </class>
+</hibernate-mapping>

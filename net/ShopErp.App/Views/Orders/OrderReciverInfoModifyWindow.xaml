@@ -1,0 +1,32 @@
+﻿<Window x:Class="ShopErp.App.Views.Orders.OrderReceiverInfoModifyWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="修改收货人信息" Height="300" Width="400" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen"
+        Loaded="Window_Loaded">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="300" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="收货人姓名:" Margin="3" VerticalAlignment="Center" />
+        <TextBox Grid.Row="0" Grid.Column="1" Name="tbReceiverName" Margin="3" VerticalAlignment="Center" />
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="收货人座机:" Margin="3" VerticalAlignment="Center" />
+        <TextBox Grid.Row="1" Grid.Column="1" Name="tbReceiverPhone" Margin="3" VerticalAlignment="Center" />
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="收货人手机:" Margin="3" VerticalAlignment="Center" />
+        <TextBox Grid.Row="2" Grid.Column="1" Name="tbReceiverMobile" Margin="3" VerticalAlignment="Center" />
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="收货人地址:" Margin="3" VerticalAlignment="Center" />
+        <TextBox Grid.Row="3" Grid.Column="1" Name="tbReceiverAddress" Margin="3" VerticalAlignment="Center" />
+        <TextBlock Grid.Row="4" Grid.Column="1" Text="示例:上海 上海市 徐汇区 江河路123号美满酒楼" Margin="3" VerticalAlignment="Center" />
+        <Button Grid.Row="5" Grid.Column="1" Name="btnSave" Margin="3" HorizontalAlignment="Right"
+                VerticalAlignment="Center" Content="保存" Width="60" Click="btnSave_Click" />
+    </Grid>
+</Window>

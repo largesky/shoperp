@@ -1,0 +1,55 @@
+﻿<UserControl x:Class="ShopErp.App.Views.Shops.ShopUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:ShopErp.App.Views.Shops"
+             mc:Ignorable="d"
+              xmlns:clr="clr-namespace:System;assembly=mscorlib"
+             d:DesignHeight="300" d:DesignWidth="1400" Loaded="UserControl_Loaded">
+    <UserControl.Resources>
+        <clr:String x:Key="AccessString">前往授权</clr:String>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <Button Name="btnRefresh" Content="刷新" Margin="3" VerticalAlignment="Center" Width="60"
+                    Click="btnRefresh_Click" />
+            <Button Name="btnAdd" Content="添加" Margin="3" VerticalAlignment="Center" Width="60" Click="btnAdd_Click" />
+            <Button Name="btnEdit" Content="编辑" Margin="3" VerticalAlignment="Center" Width="60" Click="btnEdit_Click" />
+            <Button Name="btnDel" Content="删除" Margin="3" VerticalAlignment="Center" Width="60" Click="btnDel_Click" />
+        </StackPanel>
+
+        <DataGrid Grid.Row="1" Name="dgvOperators" AutoGenerateColumns="False" CanUserAddRows="False"
+                  CanUserDeleteRows="False" SelectionMode="Extended" SelectionUnit="CellOrRowHeader" IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="编号" Binding="{Binding Id}" />
+                <DataGridTextColumn Header="平台类型" Binding="{Binding PopType,Converter={StaticResource descriptionConverter}}" />
+                <DataGridTextColumn Header="卖家账号" Binding="{Binding PopSellerId}" />
+                <DataGridTextColumn Header="店铺标记" Binding="{Binding Mark}" />
+                <DataGridTextColumn Header="扣点比例" Binding="{Binding CommissionPer,StringFormat=F3}" />
+                <DataGridTextColumn Header="创建时间" Binding="{Binding CreateTime,Converter={StaticResource datetimeConverter}}" />
+                <DataGridTextColumn Header="更新时间" Binding="{Binding UpdateTime,Converter={StaticResource datetimeConverter}}" />
+                <DataGridTextColumn Header="最后更新人员" Binding="{Binding LastUpdateOperator}" />
+                <DataGridTextColumn Header="接口App Key" Binding="{Binding AppKey}" />
+                <DataGridTextColumn Header="发货时限" Binding="{Binding ShippingHours}" />
+                <DataGridTextColumn Header="第一条物流时限" Binding="{Binding FirstDeliveryHours}" />
+                <DataGridTextColumn Header="第二条物流时限" Binding="{Binding SecondDeliveryHours}" />
+                <DataGridTextColumn Header="是否启用" Binding="{Binding Enabled}" />
+                <DataGridTextColumn Header="接口启用" Binding="{Binding AppEnabled}" />
+                <DataGridHyperlinkColumn Header="更新授权信息"   IsReadOnly="True" Binding="{Binding Mode=OneWay, Source={StaticResource AccessString}}">
+                    <DataGridHyperlinkColumn.ElementStyle>
+                        <Style>
+                            <EventSetter Event="Hyperlink.Click" Handler="OpenUrl_Click2" />
+                        </Style>
+                    </DataGridHyperlinkColumn.ElementStyle>
+                </DataGridHyperlinkColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+    </Grid>
+</UserControl>

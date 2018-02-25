@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ShopErp.Domain" namespace="ShopErp.Domain">
+  <class name="Order" table="`order`" lazy="false" >
+    <id name="Id" column="Id">
+      <generator class="identity" />
+    </id>
+    <property name="ShopId">
+      <column name="ShopId" sql-type="bigint(20)" not-null="true" />
+    </property>
+    <property name="CreateType">
+      <column name="CreateType" sql-type="int" not-null="true" />
+    </property>
+    <property name="Type">
+      <column name="Type" sql-type="int" not-null="true" />
+    </property>
+    <property name="PopType">
+      <column name="PopType" sql-type="int" not-null="true" />
+    </property>
+    <property name="PopOrderId">
+      <column name="PopOrderId" sql-type="string" not-null="true" />
+    </property>
+    <property name="PopBuyerId">
+      <column name="PopBuyerId" sql-type="string" not-null="true" />
+    </property>
+    <property name="PopPayType">
+      <column name="PopPayType" sql-type="int" not-null="true" />
+    </property>
+    <property name="PopCodSevFee">
+      <column name="PopCodSevFee" sql-type="DECIMAL(22,2)" not-null="true" />
+    </property>
+    <property name="PopCodNumber">
+      <column name="PopCodNumber" sql-type="string" not-null="true" />
+    </property>
+    <property name="PopOrderTotalMoney">
+      <column name="PopOrderTotalMoney" sql-type="DECIMAL(22,2)" not-null="true" />
+    </property>
+    <property name="PopSellerGetMoney">
+      <column name="PopSellerGetMoney" sql-type="DECIMAL(22,2)" not-null="true" />
+    </property>
+    <property name="PopBuyerPayMoney">
+      <column name="PopBuyerPayMoney" sql-type="DECIMAL(22,2)" not-null="true" />
+    </property>
+    <property name="PopSellerComment">
+      <column name="PopSellerComment" sql-type="string" not-null="true" />
+    </property>
+    <property name="PopBuyerComment">
+      <column name="PopBuyerComment" sql-type="string" not-null="true" />
+    </property>
+    <property name="PopState">
+      <column name="PopState" sql-type="string" not-null="true" />
+    </property>
+    <property name="PopFlag">
+      <column name="PopFlag" sql-type="int" not-null="true" />
+    </property>
+    <property name="ReceiverName">
+      <column name="ReceiverName" sql-type="string" not-null="true" />
+    </property>
+    <property name="ReceiverPhone">
+      <column name="ReceiverPhone" sql-type="string" not-null="true" />
+    </property>
+    <property name="ReceiverMobile">
+      <column name="ReceiverMobile" sql-type="string" not-null="true" />
+    </property>
+    <property name="ReceiverAddress">
+      <column name="ReceiverAddress" sql-type="string" not-null="true" />
+    </property>
+    <property name="DeliveryTemplateId">
+      <column name="DeliveryTemplateId" sql-type="bigint(20)" not-null="true" />
+    </property>
+    <property name="DeliveryCompany">
+      <column name="DeliveryCompany" sql-type="string" not-null="true" />
+    </property>
+    <property name="DeliveryNumber">
+      <column name="DeliveryNumber" sql-type="string" not-null="true" />
+    </property>
+    <property name="DeliveryMoney">
+      <column name="DeliveryMoney" sql-type="DECIMAL(22,2)" not-null="true" />
+    </property>
+    <property name="PrintPaperType">
+      <column name="PrintPaperType" sql-type="int" not-null="true" />
+    </property>
+    <property name="Weight">
+      <column name="Weight" sql-type="DECIMAL(22,2)" not-null="true" />
+    </property>
+    <property name="PopCreateTime">
+      <column name="PopCreateTime" sql-type="datetime" not-null="true" />
+    </property>
+    <property name="PopPayTime">
+      <column name="PopPayTime" sql-type="datetime" not-null="true" />
+    </property>
+    <property name="PopDeliveryTime">
+      <column name="PopDeliveryTime" sql-type="datetime" not-null="true" />
+    </property>
+    <property name="CreateTime">
+      <column name="CreateTime" sql-type="datetime" not-null="true" />
+    </property>
+    <property name="PrintTime">
+      <column name="PrintTime" sql-type="datetime" not-null="true" />
+    </property>
+    <property name="DeliveryTime">
+      <column name="DeliveryTime" sql-type="datetime" not-null="true" />
+    </property>
+    <property name="CloseTime">
+      <column name="CloseTime" sql-type="datetime" not-null="true" />
+    </property>
+    <property name="CreateOperator">
+      <column name="CreateOperator" sql-type="string" not-null="true" />
+    </property>
+    <property name="PrintOperator">
+      <column name="PrintOperator" sql-type="string" not-null="true" />
+    </property>
+    <property name="DeliveryOperator">
+      <column name="DeliveryOperator" sql-type="string" not-null="true" />
+    </property>
+    <property name="CloseOperator">
+      <column name="CloseOperator" sql-type="string" not-null="true" />
+    </property>
+    <property name="ParseResult">
+      <column name="ParseResult" sql-type="boolean" not-null="true" />
+    </property>
+    <property name="State">
+      <column name="State" sql-type="int" not-null="true" />
+    </property>
+    <bag lazy="false" name="OrderGoodss" table="OrderGoods" cascade="none" inverse="true">
+      <key column="OrderId" />
+      <one-to-many class="ShopErp.Domain.OrderGoods" not-found="ignore" />
+    </bag>
+  </class>
+</hibernate-mapping>

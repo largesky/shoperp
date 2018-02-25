@@ -1,0 +1,41 @@
+﻿<Window x:Class="ShopErp.App.Views.Finance.FinanceEdit"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        Title="添加编辑"  SizeToContent="WidthAndHeight" ResizeMode="CanMinimize"
+        WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="300" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="类型:" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Right" />
+        <ComboBox Grid.Row="0" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="cbbTypes" DisplayMemberPath="Name"/>
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="时间:" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Right" />
+        <xctk:DateTimePicker Grid.Row="1" Grid.Column="1" xctk:Format="Custom" xctk:TimeFormatString="yyyy-MM-dd HH:mm:ss" Name="dpTime" Margin="3" VerticalAlignment="Center" MinWidth="140" />
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="金额:" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Right" />
+        <TextBox Grid.Row="2" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbMoney" />
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="账户:" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Right" />
+        <ComboBox Grid.Row="3" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="cbbAccount" DisplayMemberPath="ShortInfo" />
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="账户:" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Right" />
+        <ComboBox Grid.Row="4" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="cbbAccount2" DisplayMemberPath="ShortInfo" />
+        <TextBlock Grid.Row="5" Grid.Column="0" Text="对方:" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Right" />
+        <TextBox Grid.Row="5"  Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbOpposite"  AcceptsReturn="True" />
+        <TextBlock Grid.Row="6" Grid.Column="0" Text="描述:" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Right" />
+        <TextBox Grid.Row="6" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbComment" Height="140" AcceptsReturn="True" />
+        <Button Grid.Row="7" Grid.Column="1" Content="保存" Margin="3" VerticalAlignment="Center" Click="Button_Click" Width="60" />
+    </Grid>
+</Window>

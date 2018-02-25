@@ -1,0 +1,44 @@
+﻿<UserControl x:Class="ShopErp.App.Views.Delivery.DeliveryInUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="800" Loaded="UserControl_Loaded">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <CheckBox Name="isRefused" Content="扫描拒签" Margin="3" VerticalAlignment="Center" IsChecked="False" />
+            <TextBlock Text="物流公司:" Margin="3" VerticalAlignment="Center" />
+            <ComboBox Name="cbbDeliveryCompanies" VerticalAlignment="Center" Width="120" />
+            <TextBlock Text="物流单号:" Margin="3" VerticalAlignment="Center" />
+            <TextBox Name="tbDeliveryNumber" Margin="3" VerticalAlignment="Center" PreviewKeyDown="tbDeliveryNumber_PreviewKeyDown" Width="120" />
+            <Button Name="btnUpload" Margin="3" VerticalAlignment="Center" Click="btnUpload_Click" Content="上传" Width="80" />
+            <Button Name="btnClear" Content="清空" Margin="3" VerticalAlignment="Center" Width="80" Click="btnClear_Click" />
+            <TextBlock Name="tbTotalInfo" Margin="3" VerticalAlignment="Center" FontSize="16" />
+        </StackPanel>
+
+        <DataGrid Grid.Row="1" Name="dgvOrderChanges" AutoGenerateColumns="False" GridLinesVisibility="All" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" SelectionMode="Extended" SelectionUnit="CellOrRowHeader">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="收件编号" Binding="{Binding Id}" Width="Auto" IsReadOnly="True" />
+                <DataGridTextColumn Header="店铺名称" Binding="{Binding ShopId,Converter={StaticResource shopMarkConverter}}" Width="Auto" IsReadOnly="True" />
+                <DataGridTextColumn Header="收件人电话" Binding="{Binding ReceiverMobile}" Width="Auto" IsReadOnly="True" />
+                <DataGridTextColumn Header="商品信息" Binding="{Binding OrderGoodsInfo}" Width="Auto" IsReadOnly="True" />
+                <DataGridTextColumn Header="物流公司" Binding="{Binding DeliveryCompany}" Width="Auto" IsReadOnly="True" />
+                <DataGridTextColumn Header="物流单号" Binding="{Binding DeliveryNumber}" Width="Auto" IsReadOnly="True" />
+                <DataGridTextColumn Header="上传状态" Binding="{Binding State}" />
+                <DataGridHyperlinkColumn Header="删除" Width="Auto" Binding="{Binding Path=Action}" IsReadOnly="True">
+                    <DataGridHyperlinkColumn.ElementStyle>
+                        <Style>
+                            <EventSetter Event="Hyperlink.Click" Handler="Delete_Click" />
+                        </Style>
+                    </DataGridHyperlinkColumn.ElementStyle>
+                </DataGridHyperlinkColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

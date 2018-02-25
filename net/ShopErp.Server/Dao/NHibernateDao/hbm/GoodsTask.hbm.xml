@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ShopErp.Domain" namespace="ShopErp.Domain">
+  <class name="GoodsTask" table="goodstask" lazy="false" >
+    <id name="Id" column="Id">
+      <generator class="identity" />
+    </id>
+    <property name="ShopId">
+      <column name="ShopId" sql-type="bigint(20)" not-null="true" />
+    </property>
+    <property name="GoodsId">
+      <column name="GoodsId" sql-type="string" not-null="true" />
+    </property>
+    <property name="Comment">
+      <column name="Comment" sql-type="string" not-null="true" />
+    </property>
+  </class>
+</hibernate-mapping>

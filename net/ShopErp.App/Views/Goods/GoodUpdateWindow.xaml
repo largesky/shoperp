@@ -1,0 +1,55 @@
+﻿<Window x:Class="ShopErp.App.Views.Goods.GoodUpdateWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        mc:Ignorable="d"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        d:DesignHeight="300" d:DesignWidth="800" Loaded="Window_Loaded"
+        Title="更新商品">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="商品编号,厂家名称:" Margin="3" VerticalAlignment="Center" />
+            <TextBox Name="tbIdOrUrl" Margin="3" VerticalAlignment="Center" Width="300" />
+            <TextBlock Text="(如不输入则读取所有)" Margin="3" VerticalAlignment="Center" />
+            <Button Name="btnQuery" Content="读取商品" Margin="3" VerticalAlignment="Center" Click="btnQuery_Click" />
+            <Button Name="btnUpdate" Content="更新商品" Margin="3" VerticalAlignment="Center" Click="btnUpdate_Click" />
+            <TextBlock Name="tbProgress" Margin="3" VerticalAlignment="Center" MinWidth="200" />
+        </StackPanel>
+        <DataGrid Grid.Row="1" IsReadOnly="True" Name="dgvShoes" AutoGenerateColumns="False" GridLinesVisibility="All"
+                  SelectionMode="Extended" SelectionUnit="CellOrRowHeader" HorizontalScrollBarVisibility="Auto"
+                  VerticalScrollBarVisibility="Auto">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="商品编号" Binding="{Binding Source.Id}" />
+                <DataGridTextColumn Header="厂家名称"
+                                    Binding="{Binding Source.VendorId, Converter={StaticResource vendorConverter}}" />
+                <DataGridTextColumn Header="鞋子类型"
+                                    Binding="{Binding Source.Type, Converter={StaticResource ResourceKey=descriptionConverter}}" />
+                <DataGridTextColumn Header="产品货号" Binding="{Binding Source.Number}" />
+                <DataGridTextColumn Header="产品价格" Binding="{Binding Source.Price,StringFormat=F2}" />
+                <DataGridTextColumn Header="产品材质" Binding="{Binding Source.Material,StringFormat=F2}" />
+                <DataGridTextColumn Header="产品颜色" Binding="{Binding Source.Colors,StringFormat=F2}" />
+                <DataGridTextColumn Header="上货店铺" Binding="{Binding TargetShops,StringFormat=F2}" />
+                <DataGridTextColumn Header="处理状态" Binding="{Binding State}" />
+                <DataGridTextColumn Header="创建时间"
+                                    Binding="{Binding Source.CreateTime, Converter={StaticResource datetimeConverter}}" />
+                <DataGridTextColumn Header="更新时间"
+                                    Binding="{Binding Source.UpdateTime, Converter={StaticResource datetimeConverter}}" />
+                <DataGridHyperlinkColumn Header="商品网址" Binding="{Binding Source.Url}" Width="*">
+                    <DataGridHyperlinkColumn.ElementStyle>
+                        <Style>
+                            <EventSetter Event="Hyperlink.Click" Handler="Open_Click" />
+                        </Style>
+                    </DataGridHyperlinkColumn.ElementStyle>
+                </DataGridHyperlinkColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <WebBrowser Grid.Row="2" Name="wb1" LoadCompleted="wb1_LoadCompleted" Source="http://www.go2.cn/supplier" />
+    </Grid>
+</Window>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ShopErp.Domain" namespace="ShopErp.Domain">
+  <class name="DeliveryOut" table="deliveryout" lazy="false" >
+    <id name="Id" column="Id">
+      <generator class="identity" />
+    </id>
+    <property name="ShopId">
+      <column name="ShopId" sql-type="bigint(20)" not-null="true" />
+    </property>
+    <property name="OrderId">
+      <column name="OrderId" sql-type="string" not-null="true" />
+    </property>
+    <property name="PopType">
+      <column name="PopType" sql-type="int" not-null="true" />
+    </property>
+    <property name="PopPayType">
+      <column name="PopPayType" sql-type="int" not-null="true" />
+    </property>
+    <property name="DeliveryCompany">
+      <column name="DeliveryCompany" sql-type="string" not-null="true" />
+    </property>
+    <property name="DeliveryNumber">
+      <column name="DeliveryNumber" sql-type="string" not-null="true" />
+    </property>
+    <property name="ReceiverAddress">
+      <column name="ReceiverAddress" sql-type="string" not-null="true" />
+    </property>
+    <property name="Weight">
+      <column name="Weight" sql-type="DECIMAL(22,2)" not-null="true" />
+    </property>
+    <property name="ERPDeliveryMoney">
+      <column name="ERPDeliveryMoney" sql-type="DECIMAL(22,2)" not-null="true" />
+    </property>
+    <property name="ERPGoodsMoney">
+      <column name="ERPGoodsMoney" sql-type="DECIMAL(22,2)" not-null="true" />
+    </property>
+    <property name="PopDeliveryMoney">
+      <column name="PopDeliveryMoney" sql-type="DECIMAL(22,2)" not-null="true" />
+    </property>
+    <property name="PopCodSevFee">
+      <column name="PopCodSevFee" sql-type="DECIMAL(22,2)" not-null="true" />
+    </property>
+    <property name="PopGoodsMoney">
+      <column name="PopGoodsMoney" sql-type="DECIMAL(22,2)" not-null="true" />
+    </property>
+    <property name="GoodsInfo">
+      <column name="GoodsInfo" sql-type="string" not-null="true" />
+    </property>
+    <property name="Operator">
+      <column name="Operator" sql-type="string" not-null="true" />
+    </property>
+    <property name="CreateTime">
+      <column name="CreateTime" sql-type="datetime" not-null="true" />
+    </property>
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ShopErp.Domain" namespace="ShopErp.Domain">
+  <class name="WuliuNumber" table="wuliunumber" lazy="false" >
+    <id name="Id" column="Id">
+      <generator class="identity" />
+    </id>
+    <property name="WuliuIds">
+      <column name="WuliuIds" sql-type="string" not-null="true" />
+    </property>
+    <property name="ReceiverName">
+      <column name="ReceiverName" sql-type="string" not-null="true" />
+    </property>
+    <property name="ReceiverPhone">
+      <column name="ReceiverPhone" sql-type="string" not-null="true" />
+    </property>
+    <property name="ReceiverMobile">
+      <column name="ReceiverMobile" sql-type="string" not-null="true" />
+    </property>
+    <property name="ReceiverAddress">
+      <column name="ReceiverAddress" sql-type="string" not-null="true" />
+    </property>
+    <property name="PackageId">
+      <column name="PackageId" sql-type="string" not-null="true" />
+    </property>
+    <property name="CreateTime">
+      <column name="CreateTime" sql-type="datetime" not-null="true" />
+    </property>
+    <property name="DeliveryCompany">
+      <column name="DeliveryCompany" sql-type="string" not-null="true" />
+    </property>
+    <property name="DeliveryNumber">
+      <column name="DeliveryNumber" sql-type="string" not-null="true" />
+    </property>
+    <property name="SortationName">
+      <column name="SortationName" sql-type="string" not-null="true" />
+    </property>
+    <property name="RouteCode">
+      <column name="RouteCode" sql-type="string" not-null="true" />
+    </property>
+    <property name="ConsolidationCode">
+      <column name="ConsolidationCode" sql-type="string" not-null="true" />
+    </property>
+    <property name="OriginCode">
+      <column name="OriginCode" sql-type="string" not-null="true" />
+    </property>
+    <property name="OriginName">
+      <column name="OriginName" sql-type="string" not-null="true" />
+    </property>
+    <property name="SortationNameAndRouteCode">
+      <column name="SortationNameAndRouteCode" sql-type="string" not-null="true" />
+    </property>
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,40 @@
+﻿<Window x:Class="ShopErp.App.Views.Orders.OrderCommentAndFlagEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="编辑订单备注" Height="250" Width="400" ResizeMode="CanMinimize" Loaded="Window_Loaded"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5">
+            <RadioButton Name="rbUnLable" Margin="5">
+                <Image Source="/ShopErp.App;component/Resources/Images/UnLable.png" Stretch="Fill" Height="14"
+                       Width="14" />
+            </RadioButton>
+            <RadioButton Name="rbRed" Margin="5">
+                <Image Source="/ShopErp.App;component/Resources/Images/Red.png" Stretch="Fill" Height="14" Width="14" />
+            </RadioButton>
+            <RadioButton Name="rbYellow" Margin="5">
+                <Image Height="14" Width="14" Source="/ShopErp.App;component/Resources/Images/Yellow.png"
+                       Stretch="Fill" />
+            </RadioButton>
+            <RadioButton Name="rbGreen" Margin="5">
+                <Image Height="14" Width="14" Source="/ShopErp.App;component/Resources/Images/Green.png"
+                       Stretch="Fill" />
+            </RadioButton>
+            <RadioButton Name="rbBlue" Margin="5">
+                <Image Height="14" Width="14" Source="/ShopErp.App;component/Resources/Images/Blue.png" Stretch="Fill" />
+            </RadioButton>
+            <RadioButton Name="rbPink" Margin="5">
+                <Image Height="14" Width="14" Source="/ShopErp.App;component/Resources/Images/Pink.png" Stretch="Fill" />
+            </RadioButton>
+        </StackPanel>
+        <TextBox Grid.Row="1" Name="tbComment" Margin="3" AcceptsReturn="False" TextWrapping="Wrap"
+                 HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" />
+        <Button Grid.Row="2" Name="btnOK" Content="保存" Margin="3" Click="btnOK_Click" Width="60" />
+    </Grid>
+</Window>

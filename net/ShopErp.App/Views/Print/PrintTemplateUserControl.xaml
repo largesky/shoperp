@@ -1,0 +1,202 @@
+﻿<UserControl x:Class="ShopErp.App.Views.Print.PrintTemplateUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             xmlns:delivery="clr-namespace:ShopErp.App.Views.Print"
+             d:DesignHeight="600" d:DesignWidth="1920" Loaded="UserControl_Loaded">
+    <UserControl.Resources>
+        <Style TargetType="Thumb" x:Key="ThumbStyle">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Border BorderThickness="1" Background="Transparent" Opacity="1">
+                            <Border.Style>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="BorderBrush" Value="Green" />
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="true">
+                                            <Setter Property="BorderBrush" Value="Red" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <Grid Background="LightBlue" Opacity="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <ContentControl Content="{Binding Path=PreviewValue,Mode=OneWay}" DataContext="{Binding}" Name="cc"/>
+                                <Button Content="X" Width="15" DataContext="{Binding}" BorderThickness="0" Canvas.Right="0" Canvas.Top="0" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Right" Foreground="Red" Name="btnRemoveDeliveryPrintTemplateItem"  Click="btnRemoveDeliveryPrintTemplateItem_Click" />
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" MinWidth="200" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="330" />
+        </Grid.ColumnDefinitions>
+        <ListBox Grid.Column="0" Name="lstDeliveryPrintTemplates" Margin="3" DisplayMemberPath="Name"
+                 SelectionChanged="lstDeliveryTemplates_SelectionChanged" />
+        <Grid Grid.Column="1" Margin="3" IsEnabled="False" Name="dgDeliverPrintTemplateHolder">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="3">
+                <TextBlock Text="模板类型：" Margin="3" VerticalAlignment="Center" />
+                <ComboBox Name="cbbTemplateTypes" Margin="3" VerticalAlignment="Center" Width="50"
+                          SelectedItem="{Binding SelectedItem.Type, ElementName=lstDeliveryPrintTemplates, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Text="物流公司：" Margin="3" VerticalAlignment="Center" />
+                <ComboBox Name="cbbDeliverCompanies" Margin="3" VerticalAlignment="Center" Width="100"
+                          SelectedItem="{Binding SelectedItem.DeliveryCompany, ElementName=lstDeliveryPrintTemplates, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Text="面单类型：" Margin="3" VerticalAlignment="Center" />
+                <ComboBox Name="cbbPaperType" Margin="3" VerticalAlignment="Center" Width="60">
+                    <ComboBoxItem>普通</ComboBoxItem>
+                    <ComboBoxItem>电子</ComboBoxItem>
+                    <ComboBox.SelectedIndex>0</ComboBox.SelectedIndex>
+                </ComboBox>
+                <TextBlock Text="模板名称：" Margin="3" VerticalAlignment="Center" />
+                <TextBox Name="tbDeliveryTemplateName" Width="120" Margin="3" VerticalAlignment="Center"
+                         Text="{Binding ElementName=lstDeliveryPrintTemplates,Path=SelectedItem.Name,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Text="宽度：" Margin="3" VerticalAlignment="Center" />
+                <TextBox Name="tbWidth" Width="40" Margin="3" VerticalAlignment="Center"
+                         Text="{Binding ElementName=imgDelivery,Path=Width,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Text="高度：" Margin="3" VerticalAlignment="Center" />
+                <TextBox Name="tbHeight" Width="40" Margin="3" VerticalAlignment="Center"
+                         Text="{Binding ElementName=imgDelivery,Path=Height,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Text="水平偏移:" Margin="3" VerticalAlignment="Center" />
+                <TextBox Name="tbXOffset" Margin="3" VerticalAlignment="Center" Width="40"
+                         Text="{Binding ElementName=lstDeliveryPrintTemplates,Path=SelectedItem.XOffset,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Text="垂直偏移：" Margin="3" VerticalAlignment="Center" />
+                <TextBox Name="tbYOffset" Margin="3" VerticalAlignment="Center" Width="40"
+                         Text="{Binding ElementName=lstDeliveryPrintTemplates,Path=SelectedItem.YOffset,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                <Button Name="btnChooseFile" Content="选择图片" Margin="3" Click="btnChooseFile_Click" Width="80"
+                        VerticalAlignment="Center" />
+            </StackPanel>
+
+            <ListBox Grid.Row="1" Name="lstDeliveryPrintTemplateTypes"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate>
+                                    <Button Name="btnDeliveryPrintTemplateItemType" Content="{Binding Type}"
+                                            Click="btnDeliveryPrintTemplateItemType_Click" Margin="5" />
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+            </ListBox>
+
+            <Canvas Name="cDeliveryHost" Grid.Row="2">
+                <Border BorderBrush="Gray" BorderThickness="2">
+                    <Image Name="imgDelivery" Width="0" Height="0" Stretch="Fill" />
+                </Border>
+            </Canvas>
+        </Grid>
+        <Border Grid.Column="2" BorderThickness="3" BorderBrush="DarkGray">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <GroupBox Header="模板操作" Grid.Row="1">
+                    <StackPanel Grid.Row="1" Orientation="Vertical">
+                        <TextBlock Text="新模板名称:" VerticalAlignment="Center" Margin="3" />
+                        <TextBox Name="tbNewDeliverPrintTemplateName" VerticalAlignment="Center" Margin="3" />
+                        <Button Name="tbNewDeliveryPrintTemplate" VerticalAlignment="Center" Margin="3" Content="添加模板"
+                                Click="tbNewDeliveryPrintTemplate_Click" />
+                        <Button Name="btnDeleteDeliveryPrintTemplate" VerticalAlignment="Center" Margin="3"
+                                Content="删除当前模板" Click="btnDeleteDeliveryPrintTemplate_Click" />
+                        <Button Name="btnRefreshAllDeliveryPrintTemplates" Content="刷新所有模板" Margin="3"
+                                VerticalAlignment="Center" Click="btnRefreshAllDeliveryPrintTemplate_Click" />
+                        <Button Name="btnCopyDeliveryPrintTemplate" Content="复制当前模板" Margin="3"
+                                VerticalAlignment="Center" Click="btnCopyDeliveryPrintTemplate_Click" />
+                        <Button Name="btnSaveDeliveryPrintTemplate" Content="保存当前模板" Margin="3,3,3,10"
+                                VerticalAlignment="Center" Click="btnSaveDeliveryPrintTemplate_Click" />
+                        <TextBlock Text="测试张数:" Margin="3,10,3,0" VerticalAlignment="Center" />
+                        <TextBox Name="tbTestCount" Text="3" Margin="3,10,3,0" VerticalAlignment="Center" />
+                        <Button Name="btnPrintTest" Content="打印测试" Margin="3,10,3,10" VerticalAlignment="Center"
+                                Click="btnPrintTest_Click" />
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Header="对象属性" Grid.Row="2" Margin="5">
+                    <Grid Name="dgDelivertyTemplateItemProperties">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="名称:" Margin="3" VerticalAlignment="Center" />
+                        <TextBox Grid.Row="0" Grid.Column="1" Name="tbDeliveryTemplateItemName"
+                                 VerticalAlignment="Center" Margin="3" Text="{Binding Path=Type,Mode=OneWay}"
+                                 IsEnabled="False" />
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="X坐标:" Margin="3" VerticalAlignment="Center" />
+                        <TextBox Grid.Row="1" Grid.Column="1" Name="tbDeliveryTemplateItemX" VerticalAlignment="Center"
+                                 Margin="3" Text="{Binding Path=X,UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Y坐标:" Margin="3" VerticalAlignment="Center" />
+                        <TextBox Grid.Row="2" Grid.Column="1" Name="tbDeliveryTemplateItemY" VerticalAlignment="Center"
+                                 Margin="3" Text="{Binding Path=Y,UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="宽度:" Margin="3" VerticalAlignment="Center" />
+                        <TextBox Grid.Row="3" Grid.Column="1" Name="tbDeliveryTemplateItemWidth"
+                                 VerticalAlignment="Center" Margin="3"
+                                 Text="{Binding Path=Width,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="高度:" Margin="3" VerticalAlignment="Center" />
+                        <TextBox Grid.Row="4" Grid.Column="1" Name="tbDeliveryTemplateItemHeight"
+                                 VerticalAlignment="Center" Margin="3"
+                                 Text="{Binding Path=Height,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="字体:" Margin="3" VerticalAlignment="Center" />
+                        <ComboBox Grid.Row="5" Grid.Column="1" Name="cbbDeliveryPrintTemplateItemFontName" Margin="3"
+                                  SelectedItem="{Binding FontName,UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="字号:" Margin="3" VerticalAlignment="Center" />
+                        <TextBox Grid.Row="6" Grid.Column="1" Name="tbDeliveryPrintTemplateItemFontSize" Margin="3"
+                                 VerticalAlignment="Center"
+                                 Text="{Binding Path=FontSize,UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Grid.Row="7" Grid.Column="0" Text="透明度:" Margin="3" VerticalAlignment="Center" />
+                        <TextBox Grid.Row="7" Grid.Column="1" Name="tbDeliveryPrintTemplateItemOpacity" Margin="3"
+                                 VerticalAlignment="Center"
+                                 Text="{Binding Path=Opacity,UpdateSourceTrigger=PropertyChanged,StringFormat=F2}" />
+                        <TextBlock Grid.Row="8" Grid.Column="0" Text="文本对齐:" Margin="3" VerticalAlignment="Center" />
+                        <ComboBox Grid.Row="8" Grid.Column="1" Name="cbbDeliveryPrintTemplateItemTextAlignment" Margin="3"
+                                  SelectedItem="{Binding TextAlignment,UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Grid.Row="9" Grid.Column="0" Text="文本缩放:" Margin="3" VerticalAlignment="Center" />
+                        <ComboBox Grid.Row="9" Grid.Column="1" Name="cbbDeliveryPrintTemplateItemScaleFormat" Margin="3"
+                                  SelectedItem="{Binding ScaleFormat,UpdateSourceTrigger=PropertyChanged}" />
+                        <DockPanel Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2" Name="dpExtendUI" />
+                    </Grid>
+                </GroupBox>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

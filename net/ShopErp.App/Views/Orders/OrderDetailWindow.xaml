@@ -1,0 +1,368 @@
+﻿<Window x:Class="ShopErp.App.Views.Orders.OrderDetailWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="订单详情" Height="800" Width="1400" Name="window" WindowStartupLocation="CenterScreen"
+        WindowState="Maximized" Loaded="window_Loaded">
+
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Margin" Value="3" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <GroupBox Header="系统信息" Padding="0" Margin="0,2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="下载时间:" VerticalAlignment="Center" />
+                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="0" Grid.Column="1"
+                         Text="{Binding CreateTime,Converter={StaticResource datetimeConverter}}"
+                         VerticalAlignment="Center" />
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="返款时间:" Margin="3" VerticalAlignment="Center" />
+                <TextBox Grid.Row="0" Grid.Column="3" Style="{StaticResource SelectableTextBox}"
+                         Text="{Binding PopRecvfeeTime,Converter={StaticResource datetimeConverter}}"
+                         VerticalAlignment="Center" />
+                <TextBlock Grid.Row="0" Grid.Column="4" Text="解析结果:" />
+                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="0" Grid.Column="5"
+                         Text="{Binding ParseResult,Converter={StaticResource boolConverter},ConverterParameter=失败|成功}"
+                         VerticalAlignment="Center" />
+                <TextBlock Grid.Row="0" Grid.Column="6" Text="创建类型:" Margin="3" VerticalAlignment="Center" />
+                <TextBlock Grid.Row="0" Grid.Column="7"
+                           Text="{Binding CreateType,Converter={StaticResource descriptionConverter}}" Margin="3"
+                           VerticalAlignment="Center" />
+                <TextBlock Grid.Row="0" Grid.Column="8" Text="订单类型:" Margin="3" VerticalAlignment="Center" />
+                <TextBlock Grid.Row="0" Grid.Column="9"
+                           Text="{Binding Type,Converter={StaticResource descriptionConverter}}" Margin="3"
+                           Name="tbOrderType" VerticalAlignment="Center" />
+                <Button Grid.Row="0" Grid.Column="10" Name="btnShuaSet" Content="设置/取消 刷单" Margin="3"
+                        VerticalAlignment="Center" Click="Button_Click" />
+            </Grid>
+        </GroupBox>
+
+
+        <GroupBox Header="基本信息:" Grid.Row="1" Padding="0" Margin="0,2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="创建时间:" />
+                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="0" Grid.Column="1"
+                         Text="{Binding PopCreateTime,Converter={StaticResource datetimeConverter}}" />
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="创建人员:" />
+                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="0" Grid.Column="3"
+                         Text="{Binding CreateOperator}" />
+                <TextBlock Grid.Row="0" Grid.Column="4" Text="订单编号:" />
+                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="0" Grid.Column="5" Text="{Binding Id}" />
+                <TextBlock Grid.Row="0" Grid.Column="6" Text="订单状态:" />
+                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="0" Grid.Column="7"
+                         Text="{Binding State,Converter={StaticResource descriptionConverter}}" />
+                <TextBlock Grid.Row="0" Grid.Column="8" Text="关闭人员:" />
+                <TextBox Grid.Row="0" Grid.Column="9" Style="{StaticResource SelectableTextBox}"
+                         Text="{Binding CloseOperator}" />
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="标记时间:" />
+                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="1" Grid.Column="1"
+                         Text="{Binding PopDeliveryTime,Converter={StaticResource datetimeConverter}}" />
+                <TextBlock Grid.Row="1" Grid.Column="2" Text="付款时间:" />
+                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="1" Grid.Column="3"
+                         Text="{Binding PopPayTime,Converter={StaticResource datetimeConverter}}" />
+                <TextBlock Grid.Row="1" Grid.Column="4" Text="打印时间:" />
+                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="1" Grid.Column="5"
+                         Text="{Binding PrintTime,Converter={StaticResource datetimeConverter}}" />
+                <TextBlock Grid.Row="1" Grid.Column="6" Text="发货时间:" />
+                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="1" Grid.Column="7"
+                         Text="{Binding DeliveryTime,Converter={StaticResource datetimeConverter}}" />
+                <TextBlock Grid.Row="1" Grid.Column="8" Text="关闭时间:" />
+                <TextBox Grid.Row="1" Grid.Column="9" Style="{StaticResource SelectableTextBox}"
+                         Text="{Binding CloseTime,Converter={StaticResource datetimeConverter}}" />
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Header="收货人和物流信息:" Grid.Row="2" Padding="0" Margin="0,2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="收货人姓名:" />
+                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="0" Grid.Column="1"
+                         Text="{Binding ReceiverName}" />
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="收货人座机:" />
+                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="0" Grid.Column="3"
+                         Text="{Binding ReceiverPhone}" />
+                <TextBlock Grid.Row="0" Grid.Column="4" Text="收货人手机:" />
+                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="0" Grid.Column="5"
+                         Text="{Binding ReceiverMobile}" />
+                <TextBlock Grid.Row="0" Grid.Column="6" Text="收货人地址:" />
+                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="0" Grid.Column="7"
+                         Text="{Binding ReceiverAddress}" Grid.ColumnSpan="6" />
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="物流公司:" />
+                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="1" Grid.Column="1"
+                         Text="{Binding DeliveryCompany}" />
+                <TextBlock Grid.Row="1" Grid.Column="2" Text="物流单号:" />
+                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="1" Grid.Column="3"
+                         Text="{Binding DeliveryNumber}" />
+                <TextBlock Grid.Row="1" Grid.Column="4" Text="物流重量:" />
+                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="1" Grid.Column="5"
+                         Text="{Binding Weight}" />
+                <TextBlock Grid.Row="1" Grid.Column="6" Text="面单类型:" />
+                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="1" Grid.Column="7"
+                         Text="{Binding PrintPaperType,Converter={StaticResource descriptionConverter}}" />
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Header="成本金额:" Grid.Row="3" Padding="0" Margin="0,2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="60" />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="*" />
+
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="订单总额:" Grid.ColumnSpan="2" Margin="3,4,3,3" />
+                <TextBlock Grid.Row="0" Grid.Column="2" Margin="3,4,3,3" Text="{Binding PopOrderTotalMoney}" />
+                <TextBlock Grid.Row="0" Grid.Column="3" Text="买家实付:" Margin="3,4,3,3" />
+                <TextBlock Grid.Row="0" Grid.Column="4" Text="{Binding PopBuyerPayMoney}" Margin="3,4,3,3" />
+                <TextBlock Grid.Row="0" Grid.Column="5" Text="卖家实得:" Margin="3,4,3,3" />
+                <TextBlock Grid.Row="0" Grid.Column="6" Text="{Binding PopSellerGetMoney}" Margin="3,4,3,3" />
+                <TextBlock Grid.Row="0" Grid.Column="7" Text="商品成本:" Margin="3,4,3,3" />
+                <TextBlock Grid.Row="0" Grid.Column="8" Text="未显示" Margin="3,4,3,3" />
+                <TextBlock Grid.Row="0" Grid.Column="9" Text="快递成本:" Margin="3,4,3,3" />
+                <TextBlock Grid.Row="0" Grid.Column="10" Text="{Binding DeliveryMoney}" Margin="3,4,3,3" />
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Header="平台信息:" Grid.Row="4" Padding="0" Margin="0,2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="订单平台:" />
+                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="0" Grid.Column="1"
+                         Text="{Binding PopType,Converter={StaticResource descriptionConverter}}" />
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="COD编号:" />
+                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="0" Grid.Column="3"
+                         Text="{Binding PopCodNumber}" />
+                <TextBlock Grid.Row="0" Grid.Column="4" Text="买家账号:" />
+                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="0" Grid.Column="5"
+                         Text="{Binding PopBuyerId}" />
+                <TextBlock Grid.Row="0" Grid.Column="6" Text="订单编号:" />
+                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="0" Grid.Column="7"
+                         Text="{Binding PopOrderId}" />
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="订单类型:" />
+                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="1" Grid.Column="1"
+                         Text="{Binding PopPayType,Converter={StaticResource descriptionConverter}}" />
+                <TextBlock Grid.Row="1" Grid.Column="2" Text="订单总额:" />
+                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="1" Grid.Column="3"
+                         Text="{Binding PopOrderTotalMoney}" />
+                <TextBlock Grid.Row="1" Grid.Column="4" Text="买家备注:" />
+                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="1" Grid.Column="5"
+                         Text="{Binding PopBuyerComment}" />
+                <TextBlock Grid.Row="1" Grid.Column="6" Text="卖家备注:" />
+                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="1" Grid.Column="7"
+                         Text="{Binding PopSellerComment}" Grid.ColumnSpan="3" />
+            </Grid>
+        </GroupBox>
+
+        <StackPanel Grid.Row="5" Background="LightGray" Margin="0,3">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="300" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="80" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="商品名称" HorizontalAlignment="Center" />
+                <TextBlock Grid.Column="1" Text="批发价" HorizontalAlignment="Center" />
+                <TextBlock Grid.Column="2" Text="出售价" HorizontalAlignment="Center" />
+                <TextBlock Grid.Column="3" Text="数量" HorizontalAlignment="Center" />
+                <TextBlock Grid.Column="4" Text="已拿数量" HorizontalAlignment="Center" />
+                <TextBlock Grid.Column="5" Text="状态" HorizontalAlignment="Center" />
+                <TextBlock Grid.Column="6" Text="重量" HorizontalAlignment="Center" />
+                <TextBlock Grid.Column="7" Text="囤货时间" HorizontalAlignment="Center" />
+                <TextBlock Grid.Column="8" Text="囤货人员" HorizontalAlignment="Center" />
+                <TextBlock Grid.Column="9" Text="关闭时间" HorizontalAlignment="Center" />
+                <TextBlock Grid.Column="10" Text="关闭人员" HorizontalAlignment="Center" />
+            </Grid>
+        </StackPanel>
+
+        <ListBox Grid.Row="6" ItemsSource="{Binding ElementName=window,Path=DataContext.OrderGoodss}" Margin="0,3">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="1" />
+                                    </Grid.RowDefinitions>
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="240" />
+                                            <ColumnDefinition Width="80" />
+                                            <ColumnDefinition Width="80" />
+                                            <ColumnDefinition Width="80" />
+                                            <ColumnDefinition Width="80" />
+                                            <ColumnDefinition Width="80" />
+                                            <ColumnDefinition Width="80" />
+                                            <ColumnDefinition Width="130" />
+                                            <ColumnDefinition Width="80" />
+                                            <ColumnDefinition Width="130" />
+                                            <ColumnDefinition Width="80" />
+                                        </Grid.ColumnDefinitions>
+                                        <Image Source="{Binding Image,Converter={StaticResource webUrlImageConverter}}"
+                                               Width="60" Height="60" />
+
+                                        <StackPanel Grid.Column="1" Orientation="Vertical">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Vendor}" />
+                                                <TextBlock Text="{Binding Number}" />
+                                                <TextBlock Text="{Binding Edtion}" />
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="颜色:" />
+                                                <TextBlock Text="{Binding Color}" />
+                                                <TextBlock Text="尺码:" />
+                                                <TextBlock Text="{Binding Size}" />
+                                            </StackPanel>
+                                        </StackPanel>
+
+                                        <TextBlock Grid.Column="2" Text="{Binding Price}" HorizontalAlignment="Center" />
+                                        <TextBlock Grid.Column="3" Text="{Binding PopPrice}"
+                                                   HorizontalAlignment="Center" />
+                                        <TextBlock Grid.Column="4" Text="{Binding Count}" HorizontalAlignment="Center" />
+                                        <TextBlock Grid.Column="5" Text="{Binding GetedCount}"
+                                                   HorizontalAlignment="Center" />
+                                        <TextBlock Grid.Column="6"
+                                                   Text="{Binding State,Converter={StaticResource descriptionConverter}}"
+                                                   HorizontalAlignment="Center" />
+                                        <TextBlock Grid.Column="7" Text="{Binding Weight}" HorizontalAlignment="Center" />
+                                        <TextBlock Grid.Column="8"
+                                                   Text="{Binding StockTime,Converter={StaticResource datetimeConverter}}"
+                                                   HorizontalAlignment="Center" />
+                                        <TextBlock Grid.Column="9" Text="{Binding StockOperator}"
+                                                   HorizontalAlignment="Center" />
+                                        <TextBlock Grid.Column="10"
+                                                   Text="{Binding CloseTime,Converter={StaticResource datetimeConverter}}"
+                                                   HorizontalAlignment="Center" />
+                                        <TextBlock Grid.Column="11" Text="{Binding CloseOperator}"
+                                                   HorizontalAlignment="Center" />
+                                    </Grid>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
+
+        <StackPanel Grid.Row="7" Background="LightGray" Margin="0,3">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="300" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="80" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="礼品名称" HorizontalAlignment="Center" />
+                <TextBlock Grid.Column="1" Text="批发价" HorizontalAlignment="Center" />
+                <TextBlock Grid.Column="2" Text="数量" HorizontalAlignment="Center" />
+            </Grid>
+        </StackPanel>
+    </Grid>
+</Window>

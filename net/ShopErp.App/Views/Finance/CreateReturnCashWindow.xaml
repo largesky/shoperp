@@ -1,0 +1,65 @@
+﻿<Window x:Class="ShopErp.App.Views.Finance.CreateReturnCashWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="创建返现信息" Height="300" Width="300" ResizeMode="NoResize" WindowStartupLocation="CenterScreen"
+        Loaded="Window_Loaded">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!--<TextBlock Grid.Row="0" Text="结果:" Margin="3" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="0" Text="" Name="tbType" Margin="3" VerticalAlignment="Center"/>
+
+        <TextBlock Grid.Row="1" Text="内容:" Margin="3" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Text="" Name="tbContent" Margin="3" VerticalAlignment="Center"/>
+
+        <TextBlock Grid.Row="3" Text="时间:" Margin="3" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="3" Text="" Name="tbTime" Margin="3" VerticalAlignment="Center"/>
+
+        <TextBlock Grid.Row="4" Text="图片:" Margin="3" VerticalAlignment="Center"/>-->
+
+
+        <TextBlock Grid.Row="5" Text="类型:" Margin="3" VerticalAlignment="Center" />
+        <ComboBox Grid.Row="5" Grid.Column="1" Name="cbbTypes" Margin="3" VerticalAlignment="Center" IsEditable="True">
+            <ComboBoxItem>好评返现</ComboBoxItem>
+            <ComboBoxItem>补运费</ComboBoxItem>
+            <ComboBoxItem>补差价</ComboBoxItem>
+            <ComboBoxItem>补修理费</ComboBoxItem>
+            <ComboBoxItem>好评返现+补运费</ComboBoxItem>
+            <ComboBoxItem>好评返现+补差价</ComboBoxItem>
+            <ComboBoxItem>退部分款</ComboBoxItem>
+            <ComboBoxItem>线下退款</ComboBoxItem>
+            <ComboBoxItem>--没有类型手动输入--</ComboBoxItem>
+            <ComboBox.SelectedIndex>0</ComboBox.SelectedIndex>
+        </ComboBox>
+        <TextBlock Grid.Row="6" Text="类型:" Margin="3" VerticalAlignment="Center" />
+        <ComboBox Grid.Row="6" Grid.Column="1" Name="cbbAcountType" Margin="3" VerticalAlignment="Center"
+                  IsEditable="True">
+            <ComboBoxItem>支付宝</ComboBoxItem>
+            <ComboBoxItem>微信</ComboBoxItem>
+            <ComboBoxItem>银行卡</ComboBoxItem>
+            <ComboBoxItem>--没有类型手动输入--</ComboBoxItem>
+            <ComboBox.SelectedIndex>0</ComboBox.SelectedIndex>
+        </ComboBox>
+        <TextBlock Grid.Row="7" Grid.Column="0" Text="账户:" Margin="3" VerticalAlignment="Center" />
+        <TextBox Grid.Row="7" Grid.Column="1" Name="tbbAccountInfo" Margin="3" VerticalAlignment="Center" />
+        <TextBlock Grid.Row="8" Grid.Column="0" Text="金额:" Margin="3" VerticalAlignment="Center" />
+        <TextBox Grid.Row="8" Grid.Column="1" Name="tbMoney" Margin="3" VerticalAlignment="Center" />
+        <Button Grid.Row="9" Grid.Column="1" Name="btnSave" Margin="3" Content="保存" IsDefault="True"
+                VerticalAlignment="Center" Width="60" Click="btnSave_Click" />
+    </Grid>
+</Window>

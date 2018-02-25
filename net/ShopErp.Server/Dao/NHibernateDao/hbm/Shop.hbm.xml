@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ShopErp.Domain" namespace="ShopErp.Domain">
+  <class name="Shop" table="shop" lazy="false" >
+    <id name="Id" column="Id">
+      <generator class="identity" />
+    </id>
+    <property name="PopType">
+      <column name="PopType" sql-type="int" not-null="true" />
+    </property>
+    <property name="PopSellerId">
+      <column name="PopSellerId" sql-type="string" not-null="true" />
+    </property>
+    <property name="PopSellerNumberId">
+      <column name="PopSellerNumberId" sql-type="string" not-null="true" />
+    </property>
+    <property name="AppKey">
+      <column name="AppKey" sql-type="string" not-null="true" />
+    </property>
+    <property name="AppSecret">
+      <column name="AppSecret" sql-type="string" not-null="true" />
+    </property>
+    <property name="AppAccessToken">
+      <column name="AppAccessToken" sql-type="string" not-null="true" />
+    </property>
+    <property name="AppRefreshToken">
+      <column name="AppRefreshToken" sql-type="string" not-null="true" />
+    </property>
+    <property name="AppCallbackUrl">
+      <column name="AppCallbackUrl" sql-type="string" not-null="true" />
+    </property>
+    <property name="Mark">
+      <column name="Mark" sql-type="string" not-null="true" />
+    </property>
+    <property name="CommissionPer">
+      <column name="CommissionPer" sql-type="DECIMAL(22,2)" not-null="true" />
+    </property>
+    <property name="CreateTime">
+      <column name="CreateTime" sql-type="datetime" not-null="true" />
+    </property>
+    <property name="UpdateTime">
+      <column name="UpdateTime" sql-type="datetime" not-null="true" />
+    </property>
+    <property name="LastUpdateOperator">
+      <column name="LastUpdateOperator" sql-type="string" not-null="true" />
+    </property>
+    <property name="Enabled">
+      <column name="Enabled" sql-type="boolean" not-null="true" />
+    </property>
+    <property name="ShippingHours">
+      <column name="ShippingHours" sql-type="int" not-null="true" />
+    </property>
+    <property name="FirstDeliveryHours">
+      <column name="FirstDeliveryHours" sql-type="int" not-null="true" />
+    </property>
+    <property name="SecondDeliveryHours">
+      <column name="SecondDeliveryHours" sql-type="int" not-null="true" />
+    </property>
+    <property name="AppEnabled">
+      <column name="AppEnabled" sql-type="boolean" not-null="true" />
+    </property>
+  </class>
+</hibernate-mapping>

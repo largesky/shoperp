@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ShopErp.Domain" namespace="ShopErp.Domain">
+  <class name="OrderGoods" table="ordergoods" lazy="false" >
+    <id name="Id" column="Id">
+      <generator class="identity" />
+    </id>
+    <property name="OrderId">
+      <column name="OrderId" sql-type="bigint(20)" not-null="true" />
+    </property>
+    <property name="Vendor">
+      <column name="Vendor" sql-type="string" not-null="true" />
+    </property>
+    <property name="Number">
+      <column name="Number" sql-type="string" not-null="true" />
+    </property>
+    <property name="PopNumber">
+      <column name="PopNumber" sql-type="string" not-null="true" />
+    </property>
+    <property name="NumberId">
+      <column name="NumberId" sql-type="bigint(20)" not-null="true" />
+    </property>
+    <property name="Edtion">
+      <column name="Edtion" sql-type="string" not-null="true" />
+    </property>
+    <property name="Color">
+      <column name="Color" sql-type="string" not-null="true" />
+    </property>
+    <property name="Size">
+      <column name="Size" sql-type="string" not-null="true" />
+    </property>
+    <property name="Count">
+      <column name="Count" sql-type="int" not-null="true" />
+    </property>
+    <property name="GetedCount">
+      <column name="GetedCount" sql-type="int" not-null="true" />
+    </property>
+    <property name="Price">
+      <column name="Price" sql-type="DECIMAL(22,2)" not-null="true" />
+    </property>
+    <property name="PopPrice">
+      <column name="PopPrice" sql-type="DECIMAL(22,2)" not-null="true" />
+    </property>
+    <property name="PopUrl">
+      <column name="PopUrl" sql-type="string" not-null="true" />
+    </property>
+    <property name="PopInfo">
+      <column name="PopInfo" sql-type="string" not-null="true" />
+    </property>
+    <property name="PopOrderSubId">
+      <column name="PopOrderSubId" sql-type="string" not-null="true" />
+    </property>
+    <property name="CloseTime">
+      <column name="CloseTime" sql-type="datetime" not-null="true" />
+    </property>
+    <property name="CloseOperator">
+      <column name="CloseOperator" sql-type="string" not-null="true" />
+    </property>
+    <property name="Comment">
+      <column name="Comment" sql-type="string" not-null="true" />
+    </property>
+    <property name="StockTime">
+      <column name="StockTime" sql-type="datetime" not-null="true" />
+    </property>
+    <property name="StockOperator">
+      <column name="StockOperator" sql-type="string" not-null="true" />
+    </property>
+    <property name="Image">
+      <column name="Image" sql-type="string" not-null="true" />
+    </property>
+    <property name="State">
+      <column name="State" sql-type="int" not-null="true" />
+    </property>
+    <property name="PopRefundState">
+      <column name="PopRefundState" sql-type="int" not-null="true" />
+    </property>
+    <property name="Weight">
+      <column name="Weight" sql-type="DECIMAL(22,2)" not-null="true" />
+    </property>
+    <property name="IsPeijian">
+      <column name="IsPeijian" sql-type="boolean" not-null="true" />
+    </property>
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,1048 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\CefSharp.WinForms.57.0.0\build\CefSharp.WinForms.props" Condition="Exists('..\packages\CefSharp.WinForms.57.0.0\build\CefSharp.WinForms.props')" />
+  <Import Project="..\packages\CefSharp.Common.57.0.0\build\CefSharp.Common.props" Condition="Exists('..\packages\CefSharp.Common.57.0.0\build\CefSharp.Common.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{853BB254-44F0-45F2-ABBB-6FCCA11EDA11}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ShopErp.App</RootNamespace>
+    <AssemblyName>ShopErp.App</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>网店ERP.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="HtmlAgilityPack, Version=1.5.1.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.5.1\lib\Net45\HtmlAgilityPack.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Largesky.Excel">
+      <HintPath>..\packages\Largesky.Excel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ReachFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Printing" />
+    <Reference Include="System.Speech" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="TopSdk">
+      <HintPath>..\packages\TopSdk.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsFormsIntegration" />
+    <Reference Include="Xceed.Wpf.Toolkit">
+      <HintPath>..\packages\Xceed.Wpf.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="zxing">
+      <HintPath>..\packages\ZXingnet40\zxing.dll</HintPath>
+    </Reference>
+    <Reference Include="zxing.presentation">
+      <HintPath>..\packages\ZXingnet40\zxing.presentation.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="CefSharpUtils\BrowserProcessHandler.cs" />
+    <Compile Include="Converters\BoolConverter.cs" />
+    <Compile Include="Converters\DateTimeConverter.cs" />
+    <Compile Include="Converters\EnumConverter.cs" />
+    <Compile Include="Converters\FinanceAccountConverter.cs" />
+    <Compile Include="Converters\IntConverter.cs" />
+    <Compile Include="Converters\ColorFlagImageConverter.cs" />
+    <Compile Include="Converters\OrderGoodsStateConverter.cs" />
+    <Compile Include="Converters\OrderPayTypeVisibilityConverter.cs" />
+    <Compile Include="Converters\OrderReciverInfoConverter.cs" />
+    <Compile Include="Converters\ShopMarkConverter.cs" />
+    <Compile Include="Converters\VendorConverter.cs" />
+    <Compile Include="Converters\VendorNameFormatConverter.cs" />
+    <Compile Include="Converters\WebUrlImageConverter.cs" />
+    <Compile Include="Device\IDevice.cs" />
+    <Compile Include="Device\IDeviceConfigUI.cs" />
+    <Compile Include="Device\Kunhong\KunhongConfigUI.xaml.cs">
+      <DependentUpon>KunhongConfigUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Device\Kunhong\KunhongDevice.cs" />
+    <Compile Include="Domain\GoodsCountPrintDocument.cs" />
+    <Compile Include="Domain\GoodsCountPrintDocument2.cs" />
+    <Compile Include="Domain\GoodsPrintDocument.cs" />
+    <Compile Include="Domain\OrderPrintDocument.cs" />
+    <Compile Include="Domain\OrderReturnOutPrintDocument.cs" />
+    <Compile Include="Domain\OrderReturnPrintDocument.cs" />
+    <Compile Include="Domain\PrintInfo.cs" />
+    <Compile Include="Domain\PrintTemplate.cs" />
+    <Compile Include="Domain\PrintTemplateItem.cs" />
+    <Compile Include="Domain\PrintTemplateItemType.cs" />
+    <Compile Include="Domain\PrintTemplateItemTypeGroup.cs" />
+    <Compile Include="Domain\PrintTemplateItemTypeGroupAttribute.cs" />
+    <Compile Include="Log\Logger.cs" />
+    <Compile Include="Service\Delivery\DeliveryService.cs" />
+    <Compile Include="Service\Delivery\DeliveryTransation.cs" />
+    <Compile Include="Service\Delivery\DeliveryTransationItem.cs" />
+    <Compile Include="Service\Delivery\Kuaidi100DeliveryItem.cs" />
+    <Compile Include="Service\Delivery\Kuaidi100DeliveryResult.cs" />
+    <Compile Include="Service\LocalConfigService.cs" />
+    <Compile Include="Service\Net\Message.cs" />
+    <Compile Include="Service\Net\MessageArrviedEventArgs.cs" />
+    <Compile Include="Service\Net\MessageCenter.cs" />
+    <Compile Include="Service\Net\MsHttpRestful.cs" />
+    <Compile Include="Service\Net\OrderDeliveryInfoChangedMessage.cs" />
+    <Compile Include="Service\Net\OrderPopSellerCommentChangedMessage.cs" />
+    <Compile Include="Service\Print\DeliveryFormatters\DeliveryRouteCode.cs" />
+    <Compile Include="Service\Print\DeliveryFormatters\DeliverySortationName.cs" />
+    <Compile Include="Service\Print\DeliveryFormatters\DeliverySortationNameAndRouteCode.cs" />
+    <Compile Include="Service\Print\DeliveryFormatters\DeliveryFormatterManager.cs" />
+    <Compile Include="Service\Print\DeliveryFormatters\DeliveryNumberBarcode.cs" />
+    <Compile Include="Service\Print\DeliveryFormatters\DeliveryNumberText.cs" />
+    <Compile Include="Service\Print\DeliveryFormatters\DeliveryConsolidationCode.cs" />
+    <Compile Include="Service\Print\DeliveryFormatters\DeliveryConsolidationCodeBarCode.cs" />
+    <Compile Include="Service\Print\DeliveryFormatters\IDeliveryFormatter.cs" />
+    <Compile Include="Service\Print\GoodsFormatters\GoodsColor.cs" />
+    <Compile Include="Service\Print\GoodsFormatters\GoodsFormatterManager.cs" />
+    <Compile Include="Service\Print\GoodsFormatters\GoodsMaterial.cs" />
+    <Compile Include="Service\Print\GoodsFormatters\GoodsNumber.cs" />
+    <Compile Include="Service\Print\GoodsFormatters\GoodsSize.cs" />
+    <Compile Include="Service\Print\GoodsFormatters\IGoodsFormatter.cs" />
+    <Compile Include="Service\Print\OrderFormatters\IOrderFormatter.cs" />
+    <Compile Include="Service\Print\OrderFormatters\OrderFormatterManager.cs" />
+    <Compile Include="Service\Print\OrderFormatters\OrderGoodsCount.cs" />
+    <Compile Include="Service\Print\OrderFormatters\OrderGoodsInfoAndSellerComment.cs" />
+    <Compile Include="Service\Print\OrderFormatters\OrderMoney.cs" />
+    <Compile Include="Service\Print\OrderFormatters\OrderMoneyInBig.cs" />
+    <Compile Include="Service\Print\OrderFormatters\OrderPayTime.cs" />
+    <Compile Include="Service\Print\OrderFormatters\OrderPop.cs" />
+    <Compile Include="Service\Print\OrderFormatters\OrderPopPayType.cs" />
+    <Compile Include="Service\Print\OrderFormatters\OrderReceiverFullAddress.cs" />
+    <Compile Include="Service\Print\OrderFormatters\OrderReceiverInfoAll.cs" />
+    <Compile Include="Service\Print\OrderFormatters\OrderReceiverMobile.cs" />
+    <Compile Include="Service\Print\OrderFormatters\OrderReceiverName.cs" />
+    <Compile Include="Service\Print\OrderFormatters\OrderReceiverPhone.cs" />
+    <Compile Include="Service\Print\OrderFormatters\OrderWeight.cs" />
+    <Compile Include="Service\Print\OtherFormatters\IOtherFormatter.cs" />
+    <Compile Include="Service\Print\OtherFormatters\OtherBarcode.cs" />
+    <Compile Include="Service\Print\OtherFormatters\OtherFormatterManager.cs" />
+    <Compile Include="Service\Print\OtherFormatters\OtherImage.cs" />
+    <Compile Include="Service\Print\OtherFormatters\OtherLine.cs" />
+    <Compile Include="Service\Print\OtherFormatters\OtherRandom.cs" />
+    <Compile Include="Service\Print\OtherFormatters\OtherStaticText.cs" />
+    <Compile Include="Service\Print\PrintDataFormatterBase.cs" />
+    <Compile Include="Service\Print\PrintDataFormatterManagerBase.cs" />
+    <Compile Include="Service\Print\PrintFormatters\IPrintFormatter.cs" />
+    <Compile Include="Service\Print\PrintFormatters\PrintDatetime.cs" />
+    <Compile Include="Service\Print\PrintFormatters\PrintFormatterManager.cs" />
+    <Compile Include="Service\Print\PrintFormatters\PrintPageNumber.cs" />
+    <Compile Include="Service\Print\ReturnFormatters\IReturnFormatter.cs" />
+    <Compile Include="Service\Print\ReturnFormatters\ReturnFormatterManager.cs" />
+    <Compile Include="Service\Print\ReturnFormatters\ReturnGoodsInfo.cs" />
+    <Compile Include="Service\Print\ReturnFormatters\ReturnIdBarCode.cs" />
+    <Compile Include="Service\Print\ReturnFormatters\ReturnIdText.cs" />
+    <Compile Include="Service\Print\ReturnFormatters\ReturnVendor.cs" />
+    <Compile Include="Service\Print\ReturnFormatters\ReturnVendorDoor.cs" />
+    <Compile Include="Service\Print\ShopFormatters\IShopFormatter.cs" />
+    <Compile Include="Service\Print\ShopFormatters\ShopFormatterManager.cs" />
+    <Compile Include="Service\Print\ShopFormatters\ShopImage.cs" />
+    <Compile Include="Service\Print\ShopFormatters\ShopMark.cs" />
+    <Compile Include="Service\Restful\DeliveryCompanyService.cs" />
+    <Compile Include="Service\Restful\DeliveryInService.cs" />
+    <Compile Include="Service\Restful\DeliveryOutService.cs" />
+    <Compile Include="Service\Restful\DeliveryTemplateAreaService.cs" />
+    <Compile Include="Service\Restful\DeliveryTemplateService.cs" />
+    <Compile Include="Service\Restful\FinanceAccountService.cs" />
+    <Compile Include="Service\Restful\FinanceService.cs" />
+    <Compile Include="Service\Restful\FinanceTypeService.cs" />
+    <Compile Include="Service\Restful\GoodsMapService.cs" />
+    <Compile Include="Service\Restful\GoodsService.cs" />
+    <Compile Include="Service\Restful\GoodsShopService.cs" />
+    <Compile Include="Service\Restful\GoodsTaskService.cs" />
+    <Compile Include="Service\Restful\ImageService.cs" />
+    <Compile Include="Service\Restful\OperatorService.cs" />
+    <Compile Include="Service\Restful\OrderGoodsService.cs" />
+    <Compile Include="Service\Restful\OrderModifyHistoryService.cs" />
+    <Compile Include="Service\Restful\OrderReturnService.cs" />
+    <Compile Include="Service\Restful\OrderService.cs" />
+    <Compile Include="Service\Restful\OrderUpdateService.cs" />
+    <Compile Include="Service\Restful\PrintHistoryService.cs" />
+    <Compile Include="Service\Restful\ReturnCashService.cs" />
+    <Compile Include="Service\Restful\ServiceBase.cs" />
+    <Compile Include="Service\Restful\ServiceContainer.cs" />
+    <Compile Include="Service\Restful\ShopService.cs" />
+    <Compile Include="Service\Restful\SystemCleanService.cs" />
+    <Compile Include="Service\Restful\SystemConfigService.cs" />
+    <Compile Include="Service\Restful\TaobaoKeywordDetailService.cs" />
+    <Compile Include="Service\Restful\TaobaoKeywordService.cs" />
+    <Compile Include="Service\Restful\VendorService.cs" />
+    <Compile Include="Service\Restful\WuliuNumberService.cs" />
+    <Compile Include="Service\ScriptManager.cs" />
+    <Compile Include="Service\Speaker.cs" />
+    <Compile Include="Service\Spider\Go2\Go2Spider.cs" />
+    <Compile Include="Service\Spider\SpiderBase.cs" />
+    <Compile Include="Service\Sync\OrderSync.cs" />
+    <Compile Include="Service\Sync\SyncEventArgs.cs" />
+    <Compile Include="Utils\CollectionsSpilteUtil.cs" />
+    <Compile Include="Utils\CSV.cs" />
+    <Compile Include="Utils\EnumUtil.cs" />
+    <Compile Include="Utils\EnvironmentDirHelper.cs" />
+    <Compile Include="Utils\FileUtil.cs" />
+    <Compile Include="Utils\MD5Util.cs" />
+    <Compile Include="Utils\PopProgramUtil.cs" />
+    <Compile Include="Utils\PrintUtil.cs" />
+    <Compile Include="Utils\ZXingUtil.cs" />
+    <Compile Include="ViewModels\DeliveryCheckViewModel.cs" />
+    <Compile Include="ViewModels\DeliveryInViewModel.cs" />
+    <Compile Include="ViewModels\DeliveryScanViewModel.cs" />
+    <Compile Include="ViewModels\OrderCodViewModel.cs" />
+    <Compile Include="ViewModels\OrderFlagViewModel.cs" />
+    <Compile Include="ViewModels\OrderGoodsCloseViewModel.cs" />
+    <Compile Include="ViewModels\OrderReturnViewModel.cs" />
+    <Compile Include="ViewModels\OrderSpilteViewModel.cs" />
+    <Compile Include="ViewModels\OrderViewModel.cs" />
+    <Compile Include="ViewModels\PrintHistoryGroupViewModel.cs" />
+    <Compile Include="ViewModels\PrintHistoryViewModel.cs" />
+    <Compile Include="ViewModels\PrintOrderPageViewModel.cs" />
+    <Compile Include="ViewModels\PrintOrderViewModel.cs" />
+    <Compile Include="ViewModels\PrintTemplateItemConsolidationCodeBarCode.cs" />
+    <Compile Include="ViewModels\PrintTemplateItemTypeViewModel.cs" />
+    <Compile Include="ViewModels\PrintTemplateItemViewModelCommon.cs" />
+    <Compile Include="ViewModels\PrintTemplateItemViewModelFactory.cs" />
+    <Compile Include="ViewModels\PrintTemplateItemViewModelForBarcode.cs" />
+    <Compile Include="ViewModels\PrintTemplateItemViewModelForDate.cs" />
+    <Compile Include="ViewModels\PrintTemplateItemViewModelForDeliveryNumberBarcode.cs" />
+    <Compile Include="ViewModels\PrintTemplateItemViewModelForImage.cs" />
+    <Compile Include="ViewModels\PrintTemplateItemViewModelForLine.cs" />
+    <Compile Include="ViewModels\PrintTemplateItemViewModelForPriceInBig.cs" />
+    <Compile Include="ViewModels\PrintTemplateItemViewModelForRandom.cs" />
+    <Compile Include="ViewModels\PrintTemplateItemViewModelForReciverInfoAll.cs" />
+    <Compile Include="ViewModels\PrintTemplateItemViewModelForReciverPhone.cs" />
+    <Compile Include="ViewModels\PrintTemplateItemViewModelForRouteCode.cs" />
+    <Compile Include="ViewModels\PrintTemplateItemViewModelForText.cs" />
+    <Compile Include="ViewModels\ShopDownloadViewModel.cs" />
+    <Compile Include="Views\Config\ConfigUserControl.xaml.cs">
+      <DependentUpon>ConfigUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Config\ImgCleanUserControl.xaml.cs">
+      <DependentUpon>ImgCleanUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Config\ImgCleanViewModel.cs" />
+    <Compile Include="Views\Config\SystemCleanUserControl.xaml.cs">
+      <DependentUpon>SystemCleanUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Config\SystemCleanViewModel.cs" />
+    <Compile Include="Views\DataCenter\DataTypeSelectViewModel.cs" />
+    <Compile Include="Views\DataCenter\SaleCountInfo.cs" />
+    <Compile Include="Views\DataCenter\SaleInfo.cs" />
+    <Compile Include="Views\DataCenter\SaleUserControl.xaml.cs">
+      <DependentUpon>SaleUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DataCenter\TaobaoKeywordCountUserControl.xaml.cs">
+      <DependentUpon>TaobaoKeywordCountUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DataCenter\TaobaoKeywordStateUserControl.xaml.cs">
+      <DependentUpon>TaobaoKeywordStateUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DataCenter\TaobaoKeywordUserControl.xaml.cs">
+      <DependentUpon>TaobaoKeywordUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Delivery\DeliveryCheckUserControl.xaml.cs">
+      <DependentUpon>DeliveryCheckUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Delivery\DeliveryCompanyUserControl.xaml.cs">
+      <DependentUpon>DeliveryCompanyUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Delivery\DeliveryDistributionUserControl.xaml.cs">
+      <DependentUpon>DeliveryDistributionUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Delivery\DeliveryInQueryUserControl.xaml.cs">
+      <DependentUpon>DeliveryInQueryUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Delivery\DeliveryInUserControl.xaml.cs">
+      <DependentUpon>DeliveryInUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Delivery\DeliveryMatchWindow.xaml.cs">
+      <DependentUpon>DeliveryMatchWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Delivery\DeliveryOutQueryUserControl.xaml.cs">
+      <DependentUpon>DeliveryOutQueryUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Delivery\DeliveryQueryWindow.xaml.cs">
+      <DependentUpon>DeliveryQueryWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Delivery\DeliveryScanUserControl.xaml.cs">
+      <DependentUpon>DeliveryScanUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Delivery\DeliveryTemplateEditWindow.xaml.cs">
+      <DependentUpon>DeliveryTemplateEditWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Delivery\DeliveryTemplateUserControl.xaml.cs">
+      <DependentUpon>DeliveryTemplateUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Delivery\ShippingCheckHtmlUserControl.xaml.cs">
+      <DependentUpon>ShippingCheckHtmlUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Delivery\ProvincesSeletorWindow.xaml.cs">
+      <DependentUpon>ProvincesSeletorWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Delivery\ShippingCheckUserControl.xaml.cs">
+      <DependentUpon>ShippingCheckUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Extenstions\ComboBoxExtension.cs" />
+    <Compile Include="Views\Finance\CreateReturnCashWindow.xaml.cs">
+      <DependentUpon>CreateReturnCashWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Finance\FinanceAccountUserControl.xaml.cs">
+      <DependentUpon>FinanceAccountUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Finance\FinanceCreateBatchWindow.xaml.cs">
+      <DependentUpon>FinanceCreateBatchWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Finance\FinanceEdit.xaml.cs">
+      <DependentUpon>FinanceEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Finance\FinanceTypeConfigWindow.xaml.cs">
+      <DependentUpon>FinanceTypeConfigWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Finance\FinanceUserControl.xaml.cs">
+      <DependentUpon>FinanceUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Finance\ImageViewWindow.xaml.cs">
+      <DependentUpon>ImageViewWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Finance\ReturnCashCompleteWindow.xaml.cs">
+      <DependentUpon>ReturnCashCompleteWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Finance\ReturnCashUserControl.xaml.cs">
+      <DependentUpon>ReturnCashUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Goods\GoodsAddMapWindow.xaml.cs">
+      <DependentUpon>GoodsAddMapWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Goods\GoodsCommentEditWindow.xaml.cs">
+      <DependentUpon>GoodsCommentEditWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Goods\GoodsCreateSampleWindow.xaml.cs">
+      <DependentUpon>GoodsCreateSampleWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Goods\GoodsCreateWindow.xaml.cs">
+      <DependentUpon>GoodsCreateWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Goods\GoodsDetailWindow.xaml.cs">
+      <DependentUpon>GoodsDetailWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Goods\GoodsEditMapWindow.xaml.cs">
+      <DependentUpon>GoodsEditMapWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Goods\GoodsPatchEditWindow.xaml.cs">
+      <DependentUpon>GoodsPatchEditWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Goods\GoodsShopSelectWindow.xaml.cs">
+      <DependentUpon>GoodsShopSelectWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Goods\GoodsUserControl.xaml.cs">
+      <DependentUpon>GoodsUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Goods\GoodsViewModel.cs" />
+    <Compile Include="Views\Goods\GoodUpdateViewModel.cs" />
+    <Compile Include="Views\Goods\GoodUpdateWindow.xaml.cs">
+      <DependentUpon>GoodUpdateWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Goods\PopGoodsInfoViewModel.cs" />
+    <Compile Include="Views\Goods\PopGoodsUserControl.xaml.cs">
+      <DependentUpon>PopGoodsUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Goods\ShopCheckViewModel.cs" />
+    <Compile Include="Views\LoginWindow.xaml.cs">
+      <DependentUpon>LoginWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Orders\OrderGoodsCreateReturnWithoutOrderWindow.xaml.cs">
+      <DependentUpon>OrderGoodsCreateReturnWithoutOrderWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Orders\OrderAllUserControl.xaml.cs">
+      <DependentUpon>OrderAllUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Orders\OrderCloseWindow.xaml.cs">
+      <DependentUpon>OrderCloseWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Orders\OrderDetailWindow.xaml.cs">
+      <DependentUpon>OrderDetailWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Orders\OrderDownloadHtmlUserControl.xaml.cs">
+      <DependentUpon>OrderDownloadHtmlUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Orders\OrderDownloadWindow.xaml.cs">
+      <DependentUpon>OrderDownloadWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Orders\OrderCommentAndFlagEditWindow.xaml.cs">
+      <DependentUpon>OrderCommentAndFlagEditWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Orders\OrderGetedMarkUserControl.xaml.cs">
+      <DependentUpon>OrderGetedMarkUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Orders\OrderGoodsCreateReturnWindow.xaml.cs">
+      <DependentUpon>OrderGoodsCreateReturnWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Orders\OrderGoodsStockModifyWindow.xaml.cs">
+      <DependentUpon>OrderGoodsStockModifyWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Orders\OrderEditWindow.xaml.cs">
+      <DependentUpon>OrderEditWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Orders\OrderModifyDeliveryInfoWindow.xaml.cs">
+      <DependentUpon>OrderModifyDeliveryInfoWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Orders\OrderReciverInfoModifyWindow.xaml.cs">
+      <DependentUpon>OrderReciverInfoModifyWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Orders\OrderReturnOutUserControl.xaml.cs">
+      <DependentUpon>OrderReturnOutUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Orders\OrderReturnUserControl.xaml.cs">
+      <DependentUpon>OrderReturnUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Orders\OrderSpilteWindow.xaml.cs">
+      <DependentUpon>OrderSpilteWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Orders\OrderSyncUserControl.xaml.cs">
+      <DependentUpon>OrderSyncUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Orders\OrderSyncHtmlUserControl.xaml.cs">
+      <DependentUpon>OrderSyncHtmlUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Orders\ReturnProcessWindowEx.xaml.cs">
+      <DependentUpon>ReturnProcessWindowEx.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponse.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseAmount.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseAmountCount.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseAmountCountContent.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseAmountCountContentData.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseAmountCountContentDataMoney.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseAmountCountContentDataTitle.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseBasic.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseBasicList.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseBasicListContent.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseBasicListContentContent.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOrder.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOrderOrderGoods.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOrderOrderGoodsStatus.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOrderOrderGoodsStatusSubOrders.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOrderOrderGoodsStatusSubOrdersItemInfo.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOrderOrderGoodsStatusSubOrdersPriceInfo.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOverStatus.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOverStatusOperate.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOverStatusOperateContent.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOverStatusPrompt.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOverStatusPromptContent.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOverStatusStatus.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOverStatusStatusContent.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseStepbar.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseStepbarOptions.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrdersResponse.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrdersResponseOrder.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrdersResponseOrderBuyer.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrdersResponseOrderExtra.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrdersResponseOrderOrderGoods.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrdersResponseOrderOrderGoodsItemInfo.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrdersResponseOrderOrderGoodsItemInfoExtra.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrdersResponseOrderOrderInfo.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrdersResponseOrderPayInfo.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrdersResponseOrderStatusInfo.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrdersResponsePage.cs" />
+    <Compile Include="Views\PageBar\PageBarUserControl.xaml.cs">
+      <DependentUpon>PageBarUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageBar\PageChangeEventArgs.cs" />
+    <Compile Include="Views\Print\FilePrintTemplateRepertory.cs" />
+    <Compile Include="Views\Print\GoodsCountSortByDoor.cs" />
+    <Compile Include="Views\Print\GoodsCountSortByStreet.cs" />
+    <Compile Include="Views\Print\GoodsCountUserControl.xaml.cs">
+      <DependentUpon>GoodsCountUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Print\PrintHistoryUserControl.xaml.cs">
+      <DependentUpon>PrintHistoryUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Print\PrintTemplateItemAdorner.cs" />
+    <Compile Include="Views\Print\PrintTemplateItemBarcodeUserControl.xaml.cs">
+      <DependentUpon>PrintTemplateItemBarcodeUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Print\PrintTemplateItemDateUserControl.xaml.cs">
+      <DependentUpon>PrintTemplateItemDateUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Print\PrintTemplateItemDeliveryNumberBarcodeUserControl.xaml.cs">
+      <DependentUpon>PrintTemplateItemDeliveryNumberBarcodeUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Print\PrintTemplateItemImageUserControl.xaml.cs">
+      <DependentUpon>PrintTemplateItemImageUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Print\PrintTemplateItemLineUserControl.xaml.cs">
+      <DependentUpon>PrintTemplateItemLineUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Print\PrintTemplateItemConsolidationCodeBarCodeUserControl.xaml.cs">
+      <DependentUpon>PrintTemplateItemConsolidationCodeBarCodeUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Print\PrintTemplateItemPriceInBigUserControl.xaml.cs">
+      <DependentUpon>PrintTemplateItemPriceInBigUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Print\PrintTemplateItemRandomUserControl.xaml.cs">
+      <DependentUpon>PrintTemplateItemRandomUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Print\PrintTemplateItemReciverPhoneUserControl.xaml.cs">
+      <DependentUpon>PrintTemplateItemReciverPhoneUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Print\PrintTemplateItemTextUserControl.xaml.cs">
+      <DependentUpon>PrintTemplateItemTextUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Print\PrintTemplateItemViewModelRouteCodeUserControl.xaml.cs">
+      <DependentUpon>PrintTemplateItemViewModelRouteCodeUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Print\PrintTemplateUserControl.xaml.cs">
+      <DependentUpon>PrintTemplateUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Print\PrintUserControl.xaml.cs">
+      <DependentUpon>PrintUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Print\WuliuNumberUserControl.xaml.cs">
+      <DependentUpon>WuliuNumberUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Shops\ShopEditWindow.xaml.cs">
+      <DependentUpon>ShopEditWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Shops\ShopUserControl.xaml.cs">
+      <DependentUpon>ShopUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Users\RightsViewModel.cs" />
+    <Compile Include="Views\Users\UserEditWindow.xaml.cs">
+      <DependentUpon>UserEditWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Users\UsersUserControl.xaml.cs">
+      <DependentUpon>UsersUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Vendor\VendorGoodsWindow.xaml.cs">
+      <DependentUpon>VendorGoodsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Vendor\VendorSyncUserControl.xaml.cs">
+      <DependentUpon>VendorSyncUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Vendor\VendorEditWindow.xaml.cs">
+      <DependentUpon>VendorEditWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Vendor\VendorUserControl.xaml.cs">
+      <DependentUpon>VendorUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WPFHelper.cs" />
+    <Compile Include="Win32\Monitor.cs" />
+    <Page Include="Device\Kunhong\KunhongConfigUI.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="Views\Config\ConfigUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Config\ImgCleanUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Config\SystemCleanUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\DataCenter\SaleUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\DataCenter\TaobaoKeywordCountUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DataCenter\TaobaoKeywordStateUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DataCenter\TaobaoKeywordUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Delivery\DeliveryCheckUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Delivery\DeliveryCompanyUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Delivery\DeliveryDistributionUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Delivery\DeliveryInQueryUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Delivery\DeliveryInUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Delivery\DeliveryMatchWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Delivery\DeliveryOutQueryUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Delivery\DeliveryQueryWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Delivery\DeliveryScanUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Delivery\DeliveryTemplateEditWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Delivery\DeliveryTemplateUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Delivery\ShippingCheckHtmlUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Delivery\ProvincesSeletorWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Delivery\ShippingCheckUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Finance\CreateReturnCashWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Finance\FinanceAccountUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Finance\FinanceCreateBatchWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Finance\FinanceEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Finance\FinanceTypeConfigWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Finance\FinanceUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Finance\ImageViewWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Finance\ReturnCashCompleteWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Finance\ReturnCashUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Goods\GoodsAddMapWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Goods\GoodsCommentEditWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Goods\GoodsCreateSampleWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Goods\GoodsCreateWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Goods\GoodsDetailWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Goods\GoodsEditMapWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Goods\GoodsPatchEditWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Goods\GoodsShopSelectWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Goods\GoodsUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Goods\GoodUpdateWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Goods\PopGoodsUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\LoginWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Orders\OrderGoodsCreateReturnWithoutOrderWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Orders\OrderAllUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Orders\OrderCloseWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Orders\OrderDetailWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Orders\OrderDownloadHtmlUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Orders\OrderDownloadWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Orders\OrderCommentAndFlagEditWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Orders\OrderGetedMarkUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Orders\OrderGoodsCreateReturnWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Orders\OrderGoodsStockModifyWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Orders\OrderEditWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Orders\OrderModifyDeliveryInfoWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Orders\OrderReciverInfoModifyWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Orders\OrderReturnOutUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Orders\OrderReturnUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Orders\OrderSpilteWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Orders\OrderSyncUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Orders\OrderSyncHtmlUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Orders\ReturnProcessWindowEx.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PageBar\PageBarUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Print\GoodsCountUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Print\PrintHistoryUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Print\PrintTemplateItemBarcodeUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Print\PrintTemplateItemDateUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Print\PrintTemplateItemDeliveryNumberBarcodeUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Print\PrintTemplateItemImageUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Print\PrintTemplateItemLineUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Print\PrintTemplateItemConsolidationCodeBarCodeUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Print\PrintTemplateItemPriceInBigUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Print\PrintTemplateItemRandomUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Print\PrintTemplateItemReciverPhoneUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Print\PrintTemplateItemTextUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Print\PrintTemplateItemViewModelRouteCodeUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Print\PrintTemplateUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Print\PrintUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Print\WuliuNumberUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Shops\ShopEditWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Shops\ShopUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Users\UserEditWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Users\UsersUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Vendor\VendorGoodsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Vendor\VendorSyncUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Vendor\VendorEditWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Vendor\VendorUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ShopErp.Domain\ShopErp.Domain.csproj">
+      <Project>{3ab0b4e1-4ce3-414d-91b1-cfa98b5b6941}</Project>
+      <Name>ShopErp.Domain</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\pay_h.png" />
+    <Resource Include="Resources\Images\qq.png" />
+    <Resource Include="Resources\Images\Star0.png" />
+    <Resource Include="Resources\Images\Star1.png" />
+    <Resource Include="Resources\Images\Star2.png" />
+    <Resource Include="Resources\Images\Star3.png" />
+    <Resource Include="Resources\Images\Star4.png" />
+    <Resource Include="Resources\Images\Star5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Blue.png" />
+    <Resource Include="Resources\Images\Green.png" />
+    <Resource Include="Resources\Images\Pink.png" />
+    <Resource Include="Resources\Images\Red.png" />
+    <Resource Include="Resources\Images\UnLable.png" />
+    <Resource Include="Resources\Images\Yellow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="网店ERP.ico" />
+    <Resource Include="Resources\Images\EMPTYIMAGE.jpg" />
+    <Resource Include="Resources\Images\READIMAGEERROR.jpg" />
+    <Resource Include="Resources\Images\DISABLEIMAGE.jpg" />
+    <None Include="Resources\TAOBAOJS.js" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\cef.redist.x64.3.2987.1601\build\cef.redist.x64.targets" Condition="Exists('..\packages\cef.redist.x64.3.2987.1601\build\cef.redist.x64.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\cef.redist.x64.3.2987.1601\build\cef.redist.x64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cef.redist.x64.3.2987.1601\build\cef.redist.x64.targets'))" />
+    <Error Condition="!Exists('..\packages\cef.redist.x86.3.2987.1601\build\cef.redist.x86.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cef.redist.x86.3.2987.1601\build\cef.redist.x86.targets'))" />
+    <Error Condition="!Exists('..\packages\CefSharp.Common.57.0.0\build\CefSharp.Common.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.57.0.0\build\CefSharp.Common.props'))" />
+    <Error Condition="!Exists('..\packages\CefSharp.Common.57.0.0\build\CefSharp.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.57.0.0\build\CefSharp.Common.targets'))" />
+    <Error Condition="!Exists('..\packages\CefSharp.WinForms.57.0.0\build\CefSharp.WinForms.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.WinForms.57.0.0\build\CefSharp.WinForms.props'))" />
+    <Error Condition="!Exists('..\packages\CefSharp.WinForms.57.0.0\build\CefSharp.WinForms.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.WinForms.57.0.0\build\CefSharp.WinForms.targets'))" />
+  </Target>
+  <Import Project="..\packages\cef.redist.x86.3.2987.1601\build\cef.redist.x86.targets" Condition="Exists('..\packages\cef.redist.x86.3.2987.1601\build\cef.redist.x86.targets')" />
+  <Import Project="..\packages\CefSharp.Common.57.0.0\build\CefSharp.Common.targets" Condition="Exists('..\packages\CefSharp.Common.57.0.0\build\CefSharp.Common.targets')" />
+  <Import Project="..\packages\CefSharp.WinForms.57.0.0\build\CefSharp.WinForms.targets" Condition="Exists('..\packages\CefSharp.WinForms.57.0.0\build\CefSharp.WinForms.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

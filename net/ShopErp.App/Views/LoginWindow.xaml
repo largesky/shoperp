@@ -1,0 +1,38 @@
+﻿<Window x:Class="ShopErp.App.Views.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="登录打印系统" Height="300" Width="400" SizeToContent="Height" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" Loaded="LoginWindow_OnLoaded">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="工号:" Margin="4" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+        <TextBox Grid.Row="0" Grid.Column="1" Margin="4" VerticalAlignment="Center" Name="tbNumber" />
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="密码:" Margin="4" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+        <PasswordBox Grid.Row="1" Grid.Column="1" Margin="4" VerticalAlignment="Center" Name="pbPassword"/>
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="服务:" Margin="4" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+        <ComboBox Grid.Row="2" Grid.Column="1" Margin="4" VerticalAlignment="Center" Name="cbbSerer" IsReadOnly="False" IsEditable="True">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{Binding}"/>
+                        <Button Grid.Column="1" Content="X" Tag="{Binding}" Click="Button_Click"/>
+                    </Grid>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <Button Grid.Row="3" Grid.Column="1" Name="btnLogin" Content="登录" Margin="4" HorizontalAlignment="Right" Width="60" IsDefault="True" Click="btnLogin_Click"/>
+    </Grid>
+</Window>

@@ -1,0 +1,73 @@
+﻿<Window x:Class="ShopErp.App.Views.Delivery.DeliveryTemplateEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ShopErp.App.Views.Delivery"
+        mc:Ignorable="d"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        Title="DeliveryTemplateEditWindow" Height="300" Width="1400" Loaded="Window_Loaded">
+    <Window.Resources>
+        <sys:String x:Key="Edit">编辑</sys:String>
+        <sys:String x:Key="Delete">删除</sys:String>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="3">
+            <TextBlock Text="模板名称：" Margin="3" VerticalAlignment="Center" />
+            <TextBox Text="{Binding Name}" Margin="3" VerticalAlignment="Center" Width="120" />
+            <TextBlock Text="快递公司：" Margin="3" VerticalAlignment="Center" />
+            <ComboBox Name="cbbDeliveryCompanies" VerticalAlignment="Center" Width="120"
+                      SelectedItem="{Binding DeliveryCompany, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <CheckBox Content="电子面单" IsChecked="{Binding HotPaperUse}" VerticalAlignment="Center"
+                      FlowDirection="RightToLeft" Margin="3" />
+            <CheckBox Content="普通面单" IsChecked="{Binding NormalPaperUse}" VerticalAlignment="Center"
+                      FlowDirection="RightToLeft" Margin="3" />
+            <CheckBox Content="在线支付" IsChecked="{Binding OnlinePayTypeUse}" VerticalAlignment="Center"
+                      FlowDirection="RightToLeft" Margin="3" />
+            <CheckBox Content="货到付款" IsChecked="{Binding CodPayTypeUse}" VerticalAlignment="Center"
+                      FlowDirection="RightToLeft" Margin="3" />
+            <TextBlock Text="电子面单空包金额：" Margin="3" VerticalAlignment="Center" />
+            <TextBox Text="{Binding EmptyHotPaperMoney}" VerticalAlignment="Center" Width="60" />
+            <TextBlock Text="普通面单空包金额：" Margin="3" VerticalAlignment="Center" />
+            <TextBox Text="{Binding EmptyNormalPaperMoney}" VerticalAlignment="Center" Width="60" />
+            <Button Name="btnAddArea" Content="添加运费条目" Margin="3" VerticalAlignment="Center" Width="100"
+                    HorizontalAlignment="Right" Click="btnAddArea_Click" />
+            <Button Name="btnSave" Content="保存" Width="80" Margin="3" Click="btnSave_Click" VerticalAlignment="Center" />
+        </StackPanel>
+
+        <DataGrid Grid.Row="1" Name="dgvAreas" AutoGenerateColumns="False" CanUserAddRows="False"
+                  GridLinesVisibility="All" CanUserDeleteRows="False" SelectionMode="Single"
+                  SelectionUnit="CellOrRowHeader">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="目地城市" Binding="{Binding Path=Areas}" Width="*" IsReadOnly="True" />
+                <DataGridTextColumn Header="首重" Binding="{Binding Path=StartWeight}" Width="Auto" />
+                <DataGridTextColumn Header="首重运费" Binding="{Binding Path=StartPrice}" Width="Auto" />
+                <DataGridTextColumn Header="续重" Binding="{Binding Path=StepWeight}" Width="Auto" />
+                <DataGridTextColumn Header="续重运费" Binding="{Binding Path=StepPrice}" Width="Auto" />
+                <DataGridHyperlinkColumn Header="编辑" Binding="{Binding Mode=OneWay, Source={StaticResource Edit}}"
+                                         Width="Auto" IsReadOnly="True">
+                    <DataGridHyperlinkColumn.ElementStyle>
+                        <Style>
+                            <EventSetter Event="Hyperlink.Click" Handler="Edit_Click" />
+                        </Style>
+                    </DataGridHyperlinkColumn.ElementStyle>
+                </DataGridHyperlinkColumn>
+
+                <DataGridHyperlinkColumn Header="删除" Binding="{Binding Mode=OneWay, Source={StaticResource Delete}}"
+                                         Width="Auto" IsReadOnly="True">
+                    <DataGridHyperlinkColumn.ElementStyle>
+                        <Style>
+                            <EventSetter Event="Hyperlink.Click" Handler="Delete_Click" />
+                        </Style>
+                    </DataGridHyperlinkColumn.ElementStyle>
+                </DataGridHyperlinkColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+    </Grid>
+</Window>
