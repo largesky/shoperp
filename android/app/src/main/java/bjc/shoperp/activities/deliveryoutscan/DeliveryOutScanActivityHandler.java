@@ -27,11 +27,6 @@ import com.google.zxing.Result;
 import bjc.shoperp.R;
 import bjc.shoperp.activities.deliveryoutscan.camera.CameraManager;
 
-/**
- * This class handles all the messaging which comprises the state machine for capture.
- *
- * @author dswitkin@google.com (Daniel Switkin)
- */
 public final class DeliveryOutScanActivityHandler extends Handler {
 
     private static final String TAG = DeliveryOutScanActivityHandler.class.getSimpleName();
@@ -48,7 +43,6 @@ public final class DeliveryOutScanActivityHandler extends Handler {
         decodeThread = new DecodeThread(activity, characterSet);
         decodeThread.start();
         state = State.SUCCESS;
-
         // Start ourselves capturing previews and decoding.
         this.cameraManager = cameraManager;
         cameraManager.startPreview();
@@ -91,7 +85,6 @@ public final class DeliveryOutScanActivityHandler extends Handler {
         } catch (InterruptedException e) {
             // continue
         }
-
         // Be absolutely sure we don't send any queued up messages
         removeMessages(R.id.decode_succeeded);
         removeMessages(R.id.decode_failed);

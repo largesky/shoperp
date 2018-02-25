@@ -303,13 +303,6 @@ public final class DeliveryOutScanActivity extends Activity implements SurfaceHo
         builder.show();
     }
 
-    public void restartPreviewAfterDelay(long delayMS) {
-        if (handler != null) {
-            handler.sendEmptyMessageDelayed(R.id.restart_preview, delayMS);
-        }
-        resetStatusView();
-    }
-
     private void resetStatusView() {
         statusView.setText(R.string.msg_default_status);
         statusView.setVisibility(View.VISIBLE);
