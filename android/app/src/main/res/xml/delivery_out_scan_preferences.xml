@@ -14,32 +14,6 @@
  limitations under the License.
  -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="条码类型">
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="preferences_decode_1D_product"
-            android:title="一维码：商品" />
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="preferences_decode_1D_industrial"
-            android:title="一维码：工业" />
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="preferences_decode_QR"
-            android:title="二维码" />
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="preferences_decode_Data_Matrix"
-            android:title="Data Matrix" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="preferences_decode_Aztec"
-            android:title="Aztec" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="preferences_decode_PDF417"
-            android:title="PDF417" />
-    </PreferenceCategory>
     <PreferenceCategory android:title="扫描成功">
         <CheckBoxPreference
             android:defaultValue="true"

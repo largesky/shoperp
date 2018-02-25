@@ -6,5 +6,12 @@ package bjc.shoperp.domain;
 
 public class OrderGoods {
     public long Id;
+    public long OrderId;
+    public String Vendor;
+    public String Number;
+    public String Edition;
+    public String Color;
+    public String Size;
+    public int Count;
 
 }

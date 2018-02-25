@@ -10,7 +10,5 @@ public class DeliveryOutHistoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_delivery_out_history );
-        LinearLayout ll=null;
-
     }
 }

@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import bjc.shoperp.domain.Order;
 import bjc.shoperp.domain.Shop;
+import bjc.shoperp.domain.restfulresponse.domainresponse.OrderCollectionResponse;
 import bjc.shoperp.domain.restfulresponse.domainresponse.OrderDownloadCollectionResponse;
 
 /**
@@ -13,10 +14,19 @@ import bjc.shoperp.domain.restfulresponse.domainresponse.OrderDownloadCollection
 public class OrderService extends ServiceBase<Order> {
     public OrderDownloadCollectionResponse getPopWaitSendOrders(Shop shop, int payType, int pageIndex, int pageSize) throws Exception {
         HashMap<String, Object> para = new HashMap<String, Object>();
-        para.put( "shop", shop );
-        para.put( "payType", payType );
-        para.put( "pageIndex", pageIndex );
-        para.put( "pageSize", pageSize );
-        return DoPost( OrderDownloadCollectionResponse.class, para, null );
+        para.put("shop", shop);
+        para.put("payType", payType);
+        para.put("pageIndex", pageIndex);
+        para.put("pageSize", pageSize);
+        return DoPost(OrderDownloadCollectionResponse.class, para, null);
+    }
+
+    public OrderCollectionResponse markDelivery(String deliveryNumber, float weight, boolean ingonrePopError, boolean ingonreWeightDetect) throws Exception {
+        HashMap<String, Object> para = new HashMap<String, Object>();
+        para.put("deliveryNumber", deliveryNumber);
+        para.put("weight", weight);
+        para.put("ingonrePopError", ingonrePopError);
+        para.put("ingonreWeightDetect", ingonreWeightDetect);
+        return DoPost(OrderCollectionResponse.class, para, null);
     }
 }

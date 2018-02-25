@@ -3,6 +3,8 @@ package bjc.shoperp.domain.restfulresponse;
 import java.util.ArrayList;
 import java.util.List;
 
+import bjc.shoperp.domain.DeliveryOut;
+
 /**
  * Created by hcq on 2018/2/15.
  */
@@ -29,3 +31,4 @@ public class DataCollectionResponse<T> extends ResponseBase {
         }
     }
 }
+

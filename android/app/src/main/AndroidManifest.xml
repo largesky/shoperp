@@ -54,6 +54,10 @@
             android:name=".activities.deliveryoutscan.DeliveryOutScanActivity"
             android:label="@string/app_name"
             android:theme="@style/DeliveryOutScanTheme" />
+        <activity
+            android:name=".activities.deliveryoutscan.PreferencesActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
