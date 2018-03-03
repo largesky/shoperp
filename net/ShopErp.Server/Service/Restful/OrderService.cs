@@ -511,6 +511,7 @@ namespace ShopErp.Server.Service.Restful
                             float nw = (float)Math.Round((w + gu.Weight) / 2, 2);
                             ServiceContainer.GetService<GoodsService>().UpdateWeight(totalOgs[0].NumberId, nw);
                         }
+                        totalOgs[0].Weight = (float)Math.Round(weight / totalOgs[0].Count, 2);
                     }
                 }
 
@@ -527,7 +528,7 @@ namespace ShopErp.Server.Service.Restful
                 }
 
                 string comment = string.Format("¡¾·¢»õ{0}¡¿", DateTime.Now.ToString("MM-dd HH:mm"));
-                
+
                 foreach (var order in orders)
                 {
                     order.DeliveryMoney = orders.Count > 1 ? order.DeliveryMoney : (float)deliveryMoney;
@@ -546,6 +547,7 @@ namespace ShopErp.Server.Service.Restful
                     {
                         comment = order.PopSellerComment + comment;
                     }
+                    order.PopSellerComment = comment;
                     objsToUpdate.Add(order);
                     if (order.ShopId < 1 || string.IsNullOrWhiteSpace(order.PopOrderId))
                     {
