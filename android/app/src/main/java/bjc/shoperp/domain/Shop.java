@@ -7,41 +7,46 @@ import java.util.Date;
  */
 
 public class Shop {
-    public long Id ;
+    public long Id;
 
-    public int PopType ;
+    public int PopType;
 
-    public String PopSellerId ;
+    public String PopSellerId;
 
-    public String PopSellerNumberId ;
+    public String PopSellerNumberId;
 
-    public String AppKey ;
+    public String AppKey;
 
-    public String AppSecret ;
+    public String AppSecret;
 
-    public String AppAccessToken ;
+    public String AppAccessToken;
 
     public String AppRefreshToken;
 
-    public String AppCallbackUrl ;
+    public String AppCallbackUrl;
 
     public String Mark;
 
-    public float CommissionPer ;
+    public float CommissionPer;
 
-    public Date CreateTime ;
+    public Date CreateTime;
 
-    public Date UpdateTime ;
+    public Date UpdateTime;
 
-    public String LastUpdateOperator ;
+    public String LastUpdateOperator;
 
-    public boolean Enabled ;
+    public boolean Enabled;
 
-    public int ShippingHours ;
+    public int ShippingHours;
 
-    public int FirstDeliveryHours ;
+    public int FirstDeliveryHours;
 
-    public int SecondDeliveryHours ;
+    public int SecondDeliveryHours;
 
-    public boolean AppEnabled ;
+    public boolean AppEnabled;
+
+    @Override
+    public String toString() {
+        return this.Mark == null ? "" : this.Mark;
+    }
 }

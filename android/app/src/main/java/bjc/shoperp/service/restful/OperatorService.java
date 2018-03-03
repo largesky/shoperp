@@ -12,23 +12,23 @@ import bjc.shoperp.utils.Md5Util;
 
 public class OperatorService extends bjc.shoperp.service.restful.ServiceBase<Operator> {
 
+
+    private static LoginResponse loginVirtual() {
+        LoginResponse lr = new LoginResponse();
+        lr.op = new Operator();
+        lr.op.Number = "1001";
+
+        lr.session = "abcdefg";
+        return lr;
+    }
+
     public Operator Login(String number, String password) throws Exception {
         HashMap<String, Object> para = new HashMap<>();
-        para.put( "number", number );
-        para.put( "password", Md5Util.Md5( password ) );
-
-        //LoginResponse lr = DoPost( LoginResponse.class, para, null );
-        //ServiceContainer.AccessToken=lr.session;
-        //return lr.op;
-
-        LoginResponse lr=new LoginResponse();
-        lr.op=new Operator();
-        lr.op.Number="1001";
-
-        lr.session="abcdefg";
-
-        ServiceContainer.AccessToken=lr.session;
-
+        para.put("number", number);
+        para.put("password", Md5Util.Md5(password));
+        LoginResponse lr = DoPost(LoginResponse.class, para, null);
+        //LoginResponse lr = loginVirtual();
+        ServiceContainer.AccessToken = lr.session;
         return lr.op;
     }
 

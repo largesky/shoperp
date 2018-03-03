@@ -26,8 +26,13 @@ import android.os.Bundle;
  * @author Sean Owen
  */
 public final class PreferencesActivity extends Activity {
-    public static final String KEY_PLAY_BEEP = "preferences_play_beep";
-    public static final String KEY_VIBRATE = "preferences_vibrate";
+
+    public static final String KEY_MARK_DELIVERY_SUCCESS_BEEP = "KEY_MARK_DELIVERY_SUCCESS_BEEP";
+    public static final String KEY_MARK_DELIVERY_SUCCESS_VIBRATE = "KEY_MARK_DELIVERY_SUCCESS_VIBRATE";
+    public static final String KEY_MARK_DELIVERY_ERROR_BEEP = "KEY_MARK_DELIVERY_ERROR_BEEP";
+    public static final String KEY_MARK_DELIVERY_ERROR_VIBRATE = "KEY_MARK_DELIVERY_ERROR_VIBRATE";
+    public static final String KEY_SCAN_WAIT = "KEY_SCAN_WAIT";
+
     public static final String KEY_FRONT_LIGHT_MODE = "preferences_front_light_mode";
     public static final String KEY_AUTO_FOCUS = "preferences_auto_focus";
     public static final String KEY_INVERT_SCAN = "preferences_invert_scan";

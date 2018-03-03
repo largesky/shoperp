@@ -128,7 +128,7 @@
     <string name="menu_settings">设置</string>
     <string name="menu_share">创建二维码</string>
     <string name="msg_bulk_mode_scanned">批量扫描模式：条码已扫描并保存</string>
-    <string name="msg_camera_framework_bug">很遗憾，Android 相机出现问题。你可能需要重启设备。</string>
+    <string name="msg_camera_framework_bug">很遗憾，Android 相机出现问题。检查应用程序是否具有使用相机的权限，或者你可能需要重启设备。</string>
     <string name="msg_default_format">格式</string>
     <string name="msg_default_meta">元数据</string>
     <string name="msg_default_mms_subject">Hi</string>

@@ -13,7 +13,7 @@ import bjc.shoperp.domain.restfulresponse.domainresponse.ShopCollectionResponse;
 public class ShopService extends ServiceBase<Shop> {
 
     public List<Shop> getByAll() throws Exception {
-        HashMap<String,Object> para=new HashMap<>(  );
-        return DoPost( ShopCollectionResponse.class,para,null ).Datas;
+        HashMap<String, Object> para = new HashMap<>();
+        return DoPost(ShopCollectionResponse.class, para, null).Datas;
     }
 }

@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 
 public class LocalConfigService {
     public static final String CONFIG_SERVERADD="SERVERADD";
-    public static final String CONFIG_LASTCOUNTTIME="LASTCOUNTTIME";
     public static final String CONFIG_GOODSCOUNTSORTTYPE="GOODSCOUNTSORTTYPE";
     public static final String CONFIG_GOODSCOUNTLASTINFO="GOODSCOUNTLASTINFO";
 

@@ -13,8 +13,8 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  -->
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
 
     <SurfaceView
         android:id="@+id/preview_view"
@@ -26,6 +26,65 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="top|left"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left|center_vertical"
+            android:text="发货检查："
+            android:textSize="8sp" />
+
+        <CheckBox
+            android:id="@+id/chk_weight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:gravity="left|center_vertical"
+            android:text="重量匹配"
+            android:textSize="8sp" />
+
+        <CheckBox
+            android:id="@+id/chk_pop_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:gravity="left|center_vertical"
+            android:text="平台状态"
+            android:textSize="8sp" />
+
+        <CheckBox
+            android:id="@+id/chk_local_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:gravity="left|center_vertical"
+            android:text="本地状态"
+            android:textSize="8sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left|center_vertical"
+            android:text="重量:"
+            android:textSize="8sp" />
+
+        <EditText
+            android:id="@+id/et_weight"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:gravity="left|center_vertical"
+            android:inputType="numberDecimal"
+            android:text="0.5"
+            android:textSize="8sp" />
+    </LinearLayout>
+
+
     <TextView
         android:id="@+id/status_view"
         android:layout_width="wrap_content"
@@ -34,5 +93,6 @@
         android:background="@color/transparent"
         android:text="@string/msg_default_status"
         android:textColor="@color/status_text" />
+
 
 </merge>

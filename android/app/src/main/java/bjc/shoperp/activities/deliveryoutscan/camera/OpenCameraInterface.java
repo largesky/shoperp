@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package bjc.shoperp.activities.deliveryoutscan.camera.open;
+package bjc.shoperp.activities.deliveryoutscan.camera;
 
 import android.hardware.Camera;
 import android.util.Log;

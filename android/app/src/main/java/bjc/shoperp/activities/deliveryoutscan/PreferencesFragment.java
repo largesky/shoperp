@@ -28,17 +28,11 @@ import bjc.shoperp.R;
  *
  * @see PreferencesActivity
  */
-public final class PreferencesFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+public final class PreferencesFragment extends PreferenceFragment {
 
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         addPreferencesFromResource(R.xml.delivery_out_scan_preferences);
-        PreferenceScreen preferences = getPreferenceScreen();
-        preferences.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
     }
 }

@@ -1,32 +1,16 @@
-/*
- * Copyright (C) 2008 ZXing authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package bjc.shoperp.activities.deliveryoutscan;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.graphics.Bitmap;
+import android.hardware.Camera;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -34,44 +18,47 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.BinaryBitmap;
+import com.google.zxing.DecodeHintType;
+import com.google.zxing.MultiFormatReader;
+import com.google.zxing.PlanarYUVLuminanceSource;
+import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
+import com.google.zxing.common.HybridBinarizer;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.Map;
 
 import bjc.shoperp.R;
 import bjc.shoperp.activities.deliveryoutscan.camera.CameraManager;
+import bjc.shoperp.domain.restfulresponse.domainresponse.OrderCollectionResponse;
+import bjc.shoperp.service.restful.OrderService;
+import bjc.shoperp.service.restful.ServiceContainer;
 
-/**
- * This activity opens the camera and does the actual scanning on a background thread. It draws a
- * viewfinder to help the user place the barcode correctly, shows feedback as the image processing
- * is happening, and then overlays the results when a scan is successful.
- *
- * @author dswitkin@google.com (Daniel Switkin)
- * @author Sean Owen
+/*
+
  */
-public final class DeliveryOutScanActivity extends Activity implements SurfaceHolder.Callback {
+public final class DeliveryOutScanActivity extends AppCompatActivity implements SurfaceHolder.Callback, Camera.PreviewCallback {
 
     private static final String TAG = DeliveryOutScanActivity.class.getSimpleName();
 
-    private CameraManager cameraManager;
-    private DeliveryOutScanActivityHandler handler;
     private ViewfinderView viewfinderView;
     private TextView statusView;
-    private Result lastResult;
     private boolean hasSurface;
-    private String characterSet;
+
+    private CameraManager cameraManager;
     private BeepManager beepManager;
     private AmbientLightManager ambientLightManager;
 
-    ViewfinderView getViewfinderView() {
-        return viewfinderView;
-    }
-
-    public Handler getHandler() {
-        return handler;
-    }
+    private MultiFormatReader multiFormatReader;
 
     CameraManager getCameraManager() {
         return cameraManager;
@@ -80,13 +67,16 @@ public final class DeliveryOutScanActivity extends Activity implements SurfaceHo
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+        setContentView(R.layout.activity_delivery_out_scan);
         //保持屏幕常亮
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        setContentView(R.layout.activity_delivery_out_scan);
-        hasSurface = false;
         beepManager = new BeepManager(this);
         ambientLightManager = new AmbientLightManager(this);
         PreferenceManager.setDefaultValues(this, R.xml.delivery_out_scan_preferences, false);
+        Map<DecodeHintType, Object> hints = new EnumMap<>(DecodeHintType.class);
+        hints.put(DecodeHintType.POSSIBLE_FORMATS, EnumSet.allOf(BarcodeFormat.class));
+        multiFormatReader = new MultiFormatReader();
+        multiFormatReader.setHints(hints);
     }
 
     @Override
@@ -98,15 +88,10 @@ public final class DeliveryOutScanActivity extends Activity implements SurfaceHo
         // first launch. That led to bugs where the scanning rectangle was the wrong size and partially
         // off screen.
         cameraManager = new CameraManager(getApplication());
-
         viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
-        viewfinderView.setCameraManager(cameraManager);
-
         statusView = (TextView) findViewById(R.id.status_view);
 
-        handler = null;
-        lastResult = null;
-
+        //设置屏幕方向
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String oriStr = prefs.getString(PreferencesActivity.KEY_AUTO_ORIENTATION, "垂直");
         int ori = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
@@ -120,12 +105,13 @@ public final class DeliveryOutScanActivity extends Activity implements SurfaceHo
             ori = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
         }
         setRequestedOrientation(ori);
-        resetStatusView();
 
+        //启动声音振动
         beepManager.updatePrefs();
+        //闪光灯自动控制
         ambientLightManager.start(cameraManager);
-        characterSet = null;
 
+        //设置相机预览的控件，并初始化相机
         SurfaceView surfaceView = (SurfaceView) findViewById(R.id.preview_view);
         SurfaceHolder surfaceHolder = surfaceView.getHolder();
         if (hasSurface) {
@@ -141,13 +127,11 @@ public final class DeliveryOutScanActivity extends Activity implements SurfaceHo
 
     @Override
     protected void onPause() {
-        if (handler != null) {
-            handler.quitSynchronously();
-            handler = null;
-        }
         ambientLightManager.stop();
         beepManager.close();
+        cameraManager.stopPreview();
         cameraManager.closeDriver();
+
         if (!hasSurface) {
             SurfaceView surfaceView = (SurfaceView) findViewById(R.id.preview_view);
             SurfaceHolder surfaceHolder = surfaceView.getHolder();
@@ -162,28 +146,6 @@ public final class DeliveryOutScanActivity extends Activity implements SurfaceHo
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_BACK: {
-                finish();
-                return true;
-            }
-            case KeyEvent.KEYCODE_FOCUS:
-            case KeyEvent.KEYCODE_CAMERA:
-                // Handle these events so they don't launch the Camera app
-                return true;
-            // Use volume up/down to turn on light
-            case KeyEvent.KEYCODE_VOLUME_DOWN:
-                cameraManager.setTorch(false);
-                return true;
-            case KeyEvent.KEYCODE_VOLUME_UP:
-                cameraManager.setTorch(true);
-                return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_deliveryoutscan, menu);
@@ -193,7 +155,6 @@ public final class DeliveryOutScanActivity extends Activity implements SurfaceHo
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         switch (item.getItemId()) {
             case R.id.menu_settings:
                 intent.setClassName(this, PreferencesActivity.class.getName());
@@ -224,7 +185,7 @@ public final class DeliveryOutScanActivity extends Activity implements SurfaceHo
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         if (holder == null) {
-            Log.e(TAG, "*** WARNING *** surfaceCreated() gave us a null surface!");
+            Log.e(TAG, "*** WARNING *** surfaceChanged() gave us a null surface!");
         }
         if (!hasSurface) {
             hasSurface = true;
@@ -232,19 +193,10 @@ public final class DeliveryOutScanActivity extends Activity implements SurfaceHo
         }
     }
 
-    /**
-     * A valid barcode has been found, so give an indication of success and show the results.
-     *
-     * @param rawResult   The contents of the barcode.
-     * @param scaleFactor amount by which thumbnail was scaled
-     * @param barcode     A greyscale bitmap of the camera data which was decoded.
-     */
-    public void handleDecode(Result rawResult, Bitmap barcode, float scaleFactor) {
-        lastResult = rawResult;
-        beepManager.playBeepSoundAndVibrate();
-        viewfinderView.setVisibility(View.GONE);
-        CharSequence displayContents = rawResult.getText();
-        statusView.setText(displayContents);
+    public void handleMessage(String result, boolean detectBarcode, boolean isOk) {
+        statusView.setText(result);
+        if (detectBarcode)
+            beepManager.playBeepSoundAndVibrate(isOk);
     }
 
     private void initCamera(SurfaceHolder surfaceHolder) {
@@ -258,9 +210,8 @@ public final class DeliveryOutScanActivity extends Activity implements SurfaceHo
         try {
             cameraManager.openDriver(surfaceHolder);
             // Creating the handler starts the preview, which can also throw a RuntimeException.
-            if (handler == null) {
-                handler = new DeliveryOutScanActivityHandler(this, characterSet, cameraManager);
-            }
+            cameraManager.startPreview();
+            this.startPreviewAndDecode();
         } catch (IOException ioe) {
             Log.w(TAG, ioe);
             displayFrameworkBugMessageAndExit();
@@ -272,6 +223,13 @@ public final class DeliveryOutScanActivity extends Activity implements SurfaceHo
         }
     }
 
+    private void startPreviewAndDecode() {
+        viewfinderView.setVisibility(View.VISIBLE);
+        viewfinderView.setFrameAndPreviewFramRect(cameraManager.getFramingRect(), cameraManager.getFramingRectInPreview());
+        viewfinderView.drawViewfinder();
+        cameraManager.requestPreviewFrame(this);
+    }
+
     private void displayFrameworkBugMessageAndExit() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.app_name));
@@ -281,14 +239,90 @@ public final class DeliveryOutScanActivity extends Activity implements SurfaceHo
         builder.show();
     }
 
-    private void resetStatusView() {
-        statusView.setText(R.string.msg_default_status);
-        statusView.setVisibility(View.VISIBLE);
-        viewfinderView.setVisibility(View.VISIBLE);
-        lastResult = null;
+    @Override
+    public void onPreviewFrame(byte[] data, Camera camera) {
+        String s = PreferenceManager.getDefaultSharedPreferences(this).getString(PreferencesActivity.KEY_SCAN_WAIT, "1");
+        String strWeight = ((EditText) findViewById(R.id.et_weight)).getText().toString().trim();
+        Boolean chkWeight = ((CheckBox) findViewById(R.id.chk_weight)).isChecked();
+        Boolean chkPopState = ((CheckBox) findViewById(R.id.chk_pop_error)).isChecked();
+        Boolean chkLocalState = ((CheckBox) findViewById(R.id.chk_local_state)).isChecked();
+        float weight = Float.parseFloat(strWeight);
+        DecodeAndProcessTask task = new DecodeAndProcessTask(data, this, this.multiFormatReader, chkWeight, chkPopState, chkLocalState, weight, Integer.parseInt(s));
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
     }
 
-    public void drawViewfinder() {
-        viewfinderView.drawViewfinder();
+    class DecodeAndProcessTask extends AsyncTask<Void, Void, Boolean> {
+
+        private final byte[] rawBytes;
+        private final DeliveryOutScanActivity activity;
+        private final MultiFormatReader multiFormatReader;
+        private final boolean checkWeight;
+        private final boolean checkPopError;
+        private final boolean checkLocalState;
+        private final float weight;
+        private String barcode = "";
+        private String result = "";
+        private int waitTime = 0;
+        private boolean isSuccess;
+
+        public DecodeAndProcessTask(byte[] rawBytes, DeliveryOutScanActivity activity, MultiFormatReader multiFormatReader, boolean checkWeight, boolean checkPopError, boolean checkLocalState, float weight, int waitTime) {
+            this.rawBytes = rawBytes;
+            this.activity = activity;
+            this.multiFormatReader = multiFormatReader;
+            this.checkWeight = checkWeight;
+            this.checkPopError = checkPopError;
+            this.checkLocalState = checkLocalState;
+            this.weight = weight;
+            this.waitTime = waitTime;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            Result rawResult = null;
+            PlanarYUVLuminanceSource source = activity.getCameraManager().buildLuminanceSource(this.rawBytes);
+            if (source != null) {
+                BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+                try {
+                    rawResult = multiFormatReader.decodeWithState(bitmap);
+                } catch (ReaderException re) {
+                    // continue
+                } finally {
+                    multiFormatReader.reset();
+                }
+            }
+
+            if (rawResult != null) {
+                //标记发货
+                try {
+                    this.barcode = rawResult.getText().trim();
+                    OrderCollectionResponse orderCollectionResponse = ServiceContainer.GetService(OrderService.class).markDelivery(rawResult.getText().trim(), this.weight, this.checkWeight, this.checkPopError, this.checkLocalState);
+                    result = new Date().toLocaleString() + ":已成功标记发货" + this.waitTime;
+                    this.isSuccess = true;
+                } catch (Exception ex) {
+                    result = ex.getMessage();
+                }
+            } else {
+                result = "请将条码置于取景框内扫描";
+            }
+
+            this.publishProgress();
+            try {
+                if (rawResult != null)
+                    Thread.sleep(this.waitTime * 1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return true;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            activity.handleMessage(this.result, !TextUtils.isEmpty(this.barcode), this.isSuccess);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            activity.startPreviewAndDecode();
+        }
     }
 }

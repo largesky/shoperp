@@ -40,11 +40,8 @@ final class BeepManager implements MediaPlayer.OnErrorListener, Closeable {
 
     private static final float BEEP_VOLUME = 0.10f;
     private static final long VIBRATE_DURATION = 200L;
-
     private final Activity activity;
     private MediaPlayer mediaPlayer;
-    private boolean playBeep;
-    private boolean vibrate;
 
     BeepManager(Activity activity) {
         this.activity = activity;
@@ -52,32 +49,19 @@ final class BeepManager implements MediaPlayer.OnErrorListener, Closeable {
         updatePrefs();
     }
 
-    private static boolean shouldBeep(SharedPreferences prefs, Context activity) {
-        boolean shouldPlayBeep = prefs.getBoolean(PreferencesActivity.KEY_PLAY_BEEP, true);
-        if (shouldPlayBeep) {
-            // See if sound settings overrides this
-            AudioManager audioService = (AudioManager) activity.getSystemService(Context.AUDIO_SERVICE);
-            if (audioService.getRingerMode() != AudioManager.RINGER_MODE_NORMAL) {
-                shouldPlayBeep = false;
-            }
-        }
-        return shouldPlayBeep;
-    }
-
     synchronized void updatePrefs() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        playBeep = shouldBeep(prefs, activity);
-        vibrate = prefs.getBoolean(PreferencesActivity.KEY_VIBRATE, false);
-        if (playBeep && mediaPlayer == null) {
-            // The volume on STREAM_SYSTEM is not adjustable, and users found it too loud,
-            // so we now play on the music stream.
+        if (mediaPlayer == null) {
             activity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
             mediaPlayer = buildMediaPlayer(activity);
         }
     }
 
-    synchronized void playBeepSoundAndVibrate() {
-        if (playBeep && mediaPlayer != null) {
+    synchronized void playBeepSoundAndVibrate(boolean success) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        boolean beep = success ? prefs.getBoolean(PreferencesActivity.KEY_MARK_DELIVERY_SUCCESS_BEEP, true) : prefs.getBoolean(PreferencesActivity.KEY_MARK_DELIVERY_ERROR_BEEP, false);
+        boolean vibrate = success ? prefs.getBoolean(PreferencesActivity.KEY_MARK_DELIVERY_SUCCESS_VIBRATE, true) : prefs.getBoolean(PreferencesActivity.KEY_MARK_DELIVERY_ERROR_VIBRATE, false);
+        if (beep && mediaPlayer != null) {
             mediaPlayer.start();
         }
         if (vibrate) {
@@ -88,7 +72,7 @@ final class BeepManager implements MediaPlayer.OnErrorListener, Closeable {
 
     private MediaPlayer buildMediaPlayer(Context activity) {
         MediaPlayer mediaPlayer = new MediaPlayer();
-        try  {
+        try {
             AssetFileDescriptor file = activity.getResources().openRawResourceFd(R.raw.beep);
             mediaPlayer.setDataSource(file.getFileDescriptor(), file.getStartOffset(), file.getLength());
             mediaPlayer.setOnErrorListener(this);

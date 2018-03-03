@@ -19,5 +19,5 @@
         android:id="@+id/menu_settings"
         android:title="@string/menu_settings"
         android:visible="true"
-        app:showAsAction="never|always" />
+        app:showAsAction="ifRoom|withText" />
 </menu>

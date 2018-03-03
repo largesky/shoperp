@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package bjc.shoperp.activities.deliveryoutscan.camera.open;
+package bjc.shoperp.activities.deliveryoutscan.camera;
 
 import android.hardware.Camera;
-
-import bjc.shoperp.activities.deliveryoutscan.camera.open.CameraFacing;
+import android.util.Log;
 
 /**
  * Represents an open {@link Camera} and its metadata, like facing direction and orientation.

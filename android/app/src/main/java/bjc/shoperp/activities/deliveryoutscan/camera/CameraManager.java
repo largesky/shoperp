@@ -20,16 +20,12 @@ import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.Camera;
-import android.os.Handler;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
 import com.google.zxing.PlanarYUVLuminanceSource;
 
 import java.io.IOException;
-
-import bjc.shoperp.activities.deliveryoutscan.camera.open.OpenCamera;
-import bjc.shoperp.activities.deliveryoutscan.camera.open.OpenCameraInterface;
 
 /**
  * This object wraps the Camera service object and expects to be the only one talking to it. The
@@ -54,7 +50,6 @@ public final class CameraManager {
      * Preview frames are delivered here, which we pass on to the registered handler. Make sure to
      * clear the handler so it will only receive one message.
      */
-    private final PreviewCallback previewCallback;
     private OpenCamera camera;
     private AutoFocusManager autoFocusManager;
     private Rect framingRect;
@@ -68,7 +63,6 @@ public final class CameraManager {
     public CameraManager(Context context) {
         this.context = context;
         this.configManager = new CameraConfigurationManager(context);
-        previewCallback = new PreviewCallback(configManager);
     }
 
     private static int findDesiredDimensionInRange(int resolution, int hardMin, int hardMax) {
@@ -174,7 +168,6 @@ public final class CameraManager {
         }
         if (camera != null && previewing) {
             camera.getCamera().stopPreview();
-            previewCallback.setHandler(null, 0);
             previewing = false;
         }
     }
@@ -200,18 +193,9 @@ public final class CameraManager {
         }
     }
 
-    /**
-     * A single preview frame will be returned to the handler supplied. The data will arrive as byte[]
-     * in the message.obj field, with width and height encoded as message.arg1 and message.arg2,
-     * respectively.
-     *
-     * @param handler The handler to send the message to.
-     * @param message The what field of the message to be sent.
-     */
-    public synchronized void requestPreviewFrame(Handler handler, int message) {
+    public synchronized void requestPreviewFrame(Camera.PreviewCallback previewCallback) {
         OpenCamera theCamera = camera;
         if (theCamera != null && previewing) {
-            previewCallback.setHandler(handler, message);
             theCamera.getCamera().setOneShotPreviewCallback(previewCallback);
         }
     }
@@ -316,17 +300,16 @@ public final class CameraManager {
      * of the preview buffers, as described by Camera.Parameters.
      *
      * @param data   A preview frame.
-     * @param width  The width of the image.
-     * @param height The height of the image.
      * @return A PlanarYUVLuminanceSource instance.
      */
-    public PlanarYUVLuminanceSource buildLuminanceSource(byte[] data, int width, int height) {
+    public PlanarYUVLuminanceSource buildLuminanceSource(byte[] data) {
+        Point p = this.configManager.getCameraResolution();
         Rect rect = getFramingRectInPreview();
         if (rect == null) {
             return null;
         }
         // Go ahead and assume it's YUV rather than die.
-        return new PlanarYUVLuminanceSource(data, width, height, rect.left, rect.top,
+        return new PlanarYUVLuminanceSource(data, p.x, p.y, rect.left, rect.top,
                 rect.width(), rect.height(), false);
     }
 

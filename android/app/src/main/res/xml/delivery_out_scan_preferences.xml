@@ -14,17 +14,31 @@
  limitations under the License.
  -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="扫描成功">
+    <PreferenceCategory android:title="扫描设置">
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="preferences_play_beep"
-            android:title="播放声音" />
+            android:key="KEY_MARK_DELIVERY_SUCCESS_BEEP"
+            android:title="标记发货成功-播放声音" />
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="preferences_vibrate"
-            android:title="手机振动" />
+            android:key="KEY_MARK_DELIVERY_SUCCESS_VIBRATE"
+            android:title="标记发货成功-手机振动" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="KEY_MARK_DELIVERY_ERROR_BEEP"
+            android:title="标记发货失败-播放声音" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="KEY_MARK_DELIVERY_ERROR_VIBRATE"
+            android:title="标记发货失败-手机振动" />
+        <ListPreference
+            android:defaultValue="1"
+            android:entries="@array/preferences_scan_wait"
+            android:entryValues="@array/preferences_scan_wait"
+            android:key="KEY_SCAN_WAIT"
+            android:title="扫描间隔时间(秒)" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="扫描设置">
+    <PreferenceCategory android:title="相机设置">
         <ListPreference
             android:defaultValue="OFF"
             android:entries="@array/preferences_front_light_options"

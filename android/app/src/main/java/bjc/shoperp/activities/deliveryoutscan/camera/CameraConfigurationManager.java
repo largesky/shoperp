@@ -29,8 +29,6 @@ import android.view.WindowManager;
 import com.google.zxing.client.android.camera.CameraConfigurationUtils;
 
 import bjc.shoperp.activities.deliveryoutscan.PreferencesActivity;
-import bjc.shoperp.activities.deliveryoutscan.camera.open.CameraFacing;
-import bjc.shoperp.activities.deliveryoutscan.camera.open.OpenCamera;
 
 /**
  * A class which deals with reading, parsing, and setting the camera parameters which are used to
