@@ -9,10 +9,10 @@ import java.util.List;
 public class Order {
     public long Id;
     public String PopOrderId;
-    public String RecevierName;
-    public String RecevierPhone;
-    public String RecevierMobile;
-    public String RecevierAddress;
+    public String ReceiverName;
+    public String ReceiverPhone;
+    public String ReceiverMobile;
+    public String ReceiverAddress;
     public String DeliveryCompany;
     public String DeliveryNumber;
 

@@ -32,13 +32,14 @@ import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Map;
 
 import bjc.shoperp.R;
 import bjc.shoperp.activities.deliveryoutscan.camera.CameraManager;
+import bjc.shoperp.domain.Order;
+import bjc.shoperp.domain.OrderGoods;
 import bjc.shoperp.domain.restfulresponse.domainresponse.OrderCollectionResponse;
 import bjc.shoperp.service.restful.OrderService;
 import bjc.shoperp.service.restful.ServiceContainer;
@@ -296,7 +297,14 @@ public final class DeliveryOutScanActivity extends AppCompatActivity implements 
                 try {
                     this.barcode = rawResult.getText().trim();
                     OrderCollectionResponse orderCollectionResponse = ServiceContainer.GetService(OrderService.class).markDelivery(rawResult.getText().trim(), this.weight, this.checkWeight, this.checkPopError, this.checkLocalState);
-                    result = new Date().toLocaleString() + ":已成功标记发货" + this.waitTime;
+                    for (Order o : orderCollectionResponse.Datas) {
+                        if (o.OrderGoodss != null) {
+                            for (OrderGoods og : o.OrderGoodss) {
+                                result += og.Vendor + " " + og.Number + " " + og.Edition + " " + og.Color + " " + og.Size + " " + og.Count + "\r";
+                            }
+                        }
+                    }
+                    result += orderCollectionResponse.Datas.get(0).ReceiverName + "," + orderCollectionResponse.Datas.get(0).ReceiverMobile + "," + orderCollectionResponse.Datas.get(0).ReceiverAddress;
                     this.isSuccess = true;
                 } catch (Exception ex) {
                     result = ex.getMessage();
