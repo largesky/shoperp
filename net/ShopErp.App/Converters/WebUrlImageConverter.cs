@@ -13,8 +13,8 @@ namespace ShopErp.App.Converters
 {
     public class WebUrlImageConverter : IValueConverter
     {
-        static string IMAGE_DIR = LocalConfigService.GetValue(SystemNames.CONFIG_WEB_IMAGE_DIR);
-        private String IMAGE_MODE = LocalConfigService.GetValue(SystemNames.CONFIG_WEB_IMAGE_MODE);
+        static string IMAGE_DIR = LocalConfigService.GetValue(SystemNames.CONFIG_WEB_IMAGE_DIR, "");
+        private String IMAGE_MODE = LocalConfigService.GetValue(SystemNames.CONFIG_WEB_IMAGE_MODE, "");
 
         public static readonly BitmapSource DISABLEIMAGE = new BitmapImage(new Uri("/ShopErp.App;component/Resources/Images/DISABLEIMAGE.jpg", UriKind.Relative));
         public static readonly BitmapSource EMPTYIMAGE = new BitmapImage(new Uri("/ShopErp.App;component/Resources/Images/EMPTYIMAGE.jpg", UriKind.Relative));
