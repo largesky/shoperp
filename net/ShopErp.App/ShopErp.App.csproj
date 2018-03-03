@@ -327,8 +327,8 @@
     <Compile Include="Views\Delivery\DeliveryInQueryUserControl.xaml.cs">
       <DependentUpon>DeliveryInQueryUserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Delivery\DeliveryInUserControl.xaml.cs">
-      <DependentUpon>DeliveryInUserControl.xaml</DependentUpon>
+    <Compile Include="Views\Delivery\DeliveryInScanUserControl.xaml.cs">
+      <DependentUpon>DeliveryInScanUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Delivery\DeliveryMatchWindow.xaml.cs">
       <DependentUpon>DeliveryMatchWindow.xaml</DependentUpon>
@@ -339,8 +339,8 @@
     <Compile Include="Views\Delivery\DeliveryQueryWindow.xaml.cs">
       <DependentUpon>DeliveryQueryWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Delivery\DeliveryScanUserControl.xaml.cs">
-      <DependentUpon>DeliveryScanUserControl.xaml</DependentUpon>
+    <Compile Include="Views\Delivery\DeliveryOutScanUserControl.xaml.cs">
+      <DependentUpon>DeliveryOutScanUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Delivery\DeliveryTemplateEditWindow.xaml.cs">
       <DependentUpon>DeliveryTemplateEditWindow.xaml</DependentUpon>
@@ -662,7 +662,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Delivery\DeliveryInUserControl.xaml">
+    <Page Include="Views\Delivery\DeliveryInScanUserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -678,7 +678,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Delivery\DeliveryScanUserControl.xaml">
+    <Page Include="Views\Delivery\DeliveryOutScanUserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

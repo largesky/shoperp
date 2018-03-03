@@ -24,14 +24,14 @@ namespace ShopErp.App.Views.Delivery
     /// <summary>
     /// ReturnUserControl.xaml 的交互逻辑
     /// </summary>
-    public partial class DeliveryInUserControl : UserControl
+    public partial class DeliveryInScanUserControl : UserControl
     {
         private bool myLoaded = false;
         private OrderService orderService = ServiceContainer.GetService<OrderService>();
 
         private System.Collections.ObjectModel.ObservableCollection<DeliveryInViewModel> deliveryInViewModels = new System.Collections.ObjectModel.ObservableCollection<DeliveryInViewModel>();
 
-        public DeliveryInUserControl()
+        public DeliveryInScanUserControl()
         {
             InitializeComponent();
         }

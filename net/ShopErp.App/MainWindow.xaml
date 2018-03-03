@@ -28,9 +28,9 @@
             </MenuItem>
             <MenuItem Header="物流">
                 <MenuItem Header="快递分配" Click="MenuItem_Click" Tag="DeliveryDistributionUserControl" />
-                <MenuItem Header="发货扫描" Click="MenuItem_Click" Tag="DeliveryScanUserControl" />
+                <MenuItem Header="发货扫描" Click="MenuItem_Click" Tag="DeliveryOutScanUserControl" />
                 <MenuItem Header="发货记录" Click="MenuItem_Click" Tag="DeliveryOutQueryUserControl" />
-                <MenuItem Header="收件扫描" Click="MenuItem_Click" Tag="DeliveryInUserControl" />
+                <MenuItem Header="收件扫描" Click="MenuItem_Click" Tag="DeliveryInScanUserControl" />
                 <MenuItem Header="收件记录" Click="MenuItem_Click" Tag="DeliveryInQueryUserControl" />
                 <MenuItem Header="发货时限" Click="MenuItem_Click" Tag="ShippingCheckUserControl" />
                 <MenuItem Header="物流时限" Click="MenuItem_Click" Tag="DeliveryCheckUserControl" />
@@ -75,7 +75,7 @@
             <Button Content="打印订单" Margin="3" Click="MenuItem_Click" Tag="PrintUserControl" />
             <Button Content="打印历史" Margin="3" Click="MenuItem_Click" Tag="PrintHistoryUserControl" />
             <Button Content="快递分配" Click="MenuItem_Click" Tag="DeliveryDistributionUserControl" />
-            <Button Content="发货扫描" Margin="3" Click="MenuItem_Click" Tag="DeliveryScanUserControl" />
+            <Button Content="发货扫描" Margin="3" Click="MenuItem_Click" Tag="DeliveryOutScanUserControl" />
             <Button Content="发货时限" Margin="3" Click="MenuItem_Click" Tag="ShippingCheckUserControl" />
             <Button Content="标记发货(天猫)" Margin="3" Click="MenuItem_Click" Tag="ShippingCheckHtmlUserControl" />
             <Button Content="物流时限" Margin="3" Click="MenuItem_Click" Tag="DeliveryCheckUserControl" />

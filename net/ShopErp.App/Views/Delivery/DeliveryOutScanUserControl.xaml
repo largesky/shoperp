@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="ShopErp.App.Views.Delivery.DeliveryScanUserControl"
+﻿<UserControl x:Class="ShopErp.App.Views.Delivery.DeliveryOutScanUserControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -18,14 +18,12 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal">
-            <CheckBox Name="chkIngoreWeightDetect" Margin="3" VerticalAlignment="Center" Content="忽略重量检测"
-                      IsChecked="False" />
-            <CheckBox Name="chkIngorePopError" Margin="3" VerticalAlignment="Center" Content="忽略平台错误" IsChecked="False" />
-            <CheckBox Name="chkIngoreStateCheck" Margin="3" VerticalAlignment="Center" Content="忽略状态错误"
-                      IsChecked="False" />
-            <CheckBox Name="chkEnableInput" Margin="3" Content="手动输入重量" VerticalAlignment="Center" />
-            <TextBox Name="tbWeight" Margin="3" VerticalAlignment="Center" Width="60"
-                     IsEnabled="{Binding IsChecked, ElementName=chkEnableInput}" />
+            <TextBlock Text="发货检查：" Margin="3" VerticalAlignment="Center"/>
+            <CheckBox Name="chkWeight" Margin="3" VerticalAlignment="Center" Content="重量匹配" IsChecked="True" />
+            <CheckBox Name="chkPopState" Margin="3" VerticalAlignment="Center" Content="平台状态" IsChecked="True" />
+            <CheckBox Name="chkLocalState" Margin="3" VerticalAlignment="Center" Content="本地状态" IsChecked="True" />
+            <CheckBox Name="chkEnableInput" Margin="100,3,3,3" Content="手动输入重量" VerticalAlignment="Center" />
+            <TextBox Name="tbWeight" Margin="3" VerticalAlignment="Center" Width="60" IsEnabled="{Binding IsChecked, ElementName=chkEnableInput}" />
             <TextBlock Text="物流单号:" Margin="3" VerticalAlignment="Center" />
             <TextBox Name="tbDeliveryNumber" Margin="3" Width="150" PreviewKeyDown="tbDeliveryNumber_PreviewKeyDown" />
             <TextBlock Text="(使用条码枪扫描，或者手动输入后按回车键)" Margin="3" VerticalAlignment="Center" />

@@ -43,14 +43,14 @@ namespace ShopErp.App.Service.Restful
             return DoPost<ResponseBase>(para);
         }
 
-        public Order[] MarkDelivery(string deliveryNumber, float weight, bool ingorePopError, bool ingoreWeightDetect, bool ingoreStateCheck)
+        public Order[] MarkDelivery(string deliveryNumber, float weight, bool chkWeight, bool chkPopState, bool chkLocalState)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
             para["deliveryNumber"] = deliveryNumber;
             para["weight"] = weight;
-            para["ingorePopError"] = ingorePopError;
-            para["ingoreWeightDetect"] = ingoreWeightDetect;
-            para["ingoreStateCheck"] = ingoreStateCheck;
+            para["chkWeight"] = chkWeight;
+            para["chkPopState"] = chkPopState;
+            para["chkLocalState"] = chkLocalState;
             return DoPost<DataCollectionResponse<Order>>(para).Datas.ToArray();
         }
 

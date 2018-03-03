@@ -405,7 +405,7 @@ namespace ShopErp.Server.Service.Restful
 
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/markdelivery.html")]
-        public DataCollectionResponse<Order> MarkDelivery(string deliveryNumber, float weight, bool ingorePopError, bool ingoreWeightDetect, bool ingoreStateCheck)
+        public DataCollectionResponse<Order> MarkDelivery(string deliveryNumber, float weight, bool chkWeight, bool chkPopState, bool chkLocalState)
         {
             try
             {
@@ -414,18 +414,18 @@ namespace ShopErp.Server.Service.Restful
 
                 if (orders == null || orders.Count < 1)
                 {
-                    throw new Exception("订单不存在");
+                    throw new Exception("快递单号未找到订单");
                 }
 
-                //过滤掉系统中以前关闭的订单，面单有可能重用
-                if (orders.Count > 1 && ingoreStateCheck == false)
+                //过滤状态不正确的订单
+                if (orders.Count > 1 && chkLocalState)
                 {
-                    orders = orders.Where(obj => obj.State != OrderState.RETURNING && obj.State != OrderState.CANCLED && obj.State != OrderState.CLOSED && obj.State != OrderState.CLOSEDAFTERTRADE).ToList();
+                    orders = orders.Where(obj => (int)obj.State >= (int)OrderState.PRINTED && (int)obj.State <= (int)OrderState.SHIPPED).ToList();
                 }
 
                 if (orders.Count < 1)
                 {
-                    throw new Exception("订单状态不对");
+                    throw new Exception("订单状态不正确");
                 }
 
                 //正常订单数量
@@ -434,57 +434,57 @@ namespace ShopErp.Server.Service.Restful
                 //检测基本信息与状态
                 if (orders.Select(obj => obj.ShopId).Distinct().Count() > 1 && normalOrderCount > 1)
                 {
-                    throw new Exception("多个真实订单且店铺不一样");
+                    throw new Exception("多个订单且店铺不一样");
                 }
 
                 if (orders.Select(obj => obj.PopBuyerId).Distinct().Count() > 1 && normalOrderCount > 1)
                 {
-                    throw new Exception("多个真实订单且买家账号不一样");
+                    throw new Exception("多个订单且买家账号不一样");
                 }
 
                 if (orders.Select(obj => obj.ReceiverName).Distinct().Count() > 1 && normalOrderCount > 1)
                 {
-                    throw new Exception("多个真实订单且收货人姓名不一样");
+                    throw new Exception("多个订单且收货人姓名不一样");
                 }
 
                 if (orders.Select(obj => obj.ReceiverPhone).Distinct().Count() > 1 && normalOrderCount > 1)
                 {
-                    throw new Exception("多个真实订单且收货人电话不一样");
+                    throw new Exception("多个订单且收货人电话不一样");
                 }
 
                 if (orders.Select(obj => obj.ReceiverMobile).Distinct().Count() > 1 && normalOrderCount > 1)
                 {
-                    throw new Exception("多个真实订单且收货人手机不一样");
+                    throw new Exception("多个订单且收货人手机不一样");
                 }
 
                 if (orders.Select(obj => obj.ReceiverAddress.Trim()).Distinct().Count() > 1 && normalOrderCount > 1)
                 {
-                    throw new Exception("多个真实订单且收货人地址不一样");
+                    throw new Exception("多个订单且收货人地址不一样");
                 }
 
-                if (orders.Any(obj => (int)obj.State < (int)OrderState.PRINTED || (int)obj.State > (int)OrderState.SHIPPED) && ingoreStateCheck == false)
+                if (orders.Any(obj => (int)obj.State < (int)OrderState.PRINTED || (int)obj.State > (int)OrderState.SHIPPED) && chkLocalState)
                 {
                     throw new Exception("订单状态不正确");
                 }
 
-                //重量检测，刷单的订单将被排除在外
+                //重量检测
                 var totalOgs = new List<OrderGoods>();
                 foreach (var or in orders.Where(obj => obj.Type != OrderType.SHUA))
                 {
-                    if (ingoreStateCheck == false)
+                    if (chkLocalState)
                     {
-                        totalOgs.AddRange(or.OrderGoodss.Where(obj => (int)obj.State <= (int)OrderState.SHIPPED));
+                        totalOgs.AddRange(or.OrderGoodss.Where(obj => obj.State != OrderState.CLOSED && obj.State != OrderState.SPILTED && obj.State != OrderState.CANCLED && obj.State != OrderState.CLOSEDAFTERTRADE && obj.State != OrderState.NOTSALE));
                     }
                     else
                     {
-                        totalOgs.AddRange(or.OrderGoodss.Where(obj => obj.State != OrderState.CLOSED && obj.State != OrderState.SPILTED && obj.State != OrderState.CANCLED && obj.State != OrderState.CLOSEDAFTERTRADE && obj.State != OrderState.NOTSALE));
+                        totalOgs.AddRange(or.OrderGoodss);
                     }
                 }
                 float totalOrderWeight = totalOgs.Select(obj => obj.Weight * obj.Count).Sum();
                 int unWeightCount = totalOgs.Where(obj => obj.Weight <= 0).Select(obj => obj.Count).Sum();
                 int totalCount = totalOgs.Select(obj => obj.Count).Sum();
 
-                if (ingoreWeightDetect == false && totalCount > 0)
+                if (chkWeight && totalCount > 0)
                 {
                     if (unWeightCount == 0)
                     {
@@ -501,49 +501,51 @@ namespace ShopErp.Server.Service.Restful
                             throw new Exception(string.Format("所有商品重量应该大于当前:{0:F2},预期值:{1:F2}", weight, totalOrderWeight + unWeightCount * 0.2));
                         }
                     }
-                }
-                //订单中只有一件商品没有重量，且不是配件订单
-                if (totalOgs.Count == 1 && totalOgs[0].IsPeijian == false && ingoreWeightDetect == false)
-                {
-                    var gu = ServiceContainer.GetService<GoodsService>().GetById(totalOgs[0].NumberId).First;
-                    if (gu != null)
+                    //订单中只有一件商品没有重量，且不是配件订单
+                    if (totalOgs.Count == 1 && totalOgs[0].IsPeijian == false)
                     {
-                        float w = (float)Math.Round(weight / totalOgs[0].Count, 2);
-                        float nw = (float)Math.Round((w + gu.Weight) / 2, 2);
-                        ServiceContainer.GetService<GoodsService>().UpdateWeight(totalOgs[0].NumberId, nw);
+                        var gu = ServiceContainer.GetService<GoodsService>().GetById(totalOgs[0].NumberId).First;
+                        if (gu != null)
+                        {
+                            float w = (float)Math.Round(weight / totalOgs[0].Count, 2);
+                            float nw = (float)Math.Round((w + gu.Weight) / 2, 2);
+                            ServiceContainer.GetService<GoodsService>().UpdateWeight(totalOgs[0].NumberId, nw);
+                        }
                     }
                 }
+
 
                 //计算物流
                 double deliveryMoney = ServiceContainer.GetService<DeliveryTemplateService>().ComputeDeliveryMoneyImpl(orders[0].DeliveryCompany, orders[0].ReceiverAddress, orders[0].Type == OrderType.SHUA, orders[0].PrintPaperType, orders[0].PopPayType, weight);
 
                 //更新订单状态，运费金额信息
-                List<object> objsToUpdate = new List<object>();
-                foreach (var or in orders)
-                {
-                    if (ingoreStateCheck == false)
-                    {
-                        objsToUpdate.AddRange(or.OrderGoodss.Where(obj => (int)obj.State <= (int)OrderState.SHIPPED));
-                    }
-                    else
-                    {
-                        objsToUpdate.AddRange(or.OrderGoodss.Where(obj => obj.State != OrderState.CLOSED && obj.State != OrderState.SPILTED && obj.State != OrderState.CANCLED && obj.State != OrderState.CLOSEDAFTERTRADE && obj.State != OrderState.NOTSALE));
-                    }
-                }
-
-                foreach (OrderGoods og in objsToUpdate)
+                List<object> objsToUpdate = new List<object>(totalOgs);
+                foreach (OrderGoods og in totalOgs)
                 {
                     og.State = OrderState.SHIPPED;
                     og.Comment = "";
                 }
 
+                string comment = string.Format("【发货{0}】", DateTime.Now.ToString("MM-dd HH:mm"));
+                
                 foreach (var order in orders)
                 {
                     order.DeliveryMoney = orders.Count > 1 ? order.DeliveryMoney : (float)deliveryMoney;
                     order.Weight = orders.Count > 1 ? order.Weight : (float)weight;
                     order.DeliveryTime = DateTime.Now;
                     order.DeliveryOperator = op;
-                    order.State = (int)order.State < (int)OrderState.SHIPPED || order.State == OrderState.RETURNING ? OrderState.SHIPPED : order.State;
+                    order.State = order.State != OrderState.SUCCESS ? OrderState.SHIPPED : order.State;
+                    //检查当前是否有标记发货信息
+                    int startIndex = order.PopSellerComment.IndexOf("【发货");
+                    int endIndex = order.PopSellerComment.IndexOf('】', startIndex < 0 ? 0 : startIndex);
+                    if (startIndex >= 0 && endIndex > startIndex)
+                    {
+                        comment = order.PopSellerComment.Replace(order.PopSellerComment.Substring(startIndex, endIndex - startIndex + 1), comment);
+                    }
+                    else
+                    {
+                        comment = order.PopSellerComment + comment;
+                    }
                     objsToUpdate.Add(order);
                     if (order.ShopId < 1 || string.IsNullOrWhiteSpace(order.PopOrderId))
                     {
@@ -576,7 +578,7 @@ namespace ShopErp.Server.Service.Restful
                     }
                     catch (Exception ex)
                     {
-                        if (ingorePopError == false)
+                        if (chkPopState)
                         {
                             throw ex;
                         }
@@ -605,7 +607,7 @@ namespace ShopErp.Server.Service.Restful
                 };
                 if (deliveryOut.GoodsInfo.Length > 1000)
                 {
-                    deliveryOut.GoodsInfo = deliveryOut.GoodsInfo.Substring(0, 1000);
+                    deliveryOut.GoodsInfo = deliveryOut.GoodsInfo.Substring(0, 990);
                 }
                 this.dao.Update(objsToUpdate.ToArray());
                 this.dao.Save(deliveryOut);
