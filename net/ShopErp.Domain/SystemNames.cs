@@ -9,9 +9,6 @@ namespace ShopErp.Domain
     public class SystemNames
     {
         public const string CONFIG_WEB_IMAGE_DIR = "WEB_IMAGE_DIR";
-        public const string CONFIG_WEB_IMAGE_GOODS_DIR = "WEB_IMAGE_GOODS_DIR";
-        public const string CONFIG_WEB_IMAGE_ORDER_DIR = "WEB_IMAGE_ORDER_DIR";
-        public const string CONFIG_WEB_IMAGE_RETURN_DIR = "WEB_IMAGE_RETURN_DIR";
         public const string CONFIG_WEB_IMAGE_MODE = "WEB_IMAGE_MODE";
         public const string CONFIG_SERVER_ADDRESS = "SERVER_ADDRESS";
         public const string CONFIG_CAINIAO_APP_KEY = "CAINIAO_APP_KEY";

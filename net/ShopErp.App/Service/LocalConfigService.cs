@@ -41,22 +41,7 @@ namespace ShopErp.App.Service
 
             if (xDoc.Root.Element(SystemNames.CONFIG_WEB_IMAGE_DIR) == null)
             {
-                UpdateValue(SystemNames.CONFIG_WEB_IMAGE_DIR, @"\\host-bjc\shoperpdata\images");
-            }
-
-            if (xDoc.Root.Element(SystemNames.CONFIG_WEB_IMAGE_GOODS_DIR) == null)
-            {
-                UpdateValue(SystemNames.CONFIG_WEB_IMAGE_GOODS_DIR, @"\\host-bjc\shoperpdata\images\goods");
-            }
-
-            if (xDoc.Root.Element(SystemNames.CONFIG_WEB_IMAGE_ORDER_DIR) == null)
-            {
-                UpdateValue(SystemNames.CONFIG_WEB_IMAGE_ORDER_DIR, @"\\host-bjc\shoperpdata\images\order");
-            }
-
-            if (xDoc.Root.Element(SystemNames.CONFIG_WEB_IMAGE_RETURN_DIR) == null)
-            {
-                UpdateValue(SystemNames.CONFIG_WEB_IMAGE_RETURN_DIR, @"\\host-bjc\shoperpdata\images\orderreturn");
+                UpdateValue(SystemNames.CONFIG_WEB_IMAGE_DIR, @"\\host-bjc\images");
             }
         }
 
