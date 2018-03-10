@@ -32,7 +32,7 @@ import bjc.shoperp.service.restful.ServiceContainer;
  */
 public class LoginActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    private static final String DEFAULT_SERVER_ADDRESS = "http://bjcgroup.imwork.net:60014/shoperp,http://bjcgroup.imwork.net:60014/shoperpdebug,http://192.168.31.9/shoperp,http://192.168.31.9/shoperpdebug";
+    private static final String DEFAULT_SERVER_ADDRESS = "http://bjcgroup.imwork.net:60014/shoperp,http://bjcgroup.imwork.net:60014/shoperpdebug,http://192.168.31.67/shoperp,http://192.168.31.67/shoperpdebug";
 
     private UserLoginTask mAuthTask = null;
     private String[] serverAddress = null;

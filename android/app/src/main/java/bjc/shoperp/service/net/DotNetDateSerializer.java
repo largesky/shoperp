@@ -40,8 +40,7 @@ public class DotNetDateSerializer implements JsonSerializer<Date>, JsonDeseriali
                 return t;
             }
             long time = Long.parseLong( ss[0] );
-            long zone=Long.parseLong( ss[1].substring( 0,2 ) )*3600*1000;
-            Date t=new Date( time+zone );
+            Date t=new Date( time );
             return t;
         } catch (Exception ex) {
             ex.printStackTrace();
