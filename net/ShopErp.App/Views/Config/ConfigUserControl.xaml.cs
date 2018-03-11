@@ -159,16 +159,6 @@ namespace ShopErp.App.Views.Config
             }
         }
 
-        private void btnChoseImageDir_Click(object sender, RoutedEventArgs e)
-        {
-            System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog();
-            if (fbd.ShowDialog() != System.Windows.Forms.DialogResult.OK)
-            {
-                return;
-            }
-            this.tbImageDir.Text = fbd.SelectedPath;
-        }
-
         private void btnUpdateAddressArea_Click(object sender, RoutedEventArgs e)
         {
             try
