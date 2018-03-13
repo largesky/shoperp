@@ -129,6 +129,7 @@
     <Compile Include="Converters\ShopMarkConverter.cs" />
     <Compile Include="Converters\VendorConverter.cs" />
     <Compile Include="Converters\VendorNameFormatConverter.cs" />
+    <Compile Include="Converters\VideoTypeConverter.cs" />
     <Compile Include="Converters\WebUrlImageConverter.cs" />
     <Compile Include="Device\IDevice.cs" />
     <Compile Include="Device\IDeviceConfigUI.cs" />
@@ -1021,6 +1022,9 @@
     <Resource Include="Resources\Images\READIMAGEERROR.jpg" />
     <Resource Include="Resources\Images\DISABLEIMAGE.jpg" />
     <None Include="Resources\TAOBAOJS.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\VideoIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

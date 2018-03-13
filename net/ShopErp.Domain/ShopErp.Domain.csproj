@@ -91,6 +91,7 @@
     <Compile Include="GoodsState.cs" />
     <Compile Include="GoodsTask.cs" />
     <Compile Include="GoodsType.cs" />
+    <Compile Include="GoodsVideoType.cs" />
     <Compile Include="RestfulResponse\DataOneResponse.cs" />
     <Compile Include="RestfulResponse\DomainResponse\LoginResponse.cs" />
     <Compile Include="Operator.cs" />

@@ -53,17 +53,6 @@ namespace ShopErp.App.Service.Restful
             return DoPost<DataCollectionResponse<Goods>>(para);
         }
 
-        //public DataResponse<Goods> GetByNumberAndVendorNameLike(string number, string vendorNameOrPingName,
-        //    int pageIndex, int pageSize)
-        //{
-        //    Dictionary<string, object> para = new Dictionary<string, object>();
-        //    para["number"] = number;
-        //    para["vendorNameOrPingName"] = vendorNameOrPingName;
-        //    para["pageIndex"] = pageIndex;
-        //    para["pageSize"] = pageSize;
-        //    return DoPost<DataResponse<Goods>>(para);
-        //}
-
         public DataCollectionResponse<Goods> ParseGoods(string vendorNameOrPingName, string number)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
@@ -107,7 +96,33 @@ namespace ShopErp.App.Service.Restful
             var imageBytes = GetImage(imageUrl);
             FileUtil.EnsureExits(new FileInfo(fullPath));
             File.WriteAllBytes(fullPath, imageBytes);
-            ServiceContainer.GetService<ImageService>().SaveImage(goods.Image, imageBytes);
+            //ServiceContainer.GetService<ImageService>().SaveImage(goods.Image, imageBytes);
+        }
+
+        public static void SaveVideo(Goods goods, String videoUrl)
+        {
+            //图片路径为空，或者目标图片与当前图片相同
+            if (string.IsNullOrWhiteSpace(videoUrl))
+            {
+                return;
+            }
+
+            if (goods.VendorId < 1)
+            {
+                throw new Exception("商品VENDORID不能小于1");
+            }
+
+            string dir = LocalConfigService.GetValue(SystemNames.CONFIG_WEB_IMAGE_DIR, "");
+            if (string.IsNullOrWhiteSpace(dir))
+            {
+                throw new Exception(SystemNames.CONFIG_WEB_IMAGE_DIR + "不能为空");
+            }
+            goods.ImageDir = "goods\\" + goods.VendorId.ToString() + "\\" + goods.Number;
+            string videoPath = goods.ImageDir + "\\index" + videoUrl.Substring(videoUrl.LastIndexOf("."));
+            string fullPath = dir + "\\" + videoPath;
+            var imageBytes = GetImage(videoUrl);
+            FileUtil.EnsureExits(new FileInfo(fullPath));
+            File.WriteAllBytes(fullPath, imageBytes);
         }
     }
 }

@@ -61,6 +61,9 @@
     <property name="CreateOperator">
       <column name="CreateOperator" sql-type="string" not-null="true" />
     </property>
+    <property name="VideoType">
+      <column name="VideoType" sql-type="int" not-null="true" />
+    </property>
     <bag lazy="false" name="Shops" table="GoodsShop" cascade="none" inverse="true">
       <key column="GoodsId"/>
       <one-to-many class="ShopErp.Domain.GoodsShop" not-found="ignore" />

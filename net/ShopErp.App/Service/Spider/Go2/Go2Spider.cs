@@ -128,30 +128,11 @@ namespace ShopErp.App.Service.Spider.Go2
             throw new Exception("获取GO2厂家查询页面失败");
         }
 
-        public override Goods GetGoodsInfoByUrl(string url, ref string vendorName, bool raiseExceptionOnGoodsNotSale = false)
+        public override Goods GetGoodsInfoByUrl(string url, ref string vendorHomePage, ref string videoUrl, bool raiseExceptionOnGoodsNotSale)
         {
-            Goods g = new Goods { Comment = "", CreateTime = DateTime.Now, Image = "", LastSellTime = DateTime.Now, Number = "", Price = 0, Type = 0, UpdateEnabled = true, UpdateTime = DateTime.Now, Url = url, VendorId = 0, Weight = 0, Id = 0, Colors = "", CreateOperator = "", Flag = ColorFlag.UN_LABEL, IgnoreEdtion = true, ImageDir = "", Material = "" };
+            Goods g = new Goods { Comment = "", CreateTime = DateTime.Now, Image = "", LastSellTime = DateTime.Now, Number = "", Price = 0, Type = 0, UpdateEnabled = true, UpdateTime = DateTime.Now, Url = url, VendorId = 0, Weight = 0, Id = 0, Colors = "", CreateOperator = "", Flag = ColorFlag.UN_LABEL, IgnoreEdtion = false, ImageDir = "", Material = "" };
             var doc = this.GetHtmlDocWithRetry(url, "");
-            if (url.ToLower().Contains("z.go2.cn"))
-            {
-                ParseZShoesByUrl(g, doc, true, ref vendorName, raiseExceptionOnGoodsNotSale);
-            }
-            else
-            {
-                try
-                {
-                    ParseShoesByUrl(g, doc, true, ref vendorName, raiseExceptionOnGoodsNotSale);
-                }
-                catch (Exception ex)
-                {
-                    if (ex.Message == "产品已从GO2删除" || ex.Message == "产品已从GO2下架" || ex.Message == "产品属于店铺尾货")
-                    {
-                        throw ex;
-                    }
-                    ParseZShoesByUrl(g, doc, true, ref vendorName, raiseExceptionOnGoodsNotSale);
-                }
-            }
-
+            ParseShoesByAllUrl(g, doc, ref vendorHomePage, ref videoUrl, raiseExceptionOnGoodsNotSale);
             return g;
         }
 
@@ -161,18 +142,18 @@ namespace ShopErp.App.Service.Spider.Go2
             var doc = this.GetHtmlDocWithRetry(url, "");
             if (url.ToLower().Contains("z.go2.cn"))
             {
-                ParseVendorInfoZ(ven, doc);
+                ParseVendorByZUrl(ven, doc);
             }
             else
             {
                 try
                 {
-                    ParseVendorInfo(ven, doc);
+                    ParseVendorByUrl(ven, doc);
 
                 }
                 catch
                 {
-                    ParseVendorInfoZ(ven, doc);
+                    ParseVendorByZUrl(ven, doc);
                 }
             }
             ven.HomePage = ven.HomePage.TrimEnd('/');
@@ -328,7 +309,7 @@ namespace ShopErp.App.Service.Spider.Go2
             }
         }
 
-        private void ParseVendorInfo(Vendor vendor, HtmlAgilityPack.HtmlDocument htmlDoc)
+        private void ParseVendorByUrl(Vendor vendor, HtmlAgilityPack.HtmlDocument htmlDoc)
         {
             //获取厂家名称url地址
             var vendorUrlNode = htmlDoc.DocumentNode.SelectSingleNode("//a[@class='merchant-title']");
@@ -382,7 +363,7 @@ namespace ShopErp.App.Service.Spider.Go2
             vendor.HomePage = u;
         }
 
-        private void ParseVendorInfoZ(Vendor vendor, HtmlAgilityPack.HtmlDocument htmlDoc)
+        private void ParseVendorByZUrl(Vendor vendor, HtmlAgilityPack.HtmlDocument htmlDoc)
         {
             //获取厂家名称url地址
             var vendorUrlNode = htmlDoc.DocumentNode.SelectSingleNode("//a[@class='merchant-title color-main']");
@@ -435,7 +416,7 @@ namespace ShopErp.App.Service.Spider.Go2
             vendor.HomePage = u;
         }
 
-        public void ParseShoesByUrl(Goods g, HtmlAgilityPack.HtmlDocument htmlDoc, bool requstPrice, ref string vendorName, bool raiseExceptionOnGoodsNotSale = false)
+        private void ParseShoesByAllUrl(Goods g, HtmlAgilityPack.HtmlDocument htmlDoc, ref string vendorHomePage, ref string videoUrl, bool raiseExceptionOnGoodsNotSale)
         {
             //商品已删除 
             if (htmlDoc.DocumentNode.InnerHtml.Contains("该商品不存在或已删除"))
@@ -459,30 +440,51 @@ namespace ShopErp.App.Service.Spider.Go2
                 }
             }
 
-            //获取厂家名称url地址
-            var vendorUrlNode = htmlDoc.DocumentNode.SelectSingleNode("//a[@class='merchant-title']");
+            //获取厂家名称
+            var vendorUrlNode = htmlDoc.DocumentNode.SelectSingleNode("//a[@class='topbar-sup color-orange']");
             if (vendorUrlNode == null)
             {
                 throw new Exception("解析厂家名称HTML失败");
             }
-            vendorName = vendorUrlNode.InnerText.Trim();
-            if (string.IsNullOrWhiteSpace(vendorName))
+            vendorHomePage = vendorUrlNode.GetAttributeValue("href", "").TrimEnd('/');
+            if (string.IsNullOrWhiteSpace(vendorHomePage))
             {
-                throw new Exception("获取到的厂家名称为空");
+                throw new Exception("获取到的厂家主页为空");
             }
 
             //获取货号
-            var numberNode = htmlDoc.DocumentNode.SelectNodes("//div[@class='product-details']/h5/span");
-            if (numberNode == null || numberNode.Count < 1)
+            var numberNode = htmlDoc.DocumentNode.SelectSingleNode("//span[@class='top-number color-orange']");
+            if (numberNode == null)
             {
                 throw new Exception("解析厂家货号HTML结点失败");
             }
-
-            g.Number = numberNode.LastOrDefault().InnerText.Trim().Replace("商家编码：", "").Replace("&amp;", "&");
+            g.Number = numberNode.InnerText.Trim();
             if (g.Number.Contains("&"))
             {
                 g.Number = g.Number.Split(new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries)[1];
             }
+            if (string.IsNullOrWhiteSpace(g.Number))
+            {
+                throw new Exception("获取到的货号为空");
+            }
+
+            //价格，在GO2网页中，价格结点中的TITLE属性是真正的价格，内部值在源网页中是假的，网页加载完成后有JS改正
+            var priceNode = htmlDoc.DocumentNode.SelectSingleNode("//span[@class='supplie-price-top top-price color-orange']");
+            if (priceNode == null)
+            {
+                priceNode = htmlDoc.DocumentNode.SelectSingleNode("//span[@class='top-price color-orange sup-price-top-hx']");
+                if (priceNode == null)
+                {
+                    throw new Exception("未找到价格结点：//span[@class='supplie-price-top top-price color-orange 或者" + Environment.NewLine + "//span[@class='top-price color-orange sup-price-top-hx']");
+                }
+            }
+            if (priceNode.Attributes["title"] == null)
+            {
+                throw new Exception("价格结点没有title属性");
+            }
+            string price = priceNode.Attributes["title"].Value.Replace("&yen;", "");
+            g.Price = float.Parse(price);
+
 
             //解析商品图片
             var imageNode = htmlDoc.DocumentNode.SelectNodes("//div[@class='big-img-box']/img");
@@ -490,11 +492,29 @@ namespace ShopErp.App.Service.Spider.Go2
             {
                 throw new Exception("解析商品图片HTML结点失败");
             }
-
             g.Image = imageNode.FirstOrDefault().GetAttributeValue("src", "").Trim();
             if (string.IsNullOrWhiteSpace(g.Image))
             {
                 throw new Exception("商品没有主图");
+            }
+
+            //主图视频
+            var videoNode = htmlDoc.DocumentNode.SelectSingleNode("//div[@id='video-flv']");
+            if (videoNode == null)
+            {
+                g.VideoType = GoodsVideoType.NOT;
+            }
+            else
+            {
+                videoUrl = videoNode.GetAttributeValue("data-url", "");
+                if (string.IsNullOrWhiteSpace(videoUrl))
+                {
+                    g.VideoType = GoodsVideoType.NOT;
+                }
+                else
+                {
+                    g.VideoType = GoodsVideoType.VIDEO;
+                }
             }
 
             //商品类型
@@ -515,18 +535,7 @@ namespace ShopErp.App.Service.Spider.Go2
 
             g.Type = FormatType(typeNode.First().Attributes["title"].Value.Trim());
 
-            //价格
-            var priceNode = htmlDoc.DocumentNode.SelectSingleNode("//span[@class='supplie-price-top top-price color-orange']");
-            if (priceNode == null)
-            {
-                throw new Exception("价格结点未找到//div[@id='topbar']/div/ul/li/span[@class='top-price color-orange sup-price-top-hx']");
-            }
-            if (priceNode.Attributes["title"] == null)
-            {
-                throw new Exception("价格结点没有title属性");
-            }
-            string price = priceNode.Attributes["title"].Value.Replace("&yen;", "");
-            g.Price = float.Parse(price);
+
 
             var colorNode = htmlDoc.DocumentNode.SelectSingleNode("//div[@class='details-item']/div/ul/li[@class='details-attribute-item props-color']");
             if (colorNode != null)
@@ -539,123 +548,6 @@ namespace ShopErp.App.Service.Spider.Go2
             else
             {
                 g.Colors = "默认颜色";
-            }
-
-            var detailNodes = htmlDoc.DocumentNode.SelectNodes("//div[@class='details-item']/div/ul/li[@class='details-attribute-item']");
-            if (detailNodes != null && detailNodes.Count > 0)
-            {
-                foreach (var dN in detailNodes)
-                {
-                    if (dN.InnerText.Contains("帮面材质"))
-                    {
-                        g.Material = dN.GetAttributeValue("title", "").Trim();
-                        break;
-                    }
-                }
-            }
-            g.Material = g.Material ?? "";
-        }
-
-        private void ParseZShoesByUrl(Goods g, HtmlAgilityPack.HtmlDocument htmlDoc, bool requstPrice, ref string vendorName, bool raiseExceptionOnGoodsNotSale)
-        {
-            //商品已删除 
-            if (htmlDoc.DocumentNode.InnerHtml.Contains("该商品不存在或已删除"))
-            {
-                throw new Exception("产品已从GO2删除");
-            }
-
-            //检查是否下架
-            if (raiseExceptionOnGoodsNotSale)
-            {
-                var stateNode = htmlDoc.DocumentNode.SelectNodes("//p[@class='xiajia']");
-                if (stateNode != null && stateNode.Count > 0 && stateNode.LastOrDefault().InnerText.Trim() == "本产品已下架，如有特殊需求请直接联系商家")
-                {
-                    throw new Exception("产品已从GO2下架");
-                }
-                stateNode = htmlDoc.DocumentNode.SelectNodes("//i[@class='icon icon-sm s_weihuo']");
-                if (stateNode != null && stateNode.Count > 0)
-                {
-                    throw new Exception("产品属于店铺尾货");
-                }
-            }
-
-            //获取厂家名称url地址
-            var vendorUrlNode = htmlDoc.DocumentNode.SelectSingleNode("//a[@class='merchant-title color-main']");
-            if (vendorUrlNode == null)
-            {
-                throw new Exception("解析厂家名称HTML失败");
-            }
-
-            vendorName = vendorUrlNode.InnerText.Trim();
-            if (string.IsNullOrWhiteSpace(vendorName))
-            {
-                throw new Exception("获取到的厂家名称为空");
-            }
-
-            //获取货号
-            var numberNode = htmlDoc.DocumentNode.SelectNodes("//div[@class='product-details']/h5/span");
-            if (numberNode == null || numberNode.Count < 1)
-            {
-                throw new Exception("解析厂家货号HTML结点失败");
-            }
-
-            g.Number = numberNode.LastOrDefault().InnerText.Trim().Replace("商家编码：", "").Replace("&amp;", "&");
-            if (g.Number.Contains("&"))
-            {
-                g.Number = g.Number.Split(new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries)[1];
-            }
-
-            //解析商品图片
-            var imageNode = htmlDoc.DocumentNode.SelectNodes("//div[@class='big-img-box']/img");
-            if (imageNode == null || imageNode.Count < 1)
-            {
-                throw new Exception("解析商品图片HTML结点失败");
-            }
-
-            g.Image = imageNode.FirstOrDefault().GetAttributeValue("src", "").Trim();
-            if (string.IsNullOrWhiteSpace(g.Image))
-            {
-                throw new Exception("商品没有主图");
-            }
-
-            //商品类型
-            var typeNode = htmlDoc.DocumentNode.SelectNodes("//div[@class='product-data-categary']/p");
-            if (typeNode == null || typeNode.Count < 1)
-            {
-                throw new Exception("解析商品类型结点失败");
-            }
-            if (string.IsNullOrWhiteSpace(typeNode.First().InnerText))
-            {
-                throw new Exception("商品类型结点值为空");
-            }
-
-            if (typeNode.First().Attributes["title"] == null)
-            {
-                throw new Exception("商品类型结点值 title 属性 为空");
-            }
-
-            g.Type = FormatType(typeNode.First().Attributes["title"].Value.Trim());
-
-            //Z.go2.cn
-            var priceNode = htmlDoc.DocumentNode.SelectSingleNode("//span[@class='top-price color-orange sup-price-top-hx']");
-            if (priceNode == null)
-            {
-                throw new Exception("价格结点未找到//div[@id='topbar']/div/ul/li/span[@class='top-price color-orange sup-price-top-hx']");
-            }
-            if (priceNode.Attributes["title"] == null)
-            {
-                throw new Exception("价格结点没有title属性");
-            }
-            string price = priceNode.Attributes["title"].Value.Replace("&yen;", "");
-            g.Price = float.Parse(price);
-
-            var colorNode = htmlDoc.DocumentNode.SelectSingleNode("//div[@class='details-item']/div/ul/li[@class='details-attribute-item props-color']");
-            if (colorNode != null)
-            {
-                string color = colorNode.GetAttributeValue("title", "").Trim();
-                var colors = color.Split(new char[] { ',', '，', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                var nc = colors.Where(obj => obj.Any(c => Char.IsDigit(c)) == false || obj.Contains("色")).ToArray();
-                g.Colors = string.Join(",", nc);
             }
 
             var detailNodes = htmlDoc.DocumentNode.SelectNodes("//div[@class='details-item']/div/ul/li[@class='details-attribute-item']");

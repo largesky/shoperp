@@ -64,6 +64,7 @@ namespace ShopErp.App.Views.Goods
                     this.Goods.UpdateTime = minTime;
                     this.Goods.Shops = new List<GoodsShop>();
                     this.Goods.Flag = ColorFlag.UN_LABEL;
+                    this.Goods.VideoType = GoodsVideoType.NOT;
                 }
                 this.imagePath = this.Goods.Image;
                 this.img.Source = (new WebUrlImageConverter()).Convert(this.Goods.Image, null, null, null) as ImageSource;
@@ -77,7 +78,16 @@ namespace ShopErp.App.Views.Goods
                 this.chkUpdateEnabled.IsChecked = this.Goods.UpdateEnabled;
                 this.tbColors.Text = this.Goods.Colors;
                 this.tbStar.Text = this.Goods.Star.ToString();
-
+                if (this.Goods.VideoType == GoodsVideoType.VIDEO)
+                {
+                    this.rbYes.IsChecked = true;
+                    this.rbNo.IsChecked = false;
+                }
+                else
+                {
+                    this.rbYes.IsChecked = false;
+                    this.rbNo.IsChecked = true;
+                }
                 foreach (var shop in this.cbbShops.ItemsSource as ShopCheckViewModel[])
                 {
                     shop.IsChecked = this.Goods.Shops.FirstOrDefault(obj => obj.ShopId == shop.Source.Id) != null;
@@ -160,7 +170,7 @@ namespace ShopErp.App.Views.Goods
                 this.Goods.Star = int.Parse(this.tbStar.Text.Trim());
                 var selectedShops = this.cbbShops.ItemsSource.OfType<ShopCheckViewModel>().Where(obj => obj.IsChecked).ToArray();
                 this.Goods.Vendor = v;
-
+                this.Goods.VideoType = this.rbYes.IsChecked.Value ? GoodsVideoType.VIDEO : GoodsVideoType.NOT;
                 if (this.Goods.Id < 1)
                 {
                     GoodsService.SaveImage(this.Goods, this.imagePath);

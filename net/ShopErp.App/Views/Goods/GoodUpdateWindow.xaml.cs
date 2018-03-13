@@ -159,7 +159,7 @@ namespace ShopErp.App.Views.Goods
                 this.isRunning = true;
                 this.current = 0;
                 this.Dispatcher.BeginInvoke(new Action(() => this.btnUpdate.Content = "停止"));
-                string vendor = "";
+                string vendorHomePage = "", goodsVideoUrl = "";
                 foreach (var gu in shoes)
                 {
                     if (this.isStop)
@@ -179,12 +179,12 @@ namespace ShopErp.App.Views.Goods
                         {
                             throw new Exception("商品没有URL地址");
                         }
-                        var g = this.sb.GetGoodsInfoByUrl(gu.Source.Url, ref vendor, true);
+                        var g = this.sb.GetGoodsInfoByUrl(gu.Source.Url, ref vendorHomePage, ref goodsVideoUrl, true);
                         if (g == null)
                         {
                             throw new Exception("获取商品方法返回NULL");
                         }
-                        gu.Source.Price = g.Price; 
+                        gu.Source.Price = g.Price;
                         gu.Source.Colors = g.Colors;
                         gu.Source.UpdateTime = DateTime.Now;
                         gu.Source.Material = g.Material;

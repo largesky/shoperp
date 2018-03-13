@@ -71,7 +71,7 @@ namespace ShopErp.App.Service.Spider
 
         public abstract bool AcceptUrl(Uri uri);
 
-        public abstract Goods GetGoodsInfoByUrl(string url, ref string vendorName, bool raiseExceptionOnGoodsNotSale = false);
+        public abstract Goods GetGoodsInfoByUrl(string url, ref string vendorHomePage, ref string videoUrl, bool raiseExceptionOnGoodsNotSale);
 
         public abstract Vendor GetVendorInfoByUrl(string url);
 

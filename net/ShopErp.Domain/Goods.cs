@@ -25,6 +25,7 @@ namespace ShopErp.Domain
         public DateTime LastSellTime { get; set; }
         public DateTime UpdateTime { get; set; }
         public string CreateOperator { get; set; }
+        public GoodsVideoType VideoType { get; set; }
         public IList<GoodsShop> Shops { get; set; }
         public virtual Vendor Vendor { get; set; }
     }

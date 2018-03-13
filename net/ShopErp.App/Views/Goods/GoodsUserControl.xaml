@@ -67,6 +67,8 @@
                                      Margin="3" VerticalAlignment="Center" MinWidth="140" />
                 <TextBlock Text="类型:" Margin="3" VerticalAlignment="Center" />
                 <ComboBox Name="cbbTypes" Margin="3" VerticalAlignment="Center" />
+                <TextBlock Text="主图视频:" Margin="3" VerticalAlignment="Center" />
+                <ComboBox Name="cbbVideoTypes" Margin="3" VerticalAlignment="Center" />
                 <TextBlock Text="厂家:" Margin="3" VerticalAlignment="Center" />
                 <TextBox Name="tbVendor" Margin="3" Width="60" VerticalAlignment="Center" />
                 <TextBlock Text="货号:" Margin="3" VerticalAlignment="Center" />
@@ -113,8 +115,10 @@
                 <DataGridTemplateColumn Header="图片" Width="Auto" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Image Width="90" Height="90"
-                                   Source="{Binding Source.Image,Converter={StaticResource webUrlImageConverter}}" />
+                            <Canvas Width="90" Height="90">
+                                <Image Width="90" Height="90" Source="{Binding Source.Image,Converter={StaticResource webUrlImageConverter}}" />
+                                <Image Width="28" Height="28" Canvas.Left="0" Canvas.Bottom="0" Opacity="0.8" Source="{Binding Source.VideoType,Converter={StaticResource VideoTypeConverter}}"/>
+                            </Canvas>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

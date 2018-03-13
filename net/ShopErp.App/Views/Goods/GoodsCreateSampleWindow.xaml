@@ -21,7 +21,7 @@
         <TextBlock Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="商品网址:" />
         <TextBox Grid.Row="1" Grid.Column="1" Name="tbUrl" Margin="3" VerticalAlignment="Center" />
         <TextBlock Grid.Row="3" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="上的店铺:" />
-        <ListBox Grid.Row="3" Grid.Column="1" Margin="3" Name="cbbShops" VerticalAlignment="Center" BorderBrush="White">
+        <ListBox Grid.Row="3" Grid.Column="1" Name="cbbShops" VerticalAlignment="Center" BorderBrush="White">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel />
@@ -34,6 +34,12 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+        <TextBlock Grid.Row="4" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="主图视频:" />
+        <StackPanel Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal">
+            <RadioButton  Content="自动检测" Name="rbAutoCheck" IsChecked="True" GroupName="VideoType" Margin="3,1,0,1" />
+            <RadioButton  Content="有" Name="rbYes" GroupName="VideoType" Margin="3,1,0,1" />
+            <RadioButton  Content="无" Name="rbNo" GroupName="VideoType" Margin="3,1,0,1" />
+        </StackPanel>
         <TextBlock Grid.Row="5" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="备注:" />
         <TextBox Grid.Row="5" Grid.Column="1" Name="tbComment" Margin="3" VerticalAlignment="Center" />
         <Button Grid.Row="7" Grid.Column="1" Content="保存" Width="60" Click="Button_Click" Margin="3"

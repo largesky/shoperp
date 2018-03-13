@@ -20,6 +20,7 @@
             <converters:VendorNameFormatConverter x:Key="VendorNameFormatConverter" />
             <converters:OrderGoodsStateConverter x:Key="OrderGoodsStateConverter"/>
             <converters:FinanceAccountConverter x:Key="FinanceAccountConverter"></converters:FinanceAccountConverter>
+            <converters:VideoTypeConverter x:Key="VideoTypeConverter"/>
             <Style x:Key="ImageButton" TargetType="Button">
                 <Setter Property="Template">
                     <Setter.Value>
