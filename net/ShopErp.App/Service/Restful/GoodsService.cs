@@ -33,8 +33,7 @@ namespace ShopErp.App.Service.Restful
             throw new Exception("无法处理的图片网址：" + image);
         }
 
-        public DataCollectionResponse<Goods> GetByAll(long shopId, GoodsState state, int timeType, DateTime start, DateTime end,
-            string vendor, string number, GoodsType type, string comment, ColorFlag flag, string order, int pageIndex, int pageSize)
+        public DataCollectionResponse<Goods> GetByAll(long shopId, GoodsState state, int timeType, DateTime start, DateTime end, string vendor, string number, GoodsType type, string comment, ColorFlag flag, GoodsVideoType videoType, string order, int pageIndex, int pageSize)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
             para["shopId"] = shopId;
@@ -47,6 +46,7 @@ namespace ShopErp.App.Service.Restful
             para["type"] = type;
             para["comment"] = comment;
             para["flag"] = flag;
+            para["videoType"] = videoType;
             para["order"] = order;
             para["pageIndex"] = pageIndex;
             para["pageSize"] = pageSize;

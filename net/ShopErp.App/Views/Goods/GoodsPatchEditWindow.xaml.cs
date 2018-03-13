@@ -102,7 +102,7 @@ namespace ShopErp.App.Views.Goods
                 return this.Goods;
             }
 
-            var data = ServiceContainer.GetService<GoodsService>().GetByAll(0, GoodsState.NONE, 0, DateTime.MinValue, DateTime.MinValue, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, "", 0, 0).Datas;
+            var data = ServiceContainer.GetService<GoodsService>().GetByAll(0, GoodsState.NONE, 0, DateTime.MinValue, DateTime.MinValue, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", 0, 0).Datas;
             return data.Select(obj => new GoodsViewModel(obj)).ToArray();
         }
 

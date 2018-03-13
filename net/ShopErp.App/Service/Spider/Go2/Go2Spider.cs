@@ -513,7 +513,14 @@ namespace ShopErp.App.Service.Spider.Go2
                 }
                 else
                 {
-                    g.VideoType = GoodsVideoType.VIDEO;
+                    if (videoUrl.EndsWith(".flv", StringComparison.OrdinalIgnoreCase))
+                    {
+                        g.VideoType = GoodsVideoType.PICTURE;
+                    }
+                    else
+                    {
+                        g.VideoType = GoodsVideoType.VIDEO;
+                    }
                 }
             }
 
@@ -534,8 +541,6 @@ namespace ShopErp.App.Service.Spider.Go2
             }
 
             g.Type = FormatType(typeNode.First().Attributes["title"].Value.Trim());
-
-
 
             var colorNode = htmlDoc.DocumentNode.SelectSingleNode("//div[@class='details-item']/div/ul/li[@class='details-attribute-item props-color']");
             if (colorNode != null)

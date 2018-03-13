@@ -45,14 +45,14 @@ namespace ShopErp.App.Views.Goods
                     return;
                 }
                 this.cbbStates.Bind<GoodsState>();
-                var shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas.Where(obj => obj.Enabled)
-                    .ToList();
+                var shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas.Where(obj => obj.Enabled).ToList();
                 shops.Insert(0, new Shop { Mark = "", Id = 0 });
                 shops.Insert(1, new Shop { Mark = "无", Id = -1 });
                 this.cbbShops.ItemsSource = shops;
                 this.cbbShops.SelectedIndex = 0;
                 this.cbbTypes.Bind<GoodsType>();
                 this.cbbFlags.Bind<ColorFlag>();
+                this.cbbVideoTypes.Bind<GoodsVideoType>();
                 cbbDisplayType_SelectionChanged(null, null);
                 this.myLoaded = true;
             }
@@ -78,6 +78,7 @@ namespace ShopErp.App.Views.Goods
                 this.pb1.Parameters.Add("Comment", this.tbComment.Text.Trim());
                 this.pb1.Parameters.Add("Order", (this.cbbSortType.SelectedItem as ComboBoxItem).Tag.ToString());
                 this.pb1.Parameters.Add("Flag", this.cbbFlags.GetSelectedEnum<ColorFlag>());
+                this.pb1.Parameters.Add("VideoType", this.cbbVideoTypes.GetSelectedEnum<GoodsVideoType>());
                 this.pb1.StartPage();
             }
             catch (Exception ex)
@@ -100,6 +101,7 @@ namespace ShopErp.App.Views.Goods
                     e.GetParameter<GoodsType>("Type"),
                     e.GetParameter<string>("Comment"),
                     e.GetParameter<ColorFlag>("Flag"),
+                    e.GetParameter<GoodsVideoType>("VideoType"),
                     e.GetParameter<string>("Order"),
                     e.CurrentPage - 1,
                     e.PageSize);

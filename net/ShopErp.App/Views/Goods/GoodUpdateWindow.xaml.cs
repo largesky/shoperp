@@ -96,8 +96,7 @@ namespace ShopErp.App.Views.Goods
                     }
                     else
                     {
-                        var d = this.shoesService.GetByAll(0, GoodsState.NONE, 0, DateTime.MinValue, DateTime.MinValue,
-                            strId, "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, "", 0, 0).Datas;
+                        var d = this.shoesService.GetByAll(0, GoodsState.NONE, 0, DateTime.MinValue, DateTime.MinValue, strId, "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", 0, 0).Datas;
                         foreach (var gu in d)
                         {
                             this.shoes.Add(new GoodUpdateViewModel { Source = gu });
@@ -109,8 +108,7 @@ namespace ShopErp.App.Views.Goods
                 int pageIndex = 0;
                 do
                 {
-                    var data = this.shoesService.GetByAll(0, GoodsState.NONE, 0, DateTime.MinValue, DateTime.MinValue,
-                        "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, "", pageIndex, 500);
+                    var data = this.shoesService.GetByAll(0, GoodsState.NONE, 0, DateTime.MinValue, DateTime.MinValue, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", pageIndex, 500);
                     if (data.Datas.Count < 1)
                     {
                         break;
@@ -119,8 +117,7 @@ namespace ShopErp.App.Views.Goods
                     {
                         this.shoes.Add(new GoodUpdateViewModel { Source = d });
                     }
-                    this.tbProgress.Text = "已经下载:" + (pageIndex + 1) + "/" + (data.Total + 499) / 500 + "页，当前共:" +
-                                           this.shoes.Count;
+                    this.tbProgress.Text = "已经下载:" + (pageIndex + 1) + "/" + (data.Total + 499) / 500 + "页，当前共:" + this.shoes.Count;
                     if (this.shoes.Count > 20)
                     {
                         this.dgvShoes.ScrollIntoView(this.shoes.Last());
@@ -184,10 +181,17 @@ namespace ShopErp.App.Views.Goods
                         {
                             throw new Exception("获取商品方法返回NULL");
                         }
-                        gu.Source.Price = g.Price;
+
                         gu.Source.Colors = g.Colors;
                         gu.Source.UpdateTime = DateTime.Now;
                         gu.Source.Material = g.Material;
+                        if (gu.Source.VideoType != g.VideoType)
+                        {
+                            gu.Source.VideoType = g.VideoType;
+                            GoodsService.SaveVideo(gu.Source, goodsVideoUrl);
+                        }
+                        if (gu.Source.Price > g.Price)
+                            gu.Source.Price = g.Price;
                         this.shoesService.Update(gu.Source);
                         state = "更新成功";
                     }

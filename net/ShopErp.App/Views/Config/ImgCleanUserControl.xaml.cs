@@ -92,9 +92,7 @@ namespace ShopErp.App.Views.Config
             {
                 this.count = 0;
                 this.isStop = false;
-                this.gus = ServiceContainer.GetService<GoodsService>().GetByAll(0, GoodsState.NONE, 0,
-                    DateTime.MinValue, DateTime.MinValue, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, "", 0,
-                    0).Datas;
+                this.gus = ServiceContainer.GetService<GoodsService>().GetByAll(0, GoodsState.NONE, 0, DateTime.MinValue, DateTime.MinValue, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", 0, 0).Datas;
                 this.vendors = ServiceContainer.GetService<VendorService>().GetByAll("", "", "", "", 0, 0).Datas;
 
                 string dir = LocalConfigService.GetValue(SystemNames.CONFIG_WEB_IMAGE_DIR, "");

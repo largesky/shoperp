@@ -92,11 +92,11 @@ namespace ShopErp.Server.Service.Restful
 
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/getbyall.html")]
-        public DataCollectionResponse<Goods> GetByAll(long shopId, GoodsState state, int timeType, DateTime start, DateTime end, string vendor, string number, GoodsType type, string comment, ColorFlag flag, string order, int pageIndex, int pageSize)
+        public DataCollectionResponse<Goods> GetByAll(long shopId, GoodsState state, int timeType, DateTime start, DateTime end, string vendor, string number, GoodsType type, string comment, ColorFlag flag, GoodsVideoType videoType, string order, int pageIndex, int pageSize)
         {
             try
             {
-                return this.dao.GetByAll(shopId, state, timeType, start, end, vendor, number, type, comment, flag, order, pageIndex, pageSize);
+                return this.dao.GetByAll(shopId, state, timeType, start, end, vendor, number, type, comment, flag, videoType, order, pageIndex, pageSize);
             }
             catch (Exception ex)
             {
