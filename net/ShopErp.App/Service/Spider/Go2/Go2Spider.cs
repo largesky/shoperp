@@ -507,20 +507,14 @@ namespace ShopErp.App.Service.Spider.Go2
             else
             {
                 videoUrl = videoNode.GetAttributeValue("data-url", "");
-                if (string.IsNullOrWhiteSpace(videoUrl))
+                if (videoUrl.EndsWith(".mp4", StringComparison.OrdinalIgnoreCase))
                 {
-                    g.VideoType = GoodsVideoType.NOT;
+                    g.VideoType = GoodsVideoType.VIDEO;
                 }
                 else
                 {
-                    if (videoUrl.EndsWith(".flv", StringComparison.OrdinalIgnoreCase))
-                    {
-                        g.VideoType = GoodsVideoType.PICTURE;
-                    }
-                    else
-                    {
-                        g.VideoType = GoodsVideoType.VIDEO;
-                    }
+                    g.VideoType = GoodsVideoType.NOT;
+                    videoUrl = "";
                 }
             }
 

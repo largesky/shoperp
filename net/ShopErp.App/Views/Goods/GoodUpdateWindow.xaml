@@ -20,6 +20,7 @@
             <TextBlock Text="(如不输入则读取所有)" Margin="3" VerticalAlignment="Center" />
             <Button Name="btnQuery" Content="读取商品" Margin="3" VerticalAlignment="Center" Click="btnQuery_Click" />
             <Button Name="btnUpdate" Content="更新商品" Margin="3" VerticalAlignment="Center" Click="btnUpdate_Click" />
+            <Button Name="btnTest" Content="更新商品" Margin="3" VerticalAlignment="Center" Click="btnTest_Click" Visibility="Collapsed" />
             <TextBlock Name="tbProgress" Margin="3" VerticalAlignment="Center" MinWidth="200" />
         </StackPanel>
         <DataGrid Grid.Row="1" IsReadOnly="True" Name="dgvShoes" AutoGenerateColumns="False" GridLinesVisibility="All"

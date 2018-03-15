@@ -16,6 +16,8 @@ using mshtml;
 using ShopErp.App.Service.Spider;
 using ShopErp.App.Service.Restful;
 using ShopErp.Domain;
+using ShopErp.App.Service;
+using System.IO;
 
 namespace ShopErp.App.Views.Goods
 {
@@ -229,8 +231,7 @@ namespace ShopErp.App.Views.Goods
         {
             try
             {
-                string content =
-                    "window.onerror=noError; function fixahref(){$(\"a\").each(function(index){$(this).attr(\"target\", \"_self\"); }); } function noError(){ return true; }";
+                string content = "window.onerror=noError; function fixahref(){$(\"a\").each(function(index){$(this).attr(\"target\", \"_self\"); }); } function noError(){ return true; }";
                 HTMLDocument doc2 = this.wb1.Document as HTMLDocument;
                 IHTMLElementCollection nodes = doc2.getElementsByTagName("head");
                 IHTMLScriptElement injectNode = (IHTMLScriptElement)doc2.createElement("SCRIPT");
@@ -247,6 +248,86 @@ namespace ShopErp.App.Views.Goods
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "页面加载完成，无法注入JS代码");
+            }
+        }
+
+        private void btnTest_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                this.isStop = false;
+                this.isRunning = true;
+                this.current = 0;
+                this.Dispatcher.BeginInvoke(new Action(() => this.btnUpdate.Content = "停止"));
+                string dir = LocalConfigService.GetValue(SystemNames.CONFIG_WEB_IMAGE_DIR, "");
+
+                if (string.IsNullOrWhiteSpace(dir))
+                {
+                    throw new Exception("没有配置图片文件夹");
+                }
+
+                foreach (var gu in shoes)
+                {
+                    if (this.isStop)
+                    {
+                        break;
+                    }
+
+                    if (gu.Source.UpdateEnabled == false)
+                    {
+                        continue;
+                    }
+
+                    if (gu.Source.VideoType != GoodsVideoType.VIDEO)
+                    {
+                        continue;
+                    }
+
+                    string state = null;
+                    try
+                    {
+                        string fullDir = System.IO.Path.Combine(dir, gu.Source.ImageDir);
+                        string[] videos = Directory.GetFiles(fullDir, "*.mp4");
+                        if (videos.Length > 0)
+                        {
+                            FileInfo fileInfo = new FileInfo(videos[0]);
+                            string newPath = System.IO.Path.Combine(fullDir, gu.Source.Number + ".mp4");
+                            File.Move(videos[0], newPath);
+                            state = "已处理";
+                        }
+                        else
+                        {
+                            state = "已检查，未处理";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        state = "错误:" + ex.Message;
+                    }
+                    finally
+                    {
+                        lock (this.shoes)
+                        {
+                            current++;
+                        }
+                        this.Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            this.tbProgress.Text = "已经更新:" + current + "/" + this.shoes.Count;
+                            gu.State = state;
+                        }));
+                        WPFHelper.DoEvents();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                this.isRunning = false;
+                this.isStop = true;
+                this.Dispatcher.BeginInvoke(new Action(() => this.btnUpdate.Content = "更新商品"));
             }
         }
     }

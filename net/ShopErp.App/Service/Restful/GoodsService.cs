@@ -118,7 +118,7 @@ namespace ShopErp.App.Service.Restful
                 throw new Exception(SystemNames.CONFIG_WEB_IMAGE_DIR + "不能为空");
             }
             goods.ImageDir = "goods\\" + goods.VendorId.ToString() + "\\" + goods.Number;
-            string videoPath = goods.ImageDir + "\\index" + videoUrl.Substring(videoUrl.LastIndexOf("."));
+            string videoPath = goods.ImageDir + "\\" + goods.Number + videoUrl.Substring(videoUrl.LastIndexOf("."));
             string fullPath = dir + "\\" + videoPath;
             var imageBytes = GetImage(videoUrl);
             FileUtil.EnsureExits(new FileInfo(fullPath));
