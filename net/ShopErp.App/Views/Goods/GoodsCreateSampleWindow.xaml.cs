@@ -67,6 +67,7 @@ namespace ShopErp.App.Views.Goods
                 goods.CreateTime = DateTime.Now;
                 goods.UpdateTime = DateTime.Now;
                 goods.Flag = ColorFlag.UN_LABEL;
+                goods.Comment = this.tbComment.Text.Trim();
                 GoodsService.SaveImage(goods, goods.Image);
 
                 if (this.rbAutoCheck.IsChecked.Value)
