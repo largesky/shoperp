@@ -57,6 +57,7 @@ namespace ShopErp.App.Views.Goods
                 {
                     //检查重复
                     var datas = goodsService.GetByAll(0, GoodsState.NONE, 0, DateTime.MinValue, DateTime.MinValue, "", goods.Number, GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", 0, 0).Datas;
+                    datas = datas.Where(obj => obj.Number.Equals(goods.Number, StringComparison.OrdinalIgnoreCase)).ToList();
                     if (datas.FirstOrDefault(obj => obj.VendorId == vendor.Id) != null)
                     {
                         throw new Exception("已经存在该厂家货号");
