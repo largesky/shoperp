@@ -10,7 +10,7 @@ namespace ShopErp.Server.Service.Pop.Pingduoduo
     {
         public string goods_id;
         public string goods_name;
-        public string image_url;
+        public string thumb_url;
         public string is_more_sku;
         public int goods_quantity;
         public string is_onsale;

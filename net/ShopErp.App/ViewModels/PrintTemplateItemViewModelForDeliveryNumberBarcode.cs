@@ -1,4 +1,5 @@
 ﻿using ShopErp.App.Domain;
+using ShopErp.App.Service.Print;
 using ShopErp.App.Views.Print;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace ShopErp.App.ViewModels
 {
     public class PrintTemplateItemViewModelForDeliveryNumberBarcode : PrintTemplateItemViewModelForBarcode
     {
-        public PrintTemplateItemViewModelForDeliveryNumberBarcode(PrintTemplate template) :
+        public PrintTemplateItemViewModelForDeliveryNumberBarcode(Service.Print.PrintTemplate template) :
             base(template)
         {
             this.PropertyUI = new PrintTemplateItemDeliveryNumberBarcodeUserControl();

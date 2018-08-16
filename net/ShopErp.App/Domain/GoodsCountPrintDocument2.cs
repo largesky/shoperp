@@ -18,8 +18,7 @@ namespace ShopErp.App.Domain
         private const int ITEM_MARGIN_HEIGHT = 4;
         private const int ITEM_MARGIN_WIDGHT = 2;
 
-        List<KeyValuePair<DocumentPage, List<GoodsCount>>> pagesList =
-            new List<KeyValuePair<DocumentPage, List<GoodsCount>>>();
+        List<KeyValuePair<DocumentPage, List<GoodsCount>>> pagesList = new List<KeyValuePair<DocumentPage, List<GoodsCount>>>();
 
         public override bool IsPageCountValid
         {

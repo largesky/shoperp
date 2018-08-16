@@ -1,8 +1,8 @@
 ﻿using ShopErp.App.Domain;
 
-namespace ShopErp.App.Service.Print.PrintFormatters
+namespace ShopErp.App.Service.Print.PrintFormatters.PrintInfoFormatters
 {
-    class PrintPageNumber : IPrintFormatter
+    class PrintPageNumber : IPrintInfoFormatter
     {
         public string AcceptType
         {

@@ -166,32 +166,16 @@ namespace ShopErp.Server.Service.Restful
                     CainiaoWaybillIiGetRequest req = new CainiaoWaybillIiGetRequest();
                     var reqBody = new CainiaoWaybillIiGetRequest.WaybillCloudPrintApplyNewRequestDomain();
                     reqBody.CpCode = GetCPCodeCN(deliveryCompany);
-                    reqBody.Sender = new CainiaoWaybillIiGetRequest.UserInfoDtoDomain
-                    {
-                        Phone = "",
-                        Name = senderName,
-                        Mobile = senderPhone,
-                        Address = GetShippingAddress(),
-                    };
+                    reqBody.Sender = new CainiaoWaybillIiGetRequest.UserInfoDtoDomain { Phone = "", Name = senderName, Mobile = senderPhone, Address = GetShippingAddress() };
                     //订单信息，一个请求里面可以包含多个订单，我们系统里面，默认一个
                     reqBody.TradeOrderInfoDtos = new List<CainiaoWaybillIiGetRequest.TradeOrderInfoDtoDomain>();
                     var or = new CainiaoWaybillIiGetRequest.TradeOrderInfoDtoDomain { ObjectId = Guid.NewGuid().ToString() };
                     or.UserId = long.Parse(popSellerNumberId);
                     or.TemplateUrl = templte.StandardTemplates.First().StandardTemplateUrl;
-                    or.Recipient = new CainiaoWaybillIiGetRequest.UserInfoDtoDomain
-                    {
-                        Phone = order.ReceiverPhone,
-                        Mobile = order.ReceiverMobile,
-                        Name = order.ReceiverName,
-                        Address = ParseTaobaoAddress(order.ReceiverAddress),
-                    };
+                    or.Recipient = new CainiaoWaybillIiGetRequest.UserInfoDtoDomain { Phone = order.ReceiverPhone, Mobile = order.ReceiverMobile, Name = order.ReceiverName, Address = ParseTaobaoAddress(order.ReceiverAddress), };
                     or.OrderInfo = new CainiaoWaybillIiGetRequest.OrderInfoDtoDomain { OrderChannelsType = GetOrderChannleTypeCN(order.PopType), TradeOrderList = new List<string>(wuliuIds) };
                     or.PackageInfo = new CainiaoWaybillIiGetRequest.PackageInfoDtoDomain { Id = packageId == "" ? null : packageId, Items = new List<CainiaoWaybillIiGetRequest.ItemDomain>() };
-                    or.PackageInfo.Items.AddRange(order.OrderGoodss.Where(obj => (int)obj.State >= (int)OrderState.PAYED && (int)obj.State <= (int)OrderState.NOTSALE).Select(obj => new CainiaoWaybillIiGetRequest.ItemDomain
-                    {
-                        Name = obj.Number + "," + obj.Edtion + "," + obj.Color + "," + obj.Size,
-                        Count = obj.Count
-                    }));
+                    or.PackageInfo.Items.AddRange(order.OrderGoodss.Where(obj => (int)obj.State >= (int)OrderState.PAYED && (int)obj.State <= (int)OrderState.NOTSALE).Select(obj => new CainiaoWaybillIiGetRequest.ItemDomain { Name = obj.Number + "," + obj.Edtion + "," + obj.Color + "," + obj.Size, Count = obj.Count }));
                     if (or.PackageInfo.Items.Count < 1)
                     {
                         or.PackageInfo.Items.Add(new CainiaoWaybillIiGetRequest.ItemDomain { Name = "没有商品或者其它未定义商品", Count = 1 });
@@ -221,6 +205,7 @@ namespace ShopErp.Server.Service.Restful
                 wuliuNumber.SortationNameAndRouteCode = "";
                 wuliuNumber.WuliuIds = wuliuId;
                 wuliuNumber.PackageId = packageId;
+                wuliuNumber.PrintData = printData;
                 ContactRouteCodeAndSortationName(wuliuNumber);
                 if (wuliuNumber.Id > 0)
                 {
@@ -843,7 +828,6 @@ namespace ShopErp.Server.Service.Restful
         public CainiaoPrintDataData data;
         public string signature;
         public string templateURL;
-
     }
 
     public class CainiaoPrintDataData

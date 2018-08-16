@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using ShopErp.Domain;
 
-namespace ShopErp.App.Domain
+namespace ShopErp.App.Service.Print
 {
     /// <summary>
     /// 所有打印模板的基类

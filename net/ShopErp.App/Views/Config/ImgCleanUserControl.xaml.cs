@@ -109,7 +109,7 @@ namespace ShopErp.App.Views.Config
                         return;
                     }
 
-                    string[] numberDirs = System.IO.Directory.GetDirectories(d).Where(obj => new System.IO.DirectoryInfo(obj).Name.All(c => Char.IsDigit(c))).ToArray();
+                    string[] numberDirs = System.IO.Directory.GetDirectories(d);
                     foreach (var md in numberDirs)
                     {
                         if (this.isStop)

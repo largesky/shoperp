@@ -20,6 +20,7 @@ using ShopErp.App.Service;
 using ShopErp.App.Service.Restful;
 using ShopErp.Domain;
 using System.Xml.Linq;
+using ShopErp.App.Service.Print;
 
 namespace ShopErp.App.Views.Config
 {
@@ -79,7 +80,7 @@ namespace ShopErp.App.Views.Config
                 this.tbImageDir.Text = LocalConfigService.GetValue(SystemNames.CONFIG_WEB_IMAGE_DIR, "");
                 this.tbName.Text = LocalConfigService.GetValue("GOODS_NAME", "贾勇");
                 this.tbPhone.Text = LocalConfigService.GetValue("GOODS_PHONE", "15590065809");
-                this.cbbGoodsTemplateType.ItemsSource = Print.FilePrintTemplateRepertory.GetAllN().Where(obj => obj.Type == PrintTemplate.TYPE_GOODS).Select(obj => obj.Name).ToArray();
+                this.cbbGoodsTemplateType.ItemsSource = Print.FilePrintTemplateRepertory.GetAllN().Where(obj => obj.Type == Service.Print.PrintTemplate.TYPE_GOODS).Select(obj => obj.Name).ToArray();
                 this.cbbGoodsTemplateType.SelectedItem = LocalConfigService.GetValue(SystemNames.CONFIG_GOODS_TEMPLATE, "");
 
                 this.tbAppKey.Text = ServiceContainer.GetService<SystemConfigService>().Get(-1, SystemNames.CONFIG_CAINIAO_APP_KEY, "");

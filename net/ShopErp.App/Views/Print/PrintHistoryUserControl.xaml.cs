@@ -20,6 +20,7 @@ using ShopErp.App.Utils;
 using System.Printing;
 using ShopErp.App.Service.Restful;
 using ShopErp.Domain;
+using ShopErp.App.Service.Print;
 
 namespace ShopErp.App.Views.Print
 {
@@ -29,7 +30,7 @@ namespace ShopErp.App.Views.Print
     public partial class PrintHistoryUserControl : UserControl
     {
         private PrintHistoryService printHistoryService = ServiceContainer.GetService<PrintHistoryService>();
-        public PrintTemplate[] AllCompanies { get; set; }
+        public Service.Print.PrintTemplate[] AllCompanies { get; set; }
 
         private bool myLoaded = false;
 
@@ -98,7 +99,7 @@ namespace ShopErp.App.Views.Print
                 ComboBox cbbDeliveryCompanies =
                     ((sender as Button).Parent as StackPanel).FindName("cbbDeliveryCompanies") as ComboBox;
                 string newDeliveryNumber = tb.Text.Trim();
-                PrintTemplate printTemplate = cbbDeliveryCompanies.SelectedItem as PrintTemplate;
+                var printTemplate = cbbDeliveryCompanies.SelectedItem as Service.Print.PrintTemplate;
                 if (string.IsNullOrWhiteSpace(newDeliveryNumber) || printTemplate == null)
                 {
                     MessageBox.Show("物流公司与快递单号不能为空");

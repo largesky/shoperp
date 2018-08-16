@@ -24,6 +24,8 @@ using System.Drawing.Text;
 using ShopErp.App.Domain;
 using ShopErp.App.Service.Restful;
 using ShopErp.Domain;
+using ShopErp.App.Service.Print;
+using ShopErp.App.Service.Print.PrintDocument.DeliveryPrintDocument;
 
 namespace ShopErp.App.Views.Print
 {
@@ -33,7 +35,7 @@ namespace ShopErp.App.Views.Print
     public partial class PrintTemplateUserControl : UserControl
     {
         private FilePrintTemplateRepertory deliveryTemplateRepertory = new FilePrintTemplateRepertory();
-        private ObservableCollection<PrintTemplate> deliveryTemplates = new ObservableCollection<PrintTemplate>();
+        private ObservableCollection<Service.Print.PrintTemplate> deliveryTemplates = new ObservableCollection<Service.Print.PrintTemplate>();
         private bool loaded = false;
 
         PrintDialog pd = new PrintDialog();
@@ -110,7 +112,7 @@ namespace ShopErp.App.Views.Print
                     return;
                 }
 
-                PrintTemplate deliveryTemplate = new PrintTemplate { Name = name };
+                Service.Print.PrintTemplate deliveryTemplate = new Service.Print.PrintTemplate { Name = name };
                 FilePrintTemplateRepertory.InsertN(deliveryTemplate);
                 this.deliveryTemplates.Add(deliveryTemplate);
                 this.lstDeliveryPrintTemplates.SelectedItem = deliveryTemplate;
@@ -125,7 +127,7 @@ namespace ShopErp.App.Views.Print
         {
             try
             {
-                PrintTemplate deliveryTemplate = this.lstDeliveryPrintTemplates.SelectedItem as PrintTemplate;
+                var deliveryTemplate = this.lstDeliveryPrintTemplates.SelectedItem as Service.Print.PrintTemplate;
 
                 if (deliveryTemplate == null)
                 {
@@ -169,7 +171,7 @@ namespace ShopErp.App.Views.Print
         {
             try
             {
-                PrintTemplate deliveryTemplate = this.lstDeliveryPrintTemplates.SelectedItem as PrintTemplate;
+                var deliveryTemplate = this.lstDeliveryPrintTemplates.SelectedItem as Service.Print.PrintTemplate;
                 if (deliveryTemplate == null)
                 {
                     MessageBox.Show("请选择相应模板");
@@ -210,7 +212,7 @@ namespace ShopErp.App.Views.Print
             }
             try
             {
-                var item = this.lstDeliveryPrintTemplates.SelectedItem as PrintTemplate;
+                var item = this.lstDeliveryPrintTemplates.SelectedItem as Service.Print.PrintTemplate;
                 if (item == null)
                 {
                     return;
@@ -285,7 +287,7 @@ namespace ShopErp.App.Views.Print
                     this.cDeliveryHost.Children.Remove(thumb);
                 }
 
-                var deliveryTemplate = this.lstDeliveryPrintTemplates.SelectedItem as PrintTemplate;
+                var deliveryTemplate = this.lstDeliveryPrintTemplates.SelectedItem as Service.Print.PrintTemplate;
                 this.dgDeliverPrintTemplateHolder.IsEnabled = deliveryTemplate != null;
                 if (deliveryTemplate == null)
                 {
@@ -345,11 +347,11 @@ namespace ShopErp.App.Views.Print
                 {
                     return;
                 }
-                var deliveryTemplate = this.lstDeliveryPrintTemplates.SelectedItem as PrintTemplate;
+                var deliveryTemplate = this.lstDeliveryPrintTemplates.SelectedItem as Service.Print.PrintTemplate;
                 PrintTemplateItemTypeViewModel vmItem = cb.DataContext as PrintTemplateItemTypeViewModel;
                 PrintTemplateItemViewModelCommon itemViewModel =
                     PrintTemplateItemViewModelFactory.Create(deliveryTemplate, vmItem.Type, vmItem.Type);
-                PrintTemplateItem item = new PrintTemplateItem();
+                Service.Print.PrintTemplateItem item = new Service.Print.PrintTemplateItem();
                 item.RunTimeTag = itemViewModel;
                 item.Id = Guid.NewGuid();
                 item.Type = vmItem.Type;
@@ -394,7 +396,7 @@ namespace ShopErp.App.Views.Print
                 var brige = cb.DataContext as PrintTemplateItemViewModelCommon;
                 DeattachThumbEvents(brige);
                 this.cDeliveryHost.Children.Remove(brige.UI);
-                var deliveryTemplate = this.lstDeliveryPrintTemplates.SelectedItem as PrintTemplate;
+                var deliveryTemplate = this.lstDeliveryPrintTemplates.SelectedItem as Service.Print.PrintTemplate;
                 deliveryTemplate.Items.Remove(brige.Data);
             }
             catch (Exception ex)
@@ -412,7 +414,7 @@ namespace ShopErp.App.Views.Print
         {
             try
             {
-                PrintTemplate printTemplate = this.lstDeliveryPrintTemplates.SelectedItem as PrintTemplate;
+                var printTemplate = this.lstDeliveryPrintTemplates.SelectedItem as Service.Print.PrintTemplate;
                 if (printTemplate == null)
                 {
                     MessageBox.Show("请选择一个模板");
@@ -434,7 +436,7 @@ namespace ShopErp.App.Views.Print
                 }
                 pd.PrintTicket.PageMediaSize =
                     new System.Printing.PageMediaSize(printTemplate.Width, printTemplate.Height);
-                if (printTemplate.Type == PrintTemplate.TYPE_DELIVER)
+                if (printTemplate.Type == Service.Print.PrintTemplate.TYPE_DELIVER)
                 {
                     Order[] orders = new Order[count];
                     WuliuNumber[] wns = new WuliuNumber[count];
@@ -455,7 +457,7 @@ namespace ShopErp.App.Views.Print
                     doc.GenPages(orders, wns, printTemplate);
                     pd.PrintDocument(doc, "打印测试");
                 }
-                else if (printTemplate.Type == PrintTemplate.TYPE_GOODS)
+                else if (printTemplate.Type == Service.Print.PrintTemplate.TYPE_GOODS)
                 {
                     OrderGoods[] orderGoodss = new OrderGoods[count];
                     for (int i = 0; i < count; i++)
@@ -466,7 +468,7 @@ namespace ShopErp.App.Views.Print
                     doc.GenPages(orderGoodss, printTemplate);
                     pd.PrintDocument(doc, "打印测试");
                 }
-                else if (printTemplate.Type == PrintTemplate.TYPE_RETURN)
+                else if (printTemplate.Type == Service.Print.PrintTemplate.TYPE_RETURN)
                 {
                     OrderReturn[] or = new OrderReturn[count];
                     for (int i = 0; i < count; i++)
@@ -598,7 +600,7 @@ namespace ShopErp.App.Views.Print
         {
             try
             {
-                var template = this.lstDeliveryPrintTemplates.SelectedItem as PrintTemplate;
+                var template = this.lstDeliveryPrintTemplates.SelectedItem as Service.Print.PrintTemplate;
                 if (template == null)
                 {
                     throw new Exception("请选择模板");
@@ -615,80 +617,23 @@ namespace ShopErp.App.Views.Print
             }
         }
 
-        //private void btnConvert_Click(object sender, RoutedEventArgs e)
-        //{
-        //    try
-        //    {
-        //        var vv = FilePrintTemplateRepertory.GetAll();
-        //        var vn = vv.Select(obj => Convert(obj)).ToArray();
-        //        foreach (var v in vn)
-        //        {
-        //            FilePrintTemplateRepertory.InsertNew(v);
-        //        }
+        private void btnConvert_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var vv = FilePrintTemplateRepertory.GetAll();
+                var vn = vv.Select(obj => FilePrintTemplateRepertory.ConvertOld(obj)).ToArray();
+                foreach (var v in vn)
+                {
+                    FilePrintTemplateRepertory.InsertN(v);
+                }
+                vn = FilePrintTemplateRepertory.GetAllN();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
 
-        //        vn = FilePrintTemplateRepertory.GetAllN();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show(ex.Message);
-        //    }
-        //}
-
-
-        //private Core.Domain.Print.PrintTemplate Convert(Domain.PrintTemplate pt)
-        //{
-        //    var npt = new Core.Domain.Print.PrintTemplate
-        //    {
-        //        BackgroundImage = pt.Image,
-        //        AttachFiles = pt.AttachImages,
-        //        DeliveryCompany = pt.DeliveryCompany.DeliveryCompany,
-        //        Height = pt.Height,
-        //        Width = pt.Width,
-        //        Name = pt.Name,
-        //        PaperType = pt.PaperType,
-        //        PrinterName = "",
-        //        Type = "快递",
-        //        XOffset = pt.XOffset,
-        //        YOffset = pt.YOffset,
-        //    };
-
-        //    foreach (var v in pt.Items)
-        //    {
-        //        try
-        //        {
-        //            var npti = new Core.Domain.Print.PrintTemplateItem
-        //            {
-        //                FontName = v.FontName,
-        //                FontSize = v.FontSize,
-        //                Format = v.Format,
-        //                Height = v.Height,
-        //                Id = v.Id,
-        //                RunTimeTag = null,
-        //                Value = v.Value,
-        //                Value1 = v.Value1,
-        //                Width = v.Width,
-        //                X = v.X,
-        //                Y = v.Y,
-        //                Type = Convert(v.Type),
-        //            };
-        //            npt.Items.Add(npti);
-
-        //        }
-        //        catch (Exception ee)
-        //        {
-        //            MessageBox.Show(ee.Message);
-        //        }
-
-        //    }
-
-        //    return npt;
-        //}
-
-        //private string Convert(Domain.PrintTemplateItemTypes type)
-        //{
-        //    var str = EnumUtil.GetEnumValueDescription(type);
-        //    Debug.WriteLine("类型:" + type + " 转换为:" + str);
-        //    return str;
-        //}
     }
 }

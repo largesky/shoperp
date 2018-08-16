@@ -9,9 +9,12 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using ShopErp.App.Service.Print;
 using ShopErp.App.Service.Print.GoodsFormatters;
 using ShopErp.App.Service.Print.OtherFormatters;
+using ShopErp.App.Service.Print.PrintDocument.DeliveryPrintDocument;
 using ShopErp.App.Service.Print.PrintFormatters;
+using ShopErp.App.Service.Print.PrintFormatters.PrintInfoFormatters;
 using ShopErp.Domain;
 
 namespace ShopErp.App.Domain
@@ -22,7 +25,7 @@ namespace ShopErp.App.Domain
 
         private int count = 0;
 
-        private PrintTemplate template = null;
+        private Service.Print.PrintTemplate template = null;
 
         public override bool IsPageCountValid
         {
@@ -65,12 +68,12 @@ namespace ShopErp.App.Domain
             return this.pages[pageNumber];
         }
 
-        public void GenPages(OrderGoods[] orderGoods, PrintTemplate template)
+        public void GenPages(OrderGoods[] orderGoods, Service.Print.PrintTemplate template)
         {
             this.template = template;
             this.orderGoodss = orderGoods;
             this.PageSize = new System.Windows.Size(template.Width, template.Height);
-            PrintInfo pi = new PrintInfo { };
+            var pi = new Service.Print.PrintInfo { };
             //生成页
             for (int i = 0; i < this.orderGoodss.Length; i++)
             {
@@ -91,7 +94,7 @@ namespace ShopErp.App.Domain
             }
         }
 
-        private DocumentPage DrawingPage(OrderGoods og, PrintInfo pi)
+        private DocumentPage DrawingPage(OrderGoods og, Service.Print.PrintInfo pi)
         {
             DrawingVisual dv = new DrawingVisual() { };
             var rendor = dv.RenderOpen();

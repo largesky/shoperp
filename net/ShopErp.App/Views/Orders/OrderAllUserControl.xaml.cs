@@ -26,6 +26,7 @@ using ShopErp.App.Service.Restful;
 using ShopErp.App.Utils;
 using ShopErp.Domain;
 using ShopErp.Domain.RestfulResponse;
+using ShopErp.App.Service.Print;
 
 namespace ShopErp.App.Views.Orders
 {
@@ -540,8 +541,7 @@ namespace ShopErp.App.Views.Orders
                 {
                     throw new Exception("系统中没有配置商品模板不能打印");
                 }
-                var template = Print.FilePrintTemplateRepertory.GetAllN()
-                    .FirstOrDefault(obj => obj.Type == PrintTemplate.TYPE_GOODS && obj.Name == goodsTemplate);
+                var template = Print.FilePrintTemplateRepertory.GetAllN().FirstOrDefault(obj => obj.Type == Service.Print.PrintTemplate.TYPE_GOODS && obj.Name == goodsTemplate);
                 if (template == null)
                 {
                     throw new Exception("系统中配置的商品模板:" + goodsTemplate + "不存在，或者类型不对");

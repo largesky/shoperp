@@ -21,6 +21,7 @@ using System.Printing;
 using ShopErp.App.Service;
 using ShopErp.App.Service.Restful;
 using ShopErp.Domain;
+using ShopErp.App.Service.Print;
 
 namespace ShopErp.App.Views.Orders
 {
@@ -227,8 +228,7 @@ namespace ShopErp.App.Views.Orders
                 }
 
                 OrderReturnPrintDocument orp = new OrderReturnPrintDocument();
-                var printTemplate = Print.FilePrintTemplateRepertory.GetAllN()
-                    .FirstOrDefault(obj => obj.Type == PrintTemplate.TYPE_RETURN);
+                var printTemplate = Print.FilePrintTemplateRepertory.GetAllN().FirstOrDefault(obj => obj.Type == Service.Print.PrintTemplate.TYPE_RETURN);
                 if (printTemplate == null)
                 {
                     throw new Exception("未找到退货模板");

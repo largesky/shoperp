@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ShopErp.App.Domain;
+using ShopErp.App.Service.Print;
 using ShopErp.App.Views.Print;
 
 namespace ShopErp.App.ViewModels
 {
     class PrintTemplateItemViewModelForRouteCode : PrintTemplateItemViewModelCommon
     {
-        public PrintTemplateItemViewModelForRouteCode(PrintTemplate template) : base(template)
+        public PrintTemplateItemViewModelForRouteCode(Service.Print.PrintTemplate template) : base(template)
         {
             this.PropertyUI = new PrintTemplateItemViewModelRouteCodeUserControl();
             this.PropertyUI.DataContext = this;

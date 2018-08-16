@@ -1,8 +1,8 @@
-﻿using ShopErp.App.Domain;
+﻿using ShopErp.App.Service.Print;
 
-namespace ShopErp.App.Service.Print.PrintFormatters
+namespace ShopErp.App.Service.Print.PrintFormatters.PrintInfoFormatters
 {
-    public class PrintFormatterManager : PrintDataFormatterManagerBase<IPrintFormatter>
+    public class PrintFormatterManager : PrintDataFormatterManagerBase<IPrintInfoFormatter>
     {
         public static object Format(PrintTemplate template, PrintTemplateItem item, PrintInfo printInfo)
         {

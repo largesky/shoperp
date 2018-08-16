@@ -17,12 +17,24 @@ using ShopErp.App.Service.Print.PrintFormatters;
 using ShopErp.App.Service.Print.ShopFormatters;
 using ShopErp.Domain;
 using System.Windows.Controls;
+using ShopErp.App.Service.Print.PrintFormatters.PrintInfoFormatters;
+using ShopErp.App.Service.Print;
+using ShopErp.App.Utils;
 
-namespace ShopErp.App.Domain
+namespace ShopErp.App.Service.Print.PrintDocument.DeliveryPrintDocument
 {
-    class OrderPrintDocument : DocumentPaginator, IDocumentPaginatorSource
+    class OrderPrintDocument : DocumentPaginator, IDocumentPaginatorSource, IDeliveryPrintDocument
     {
         private PrintTemplate template = null;
+
+        public Order[] Orders { get; set; }
+
+        private List<DocumentPage> pages = new List<DocumentPage>();
+
+        public event Action<object, int> PageGening;
+        public event Action<object, int> PageGened;
+        public event Action<object, int> PagePrinting;
+        public event Action<object, int> PagePrinted;
 
         public override bool IsPageCountValid
         {
@@ -46,36 +58,38 @@ namespace ShopErp.App.Domain
             get { return this; }
         }
 
-        /// <summary>
-        /// 获取或者设置 打印的订单
-        /// </summary>
-        private List<Order> orders = new List<Order>();
-
-        private List<DocumentPage> pages = new List<DocumentPage>();
-
-        /// <summary>
-        /// 开始输出页面到打印机事件
-        /// </summary>
-        public event Action<OrderPrintDocument, Order> PagePrintStarting;
-
-        /// <summary>
-        /// 页面开始生成
-        /// </summary>
-        public event Action<OrderPrintDocument, Order> PageGenStarting;
-
         public override DocumentPage GetPage(int pageNumber)
         {
-            if (this.PagePrintStarting != null)
-            {
-                this.PagePrintStarting(this, this.orders[pageNumber]);
-            }
-
             if (pageNumber >= this.pages.Count)
             {
                 throw new Exception("系统打印调用页已超出最大页");
             }
-
+            this.OnPagePrinting(pageNumber);
             return this.pages[pageNumber];
+        }
+
+        private void OnPageGening(int page)
+        {
+            if (this.PageGening != null)
+                this.PageGening(this, page);
+        }
+
+        private void OnPageGened(int page)
+        {
+            if (this.PageGened != null)
+                this.PageGened(this, page);
+        }
+
+        private void OnPagePrinting(int page)
+        {
+            if (this.PagePrinting != null)
+                this.PagePrinting(this, page);
+        }
+
+        private void OnPagePrinted(int page)
+        {
+            if (this.PagePrinted != null)
+                this.PagePrinted(this, page);
         }
 
         public void GenPages(Order[] orders, WuliuNumber[] wuliuNumbers, PrintTemplate template)
@@ -100,20 +114,17 @@ namespace ShopErp.App.Domain
                 throw new Exception("订单与物流信息长度不相等");
             }
 
-            this.orders = new List<Order>();
+            this.Orders = new Order[orders.Length];
+            Array.Copy(orders, this.Orders, orders.Length);
             this.template = template;
             this.PageSize = new System.Windows.Size(template.Width, template.Height);
             PrintInfo pi = new PrintInfo { PrintTime = DateTime.Now, PageInfo = "" };
             for (int i = 0; i < orders.Length; i++)
             {
                 pi.PageInfo = "第" + (i + 1).ToString() + "/" + orders.Length.ToString() + "页";
-                if (this.PageGenStarting != null)
-                {
-                    this.PageGenStarting(this, orders[i]);
-                }
+                this.OnPageGening(i);
                 DocumentPage page = DrawingPage(orders[i], wuliuNumbers[i], pi);
                 this.pages.Add(page);
-                this.orders.Add(orders[i]);
             }
         }
 
@@ -232,6 +243,11 @@ namespace ShopErp.App.Domain
             }
             rendor.Close();
             return new DocumentPage(dv, this.PageSize, new Rect(this.PageSize), new Rect(this.PageSize));
+        }
+
+        public void Print(string printer)
+        {
+            PrintUtil.GetPrinter(printer).PrintDocument(this, "快递打印");
         }
     }
 }

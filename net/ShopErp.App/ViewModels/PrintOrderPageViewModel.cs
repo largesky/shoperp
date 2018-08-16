@@ -22,6 +22,8 @@ using ShopErp.App.Service;
 using ShopErp.App.Service.Restful;
 using ShopErp.Domain;
 using ShopErp.App.Views;
+using ShopErp.App.Service.Print;
+using ShopErp.App.Service.Print.PrintDocument.DeliveryPrintDocument;
 
 namespace ShopErp.App.ViewModels
 {
@@ -43,7 +45,7 @@ namespace ShopErp.App.ViewModels
 
         public static readonly DependencyProperty StartDeliveryNumberProperty = DependencyProperty.Register("StartDeliveryNumber", typeof(string), typeof(PrintOrderPageViewModel));
 
-        public static readonly DependencyProperty PrintTemplateProperty = DependencyProperty.Register("PrintTemplate", typeof(PrintTemplate), typeof(PrintOrderPageViewModel));
+        public static readonly DependencyProperty PrintTemplateProperty = DependencyProperty.Register("PrintTemplate", typeof(Service.Print.PrintTemplate), typeof(PrintOrderPageViewModel));
 
         public static readonly DependencyProperty AutoDeleteSucessOrderProperty = DependencyProperty.Register("AutoDeleteSucessOrder", typeof(bool), typeof(PrintOrderPageViewModel));
 
@@ -109,9 +111,9 @@ namespace ShopErp.App.ViewModels
             set { this.SetValue(StartDeliveryNumberProperty, value); }
         }
 
-        public PrintTemplate PrintTemplate
+        public Service.Print.PrintTemplate PrintTemplate
         {
-            get { return (PrintTemplate)this.GetValue(PrintTemplateProperty); }
+            get { return (Service.Print.PrintTemplate)this.GetValue(PrintTemplateProperty); }
             set { this.SetValue(PrintTemplateProperty, value); }
         }
 
@@ -239,7 +241,7 @@ namespace ShopErp.App.ViewModels
         {
             try
             {
-                PrintTemplate template = this.PrintTemplate;
+                var template = this.PrintTemplate;
                 this.CanStartPrint = false;
                 this.CanStopPrint = true;
                 this.IsStop = false;
@@ -366,8 +368,8 @@ namespace ShopErp.App.ViewModels
                 //生成打印数据
                 pd.PrintTicket.PageMediaSize = new System.Printing.PageMediaSize(PrintTemplate.Width, PrintTemplate.Height);
                 this.printDoc = new OrderPrintDocument();
-                this.printDoc.PagePrintStarting += new Action<OrderPrintDocument, Order>(printDoc_PrintStarting);
-                this.printDoc.PageGenStarting += PrintDoc_PageGenStarting;
+                this.printDoc.PagePrinting += PrintDoc_PagePrinting;
+                this.printDoc.PageGening += PrintDoc_PageGening;
                 this.printDoc.GenPages(mergedOrders.ToArray(), wuliuNumbers, template);
 
                 foreach (var preOne in selectedOrderVMs.Where(obj => obj.State == "正在生成"))
@@ -415,29 +417,23 @@ namespace ShopErp.App.ViewModels
             }
         }
 
-        public void Stop()
-        {
-            if (this.IsStop && this.printDoc != null)
-            {
-                this.IsStop = false;
-            }
-        }
-
-        private void PrintDoc_PageGenStarting(OrderPrintDocument arg1, Order arg2)
+        private void PrintDoc_PageGening(object o, int index)
         {
             //用户取消了打印
             if (this.IsStop)
             {
                 throw new Exception("打印已经终止");
             }
-            //上传前一个
-            foreach (var preOne in this.OrderViewModels.Where(obj => obj.State == "正在生成" && obj.Source.Id != arg2.Id))
+
+            var printDoc = o as IDeliveryPrintDocument;
+
+            foreach (var preOne in this.OrderViewModels.Where(obj => obj.State == "正在生成" && obj.Source.Id != printDoc.Orders[index].Id))
             {
                 preOne.State = "生成完成";
                 preOne.Background = null;
             }
             //打印当前的
-            var vms = GetMatchOrderViewModels(arg2);
+            var vms = GetMatchOrderViewModels(printDoc.Orders[index]);
             foreach (var vm in vms)
             {
                 vm.State = "正在生成";
@@ -446,25 +442,25 @@ namespace ShopErp.App.ViewModels
                 vm.Source.PrintTime = DateTime.Now;
                 WPFHelper.DoEvents();
             }
-            this.State = string.Format("第三步：正在生成{0}/{1}...",
-                this.OrderViewModels.Count(obj => obj.State == "生成完成" && obj.IsChecked),
-                this.OrderViewModels.Count(obj => obj.IsChecked));
+            this.State = string.Format("第三步：正在生成{0}/{1}...", this.OrderViewModels.Count(obj => obj.State == "生成完成" && obj.IsChecked), this.OrderViewModels.Count(obj => obj.IsChecked));
+
         }
 
-        private void printDoc_PrintStarting(OrderPrintDocument sender, Order order)
+        private void PrintDoc_PagePrinting(object o, int index)
         {
             //用户取消了打印
             if (this.IsStop)
             {
                 throw new Exception("打印已经终止");
             }
+            var printDoc = o as IDeliveryPrintDocument;
             //上传前一个
-            foreach (var preOne in this.OrderViewModels.Where(obj => obj.State == "正在打印" && obj.Source.Id != order.Id))
+            foreach (var preOne in this.OrderViewModels.Where(obj => obj.State == "正在打印" && obj.Source.Id != printDoc.Orders[index].Id))
             {
                 this.UpdateDelivery(preOne);
             }
             //打印当前的
-            var vms = GetMatchOrderViewModels(order);
+            var vms = GetMatchOrderViewModels(printDoc.Orders[index]);
             foreach (var vm in vms)
             {
                 vm.State = "正在打印";
@@ -473,8 +469,15 @@ namespace ShopErp.App.ViewModels
                 vm.Source.PrintTime = DateTime.Now;
                 WPFHelper.DoEvents();
             }
-            this.State = string.Format("第四步：正在打印{0}/{1}...", this.OrderViewModels.Count(obj => obj.State == "打印成功"),
-                this.OrderViewModels.Count(obj => obj.IsChecked));
+            this.State = string.Format("第四步：正在打印{0}/{1}...", this.OrderViewModels.Count(obj => obj.State == "打印成功"), this.OrderViewModels.Count(obj => obj.IsChecked));
+        }
+
+        public void Stop()
+        {
+            if (this.IsStop && this.printDoc != null)
+            {
+                this.IsStop = false;
+            }
         }
 
         private void UpdateDelivery(PrintOrderViewModel vm)

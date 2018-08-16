@@ -29,7 +29,7 @@
                           SelectionChanged="cbbDisplayType_SelectionChanged">
                     <ComboBoxItem>列表</ComboBoxItem>
                     <ComboBoxItem>图片</ComboBoxItem>
-                    <ComboBox.SelectedIndex>0</ComboBox.SelectedIndex>
+                    <ComboBox.SelectedIndex>1</ComboBox.SelectedIndex>
                 </ComboBox>
                 <ComboBox Name="cbbSortType" SelectionChanged="cbbSortType_SelectionChanged" VerticalAlignment="Center">
                     <ComboBoxItem Tag="CreateTime asc">时间升序</ComboBoxItem>

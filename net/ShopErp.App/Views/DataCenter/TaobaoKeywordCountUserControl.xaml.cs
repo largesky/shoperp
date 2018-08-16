@@ -78,7 +78,7 @@ namespace ShopErp.App.Views.DataCenter
                     return;
                 }
                 string[] keys = item.Keywords.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                this.dgvKeyword.ItemsSource = this.allKeywords.Where(obj => keys.All(o => obj.Keywords.Contains(o))).ToArray();
+                this.dgvKeyword.ItemsSource = this.allKeywords.Where(obj => TaobaoKeywordDetailService.Match(keys, obj.Keywords)).ToArray();
             }
             catch (Exception ex)
             {
@@ -152,7 +152,7 @@ namespace ShopErp.App.Views.DataCenter
                 foreach (var item in anlKeywords)
                 {
                     string[] keys = item.Keywords.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                    var match = this.allKeywords.Where(obj => keys.All(o => obj.Keywords.Contains(o))).ToArray();
+                    var match = this.allKeywords.Where(obj => TaobaoKeywordDetailService.Match(keys, obj.Keywords)).ToArray();
                     item.Total = match.Sum(obj => obj.Total);
                     item.AddCat = match.Sum(obj => obj.AddCat);
                     item.Sale = match.Sum(obj => obj.Sale);
@@ -295,31 +295,6 @@ namespace ShopErp.App.Views.DataCenter
             }
 
             return dicKeywords;
-        }
-
-        private void btnDelete_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                if (this.dgvKeyword.SelectedCells.Count < 1)
-                {
-                    throw new Exception("未选择数据");
-                }
-                var items = this.dgvKeyword.SelectedCells.Select(obj => obj.Item).Distinct().ToArray();
-                if (MessageBox.Show("是否删除数据共：" + items.Length, "", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
-                {
-                    return;
-                }
-                foreach (var v in items)
-                {
-                    ServiceContainer.GetService<TaobaoKeywordDetailService>().Delete((v as TaobaoKeywordDetail).Id);
-                }
-                MessageBox.Show("删除完成");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
         }
     }
 }

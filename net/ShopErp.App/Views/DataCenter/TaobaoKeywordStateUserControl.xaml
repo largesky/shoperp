@@ -5,9 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ShopErp.App.Views.DataCenter"
              mc:Ignorable="d" 
-             xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
-             xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
-             xmlns:chart="clr-namespace:System.Windows.Forms.DataVisualization.Charting;assembly=System.Windows.Forms.DataVisualization"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              d:DesignHeight="300" d:DesignWidth="1200" Loaded="UserControl_Loaded">
     <Grid>
@@ -18,42 +15,14 @@
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" Orientation="Horizontal">
                 <Button Name="btnRefresh" Content="刷新关键词列表" Margin="3" VerticalAlignment="Center" Width="120" Click="btnRefresh_Click"/>
-                <ComboBox x:Name="cbbKeyWords" Margin="3" VerticalAlignment="Center" Width="200" SelectionChanged="cbbKeyWords_SelectionChanged"/>
+                <ComboBox x:Name="cbbKeyWords" Margin="3" VerticalAlignment="Center" Width="200"/>
                 <TextBlock Text="开始时间:" Margin="3" VerticalAlignment="Center" />
                 <xctk:DateTimePicker Name="dpStart" Margin="3" VerticalAlignment="Center" Width="150" xctk:Format="Custom" xctk:TimeFormatString="yyyy-MM-dd HH:mm:ss" />
                 <TextBlock Text="到:" Margin="3" VerticalAlignment="Center" />
                 <xctk:DateTimePicker Name="dpEnd" Margin="3" VerticalAlignment="Center" Width="150" xctk:Format="Custom" xctk:TimeFormatString="yyyy-MM-dd HH:mm:ss" />
                 <Button Name="btnQuery" Content="查询数据" Margin="3" VerticalAlignment="Center" Width="100" Click="btnQuery_Click" HorizontalAlignment="Right"/>
-                <TextBlock Text="图表类型:" Margin="3" VerticalAlignment="Center" />
-                <ComboBox Name="cbbCharType" Margin="3" VerticalAlignment="Center" SelectionChanged="cbbCharType_SelectionChanged" Width="100" />
             </StackPanel>
-
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <ListBox Name="lbKeywords" Grid.Column="0" SelectionChanged="lbKeywords_SelectionChanged"/>
-                <ListBox Name="lbDataTypes" Grid.Row="1" >
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}" Background="{Binding BrushColor}"/>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-                <WindowsFormsHost Grid.Row="0" Grid.Column="1" Grid.RowSpan="2">
-                    <chart:Chart x:Name="chart1">
-                        <chart:Chart.Visible>true</chart:Chart.Visible>
-                        <chart:Chart.ChartAreas>
-                            <chart:ChartArea x:Name="chartarea1" />
-                        </chart:Chart.ChartAreas>
-                    </chart:Chart>
-                </WindowsFormsHost>
-            </Grid>
+            <DataGrid Name="dgvItems" Grid.Row="1" FontSize="16" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" SelectionMode="Extended" SelectionUnit="CellOrRowHeader" RowHeight="40"/>
         </Grid>
     </Grid>
 </UserControl>

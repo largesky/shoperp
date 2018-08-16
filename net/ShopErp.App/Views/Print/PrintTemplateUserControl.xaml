@@ -131,6 +131,7 @@
                                 VerticalAlignment="Center" Click="btnCopyDeliveryPrintTemplate_Click" />
                         <Button Name="btnSaveDeliveryPrintTemplate" Content="保存当前模板" Margin="3,3,3,10"
                                 VerticalAlignment="Center" Click="btnSaveDeliveryPrintTemplate_Click" />
+                        <Button Name="btnConvert" Content="转换" Click="btnConvert_Click" Margin="3,3,3,10"/>
                         <TextBlock Text="测试张数:" Margin="3,10,3,0" VerticalAlignment="Center" />
                         <TextBox Name="tbTestCount" Text="3" Margin="3,10,3,0" VerticalAlignment="Center" />
                         <Button Name="btnPrintTest" Content="打印测试" Margin="3,10,3,10" VerticalAlignment="Center"

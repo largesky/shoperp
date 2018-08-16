@@ -9,8 +9,10 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using ShopErp.App.Service.Print;
 using ShopErp.App.Service.Print.OtherFormatters;
 using ShopErp.App.Service.Print.PrintFormatters;
+using ShopErp.App.Service.Print.PrintFormatters.PrintInfoFormatters;
 using ShopErp.App.Service.Print.ReturnFormatters;
 using ShopErp.Domain;
 
@@ -18,7 +20,7 @@ namespace ShopErp.App.Domain
 {
     class OrderReturnPrintDocument : DocumentPaginator, IDocumentPaginatorSource
     {
-        private PrintTemplate template = null;
+        private Service.Print.PrintTemplate template = null;
 
         private OrderReturn[] orderReturns = null;
 
@@ -55,12 +57,12 @@ namespace ShopErp.App.Domain
             return this.pages[pageNumber];
         }
 
-        public void GenPages(OrderReturn[] orderReturns, PrintTemplate template)
+        public void GenPages(OrderReturn[] orderReturns, Service.Print.PrintTemplate template)
         {
             this.template = template;
             this.orderReturns = orderReturns;
             this.PageSize = new System.Windows.Size(template.Width, template.Height);
-            PrintInfo pi = new PrintInfo { };
+            Service.Print.PrintInfo pi = new Service.Print.PrintInfo { };
             //生成页
             for (int i = 0; i < this.orderReturns.Length; i++)
             {
@@ -78,7 +80,7 @@ namespace ShopErp.App.Domain
             }
         }
 
-        private DocumentPage DrawingPage(OrderReturn or, PrintInfo pi)
+        private DocumentPage DrawingPage(OrderReturn or, Service.Print.PrintInfo pi)
         {
             DrawingVisual dv = new DrawingVisual() { };
             var rendor = dv.RenderOpen();
@@ -86,17 +88,17 @@ namespace ShopErp.App.Domain
             foreach (var printItem in this.template.Items)
             {
                 //该用那个格式货程序
-                var group = PrintTemplateItemType.GetGroup(printItem.Type);
+                var group = Service.Print.PrintTemplateItemType.GetGroup(printItem.Type);
                 object data = null;
-                if (group == PrintTemplateItemTypeGroup.PRINT)
+                if (group == Service.Print.PrintTemplateItemTypeGroup.PRINT)
                 {
                     data = PrintFormatterManager.Format(this.template, printItem, pi);
                 }
-                else if (group == PrintTemplateItemTypeGroup.OTHER)
+                else if (group == Service.Print.PrintTemplateItemTypeGroup.OTHER)
                 {
                     data = OtherFormatterManager.Format(this.template, printItem);
                 }
-                else if (group == PrintTemplateItemTypeGroup.RETURN)
+                else if (group == Service.Print.PrintTemplateItemTypeGroup.RETURN)
                 {
                     data = ReturnFormatterManager.Format(this.template, printItem,
                         or);

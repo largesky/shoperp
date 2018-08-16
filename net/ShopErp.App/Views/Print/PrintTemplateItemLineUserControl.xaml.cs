@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ShopErp.App.Domain;
+using ShopErp.App.Service.Print;
 
 namespace ShopErp.App.Views.Print
 {
@@ -35,7 +36,7 @@ namespace ShopErp.App.Views.Print
                 return;
             }
             var pvm = this.DataContext as PrintTemplateItemViewModelForLine;
-            foreach (var p in pvm.Template.Items.Where(obj => obj.Type == PrintTemplateItemType.OTHER_LINE))
+            foreach (var p in pvm.Template.Items.Where(obj => obj.Type == Service.Print.PrintTemplateItemType.OTHER_LINE))
             {
                 if (p.Width < p.Height)
                 {
@@ -57,7 +58,7 @@ namespace ShopErp.App.Views.Print
         private void cbbColorAll_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color> e)
         {
             var pvm = this.DataContext as PrintTemplateItemViewModelForLine;
-            foreach (var p in pvm.Template.Items.Where(obj => obj.Type == PrintTemplateItemType.OTHER_LINE))
+            foreach (var p in pvm.Template.Items.Where(obj => obj.Type == Service.Print.PrintTemplateItemType.OTHER_LINE))
             {
                 (p.RunTimeTag as PrintTemplateItemViewModelCommon).Format = e.NewValue.ToString();
             }

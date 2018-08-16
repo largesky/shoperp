@@ -1,4 +1,5 @@
 ﻿using ShopErp.App.Domain;
+using ShopErp.App.Service.Print;
 using ShopErp.App.Views.Print;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace ShopErp.App.ViewModels
 {
     class PrintTemplateItemViewModelForDate : PrintTemplateItemViewModelCommon
     {
-        public PrintTemplateItemViewModelForDate(PrintTemplate template) :
+        public PrintTemplateItemViewModelForDate(Service.Print.PrintTemplate template) :
             base(template)
         {
             this.PropertyUI = new PrintTemplateItemDateUserControl();

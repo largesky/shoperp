@@ -1,11 +1,12 @@
 ﻿using ShopErp.App.Domain;
+using ShopErp.App.Service.Print;
 using ShopErp.App.Views.Print;
 
 namespace ShopErp.App.ViewModels
 {
     class PrintTemplateItemConsolidationCodeBarCode : PrintTemplateItemViewModelForBarcode
     {
-        public PrintTemplateItemConsolidationCodeBarCode(PrintTemplate template) :
+        public PrintTemplateItemConsolidationCodeBarCode(Service.Print.PrintTemplate template) :
             base(template)
         {
             this.PropertyUI = new PrintTemplateItemConsolidationCodeBarCodeUserControl();

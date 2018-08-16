@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using ShopErp.App.Domain;
+using ShopErp.App.Service.Print;
 using ShopErp.App.Service.Print.OtherFormatters;
 
 namespace ShopErp.App.ViewModels
@@ -12,7 +13,7 @@ namespace ShopErp.App.ViewModels
     {
         private OtherRandom r = new OtherRandom();
 
-        public PrintTemplateItemViewModelForRandom(PrintTemplate printTemplate) : base(printTemplate)
+        public PrintTemplateItemViewModelForRandom(Service.Print.PrintTemplate printTemplate) : base(printTemplate)
         {
             this.PreviewValue = "HDF-32";
             this.PropertyUI = new Views.Print.PrintTemplateItemRandomUserControl();

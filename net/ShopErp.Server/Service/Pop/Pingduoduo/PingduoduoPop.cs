@@ -366,7 +366,7 @@ namespace ShopErp.Server.Service.Pop.Pingduoduo
                     AddTime = "",
                     UpdateTime = "",
                     SaleNum = 0,
-                    Image = g.image_url,
+                    Image = g.thumb_url,
                     CatId = "",
                     Code = "",
                     State = g.is_onsale == "1" ? PopGoodsState.ONSALE : PopGoodsState.NOTSALE,

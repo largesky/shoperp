@@ -27,6 +27,7 @@ using ShopErp.App.Views.Extenstions;
 using ShopErp.App.Utils;
 using ShopErp.App.Views.Orders;
 using ShopErp.Domain;
+using ShopErp.App.Service.Print;
 
 namespace ShopErp.App.Views.Print
 {
@@ -35,16 +36,14 @@ namespace ShopErp.App.Views.Print
     /// </summary>
     public partial class PrintUserControl : UserControl
     {
-        public static readonly DependencyProperty DeliveryPrintTemplatesProperty =
-            DependencyProperty.Register("DeliveryPrintTemplates", typeof(ObservableCollection<PrintTemplate>),
-                typeof(PrintUserControl));
+        public static readonly DependencyProperty DeliveryPrintTemplatesProperty = DependencyProperty.Register("DeliveryPrintTemplates", typeof(ObservableCollection<Service.Print.PrintTemplate>), typeof(PrintUserControl));
 
         private OrderService orderService = ServiceContainer.GetService<OrderService>();
         private object printLock = new object();
 
-        public System.Collections.ObjectModel.ObservableCollection<PrintTemplate> DeliveryPrintTemplates
+        public System.Collections.ObjectModel.ObservableCollection<Service.Print.PrintTemplate> DeliveryPrintTemplates
         {
-            get { return (ObservableCollection<PrintTemplate>)this.GetValue(DeliveryPrintTemplatesProperty); }
+            get { return (ObservableCollection<Service.Print.PrintTemplate>)this.GetValue(DeliveryPrintTemplatesProperty); }
             set { this.SetValue(DeliveryPrintTemplatesProperty, value); }
         }
 
@@ -65,11 +64,10 @@ namespace ShopErp.App.Views.Print
                 //快递公司
                 if (DeliveryPrintTemplates == null)
                 {
-                    DeliveryPrintTemplates = new System.Collections.ObjectModel.ObservableCollection<PrintTemplate>();
+                    DeliveryPrintTemplates = new System.Collections.ObjectModel.ObservableCollection<Service.Print.PrintTemplate>();
                 }
                 DeliveryPrintTemplates.Clear();
-                foreach (var item in FilePrintTemplateRepertory.GetAllN()
-                    .Where(obj => obj.Type == PrintTemplate.TYPE_DELIVER))
+                foreach (var item in FilePrintTemplateRepertory.GetAllN().Where(obj => obj.Type == Service.Print.PrintTemplate.TYPE_DELIVER))
                 {
                     DeliveryPrintTemplates.Add(item);
                 }
@@ -215,7 +213,7 @@ namespace ShopErp.App.Views.Print
                 var printOrderPage = (sender as Button).DataContext as PrintOrderPageViewModel;
                 var orders = printOrderPage.OrderViewModels.ToArray();
                 var selectedOrders = orders.Where(obj => obj.IsChecked).Select(obj => obj.Source).ToArray();
-                PrintTemplate printTemplate = printOrderPage.PrintTemplate;
+                var printTemplate = printOrderPage.PrintTemplate;
                 string deliveryNumber = printOrderPage.StartDeliveryNumber.Trim().ToUpper();
                 Grid grid = ((sender as Button).Parent as StackPanel).Parent as Grid;
                 DataGrid dg = grid.FindName("dgOrders") as DataGrid;

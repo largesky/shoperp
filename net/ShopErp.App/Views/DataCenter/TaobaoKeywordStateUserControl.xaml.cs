@@ -3,6 +3,7 @@ using ShopErp.Domain;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,15 +42,6 @@ namespace ShopErp.App.Views.DataCenter
                 {
                     return;
                 }
-                var dts = new DataTypeSelectViewModel[] { new DataTypeSelectViewModel(true, "总数", System.Drawing.Color.Red), new DataTypeSelectViewModel(false, "支付件数", System.Drawing.Color.Yellow), new DataTypeSelectViewModel(false, "购物车", System.Drawing.Color.Green), new DataTypeSelectViewModel(false, "收藏", System.Drawing.Color.Blue), new DataTypeSelectViewModel(false, "相关性", System.Drawing.Color.Pink) };
-                DependencyPropertyDescriptor notiy = DependencyPropertyDescriptor.FromProperty(DataTypeSelectViewModel.IsCheckedProperty, typeof(DataTypeSelectViewModel));
-                foreach (var np in dts)
-                {
-                    notiy.AddValueChanged(np, ViewModelCheckedHandler);
-                }
-                this.lbDataTypes.ItemsSource = dts;
-                this.cbbCharType.ItemsSource = Enum.GetValues(typeof(SeriesChartType));
-                this.cbbCharType.SelectedItem = SeriesChartType.Column;
                 this.cbbKeyWords.ItemsSource = ServiceContainer.GetService<TaobaoKeywordService>().GetByAll().Datas;
                 this.myLoaded = true;
             }
@@ -87,7 +79,38 @@ namespace ShopErp.App.Views.DataCenter
                     }
                     this.dicKeywords[v.CreateTime].Add(v);
                 }
-                this.Create();
+
+                DataTable dt = new DataTable();
+                dt.Columns.Add(new DataColumn { ColumnName = "关键词", Caption = "关键词", DataType = typeof(string), ReadOnly = true, DefaultValue = "" });
+                dt.Columns.AddRange(this.dicKeywords.Keys.Select(obj => new DataColumn { Caption = obj.ToString("yyyy-MM-dd HH:mm:ss"), ColumnName = obj.ToString("MM-dd"), DataType = typeof(string), DefaultValue = "", ReadOnly = true }).ToArray());
+
+                var sum = new List<string>();
+                sum.Add("总数");
+                foreach (var key in this.dicKeywords.Keys)
+                {
+                    sum.Add(this.dicKeywords[key].Sum(obj => obj.Total).ToString());
+                }
+                var row = dt.NewRow();
+                row.ItemArray = sum.ToArray();
+                dt.Rows.Add(row);
+
+                foreach (var word in se.WordsArray)
+                {
+                    string[] words = word.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    var datas = new string[dt.Columns.Count];
+                    datas[0] = word;
+
+                    for (int i = 1; i < datas.Length; i++)
+                    {
+                        var time = DateTime.Parse(dt.Columns[i].Caption);
+                        var total = this.dicKeywords[time].Where(obj => TaobaoKeywordDetailService.Match(words, obj.Keywords)).Sum(obj => obj.Total);
+                        datas[i] = total.ToString();
+                    }
+                    row = dt.NewRow();
+                    row.ItemArray = datas;
+                    dt.Rows.Add(row);
+                }
+                this.dgvItems.ItemsSource = dt.DefaultView;
             }
             catch (Exception ex)
             {
@@ -101,136 +124,6 @@ namespace ShopErp.App.Views.DataCenter
             {
                 this.cbbKeyWords.SelectedItem = null;
                 this.cbbKeyWords.ItemsSource = ServiceContainer.GetService<TaobaoKeywordService>().GetByAll().Datas;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        private void cbbKeyword_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            try
-            {
-                if (e.AddedItems.Count < 1)
-                {
-                    this.lbKeywords.ItemsSource = null;
-                    this.chart1.Series.Clear();
-                    return;
-                }
-                this.lbKeywords.ItemsSource = (e.AddedItems[0] as TaobaoKeyword).WordsArray;
-                this.Create();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        private void cbbCharType_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            try
-            {
-                foreach (var v in this.chart1.Series)
-                {
-                    v.ChartType = (SeriesChartType)this.cbbCharType.SelectedItem;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        private void ViewModelCheckedHandler(object sender, EventArgs e)
-        {
-            this.Create();
-        }
-
-
-        private void Create()
-        {
-            try
-            {
-                this.chart1.Series.Clear();
-                if (this.dicKeywords == null || this.dicKeywords.Count < 1)
-                {
-                    return;
-                }
-                var dts = this.lbDataTypes.ItemsSource.OfType<DataTypeSelectViewModel>().Where(obj => obj.IsChecked).ToArray();
-                if (dts.Count() < 1)
-                {
-                    return;
-                }
-                string keywords = this.lbKeywords.SelectedItem as string;
-                if (string.IsNullOrWhiteSpace(keywords))
-                {
-                    return;
-                }
-                foreach (var dt in dts)
-                {
-                    var s = new Series(dt.Name) { Color = dt.Color, ChartType = (SeriesChartType)this.cbbCharType.SelectedItem };
-                    int i = 1;
-                    foreach (var parire in this.dicKeywords)
-                    {
-                        var dp = new DataPoint { XValue = i++, YValues = new double[] { 0 }, AxisLabel = parire.Key.ToString("MM-dd"), Label = "0" };
-                        var items = parire.Value.Where(obj => obj.Keywords.Contains(keywords)).ToArray();
-                        if (items.Length > 0)
-                        {
-                            if (dt.Name == "总数")
-                            {
-                                dp.YValues[0] = items.Sum(obj => obj.Total);
-                            }
-                            else if (dt.Name == "支付件数")
-                            {
-                                dp.YValues[0] = items.Sum(obj => obj.Sale);
-                            }
-                            else if (dt.Name == "购物车")
-                            {
-                                dp.YValues[0] = items.Sum(obj => obj.AddCat);
-                            }
-                            else if (dt.Name == "收藏")
-                            {
-                                dp.YValues[0] = items.Sum(obj => obj.Collect);
-                            }
-                            else if (dt.Name == "相关性")
-                            {
-                                dp.YValues[0] = (items.Sum(obj => obj.Sale) + items.Sum(obj => obj.Collect) + items.Sum(obj => obj.AddCat)) * 1.0F / (items.Sum(obj => obj.Total) == 0 ? 1 : items.Sum(obj => obj.Total));
-                            }
-                            else
-                            {
-                                throw new Exception("未识别的数据类型");
-                            }
-                            dp.Label = dp.YValues[0].ToString("F2");
-                        }
-                        s.Points.Add(dp);
-                    }
-                    this.chart1.Series.Add(s);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        private void lbKeywords_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            this.Create();
-        }
-
-        private void cbbKeyWords_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            try
-            {
-                if (e.AddedItems.Count < 1)
-                {
-                    this.lbKeywords.ItemsSource = null;
-                    this.chart1.Series.Clear();
-                    return;
-                }
-                this.lbKeywords.ItemsSource = (e.AddedItems[0] as TaobaoKeyword).WordsArray;
-                this.Create();
             }
             catch (Exception ex)
             {

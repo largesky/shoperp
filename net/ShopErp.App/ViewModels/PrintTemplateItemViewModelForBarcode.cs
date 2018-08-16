@@ -1,4 +1,5 @@
 ﻿using ShopErp.App.Domain;
+using ShopErp.App.Service.Print;
 using ShopErp.App.Views.Print;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ namespace ShopErp.App.ViewModels
     {
         public string[] Types { get; set; }
 
-        public PrintTemplateItemViewModelForBarcode(PrintTemplate template) :
+        public PrintTemplateItemViewModelForBarcode(Service.Print.PrintTemplate template) :
             base(template)
         {
             this.Format = BarcodeFormat.CODE_128.ToString();

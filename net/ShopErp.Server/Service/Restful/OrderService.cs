@@ -429,35 +429,30 @@ namespace ShopErp.Server.Service.Restful
                 }
 
                 //正常订单数量
-                int normalOrderCount = orders.Count(obj => obj.Type == OrderType.NORMAL);
+                var normalOrders = orders.Where(obj => obj.Type != OrderType.SHUA).ToArray();
 
                 //检测基本信息与状态
-                if (orders.Select(obj => obj.ShopId).Distinct().Count() > 1 && normalOrderCount > 1)
+                if (normalOrders.Select(obj => obj.ShopId).Distinct().Count() > 1)
                 {
                     throw new Exception("多个订单且店铺不一样");
                 }
 
-                if (orders.Select(obj => obj.PopBuyerId).Distinct().Count() > 1 && normalOrderCount > 1)
-                {
-                    throw new Exception("多个订单且买家账号不一样");
-                }
-
-                if (orders.Select(obj => obj.ReceiverName).Distinct().Count() > 1 && normalOrderCount > 1)
+                if (normalOrders.Select(obj => obj.ReceiverName).Distinct().Count() > 1)
                 {
                     throw new Exception("多个订单且收货人姓名不一样");
                 }
 
-                if (orders.Select(obj => obj.ReceiverPhone).Distinct().Count() > 1 && normalOrderCount > 1)
+                if (normalOrders.Select(obj => obj.ReceiverPhone).Distinct().Count() > 1)
                 {
                     throw new Exception("多个订单且收货人电话不一样");
                 }
 
-                if (orders.Select(obj => obj.ReceiverMobile).Distinct().Count() > 1 && normalOrderCount > 1)
+                if (normalOrders.Select(obj => obj.ReceiverMobile).Distinct().Count() > 1)
                 {
                     throw new Exception("多个订单且收货人手机不一样");
                 }
 
-                if (orders.Select(obj => obj.ReceiverAddress.Trim()).Distinct().Count() > 1 && normalOrderCount > 1)
+                if (normalOrders.Select(obj => obj.ReceiverAddress.Trim()).Distinct().Count() > 1)
                 {
                     throw new Exception("多个订单且收货人地址不一样");
                 }
@@ -467,9 +462,8 @@ namespace ShopErp.Server.Service.Restful
                     throw new Exception("订单状态不正确");
                 }
 
-                //重量检测
                 var totalOgs = new List<OrderGoods>();
-                foreach (var or in orders.Where(obj => obj.Type != OrderType.SHUA))
+                foreach (var or in normalOrders)
                 {
                     if (chkLocalState)
                     {
@@ -480,12 +474,12 @@ namespace ShopErp.Server.Service.Restful
                         totalOgs.AddRange(or.OrderGoodss);
                     }
                 }
-                float totalOrderWeight = totalOgs.Select(obj => obj.Weight * obj.Count).Sum();
-                int unWeightCount = totalOgs.Where(obj => obj.Weight <= 0).Select(obj => obj.Count).Sum();
-                int totalCount = totalOgs.Select(obj => obj.Count).Sum();
 
-                if (chkWeight && totalCount > 0)
+                //检查重量
+                if (chkWeight && totalOgs.Select(obj => obj.Count).Sum() > 0)
                 {
+                    float totalOrderWeight = totalOgs.Select(obj => obj.Weight * obj.Count).Sum();
+                    int unWeightCount = totalOgs.Where(obj => obj.Weight <= 0).Select(obj => obj.Count).Sum();
                     if (unWeightCount == 0)
                     {
                         // 所有商品都有重量
@@ -515,8 +509,7 @@ namespace ShopErp.Server.Service.Restful
                     }
                 }
 
-
-                //计算物流
+                //计算快递费用
                 double deliveryMoney = ServiceContainer.GetService<DeliveryTemplateService>().ComputeDeliveryMoneyImpl(orders[0].DeliveryCompany, orders[0].ReceiverAddress, orders[0].Type == OrderType.SHUA, orders[0].PrintPaperType, orders[0].PopPayType, weight);
 
                 //更新订单状态，运费金额信息

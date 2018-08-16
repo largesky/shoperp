@@ -51,7 +51,8 @@ namespace ShopErp.App.Views.DataCenter
         {
             try
             {
-                this.keywords.Add(new TaobaoKeyword { Number = "", Words = "" });
+                var minTime = ServiceContainer.GetService<TaobaoKeywordService>().GetDBMinTime();
+                this.keywords.Add(new TaobaoKeyword { Number = "", Words = "", Start = minTime, End = minTime });
             }
             catch (Exception ex)
             {

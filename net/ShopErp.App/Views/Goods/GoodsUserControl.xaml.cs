@@ -273,19 +273,7 @@ namespace ShopErp.App.Views.Goods
                 {
                     throw new Exception("Edit_Click错误，事件源不是TextBlock");
                 }
-                var goods = tb.DataContext as GoodsViewModel;
-
-                if (string.IsNullOrWhiteSpace(goods.Source.ImageDir))
-                {
-                    return;
-                }
-                string dir = LocalConfigService.GetValue(SystemNames.CONFIG_WEB_IMAGE_DIR) + "\\" +
-                             goods.Source.ImageDir.Trim();
-                if (System.IO.Directory.Exists(dir) == false)
-                {
-                    throw new Exception("文件夹不存在或者被删除");
-                }
-                Process.Start(dir);
+                OpenImageDir(tb.DataContext as GoodsViewModel);
             }
             catch (Exception ex)
             {
@@ -336,7 +324,6 @@ namespace ShopErp.App.Views.Goods
             }
         }
 
-
         private void miProcesscedImg_Click(object sender, RoutedEventArgs e)
         {
             this.ChangeState(GoodsState.WAITPROCESSIMAGE, GoodsState.WAITREVIEW);
@@ -356,7 +343,6 @@ namespace ShopErp.App.Views.Goods
         {
             this.ChangeState(GoodsState.UPLOADED, GoodsState.NOTSALE);
         }
-
 
         private void ChangeState(GoodsState from, GoodsState to)
         {
@@ -611,19 +597,7 @@ namespace ShopErp.App.Views.Goods
                 {
                     throw new Exception("没有选择相应的商品");
                 }
-
-                if (string.IsNullOrWhiteSpace(vm.Source.ImageDir))
-                {
-                    throw new Exception("所选择商品图片文件夹为空");
-                }
-
-                string dir = LocalConfigService.GetValue(SystemNames.CONFIG_WEB_IMAGE_DIR) + "\\" +
-                             vm.Source.ImageDir.Trim();
-                if (System.IO.Directory.Exists(dir) == false)
-                {
-                    throw new Exception("文件夹不存在或者被删除");
-                }
-                Process.Start(dir);
+                OpenImageDir(vm);
             }
             catch (Exception ex)
             {
@@ -691,6 +665,51 @@ namespace ShopErp.App.Views.Goods
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void OpenImageDir(GoodsViewModel goodsViewModel)
+        {
+            if (string.IsNullOrWhiteSpace(goodsViewModel.Source.ImageDir))
+            {
+                return;
+            }
+            string dir = LocalConfigService.GetValue(SystemNames.CONFIG_WEB_IMAGE_DIR) + "\\" + goodsViewModel.Source.ImageDir.Trim();
+            if (System.IO.Directory.Exists(dir) == false)
+            {
+                throw new Exception("文件夹不存在或者被删除:" + dir);
+            }
+
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl) || Keyboard.IsKeyDown(Key.LeftAlt) || Keyboard.IsKeyDown(Key.RightAlt))
+            {
+                if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+                {
+                    var d = System.IO.Path.Combine(dir, "PT");
+                    if (System.IO.Directory.Exists(d) == false)
+                    {
+                        MessageBox.Show("文件夹不存在或者被删除:" + d);
+                    }
+                    else
+                    {
+                        Process.Start(d);
+                    }
+                }
+                if (Keyboard.IsKeyDown(Key.LeftAlt) || Keyboard.IsKeyDown(Key.RightAlt))
+                {
+                    var d = System.IO.Path.Combine(dir, "YT");
+                    if (System.IO.Directory.Exists(d) == false)
+                    {
+                        MessageBox.Show("文件夹不存在或者被删除:" + d);
+                    }
+                    else
+                    {
+                        Process.Start(d);
+                    }
+                }
+            }
+            else
+            {
+                Process.Start(dir);
             }
         }
     }

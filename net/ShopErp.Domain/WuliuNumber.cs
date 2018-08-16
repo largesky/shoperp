@@ -55,6 +55,10 @@ namespace ShopErp.Domain
         /// </summary>
         public string OriginName { get; set; }
 
+        /// <summary>
+        /// 菜鸟返回的打印JSON数据
+        /// </summary>
+        public string PrintData { get; set; }
 
         /// <summary>
         /// 大头笔和 三段码，根据一定规则拼接 http://open.taobao.com/docs/doc.htm?spm=a219a.7629140.0.0.wIXAaM&docType=1&articleId=106054

@@ -28,5 +28,12 @@ namespace ShopErp.App.Service.Restful
             para["values"] = values;
             DoPost<ResponseBase>(para);
         }
+
+        public static bool Match(string[] words, string wordStr)
+        {
+            bool ret = words.All(obj => wordStr.IndexOf(obj, StringComparison.OrdinalIgnoreCase) >= 0);
+            return ret;
+        }
+
     }
 }
