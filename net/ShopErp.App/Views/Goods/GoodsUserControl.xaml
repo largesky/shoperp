@@ -107,6 +107,7 @@
                     <MenuItem Header="编辑旗帜备注" Name="miEditFlagAndComment" Click="miEditFlagAndComment_Click" />
                     <MenuItem Header="编辑关联货号" Name="miEditGoodsMap" Click="miEditGoodsMap_Click" />
                     <MenuItem Header="打开文件夹" Name="miOpenDir" Click="miOpenDir_Click" />
+                    <MenuItem Header="创建鞋盒图" Name="miCreateBoxImage" Click="miCreateBoxImage_Click" />
                     <MenuItem Header="查看详情" Name="miDetail" Click="miDetail_Click" />
                 </ContextMenu>
             </DataGrid.ContextMenu>
@@ -172,6 +173,7 @@
                     <MenuItem Header="编辑旗帜备注" Click="miEditFlagAndComment_Click" />
                     <MenuItem Header="编辑关联货号" Click="miEditGoodsMap_Click" />
                     <MenuItem Header="打开文件夹" Click="miOpenDir_Click" />
+                    <MenuItem Header="创建鞋盒图" Click="miCreateBoxImage_Click" />
                     <MenuItem Header="查看详情" Click="miDetail_Click" />
                 </ContextMenu>
             </ListBox.ContextMenu>

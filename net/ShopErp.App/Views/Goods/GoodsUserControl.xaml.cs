@@ -712,5 +712,17 @@ namespace ShopErp.App.Views.Goods
                 Process.Start(dir);
             }
         }
+
+        private void miCreateBoxImage_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                new GoodsBoxImageWindow { Goods = this.GetSelctedItem().Source }.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
     }
 }

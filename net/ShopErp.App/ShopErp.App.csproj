@@ -401,6 +401,9 @@
     <Compile Include="Views\Goods\GoodsAddMapWindow.xaml.cs">
       <DependentUpon>GoodsAddMapWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Goods\GoodsBoxImageWindow.xaml.cs">
+      <DependentUpon>GoodsBoxImageWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Goods\GoodsCommentEditWindow.xaml.cs">
       <DependentUpon>GoodsCommentEditWindow.xaml</DependentUpon>
     </Compile>
@@ -754,6 +757,10 @@
     <Page Include="Views\Goods\GoodsAddMapWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Goods\GoodsBoxImageWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Goods\GoodsCommentEditWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
