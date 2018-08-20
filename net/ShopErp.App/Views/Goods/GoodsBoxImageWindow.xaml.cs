@@ -117,7 +117,6 @@ namespace ShopErp.App.Views.Goods
                 if (createYTPT)
                 {
                     System.IO.Directory.CreateDirectory(fulldir + "\\PT");
-                    System.IO.Directory.CreateDirectory(fulldir + "\\PT\\XQT");
                     System.IO.Directory.CreateDirectory(fulldir + "\\PT\\ZT");
                     System.IO.Directory.CreateDirectory(fulldir + "\\PT\\YST");
                     System.IO.Directory.CreateDirectory(fulldir + "\\YT");
