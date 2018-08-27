@@ -172,5 +172,23 @@ namespace ShopErp.App.Views.Config
                 MessageBox.Show(ex.Message);
             }
         }
+
+        private void btnGoOauth_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string appkey = this.tbAppKey.Text.Trim();
+                if (string.IsNullOrWhiteSpace(appkey))
+                {
+                    throw new Exception("App Key 不能为空");
+                }
+                string url = "https://oauth.taobao.com/authorize?response_type=token&view=web&client_id=" + appkey;
+                System.Diagnostics.Process.Start(url);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
     }
 }

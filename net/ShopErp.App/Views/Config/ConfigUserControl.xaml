@@ -172,6 +172,8 @@
 
                 <TextBlock Grid.Row="4" Grid.Column="0" Text="Seller Number Id:" Margin="3" VerticalAlignment="Center" />
                 <TextBox Grid.Row="4" Grid.Column="1" x:Name="tbSellerNumberId" Margin="3" VerticalAlignment="Center" />
+               
+                <Button Grid.Row="5" Grid.Column="1" x:Name="btnGoOauth" Margin="3" VerticalAlignment="Center" Content="前往授权" Click="btnGoOauth_Click"/>
             </Grid>
         </GroupBox>
 
