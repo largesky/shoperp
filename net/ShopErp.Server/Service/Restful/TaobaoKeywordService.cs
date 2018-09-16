@@ -86,7 +86,8 @@ namespace ShopErp.Server.Service.Restful
         {
             try
             {
-                return this.dao.GetAll();
+                var item = this.dao.GetAll().Datas.OrderBy(obj => obj.Number).ToList();
+                return new DataCollectionResponse<TaobaoKeyword>(item);
             }
             catch (Exception ex)
             {
@@ -100,7 +101,7 @@ namespace ShopErp.Server.Service.Restful
         {
             try
             {
-                string sql1 = "update " + this.dao.GetEntiyName() + " set Start='" + this.FormatTime(this.GetDbMinTime()) + "',End='" + this.FormatTime(this.GetDbMinTime())+"'";
+                string sql1 = "update " + this.dao.GetEntiyName() + " set Start='" + this.FormatTime(this.GetDbMinTime()) + "',End='" + this.FormatTime(this.GetDbMinTime()) + "'";
                 string sql2 = "update " + this.dao.GetEntiyName() + " set Start=(select Min(CreateTime) from TaobaoKeywordDetail where " + this.dao.GetEntiyName() + ".Number=Number) where (select Count(Id) from TaobaoKeywordDetail where TaobaoKeyword.Number=Number)>0";
                 string sql3 = "update " + this.dao.GetEntiyName() + " set End=(select Max(CreateTime) from TaobaoKeywordDetail where " + this.dao.GetEntiyName() + ".Number=Number) where (select Count(Id) from TaobaoKeywordDetail where TaobaoKeyword.Number=Number)>0";
                 this.dao.ExcuteSqlUpdate(sql1);
