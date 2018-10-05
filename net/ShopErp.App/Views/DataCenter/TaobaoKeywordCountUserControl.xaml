@@ -26,6 +26,7 @@
             <Button Name="btnQuery" Content="查询数据" Margin="3" VerticalAlignment="Center" Width="100" Click="btnQuery_Click" HorizontalAlignment="Right"/>
            
             <Button Name="btnShowAll" Content="显示所有关键词" Margin="3" VerticalAlignment="Center" Width="100" Click="btnShowAll_Click" HorizontalAlignment="Right"/>
+            <Button Name="btnShowUnMatch" Content="显示未匹配关键词" Margin="3" VerticalAlignment="Center" Width="100" Click="btnShowUnMatch_Click" HorizontalAlignment="Right"/>
             <Button Name="btnImport" Content="导入文件到系统" Margin="3" VerticalAlignment="Center" Width="100" Click="btnImport_Click" HorizontalAlignment="Right"/>
             <TextBlock Name="tbSum" Margin="3" VerticalAlignment="Center" Text="................................" HorizontalAlignment="Right"/>
         </StackPanel>

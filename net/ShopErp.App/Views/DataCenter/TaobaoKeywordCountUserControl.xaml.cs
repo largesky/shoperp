@@ -296,5 +296,30 @@ namespace ShopErp.App.Views.DataCenter
 
             return dicKeywords;
         }
+
+        private void btnShowUnMatch_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (this.allKeywords.Count < 1)
+                {
+                    throw new Exception("没有数据");
+                }
+
+                var se = this.cbbKeyWords.SelectedItem as TaobaoKeyword;
+                if (se == null)
+                {
+                    throw new Exception("没有选择数据");
+                }
+
+                var ss = se.Words.Replace(",", "").Replace(" ", "");
+                var unmatch = this.allKeywords.Where(obj => TaobaoKeywordDetailService.UnMatch(ss, obj.Keywords));
+                this.dgvKeyword.ItemsSource = unmatch;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
     }
 }

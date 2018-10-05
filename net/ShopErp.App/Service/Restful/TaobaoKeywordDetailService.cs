@@ -35,5 +35,37 @@ namespace ShopErp.App.Service.Restful
             return ret;
         }
 
+        public static bool UnMatch(string words, string wordStr)
+        {
+            if ((words == null || words.Length == 1) & string.IsNullOrWhiteSpace(wordStr) == false)
+            {
+                return true;
+            }
+
+            if (words == null || words.Length < 1)
+            {
+                return true;
+            }
+
+            if (string.IsNullOrWhiteSpace(wordStr))
+            {
+                return false;
+            }
+
+            if ("鞋子女冬" == wordStr)
+            {
+                System.Console.WriteLine("ffff");
+            }
+
+            StringBuilder sb = new StringBuilder(wordStr);
+
+            foreach (var word in words)
+            {
+                sb.Replace(word, ' ');
+            }
+
+            return string.IsNullOrWhiteSpace(sb.ToString()) == false;
+        }
+
     }
 }
