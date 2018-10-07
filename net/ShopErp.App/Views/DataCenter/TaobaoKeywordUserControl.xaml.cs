@@ -93,7 +93,7 @@ namespace ShopErp.App.Views.DataCenter
                 {
                     throw new Exception("有货号重复");
                 }
-                char[] ccs = { ' ', ',', '，' };
+                char[] ccs = { ',', '，' };
                 foreach (var key in this.keywords)
                 {
                     string[] keys = key.Words.Split(ccs, StringSplitOptions.RemoveEmptyEntries).Distinct().ToArray();
