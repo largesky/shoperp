@@ -1059,6 +1059,9 @@
   </Target>
   <Import Project="..\packages\CefSharp.Common.63.0.2\build\CefSharp.Common.targets" Condition="Exists('..\packages\CefSharp.Common.63.0.2\build\CefSharp.Common.targets')" />
   <Import Project="..\packages\CefSharp.WinForms.63.0.2\build\CefSharp.WinForms.targets" Condition="Exists('..\packages\CefSharp.WinForms.63.0.2\build\CefSharp.WinForms.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(ProjectDir)Resources\\TAOBAOJS.js $(TargetDir)DATA\\TAOBAOJS.js</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

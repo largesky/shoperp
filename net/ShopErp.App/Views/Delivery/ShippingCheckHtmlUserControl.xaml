@@ -91,6 +91,8 @@
                 <DataGridTextColumn Header="收货人地址" Binding="{Binding Source.ReceiverAddress}" IsReadOnly="True"/>
             </DataGrid.Columns>
         </DataGrid>
-        <WindowsFormsHost Grid.Row="2" Name="wfh" />
+        <WindowsFormsHost Grid.Row="2" Name="wfh" >
+            <cefwf:ChromiumWebBrowser x:Name="wb1"/>
+        </WindowsFormsHost>
     </Grid>
 </UserControl>

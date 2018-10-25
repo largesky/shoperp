@@ -67,7 +67,6 @@
         <ToolBar Grid.Row="1" FontSize="14">
             <Button Content="所有订单" Margin="3" Click="MenuItem_Click" Tag="OrderAllUserControl" />
             <Button Content="订单同步" Margin="3" Click="MenuItem_Click" Tag="OrderSyncUserControl" />
-            <Button Content="订单下载(网页)" Margin="3" Click="MenuItem_Click" Tag="OrderDownloadHtmlUserControl" />
             <Button Content="订单同步(网页)" Margin="3" Click="MenuItem_Click" Tag="OrderSyncHtmlUserControl" />
             <Button Content="商品管理" Margin="3" Click="MenuItem_Click" Tag="GoodsUserControl" />
             <!--<Button Content="好评返现" Margin="3" Click="MenuItem_Click" Tag="ReturnCashUserControl"/>-->
@@ -76,8 +75,8 @@
             <Button Content="打印历史" Margin="3" Click="MenuItem_Click" Tag="PrintHistoryUserControl" />
             <Button Content="快递分配" Click="MenuItem_Click" Tag="DeliveryDistributionUserControl" />
             <Button Content="发货扫描" Margin="3" Click="MenuItem_Click" Tag="DeliveryOutScanUserControl" />
-            <Button Content="发货时限" Margin="3" Click="MenuItem_Click" Tag="ShippingCheckUserControl" />
-            <Button Content="标记发货(天猫)" Margin="3" Click="MenuItem_Click" Tag="ShippingCheckHtmlUserControl" />
+            <Button Content="标记发货" Margin="3" Click="MenuItem_Click" Tag="ShippingCheckUserControl" />
+            <Button Content="标记发货(网页)" Margin="3" Click="MenuItem_Click" Tag="ShippingCheckHtmlUserControl" />
             <Button Content="物流时限" Margin="3" Click="MenuItem_Click" Tag="DeliveryCheckUserControl" />
             <Button Content="退货管理" Margin="3" Click="MenuItem_Click" Tag="OrderReturnUserControl" />
             <TextBlock Name="tbOperator" Grid.Row="3" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Right" />

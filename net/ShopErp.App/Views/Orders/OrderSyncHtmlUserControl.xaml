@@ -31,6 +31,8 @@
         </StackPanel>
         <TextBox Grid.Row="1" Margin="3" Name="tbMessage" HorizontalScrollBarVisibility="Auto"
                  VerticalScrollBarVisibility="Auto" Grid.ColumnSpan="2" />
-        <WindowsFormsHost Grid.Row="2" Name="wfh" />
+        <WindowsFormsHost Grid.Row="2" Name="wfh" >
+            <cefwf:ChromiumWebBrowser x:Name="wb1"></cefwf:ChromiumWebBrowser>
+        </WindowsFormsHost>
     </Grid>
 </UserControl>

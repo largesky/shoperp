@@ -32,7 +32,7 @@ namespace ShopErp.App.Views.Delivery
     {
         private bool myLoaded = false;
         string jspath = System.IO.Path.Combine(EnvironmentDirHelper.DIR_DATA + "\\TAOBAOJS.js");
-        CefSharp.WinForms.ChromiumWebBrowser wb1 = null;
+        //CefSharp.WinForms.ChromiumWebBrowser wb1 = null;
         private ObservableCollection<OrderViewModel> orders = new ObservableCollection<OrderViewModel>();
 
         public ShippingCheckHtmlUserControl()
@@ -528,7 +528,6 @@ namespace ShopErp.App.Views.Delivery
             }
         }
 
-
         private void btnMarkDelivery_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -576,9 +575,11 @@ namespace ShopErp.App.Views.Delivery
 
         private void btnGoToTaobao_Click(object sender, RoutedEventArgs e)
         {
-            string tag = (sender as Button).Tag as string;
-            wb1 = new CefSharp.WinForms.ChromiumWebBrowser("https://trade.taobao.com/trade/itemlist/list_sold_items.htm");
-            this.wfh.Child = wb1;
+
+            //string tag = (sender as Button).Tag as string;
+            //wb1 = new CefSharp.WinForms.ChromiumWebBrowser("https://trade.taobao.com/trade/itemlist/list_sold_items.htm");
+            //this.wfh.Child = wb1;
+            this.wb1.Load("https://trade.taobao.com/trade/itemlist/list_sold_items.htm");
         }
 
         #region 前选 后选 

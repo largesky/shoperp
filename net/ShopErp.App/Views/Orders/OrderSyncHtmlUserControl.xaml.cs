@@ -29,7 +29,6 @@ namespace ShopErp.App.Views.Orders
     {
         private bool myLoaded = false;
         string jspath = System.IO.Path.Combine(EnvironmentDirHelper.DIR_DATA + "\\TAOBAOJS.js");
-        CefSharp.WinForms.ChromiumWebBrowser wb1 = null;
 
         public OrderSyncHtmlUserControl()
         {
@@ -208,9 +207,7 @@ namespace ShopErp.App.Views.Orders
 
         private void btnGoToTaobao_Click(object sender, RoutedEventArgs e)
         {
-            string tag = (sender as Button).Tag as string;
-            wb1 = new CefSharp.WinForms.ChromiumWebBrowser("https://trade.taobao.com/trade/itemlist/list_sold_items.htm");
-            this.wfh.Child = wb1;
+            this.wb1.Load("https://trade.taobao.com/trade/itemlist/list_sold_items.htm");
         }
     }
 }

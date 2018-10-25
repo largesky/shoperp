@@ -11,9 +11,9 @@
     xhr.setRequestHeader("accept-language", "zh-CN,zh;q=0.8");
     xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded; charset=UTF-8");
 
-    //var xhrdata = "action=itemlist/SoldQueryAction&auctionType=0&orderStatus=PAID&tabCode=waitSend&prePageNo=###prePageNo&pageNum=###pageNum&pageSize=15"
+    var xhrdata = "action=itemlist/SoldQueryAction&auctionType=0&orderStatus=PAID&tabCode=waitSend&prePageNo=###prePageNo&pageNum=###pageNum&pageSize=15"
     //var xhrdata = "action=itemlist/SoldQueryAction&auctionType=0&orderStatus=SEND&tabCode=haveSendGoods&prePageNo=###prePageNo&pageNum=###pageNum&pageSize=15"
-    var xhrdata ="action=itemlist/SoldQueryAction&auctionType=0&orderStatus=SUCCESS&tabCode=success&prePageNo=###prePageNo&pageNum=###pageNum&pageSize=15"
+    //var xhrdata ="action=itemlist/SoldQueryAction&auctionType=0&orderStatus=SUCCESS&tabCode=success&prePageNo=###prePageNo&pageNum=###pageNum&pageSize=15"
     xhr.send(xhrdata)
     if (xhr.status == 200)
         return xhr.responseText;

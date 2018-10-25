@@ -65,6 +65,7 @@ namespace ShopErp.App
                 MessageBox.Show(ex.Message);
                 Process.GetCurrentProcess().Kill();
             }
+
         }
 
         private void Application_DispatcherUnhandledException(object sender,
