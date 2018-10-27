@@ -48,6 +48,7 @@ namespace ShopErp.App.Views.DataCenter
                 this.dpEnd.Value = DateTime.Now.Date;
                 this.cbbCharType.ItemsSource = Enum.GetValues(typeof(SeriesChartType));
                 this.cbbOrderTypes.Bind<OrderType>();
+                this.cbbOrderTypes.SelectedIndex = 1;
                 this.myLoaded = true;
             }
             catch (Exception ex)
