@@ -240,11 +240,11 @@ namespace ShopErp.Server.Service.Restful
 
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/getsalecount.html")]
-        public DataCollectionResponse<SaleCount> GetSaleCount(long shopId, int timeType, DateTime startTime, DateTime endTime, string popNumberId, int pageIndex, int pageSize)
+        public DataCollectionResponse<SaleCount> GetSaleCount(long shopId, OrderType type, int timeType, DateTime startTime, DateTime endTime, string popNumberId, int pageIndex, int pageSize)
         {
             try
             {
-                return new DataCollectionResponse<SaleCount>(this.dao.GetSaleCount(shopId, timeType, startTime, endTime, popNumberId, pageIndex, pageSize).Datas);
+                return new DataCollectionResponse<SaleCount>(this.dao.GetSaleCount(shopId, type, timeType, startTime, endTime, popNumberId, pageIndex, pageSize).Datas);
             }
             catch (Exception ex)
             {

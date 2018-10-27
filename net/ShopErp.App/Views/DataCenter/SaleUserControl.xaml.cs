@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using ShopErp.App.Utils;
 using ShopErp.App.Service.Restful;
 using ShopErp.Domain;
+using ShopErp.App.Views.Extenstions;
 
 namespace ShopErp.App.Views.DataCenter
 {
@@ -46,6 +47,7 @@ namespace ShopErp.App.Views.DataCenter
                 this.dpStart.Value = DateTime.Now.Date.AddDays(-30);
                 this.dpEnd.Value = DateTime.Now.Date;
                 this.cbbCharType.ItemsSource = Enum.GetValues(typeof(SeriesChartType));
+                this.cbbOrderTypes.Bind<OrderType>();
                 this.myLoaded = true;
             }
             catch (Exception ex)
@@ -70,9 +72,7 @@ namespace ShopErp.App.Views.DataCenter
             try
             {
                 long shopId = this.cbbShops.SelectedItem == null ? 0 : (this.cbbShops.SelectedItem as Shop).Id;
-                var scs = ServiceContainer.GetService<OrderGoodsService>()
-                    .GetSaleCount(shopId, this.cbbTimeType.SelectedIndex, this.dpStart.Value.Value,
-                        this.dpEnd.Value.Value, "", 0, 0).Datas.ToArray();
+                var scs = ServiceContainer.GetService<OrderGoodsService>().GetSaleCount(shopId, this.cbbOrderTypes.GetSelectedEnum<OrderType>(), this.cbbTimeType.SelectedIndex, this.dpStart.Value.Value, this.dpEnd.Value.Value, "", 0, 0).Datas.ToArray();
                 //订单信息金额汇总
                 List<SaleInfo> sis = new List<SaleInfo>();
                 //根据一个订单包含多个子订单重新计算每一双鞋子应该的价格，根据比例

@@ -24,11 +24,12 @@ namespace ShopErp.App.Service.Restful
             return DoPost<DataCollectionResponse<GoodsCount>>(para);
         }
 
-        public DataCollectionResponse<SaleCount> GetSaleCount(long shopId, int timeType, DateTime startTime, DateTime endTime,
+        public DataCollectionResponse<SaleCount> GetSaleCount(long shopId, OrderType type, int timeType, DateTime startTime, DateTime endTime,
             string popNumberId, int pageIndex, int pageSize)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
             para["shopId"] = shopId;
+            para["type"] = type;
             para["timeType"] = timeType;
             para["startTime"] = startTime;
             para["endTime"] = endTime;

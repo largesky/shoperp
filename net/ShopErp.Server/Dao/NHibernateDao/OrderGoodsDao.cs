@@ -10,13 +10,13 @@ namespace ShopErp.Server.Dao.NHibernateDao
 {
     public class OrderGoodsDao : NHibernateDaoBase<OrderGoods>
     {
-        public DataCollectionResponse<SaleCount> GetSaleCount(long shopId, int timeType, DateTime startTime, DateTime endTime, string popNumberId, int pageIndex, int pageSize)
+        public DataCollectionResponse<SaleCount> GetSaleCount(long shopId, OrderType type, int timeType, DateTime startTime, DateTime endTime, string popNumberId, int pageIndex, int pageSize)
         {
             ISession session = null;
             try
             {
                 String contenthsql = "select order.Id,orderGoods.Id,orderGoods.Image,orderGoods.Count,orderGoods.PopPrice,order.PopSellerGetMoney, orderGoods.Price,order.DeliveryMoney,orderGoods.Vendor,orderGoods.Number,orderGoods.NumberId,order.PopPayTime,order.DeliveryTime,order.State,order.ShopId,orderGoods.Color,orderGoods.Size,orderGoods.Edtion ";
-                String hsqlWhere = String.Format(" from Order order,OrderGoods orderGoods where order.Id=orderGoods.OrderId and order.CreateType=1 and order.Type<>2 ");
+                String hsqlWhere = String.Format(" from Order order,OrderGoods orderGoods where order.Id=orderGoods.OrderId and order.CreateType=1 ");
                 hsqlWhere += string.Format(" and order.{0} >='{1}' and order.{0} <='{2}'", (timeType == 0) ? "PopPayTime" : "DeliveryTime", this.FormatDateTime(startTime), this.FormatDateTime(endTime));
 
                 if (shopId > 0)
@@ -27,6 +27,11 @@ namespace ShopErp.Server.Dao.NHibernateDao
                 {
                     hsqlWhere += " and orderGoods.PopUrl='" + popNumberId + "'";
                 }
+                if (type != OrderType.NONE)
+                {
+                    hsqlWhere += " and order.Type=" + (int)type;
+                }
+
                 string hsqlData = contenthsql + hsqlWhere;
                 string hsqlCount = "select count(orderGoods.id) " + hsqlWhere;
                 session = OpenSession();

@@ -19,6 +19,8 @@
         <StackPanel Grid.Row="0" Orientation="Horizontal">
             <TextBlock Text="店铺:" Margin="3" VerticalAlignment="Center" />
             <ComboBox Name="cbbShops" Margin="3" VerticalAlignment="Center" Width="100" DisplayMemberPath="Mark" />
+            <TextBlock Text="订单类型:" Margin="3" VerticalAlignment="Center" />
+            <ComboBox Name="cbbOrderTypes" Margin="3" VerticalAlignment="Center" Width="100"/>
             <TextBlock Text="时间类型:" Margin="3" VerticalAlignment="Center" />
             <ComboBox Name="cbbTimeType" Margin="3" VerticalAlignment="Center">
                 <ComboBoxItem>付款时间</ComboBoxItem>
