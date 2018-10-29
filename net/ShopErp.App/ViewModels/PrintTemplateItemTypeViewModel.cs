@@ -16,8 +16,7 @@ namespace ShopErp.App.ViewModels
         {
             var type = typeof(Service.Print.PrintTemplateItemType);
             var ff = type.GetFields().Where(f => f.FieldType == typeof(string)).ToArray();
-            var vms = ff.Select(obj => new PrintTemplateItemTypeViewModel {Type = obj.GetRawConstantValue().ToString()})
-                .ToArray();
+            var vms = ff.Select(obj => new PrintTemplateItemTypeViewModel { Type = obj.GetRawConstantValue().ToString() }).ToArray();
             return vms;
         }
     }

@@ -140,22 +140,7 @@ namespace ShopErp.App.Service.Spider.Go2
         {
             Vendor ven = new Vendor { AveragePrice = 0, Count = 1, CreateTime = DateTime.Now, HomePage = "", Id = 0, MarketAddress = "", Name = "", Phone = "", PingyingName = "", Watch = false, Comment = "", Alias = "" };
             var doc = this.GetHtmlDocWithRetry(url, "");
-            if (url.ToLower().Contains("z.go2.cn"))
-            {
-                ParseVendorByZUrl(ven, doc);
-            }
-            else
-            {
-                try
-                {
-                    ParseVendorByUrl(ven, doc);
-
-                }
-                catch
-                {
-                    ParseVendorByZUrl(ven, doc);
-                }
-            }
+            ParseVendorByUrl(ven, doc);
             ven.HomePage = ven.HomePage.TrimEnd('/');
             return ven;
         }
@@ -312,7 +297,7 @@ namespace ShopErp.App.Service.Spider.Go2
         private void ParseVendorByUrl(Vendor vendor, HtmlAgilityPack.HtmlDocument htmlDoc)
         {
             //获取厂家名称url地址
-            var vendorUrlNode = htmlDoc.DocumentNode.SelectSingleNode("//a[@class='merchant-title']");
+            var vendorUrlNode = htmlDoc.DocumentNode.SelectSingleNode("//a[contains(@class,'merchant-title')]");
             if (vendorUrlNode == null)
             {
                 throw new Exception("解析厂家名称HTML失败");
@@ -328,73 +313,6 @@ namespace ShopErp.App.Service.Spider.Go2
             {
                 throw new Exception("获取到的厂家网址为空");
             }
-
-            //QQ
-            var qqNode = htmlDoc.DocumentNode.SelectSingleNode("//p[@class='merchant-qq']/span");
-            if (qqNode == null)
-            {
-                throw new Exception("未找到联系方式结点//div[@id='top_right']/h2");
-            }
-            var qq = qqNode.InnerText.Trim();
-            var ss = qq.Split(new char[] { '/', '：' }, StringSplitOptions.None);
-            if (ss.Length != 2)
-            {
-                throw new Exception("QQ联系方式数据无法解析:" + qq);
-            }
-            string qqInfo = ss[1];
-
-            //电话
-            var phoneNode = htmlDoc.DocumentNode.SelectSingleNode("//div[@class='merchant-lite-info']/p[contains(@class, 'merchant-phone')]");
-            if (phoneNode == null)
-            {
-                throw new Exception("无法获取电话结点://div[@class='merchant-lite-info']/p[contains(@class, 'merchant-phone')]");
-            }
-            string mobile = phoneNode.InnerText.Replace("&ensp;", " ").Trim();
-
-            var addNode = htmlDoc.DocumentNode.SelectSingleNode("//p[@class='merchant-address']");
-            if (addNode == null)
-            {
-                throw new Exception("厂家拿货地址结点为空");
-            }
-            string add = addNode.InnerText.Trim();
-            vendor.MarketAddress = add;
-            vendor.Name = vendorName;
-            vendor.Phone = mobile;
-            vendor.HomePage = u;
-        }
-
-        private void ParseVendorByZUrl(Vendor vendor, HtmlAgilityPack.HtmlDocument htmlDoc)
-        {
-            //获取厂家名称url地址
-            var vendorUrlNode = htmlDoc.DocumentNode.SelectSingleNode("//a[@class='merchant-title color-main']");
-            if (vendorUrlNode == null)
-            {
-                throw new Exception("解析厂家名称HTML失败");
-            }
-
-            string vendorName = vendorUrlNode.InnerText.Trim();
-            if (string.IsNullOrWhiteSpace(vendorName))
-            {
-                throw new Exception("获取到的厂家名称为空");
-            }
-            string u = vendorUrlNode.Attributes["href"].Value.Trim();
-            if (string.IsNullOrWhiteSpace(u))
-            {
-                throw new Exception("获取到的厂家网址为空");
-            }
-            //QQ
-            var qqNode = htmlDoc.DocumentNode.SelectSingleNode("//p[@class='merchant-qq']/span");
-            if (qqNode == null)
-            {
-                throw new Exception("未找到联系方式结点//div[@id='top_right']/h2");
-            }
-            var qq = qqNode.InnerText.Trim();
-            var ss = qq.Split(new char[] { '/', '：' }, StringSplitOptions.None);
-            if (ss.Length != 2)
-            {
-                throw new Exception("QQ联系方式数据无法解析:" + qq);
-            }
-            string qqInfo = ss[1];
 
             //电话
             var phoneNode = htmlDoc.DocumentNode.SelectSingleNode("//div[@class='merchant-lite-info']/p[contains(@class, 'merchant-phone')]");

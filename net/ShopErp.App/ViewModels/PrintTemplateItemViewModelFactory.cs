@@ -38,6 +38,11 @@ namespace ShopErp.App.ViewModels
                 return new PrintTemplateItemViewModelForReciverInfoAll(template);
             }
 
+            if (type == Service.Print.PrintTemplateItemType.ORDER_GOODS_INFO_AND_SELLER_COMMENT)
+            {
+                return new PrintTemplateItemViewModelForGoodsInfoAndComment(template);
+            }
+
             //物流
             if (type == Service.Print.PrintTemplateItemType.DELIVERY_DELIVERYNUMBERBARCODE)
             {

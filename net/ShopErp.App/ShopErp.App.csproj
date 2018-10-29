@@ -294,6 +294,7 @@
     <Compile Include="ViewModels\PrintTemplateItemViewModelForBarcode.cs" />
     <Compile Include="ViewModels\PrintTemplateItemViewModelForDate.cs" />
     <Compile Include="ViewModels\PrintTemplateItemViewModelForDeliveryNumberBarcode.cs" />
+    <Compile Include="ViewModels\PrintTemplateItemViewModelForGoodsInfoAndComment.cs" />
     <Compile Include="ViewModels\PrintTemplateItemViewModelForImage.cs" />
     <Compile Include="ViewModels\PrintTemplateItemViewModelForLine.cs" />
     <Compile Include="ViewModels\PrintTemplateItemViewModelForPriceInBig.cs" />
@@ -578,6 +579,9 @@
     </Compile>
     <Compile Include="Views\Print\PrintTemplateItemTextUserControl.xaml.cs">
       <DependentUpon>PrintTemplateItemTextUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Print\PrintTemplateItemViewModelGoodsInfoAndCommentUserControl.xaml.cs">
+      <DependentUpon>PrintTemplateItemViewModelGoodsInfoAndCommentUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Print\PrintTemplateItemViewModelRouteCodeUserControl.xaml.cs">
       <DependentUpon>PrintTemplateItemViewModelRouteCodeUserControl.xaml</DependentUpon>
@@ -933,6 +937,10 @@
     <Page Include="Views\Print\PrintTemplateItemTextUserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Print\PrintTemplateItemViewModelGoodsInfoAndCommentUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Print\PrintTemplateItemViewModelRouteCodeUserControl.xaml">
       <SubType>Designer</SubType>

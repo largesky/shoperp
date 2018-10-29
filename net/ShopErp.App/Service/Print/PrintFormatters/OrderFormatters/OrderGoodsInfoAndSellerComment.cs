@@ -22,16 +22,26 @@ namespace ShopErp.App.Service.Print.OrderFormatters
             {
                 vs = ServiceContainer.GetService<VendorService>();
             }
-            if (order.Type != OrderType.SHUA && order.OrderGoodss != null && order.OrderGoodss.Count > 0)
+
+            if (order.Type != OrderType.SHUA || (order.Type == OrderType.SHUA && item.Format == "是"))
             {
-                foreach (var goods in order.OrderGoodss.Where(obj => (int)obj.State <= (int)OrderState.SHIPPED && obj.State != OrderState.NOTSALE))
+                if (order.OrderGoodss != null && order.OrderGoodss.Count > 0)
                 {
-                    string areaAndDoor = VendorService.FindAreaOrStreet(vs.GetVendorAddress_InCach(goods.Vendor), "区") + "-" + VendorService.FindDoor(vs.GetVendorAddress_InCach(goods.Vendor));
-                    sb.AppendLine(areaAndDoor + " " + vs.GetVendorPingyingName(goods.Vendor).ToUpper() + " " + goods.Number + " " + goods.Edtion + " " + goods.Color + " " + goods.Size + " (" + goods.Count + ")");
+
+                    foreach (var goods in order.OrderGoodss.Where(obj => (int)obj.State <= (int)OrderState.SHIPPED && obj.State != OrderState.NOTSALE))
+                    {
+                        string areaAndDoor = VendorService.FindAreaOrStreet(vs.GetVendorAddress_InCach(goods.Vendor), "区") + "-" + VendorService.FindDoor(vs.GetVendorAddress_InCach(goods.Vendor));
+                        sb.AppendLine(areaAndDoor + " " + vs.GetVendorPingyingName(goods.Vendor).ToUpper() + " " + goods.Number + " " + goods.Edtion + " " + goods.Color + " " + goods.Size + " (" + goods.Count + ")");
+                    }
                 }
+                if (order.PopPayType != PopPayType.COD)
+                    sb.AppendLine(order.PopSellerComment);
             }
-            if (order.PopPayType != PopPayType.COD)
-                sb.AppendLine(order.PopSellerComment);
+            else
+            {
+                sb.AppendLine(item.Value);
+            }
+
             return sb.ToString();
         }
     }
