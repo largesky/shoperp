@@ -146,6 +146,7 @@
     <Compile Include="Domain\PrintTemplateItemType.cs" />
     <Compile Include="Domain\PrintTemplateItemTypeGroup.cs" />
     <Compile Include="Domain\PrintTemplateItemTypeGroupAttribute.cs" />
+    <Compile Include="MenuConfig.cs" />
     <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\CainiaoPrintDocumentPrintRequest.cs" />
     <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\CainiaoPrintDocumentPrintRequestTask.cs" />
     <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\CainiaoPrintDocumentPrintRequestTaskDocument.cs" />
@@ -311,6 +312,9 @@
       <DependentUpon>ImgCleanUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Config\ImgCleanViewModel.cs" />
+    <Compile Include="Views\Config\MenuItemConfigUserControl.xaml.cs">
+      <DependentUpon>MenuItemConfigUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Config\SystemCleanUserControl.xaml.cs">
       <DependentUpon>SystemCleanUserControl.xaml</DependentUpon>
     </Compile>
@@ -645,6 +649,10 @@
     <Page Include="Views\Config\ImgCleanUserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Config\MenuItemConfigUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Config\SystemCleanUserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
