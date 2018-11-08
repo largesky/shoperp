@@ -20,7 +20,7 @@ using ShopErp.App.Service.Restful;
 using ShopErp.Domain;
 using System.ComponentModel;
 
-namespace ShopErp.App.Views.Print
+namespace ShopErp.App.Views.Orders
 {
     /// <summary>
     /// CountUserControl.xaml 的交互逻辑

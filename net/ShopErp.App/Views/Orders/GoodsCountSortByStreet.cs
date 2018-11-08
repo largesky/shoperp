@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using ShopErp.Domain;
 
-namespace ShopErp.App.Views.Print
+namespace ShopErp.App.Views.Orders
 {
-    public class GoodsCountSortByDoor : IComparer<GoodsCount>
+    public class GoodsCountSortByStreet : IComparer<GoodsCount>
     {
         public int Compare(GoodsCount lhs, GoodsCount rhs)
         {
@@ -36,14 +36,14 @@ namespace ShopErp.App.Views.Print
                 return lhs.LianLang ? -1 : 1;
             }
 
-            if (lhs.Door != rhs.Door)
-            {
-                return lhs.Door > rhs.Door ? 1 : -1;
-            }
-
             if (lhs.Street != rhs.Street)
             {
                 return lhs.Street > rhs.Street ? 1 : -1;
+            }
+
+            if (lhs.Door != rhs.Door)
+            {
+                return lhs.Door > rhs.Door ? 1 : -1;
             }
 
             if (lhs.Number.Equals(rhs.Number, StringComparison.OrdinalIgnoreCase) == false)

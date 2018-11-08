@@ -210,70 +210,51 @@ namespace ShopErp.App.Views.Delivery
             }
 
             var addN = oi.basic.lists.First(obj => obj.key == "收货地址").content[0];
-
-            Debug.WriteLine(oi.orders.id + ":" + addN.type + " : " + addN.text);
-
-            if (addN.type.Equals("label", StringComparison.OrdinalIgnoreCase))
+            string reinfo = "";
+            //html 表示地址是要经过转运的地址，label是不需要经过转运的大陆地址
+            if (addN.type.Equals("html", StringComparison.OrdinalIgnoreCase))
             {
-                string add = "";
-                string reinfo = "";
-                reinfo = addN.text;
-                string[] reinfos = reinfo.Split(',');
-                order.ReceiverName = reinfos[0].Trim();
-                order.ReceiverMobile = reinfos[1].Replace("86-", "");
-                if (reinfos[2].All(c => Char.IsDigit(c) || c == '-'))
+                HtmlAgilityPack.HtmlDocument document = new HtmlAgilityPack.HtmlDocument();
+                document.LoadHtml(addN.text);
+                string hh = document.DocumentNode.InnerText;
+                string nhh = hh.Substring(0, hh.IndexOf("]转&nbsp;") + 1);// 
+                string read = nhh.Replace("[", "").Replace("]", "");
+                string mark = "转运仓库";
+                if (read.IndexOf(mark) > 0)
                 {
-                    order.ReceiverPhone = reinfos[2];
-                    for (int i = 3; i < reinfos.Length - 1; i++)
-                    {
-                        add += reinfos[i];
-                    }
+                    read = read.Remove(read.IndexOf(mark), mark.Length + 1);
                 }
-                else
-                {
-                    for (int i = 2; i < reinfos.Length - 1; i++)
-                    {
-                        add += reinfos[i];
-                    }
-                }
-                order.ReceiverAddress = add;
+                reinfo = read;
             }
-            else if (addN.type.Equals("html", StringComparison.OrdinalIgnoreCase))
+            else if (addN.type.Equals("label", StringComparison.OrdinalIgnoreCase))
             {
-                string PROVINCE_MARK = "'detail-oversea-info'>";
-                string tt = addN.text;
-                int iStart = tt.IndexOf(">");
-                int iEnd = tt.IndexOf("<span");
-                string ss = tt.Substring(iStart + 1, iEnd - iStart - 1);
-                string[] sss = ss.Split(new char[] { ',', '，' }, StringSplitOptions.RemoveEmptyEntries);
-                order.ReceiverName = sss[0];
-                order.ReceiverPhone = "";
-                iStart = tt.IndexOf(PROVINCE_MARK);
-                iEnd = tt.IndexOf("<span", iStart);
-                string pro = tt.Substring(iStart + PROVINCE_MARK.Length, iEnd - iStart - PROVINCE_MARK.Length).Trim();
-                iStart = tt.IndexOf("转运仓库", iEnd);
-                iStart = tt.IndexOf("<span>", iStart);
-                iEnd = tt.IndexOf("</span>", iStart);
-                string addfull = tt.Substring(iStart + "<span>".Length, iEnd - (iStart + "<span>".Length));
-                string[] adds = addfull.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                string add = pro;
-                for (int i = 0; i < adds.Length - 3; i++)
-                {
-                    if (adds[i].All(c => char.IsDigit(c)))
-                    {
-                        break;
-                    }
-                    add += " " + adds[i].Trim();
-                }
-                order.ReceiverMobile = adds[adds.Length - 1];
-                order.ReceiverPhone = adds[adds.Length - 2];
-                order.ReceiverAddress = add;
+                reinfo = addN.text;
             }
             else
             {
-                throw new Exception("无法解析的地址格式:" + addN.type);
+                throw new Exception("无法识别的地址格式");
             }
 
+            string add = "";
+            string[] reinfos = reinfo.Split(',');
+            order.ReceiverName = reinfos[0].Trim();
+            order.ReceiverMobile = reinfos[1].Replace("86-", "");
+            if (reinfos[2].All(c => Char.IsDigit(c) || c == '-'))
+            {
+                order.ReceiverPhone = reinfos[2];
+                for (int i = 3; i < reinfos.Length - 1; i++)
+                {
+                    add += reinfos[i];
+                }
+            }
+            else
+            {
+                for (int i = 2; i < reinfos.Length - 1; i++)
+                {
+                    add += reinfos[i];
+                }
+            }
+            order.ReceiverAddress = add;
             //订单金额
             var contents = new List<TaobaoQueryOrderDetailResponseAmountCountContent>();
             foreach (var c in oi.amount.count)

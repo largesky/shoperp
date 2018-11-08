@@ -458,9 +458,6 @@
     <Compile Include="Views\Orders\OrderDetailWindow.xaml.cs">
       <DependentUpon>OrderDetailWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Orders\OrderDownloadHtmlUserControl.xaml.cs">
-      <DependentUpon>OrderDownloadHtmlUserControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Orders\OrderDownloadWindow.xaml.cs">
       <DependentUpon>OrderDownloadWindow.xaml</DependentUpon>
     </Compile>
@@ -545,9 +542,9 @@
     </Compile>
     <Compile Include="Views\PageBar\PageChangeEventArgs.cs" />
     <Compile Include="Views\Print\FilePrintTemplateRepertory.cs" />
-    <Compile Include="Views\Print\GoodsCountSortByDoor.cs" />
-    <Compile Include="Views\Print\GoodsCountSortByStreet.cs" />
-    <Compile Include="Views\Print\GoodsCountUserControl.xaml.cs">
+    <Compile Include="Views\Orders\GoodsCountSortByDoor.cs" />
+    <Compile Include="Views\Orders\GoodsCountSortByStreet.cs" />
+    <Compile Include="Views\Orders\GoodsCountUserControl.xaml.cs">
       <DependentUpon>GoodsCountUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Print\PrintHistoryUserControl.xaml.cs">
@@ -834,10 +831,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Orders\OrderDownloadHtmlUserControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\Orders\OrderDownloadWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -898,7 +891,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Print\GoodsCountUserControl.xaml">
+    <Page Include="Views\Orders\GoodsCountUserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
