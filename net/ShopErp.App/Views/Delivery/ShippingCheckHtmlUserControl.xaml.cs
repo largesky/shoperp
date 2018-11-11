@@ -242,14 +242,14 @@ namespace ShopErp.App.Views.Delivery
             if (reinfos[2].All(c => Char.IsDigit(c) || c == '-'))
             {
                 order.ReceiverPhone = reinfos[2];
-                for (int i = 3; i < reinfos.Length - 1; i++)
+                for (int i = 3; i < reinfos.Length; i++)
                 {
                     add += reinfos[i];
                 }
             }
             else
             {
-                for (int i = 2; i < reinfos.Length - 1; i++)
+                for (int i = 2; i < reinfos.Length; i++)
                 {
                     add += reinfos[i];
                 }
@@ -570,10 +570,6 @@ namespace ShopErp.App.Views.Delivery
 
         private void btnGoToTaobao_Click(object sender, RoutedEventArgs e)
         {
-
-            //string tag = (sender as Button).Tag as string;
-            //wb1 = new CefSharp.WinForms.ChromiumWebBrowser("https://trade.taobao.com/trade/itemlist/list_sold_items.htm");
-            //this.wfh.Child = wb1;
             this.wb1.Load("https://trade.taobao.com/trade/itemlist/list_sold_items.htm");
         }
 
