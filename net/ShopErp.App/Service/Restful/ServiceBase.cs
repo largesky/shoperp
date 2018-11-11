@@ -118,5 +118,11 @@ namespace ShopErp.App.Service.Restful
         {
             return cancelTime.Subtract(dbMinTime).TotalDays < 300;
         }
+
+        public string FormatTime(DateTime time)
+        {
+            return time.ToString("yyyy-MM-dd HH:mm:ss");
+        }
+
     }
 }

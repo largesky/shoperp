@@ -54,10 +54,11 @@ namespace ShopErp.App.Service.Restful
             return DoPost<DataCollectionResponse<Order>>(para).Datas.ToArray();
         }
 
-        public void MarkPopDelivery(long id)
+        public void MarkPopDelivery(long id, string time)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
             para["id"] = id;
+            para["time"] = time;
             DoPost<ResponseBase>(para);
         }
 
@@ -119,13 +120,6 @@ namespace ShopErp.App.Service.Restful
             para["id"] = id;
 
             return DoPost<DataCollectionResponse<Order>>(para);
-        }
-
-        public StringResponse GetOrderPopCodNumber(long id)
-        {
-            Dictionary<string, object> para = new Dictionary<string, object>();
-            para["id"] = id;
-            return DoPost<StringResponse>(para);
         }
 
         public ResponseBase CloseOrder(long orderId, long orderGoodsId, int count)

@@ -400,7 +400,6 @@ namespace ShopErp.Server.Service.Restful
             {
                 throw new WebFaultException<ResponseBase>(new ResponseBase(ex.Message), System.Net.HttpStatusCode.OK);
             }
-
         }
 
         [OperationContract]
@@ -620,7 +619,7 @@ namespace ShopErp.Server.Service.Restful
 
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/markpopdelivery.html")]
-        public ResponseBase MarkPopDelivery(long id)
+        public ResponseBase MarkPopDelivery(long id, string time)
         {
             try
             {
@@ -637,26 +636,34 @@ namespace ShopErp.Server.Service.Restful
 
                 if ((int)or.State >= (int)OrderState.PRINTED && (int)or.State <= (int)OrderState.SHIPPED)
                 {
-                    Shop s = ServiceContainer.GetService<ShopService>().GetById(or.ShopId).First;
-                    if (s == null)
+                    int ret = 0;
+                    if (string.IsNullOrWhiteSpace(time))
                     {
-                        throw new Exception("订单店铺信息不存在");
-                    }
+                        Shop s = ServiceContainer.GetService<ShopService>().GetById(or.ShopId).First;
+                        if (s == null)
+                        {
+                            throw new Exception("订单店铺信息不存在");
+                        }
 
-                    if (s.AppEnabled == false)
-                    {
-                        throw new Exception("店铺接口已禁用，无法调用相应接口操作");
-                    }
+                        if (s.AppEnabled == false)
+                        {
+                            throw new Exception("店铺接口已禁用，无法调用相应接口操作");
+                        }
 
-                    if (string.IsNullOrWhiteSpace(s.AppKey) || string.IsNullOrWhiteSpace(s.AppSecret) || string.IsNullOrWhiteSpace(s.AppAccessToken))
-                    {
-                        throw new Exception("订单店铺授权信息为空");
-                    }
+                        if (string.IsNullOrWhiteSpace(s.AppKey) || string.IsNullOrWhiteSpace(s.AppSecret) || string.IsNullOrWhiteSpace(s.AppAccessToken))
+                        {
+                            throw new Exception("订单店铺授权信息为空");
+                        }
 
-                    this.ps.MarkDelivery(s, or.PopOrderId, or.PopPayType, or.DeliveryCompany, or.DeliveryNumber);
-                    if (this.dao.IsLessDBMinDate(or.PopDeliveryTime))
+                        this.ps.MarkDelivery(s, or.PopOrderId, or.PopPayType, or.DeliveryCompany, or.DeliveryNumber);
+                        if (this.dao.IsLessDBMinDate(or.PopDeliveryTime))
+                        {
+                            ret = this.dao.ExcuteSqlUpdate("update `Order` set PopDeliveryTime='" + this.FormatTime(DateTime.Now) + "' where Id=" + id);
+                        }
+                    }
+                    else
                     {
-                        this.dao.ExcuteSqlUpdate("update `Order` set PopDeliveryTime='" + this.FormatTime(DateTime.Now) + "' where Id=" + id);
+                        ret = this.dao.ExcuteSqlUpdate("update `Order` set PopDeliveryTime='" + time + "' where Id=" + id);
                     }
                 }
                 else
@@ -713,32 +720,6 @@ namespace ShopErp.Server.Service.Restful
             try
             {
                 return this.dao.GetOrdersByInfoIDNotEqual(popBuyerId, receiverPhone, receiverMobile, receiverAddress, id);
-            }
-            catch (Exception ex)
-            {
-                throw new WebFaultException<ResponseBase>(new ResponseBase(ex.Message), System.Net.HttpStatusCode.OK);
-            }
-        }
-
-        [OperationContract]
-        [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/getorderpopcodenumber.html")]
-        public StringResponse GetOrderPopCodNumber(long id)
-        {
-            try
-            {
-                var or = this.GetByIdWithException(id);
-                Shop s = ServiceContainer.GetService<ShopService>().GetById(or.ShopId).First;
-                if (s == null)
-                {
-                    throw new Exception("店铺信息不存在");
-                }
-                var deliveryInfo = this.ps.GetDeliveryInfo(s, or.PopOrderId);
-                if (deliveryInfo != null && or.PopCodNumber != deliveryInfo.PopCodNumber)
-                {
-                    or.PopCodNumber = deliveryInfo.PopCodNumber;
-                    this.Update(or);
-                }
-                return new StringResponse(deliveryInfo == null ? "" : deliveryInfo.PopCodNumber);
             }
             catch (Exception ex)
             {

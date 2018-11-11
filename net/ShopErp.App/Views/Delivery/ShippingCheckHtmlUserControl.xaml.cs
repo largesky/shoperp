@@ -651,6 +651,88 @@ namespace ShopErp.App.Views.Delivery
                     throw new Exception("该订单没有平台订单编号");
                 }
                 this.wb1.Load("https://wuliu.taobao.com/user/consign.htm?trade_id=" + item.Source.PopOrderId);
+                Clipboard.SetText(item.Source.DeliveryNumber);
+                this.tbMsg1.Text = "已自动复制:" + item.Source.DeliveryNumber;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void wb1_LoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
+        {
+            try
+            {
+                if (e.IsLoading)
+                {
+                    return;
+                }
+
+                string url = e.Browser.MainFrame.Url;
+                if (url.Contains("https://wuliu.taobao.com/user/order_detail_old.htm") == false)
+                {
+                    return;
+                }
+
+                this.Dispatcher.BeginInvoke(new Action(ParseResult));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+
+        private string FindNumbers(string ss, string mark)
+        {
+            int index = ss.IndexOf(mark);
+            if (index < 0)
+            {
+                return "";
+            }
+            int iStart = index + mark.Length;
+            while (Char.IsDigit(ss[iStart]) == false && iStart < ss.Length) iStart++;
+            if (iStart == ss.Length)
+            {
+                MessageBox.Show("标记发货失败，返回数据中未找到运单号码：");
+                return "";
+            }
+            int iEnd = iStart + 1;
+            while (Char.IsDigit(ss[iEnd]) && iStart < ss.Length) iEnd++;
+            string dn = ss.Substring(iStart, iEnd - iStart);
+            return dn.Trim();
+        }
+
+        private void ParseResult()
+        {
+            try
+            {
+                string ss = this.wb1.GetMainFrame().GetTextAsync().Result;
+                string dn = FindNumbers(ss, "运单号码：");
+                string oid = FindNumbers(ss, "订单编号：");
+
+                //搜索订单编号与运单号是否匹配
+                var order = this.orders.FirstOrDefault(obj => obj.Source.PopOrderId == oid);
+                if (order == null)
+                {
+                    MessageBox.Show("标记发货失败，返回数据订单编号找不到订单：" + oid, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                if (order.DeliveryNumber != dn)
+                {
+                    MessageBox.Show("标记发货失败，返回的快递单号与指定的订单快递单号不一致" + oid, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                if (ss.Contains(order.DeliveryCompany) == false)
+                {
+                    MessageBox.Show("标记发货失败，返回的快递公司与指定的快递公司不一致" + oid, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                var os = ServiceContainer.GetService<OrderService>();
+                os.MarkPopDelivery(order.Source.Id, os.FormatTime(DateTime.Now));
+                order.State = "已标记";
             }
             catch (Exception ex)
             {

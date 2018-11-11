@@ -95,7 +95,7 @@ namespace ShopErp.App.Views.Delivery
                     WPFHelper.DoEvents();
                     try
                     {
-                        os.MarkPopDelivery(o.Source.Id);
+                        os.MarkPopDelivery(o.Source.Id, "");
                         o.State = "标记成功";
                         o.Background = null;
                     }

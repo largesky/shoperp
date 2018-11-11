@@ -58,11 +58,12 @@
             <TextBlock Text="已超时订单" Margin="3" VerticalAlignment="Center" />
             <Ellipse Width="20" Height="20" Fill="Yellow" Margin="3" />
             <TextBlock Text="1小时内超时订单" Margin="3" VerticalAlignment="Center" />
+            <Button Name="btnGoToTaobao" Margin="3" Content="打开淘宝" VerticalAlignment="Center" Width="60" Click="btnGoToTaobao_Click" />
             <Button Name="btnRefresh" Margin="3" VerticalAlignment="Center" Width="60" Content="刷新" Click="btnRefresh_Click" />
             <Button Name="btnMarkDelivery" Margin="3" VerticalAlignment="Center" Width="60" Content="标记发货" Click="btnMarkDelivery_Click" />
-            <Button Name="btnGoToTaobao" Margin="3" Content="打开淘宝" VerticalAlignment="Center" Width="60" Click="btnGoToTaobao_Click" />
             <TextBlock Name="tbTotal" Margin="3" VerticalAlignment="Center" />
             <TextBlock Grid.Row="1" Name="tbMsg" Margin="3" VerticalAlignment="Center" />
+            <TextBlock Grid.Row="1" Name="tbMsg1" Margin="3" VerticalAlignment="Center" FontSize="16" Foreground="Red"/>
         </StackPanel>
         <DataGrid Grid.Row="1" Name="dgvOrders" AutoGenerateColumns="False" SelectionMode="Extended"
                   SelectionUnit="CellOrRowHeader" CanUserAddRows="False"
@@ -78,21 +79,20 @@
                 <DataGridTextColumn Header="店铺" Binding="{Binding Source.ShopId,Converter={StaticResource shopMarkConverter}}" IsReadOnly="True" />
                 <DataGridTextColumn Header="订单编号" Binding="{Binding Source.PopOrderId}" IsReadOnly="True" />
                 <DataGridTextColumn Header="付款时间" Binding="{Binding Source.PopPayTime,Converter={StaticResource datetimeConverter}}" IsReadOnly="True" />
-                <DataGridTextColumn Header="标记发货时间" Binding="{Binding Source.PopDeliveryTime,Converter={StaticResource datetimeConverter}}" IsReadOnly="True" />
                 <DataGridTextColumn Header="商品信息" Binding="{Binding GoodsInfo}" IsReadOnly="True" />
                 <DataGridTextColumn Header="订单状态" Binding="{Binding Source.State,Converter={StaticResource descriptionConverter}}" IsReadOnly="True" />
                 <DataGridTextColumn Header="快递公司" Binding="{Binding Source.DeliveryCompany}" IsReadOnly="True" />
                 <DataGridTextColumn Header="快递单号" Binding="{Binding Source.DeliveryNumber}" IsReadOnly="True" />
+                <DataGridTextColumn Header="处理状态" Binding="{Binding State}" IsReadOnly="True" />
                 <DataGridTextColumn Header="买家备注" Binding="{Binding Source.PopBuyerComment}" IsReadOnly="True" />
                 <DataGridTextColumn Header="卖家备注" Binding="{Binding Source.PopSellerComment}" IsReadOnly="True" />
-                <DataGridTextColumn Header="处理状态" Binding="{Binding State}" IsReadOnly="True" />
                 <DataGridTextColumn Header="收货人姓名" Binding="{Binding Source.ReceiverName}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="收货人电话" Binding="{Binding Phone}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="收货人地址" Binding="{Binding Source.ReceiverAddress}" IsReadOnly="True"/>
             </DataGrid.Columns>
         </DataGrid>
         <WindowsFormsHost Grid.Row="2" Name="wfh" >
-            <cefwf:ChromiumWebBrowser x:Name="wb1"/>
+            <cefwf:ChromiumWebBrowser x:Name="wb1" LoadingStateChanged="wb1_LoadingStateChanged" />
         </WindowsFormsHost>
     </Grid>
 </UserControl>

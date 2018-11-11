@@ -208,7 +208,7 @@ namespace ShopErp.App.Views.Print
                     {
                         item.Background = Brushes.Yellow;
                         item.State = "";
-                        ServiceContainer.GetService<OrderService>().MarkPopDelivery(item.Source.OrderId);
+                        ServiceContainer.GetService<OrderService>().MarkPopDelivery(item.Source.OrderId, "");
                         ServiceContainer.GetService<PrintHistoryService>().Update(item.Source);
                         item.State = "标记发货成功";
                         item.Background = null;
