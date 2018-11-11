@@ -27,6 +27,7 @@ namespace ShopErp.App.Views.Orders
     /// </summary>
     public partial class OrderSyncHtmlUserControl : UserControl
     {
+        private bool isRunning = false;
         private bool myLoaded = false;
         string jspath = System.IO.Path.Combine(EnvironmentDirHelper.DIR_DATA + "\\TAOBAOJS.js");
 
@@ -65,6 +66,13 @@ namespace ShopErp.App.Views.Orders
         {
             try
             {
+                if (this.isRunning)
+                {
+                    this.isRunning = false;
+                    return;
+                }
+                this.isRunning = true;
+                this.Dispatcher.BeginInvoke(new Action(() => this.btnUpdate.Content = "停止"));
                 string htmlRet = this.wb1.GetTextAsync().Result;
                 var allShops = ServiceContainer.GetService<ShopService>().GetByAll().Datas;
                 var shop = allShops.FirstOrDefault(obj => htmlRet.Contains(obj.PopSellerId));
@@ -77,6 +85,10 @@ namespace ShopErp.App.Views.Orders
                 int i = 0;
                 foreach (var o in orders)
                 {
+                    if (this.isRunning == false)
+                    {
+                        break;
+                    }
                     this.Dispatcher.BeginInvoke(new Action(() =>
                     {
                         if (this.tbMessage.LineCount > 10000)
@@ -98,11 +110,17 @@ namespace ShopErp.App.Views.Orders
                                                   Environment.NewLine);
                         this.tbMessage.ScrollToEnd();
                     }));
+                    WPFHelper.DoEvents();
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                this.isRunning = false;
+                this.Dispatcher.BeginInvoke(new Action(() => this.btnUpdate.Content = "开始同步"));
             }
         }
 

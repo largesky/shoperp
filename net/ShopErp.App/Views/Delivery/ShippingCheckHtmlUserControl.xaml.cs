@@ -32,7 +32,7 @@ namespace ShopErp.App.Views.Delivery
     {
         private bool myLoaded = false;
         string jspath = System.IO.Path.Combine(EnvironmentDirHelper.DIR_DATA + "\\TAOBAOJS.js");
-        //CefSharp.WinForms.ChromiumWebBrowser wb1 = null;
+        private bool isRunning = false;
         private ObservableCollection<OrderViewModel> orders = new ObservableCollection<OrderViewModel>();
 
         public ShippingCheckHtmlUserControl()
@@ -352,7 +352,7 @@ namespace ShopErp.App.Views.Delivery
                 throw new Exception("系统中没有找到相应店铺");
             }
 
-            while (true)
+            while (this.isRunning)
             {
                 string script = ScriptManager.GetBody(jspath, "//TAOBAO_SEARCH_ORDER").Replace("###prePageNo", (currentPage - 1 >= 0 ? currentPage - 1 : 1).ToString()).Replace("###pageNum", currentPage.ToString());
                 var task = wb1.GetBrowser().MainFrame.EvaluateScriptAsync(script, "", 1, new TimeSpan(0, 0, 30));
@@ -404,6 +404,15 @@ namespace ShopErp.App.Views.Delivery
         {
             try
             {
+
+                if (this.isRunning)
+                {
+                    this.isRunning = false;
+                    return;
+                }
+                this.btnRefresh.Content = "停止";
+                this.isRunning = true;
+
                 this.orders.Clear();
                 string htmlRet = this.wb1.GetTextAsync().Result;
                 var shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas;
@@ -448,6 +457,11 @@ namespace ShopErp.App.Views.Delivery
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
+            }
+            finally
+            {
+                this.isRunning = false;
+                this.btnRefresh.Content = "刷新";
             }
         }
 
