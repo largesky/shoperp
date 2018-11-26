@@ -99,6 +99,17 @@ namespace ShopErp.App.Views.Taobao
         {
             try
             {
+                var se = this.cbbKeyWords.SelectedItem as TaobaoKeyword;
+                if (se == null)
+                {
+                    throw new Exception("没有选择货号");
+                }
+                string number = se.Number.Trim();
+                if (MessageBox.Show("导入数据，货号：" + number, "提示", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                {
+                    return;
+                }
+
                 var ofd = new Microsoft.Win32.OpenFileDialog();
                 ofd.Filter = "Excel 文件|*.xlsx;*.xls";
                 ofd.Multiselect = true;
@@ -106,7 +117,21 @@ namespace ShopErp.App.Views.Taobao
                 {
                     return;
                 }
-                var kk = ParseDic(ofd.FileNames.OrderBy(obj => obj).ToArray());
+
+                //第一步预处理文件名称
+                var files = new string[ofd.FileNames.Length];
+                for (int i = 0; i < files.Length; i++)
+                {
+                    var fileNames = new FileInfo(ofd.FileNames[i]).Name.Split(new char[] { '_' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (fileNames.Length != 2)
+                    {
+                        throw new Exception("文件名称格式不对:" + ofd.FileNames[i]);
+                    }
+                    files[i] = new FileInfo(ofd.FileNames[i]).DirectoryName + "\\" + number + " " + fileNames[1].Replace("-", " ");
+                    File.Copy(ofd.FileNames[i], files[i], true);
+                }
+
+                var kk = ParseDic(files.OrderBy(obj => obj).ToArray());
                 var ss = ServiceContainer.GetService<TaobaoKeywordDetailService>();
 
                 foreach (var vv in kk)
@@ -146,7 +171,7 @@ namespace ShopErp.App.Views.Taobao
         public static Dictionary<DateTime, List<TaobaoKeywordDetail>> ParseDic(string[] files)
         {
             //检查所有文件名称
-            var fileNames = files.Select(obj => new FileInfo(obj).Name.Split(new char[] { ' ', '-', '.' }, StringSplitOptions.RemoveEmptyEntries)).ToArray();
+            var fileNames = files.Select(obj => new FileInfo(obj).Name.Split(new char[] { ' ', '.' }, StringSplitOptions.RemoveEmptyEntries)).ToArray();
             if (fileNames.Any(obj => obj.Length < 4))
             {
                 throw new Exception("有文件名称不为四段格式");
@@ -160,7 +185,7 @@ namespace ShopErp.App.Views.Taobao
             Dictionary<DateTime, List<TaobaoKeywordDetail>> dicKeywords = new Dictionary<DateTime, List<TaobaoKeywordDetail>>();
             foreach (var file in files)
             {
-                string[] fileArray = new FileInfo(file).Name.Split(new char[] { ' ', '-', '.' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] fileArray = new FileInfo(file).Name.Split(new char[] { ' ', '.' }, StringSplitOptions.RemoveEmptyEntries);
                 DateTime dt = new DateTime(int.Parse(fileArray[1]), int.Parse(fileArray[2]), int.Parse(fileArray[3]));
                 List<TaobaoKeywordDetail> allKeywords = new List<TaobaoKeywordDetail>();
                 var content = ExcelFile.Open(file).ReadFirstSheet().ToList();
