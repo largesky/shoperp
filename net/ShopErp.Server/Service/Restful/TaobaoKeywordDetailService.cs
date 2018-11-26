@@ -85,7 +85,22 @@ namespace ShopErp.Server.Service.Restful
         {
             try
             {
-                this.dao.ExcuteSqlUpdate("delete from " + this.dao.GetEntiyName() + "  =" + id);
+                this.dao.ExcuteSqlUpdate("delete from " + this.dao.GetEntiyName() + "  where id=" + id);
+                return ResponseBase.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                throw new WebFaultException<ResponseBase>(new ResponseBase(ex.Message), System.Net.HttpStatusCode.OK);
+            }
+        }
+
+        [OperationContract]
+        [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/deletemulti.html")]
+        public ResponseBase DeleteMulti(long[] ids)
+        {
+            try
+            {
+                this.dao.ExcuteSqlUpdate("delete from " + this.dao.GetEntiyName() + "  where id in(" + string.Join(",", ids) + ")");
                 return ResponseBase.SUCCESS;
             }
             catch (Exception ex)

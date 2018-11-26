@@ -1,5 +1,4 @@
-﻿using Largesky.Excel;
-using ShopErp.App.ViewModels;
+﻿using ShopErp.App.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,6 +18,7 @@ using System.Windows.Shapes;
 using ShopErp.App.Service.Delivery;
 using ShopErp.App.Service.Restful;
 using ShopErp.Domain;
+using ShopErp.App.Service.Excel;
 
 namespace ShopErp.App.Views.Delivery
 {
@@ -52,10 +52,10 @@ namespace ShopErp.App.Views.Delivery
                 {
                     this.orders.Clear();
                     this.shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas.ToArray();
-                    var os = ServiceContainer.GetService<OrderService>().GetByAll("", "", "", "", "",3,
+                    var os = ServiceContainer.GetService<OrderService>().GetByAll("", "", "", "", "", 3,
                         DateTime.Now.AddDays(-60), DateTime.MinValue, "", "", OrderState.PRINTED, PopPayType.None, "",
                         "", null, -1, "", 0, OrderCreateType.NONE, OrderType.NORMAL, 0, 0).Datas.ToArray();
-                    var orders = os.Select(obj => new DeliveryCheckViewModel(obj) {State = ""})
+                    var orders = os.Select(obj => new DeliveryCheckViewModel(obj) { State = "" })
                         .OrderBy(obj => obj.Source.PopPayTime).ToArray();
                     if (orders.Length < 1)
                     {
@@ -111,9 +111,8 @@ namespace ShopErp.App.Views.Delivery
                         obj.Source.DeliveryNumber, obj.Source.ReceiverName, obj.Source.ReceiverPhone,
                         obj.Source.ReceiverMobile, obj.Source.ReceiverAddress
                     }).ToList();
-                    contents.Insert(0, new string[] {"快递单号", "姓名", "座机", "手机", "地址"});
-                    XlsxFileWriter.WriteXlsx(dir + "\\" + DateTime.Now.ToString("MM_dd") + g.Key + ".xlsx",
-                        contents.ToArray());
+                    contents.Insert(0, new string[] { "快递单号", "姓名", "座机", "手机", "地址" });
+                    ExcelFile.WriteXlsx(dir + "\\" + DateTime.Now.ToString("MM_dd") + g.Key + ".xlsx", contents.ToArray());
                 }
                 MessageBox.Show("保存成功");
             }

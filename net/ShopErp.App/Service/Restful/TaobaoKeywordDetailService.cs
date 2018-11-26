@@ -29,6 +29,13 @@ namespace ShopErp.App.Service.Restful
             DoPost<ResponseBase>(para);
         }
 
+        public void DeleteMulti(long[] ids)
+        {
+            Dictionary<string, object> para = new Dictionary<string, object>();
+            para["ids"] = ids;
+            DoPost<ResponseBase>(para);
+        }
+
         public static bool Match(string[] words, string wordStr)
         {
             bool ret = words.All(obj => wordStr.IndexOf(obj, StringComparison.OrdinalIgnoreCase) >= 0);

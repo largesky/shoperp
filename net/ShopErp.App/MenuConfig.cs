@@ -6,6 +6,7 @@ using ShopErp.App.Views.Goods;
 using ShopErp.App.Views.Orders;
 using ShopErp.App.Views.Print;
 using ShopErp.App.Views.Shops;
+using ShopErp.App.Views.Taobao;
 using ShopErp.App.Views.Users;
 using ShopErp.App.Views.Vendor;
 using System;
@@ -74,10 +75,15 @@ namespace ShopErp.App
 
             mc = new MenuConfig("数据", null);
             mc.Add("销售汇总", typeof(SaleUserControl));
-            mc.Add("淘宝关键词管理", typeof(TaobaoKeywordUserControl));
-            mc.Add("淘宝关键词统计与导入", typeof(TaobaoKeywordCountUserControl));
+            mcs.Add(mc);
+
+            mc = new MenuConfig("淘宝运营", null);
+            mc.Add("淘宝关键词货号管理", typeof(TaobaoKeywordUserControl));
+            mc.Add("淘宝关键词导入删除", typeof(TaobaoKeywordManagementUserControl));
+            mc.Add("淘宝关键词统计", typeof(TaobaoKeywordCountUserControl));
             mc.Add("淘宝关键分日趋势", typeof(TaobaoKeywordStateUserControl));
             mcs.Add(mc);
+
 
             mc = new MenuConfig("财务", null);
             mc.Add("好评返现", typeof(ReturnCashUserControl));

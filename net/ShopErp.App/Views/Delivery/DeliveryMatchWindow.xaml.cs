@@ -1,4 +1,4 @@
-﻿using Largesky.Excel;
+﻿using ShopErp.App.Service.Excel;
 using ShopErp.Domain;
 using System;
 using System.Collections.Generic;
@@ -28,7 +28,6 @@ namespace ShopErp.App.Views.Delivery
         {
             InitializeComponent();
         }
-
 
         private string AnDetail(string[] deliveryNumbers)
         {
@@ -117,7 +116,7 @@ namespace ShopErp.App.Views.Delivery
 
         private FileDeliveryInfo[] ReadFile(string file)
         {
-            XlsxFileReader fr = XlsxFileReader.Open(file);
+            ExcelFile fr = ExcelFile.Open(file);
             string[][] contents = fr.ReadFirstSheet();
 
             if (contents.Length < 1)
