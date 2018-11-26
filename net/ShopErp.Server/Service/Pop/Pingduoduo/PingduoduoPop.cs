@@ -26,7 +26,8 @@ namespace ShopErp.Server.Service.Pop.Pingduoduo
             {
                 //去除内容头
                 bodyContent = bodyContent.Substring(bodyContent.IndexOf('{', 1));
-                bodyContent = bodyContent.Substring(0, bodyContent.Length - 1);
+                bodyContent = bodyContent.Substring(0, bodyContent.LastIndexOf('}'));
+                bodyContent = bodyContent.Substring(0, bodyContent.LastIndexOf('}')+1);
             }
             return bodyContent;
         }

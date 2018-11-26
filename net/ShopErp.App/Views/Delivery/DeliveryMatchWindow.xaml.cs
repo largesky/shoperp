@@ -107,7 +107,7 @@ namespace ShopErp.App.Views.Delivery
         {
             for (int i = 0; i < content.Length; i++)
             {
-                if (str == content[i])
+                if (content[i].Contains(str))
                 {
                     return i;
                 }
@@ -118,7 +118,7 @@ namespace ShopErp.App.Views.Delivery
         private FileDeliveryInfo[] ReadFile(string file)
         {
             XlsxFileReader fr = XlsxFileReader.Open(file);
-            string[][] contents = fr.ReadAllRows();
+            string[][] contents = fr.ReadFirstSheet();
 
             if (contents.Length < 1)
             {
@@ -128,7 +128,7 @@ namespace ShopErp.App.Views.Delivery
             int dnIndex = GetIndex(contents[0], "运单号");
             if (dnIndex < 0)
             {
-                throw new Exception("文件中没有找到 运单号 列" + file);
+                throw new Exception("文件中没有找到 运单号 列");
             }
 
             int wIndex = GetIndex(contents[0], "重量");

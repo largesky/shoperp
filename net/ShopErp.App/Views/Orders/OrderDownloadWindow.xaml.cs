@@ -186,14 +186,6 @@ namespace ShopErp.App.Views.Orders
                     this.UpdateShopState(shop, ret.IsTotalValid, ret.Total, downloaded, string.Format("每页{0}条订单，已下载第{1}页", pageSize, pageIndex + 1), null);
                     pageIndex++;
                 }
-            }
-            catch (Exception e)
-            {
-                this.hasError = true;
-                this.UpdateShopState(shop, true, 1, 1, e.Message, Brushes.Red);
-            }
-            finally
-            {
                 if (downloaded == 0)
                 {
                     this.UpdateShopState(shop, true, 1, 0, "没有订单", null);
@@ -202,6 +194,14 @@ namespace ShopErp.App.Views.Orders
                 {
                     this.UpdateShopState(shop, true, 1, 1, "已成功下载订单：" + downloaded, null);
                 }
+            }
+            catch (Exception e)
+            {
+                this.hasError = true;
+                this.UpdateShopState(shop, true, 1, 1, e.Message, Brushes.Red);
+            }
+            finally
+            {
                 this.task = null;
             }
         }
