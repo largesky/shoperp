@@ -173,7 +173,31 @@ namespace ShopErp.App.Service.Excel
 
         public static void WriteXlsx(string file, string[][] contents)
         {
-            throw new Exception("未实现该方法");
+            IWorkbook book = null;
+            if (file.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase))
+            {
+                book = new NPOI.XSSF.UserModel.XSSFWorkbook();
+            }
+            else
+            {
+                book = new NPOI.HSSF.UserModel.HSSFWorkbook();
+            }
+
+            ISheet sheet = book.CreateSheet("Sheet1");
+
+            for (int i = 0; i < contents.Length; i++)
+            {
+                var row = sheet.CreateRow(i);
+                for (int k = 0; k < contents[i].Length; k++)
+                {
+                    var cell = row.CreateCell(k, CellType.String);
+                    cell.SetCellValue(contents[i][k]);
+                }
+            }
+            using (FileStream fs = new FileStream(file, FileMode.Create))
+            {
+                book.Write(fs);
+            }
         }
 
     }

@@ -159,7 +159,7 @@
     <Compile Include="Domain\PrintTemplateItemTypeGroup.cs" />
     <Compile Include="Domain\PrintTemplateItemTypeGroupAttribute.cs" />
     <Compile Include="MenuConfig.cs" />
-    <Compile Include="Service\Excel\XlsxFileReader.cs" />
+    <Compile Include="Service\Excel\ExcelFile.cs" />
     <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\CainiaoPrintDocumentPrintRequest.cs" />
     <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\CainiaoPrintDocumentPrintRequestTask.cs" />
     <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\CainiaoPrintDocumentPrintRequestTaskDocument.cs" />
