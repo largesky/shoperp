@@ -466,7 +466,7 @@ namespace ShopErp.Server.Service.Restful
                 {
                     if (chkLocalState)
                     {
-                        totalOgs.AddRange(or.OrderGoodss.Where(obj => obj.State != OrderState.CLOSED && obj.State != OrderState.SPILTED && obj.State != OrderState.CANCLED && obj.State != OrderState.CLOSEDAFTERTRADE && obj.State != OrderState.NOTSALE));
+                        totalOgs.AddRange(or.OrderGoodss.Where(obj => (int)obj.State >= (int)OrderState.PAYED && (int)obj.State <= (int)OrderState.SUCCESS));
                     }
                     else
                     {
@@ -820,23 +820,17 @@ namespace ShopErp.Server.Service.Restful
         }
 
         [OperationContract]
-        [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/markordergoodsstate.html")]
-        public ResponseBase MarkOrderGoodsState(long orderId, long orderGoodsId, OrderState state, string stockComment)
+        [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/updateordergoodsstate.html")]
+        public ResponseBase UpdateOrderGoodsState(long orderId, long orderGoodsId, OrderState state, string stockComment)
         {
             try
             {
                 string op = ServiceContainer.GetCurrentLoginInfo().op.Number;
                 Order order = this.GetByIdWithException(orderId);
-                OrderGoods og = null;
 
-                if ((int)state < (int)OrderState.PRINTED && state != OrderState.NONE)
+                if (state != OrderState.GETED && state != OrderState.CHECKFAIL)
                 {
-                    throw new Exception("不能将订单修改成打印及以前的状态");
-                }
-
-                if (state >= OrderState.SHIPPED && state != OrderState.NONE)
-                {
-                    throw new Exception("不能将订单修改成发货状态");
+                    throw new Exception("订单商品只能修改成已拿货或者检查未过");
                 }
 
                 if ((int)order.State < (int)OrderState.PAYED)
@@ -844,29 +838,21 @@ namespace ShopErp.Server.Service.Restful
                     throw new Exception("未付款订单不能更改");
                 }
 
-                if ((int)order.State >= (int)OrderState.SHIPPED && state != OrderState.NONE)
+                if ((int)order.State >= (int)OrderState.SHIPPED)
                 {
                     throw new Exception("已经发货，不能更改");
                 }
-                List<OrderGoods> ogs = order.OrderGoodss.Where(obj => (int)obj.State < (int)OrderState.SHIPPED).ToList();
-                foreach (OrderGoods o in ogs)
-                {
-                    if (o.Id == orderGoodsId)
-                    {
-                        og = o;
-                        break;
-                    }
-                }
 
+                OrderGoods og = order.OrderGoodss.FirstOrDefault(obj => obj.Id == orderGoodsId);
                 if (og == null)
                 {
-                    throw new Exception("订单商品不存在或者状态不正确");
+                    throw new Exception("订单商品不存在");
                 }
-
-                if (state != OrderState.NONE)
+                if ((int)og.State >= (int)OrderState.SHIPPED)
                 {
-                    og.State = state;
+                    throw new Exception("订单商品状态不允许修改");
                 }
+                og.State = state;
                 og.Comment = stockComment;
                 og.StockTime = DateTime.Now;
                 og.StockOperator = op;
@@ -880,35 +866,17 @@ namespace ShopErp.Server.Service.Restful
                     }
                     og.GetedCount = val;
                 }
-                else if (state != OrderState.NONE)
+                else
                 {
                     og.GetedCount = 0;
                 }
-
-                bool allTheSame = true;
-
-                for (int i = 1; i < ogs.Count; i++)
-                {
-                    if (ogs[i].State != ogs[0].State)
-                    {
-                        allTheSame = false;
-                        break;
-                    }
-                }
-
-                if (allTheSame && (int)order.State >= (int)OrderState.PRINTED)
-                {
-                    order.State = ogs[0].State;
-                }
-
-                this.dao.Update(og, order);
+                this.dao.Update(og);
                 return ResponseBase.SUCCESS;
             }
             catch (Exception ex)
             {
                 throw new WebFaultException<ResponseBase>(new ResponseBase(ex.Message), System.Net.HttpStatusCode.OK);
             }
-
         }
 
         [OperationContract]
@@ -1137,7 +1105,7 @@ namespace ShopErp.Server.Service.Restful
                 or.State = OrderState.GETED;
                 foreach (var og in or.OrderGoodss)
                 {
-                    if (((int)or.State < (int)OrderState.PAYED || (int)or.State >= (int)OrderState.SHIPPED) && or.State != OrderState.NOTSALE)
+                    if (((int)or.State < (int)OrderState.PAYED || (int)or.State > (int)OrderState.SUCCESS))
                     {
                         continue;
                     }
@@ -1267,8 +1235,7 @@ namespace ShopErp.Server.Service.Restful
                 {
                     targetState = OrderState.PAYED;
                 }
-                else if ((orderInDb.State == OrderState.RETURNING || orderInDb.State == OrderState.WAIT_REFUNED || orderInDb.State == OrderState.UNKNOWN) &&
-                         ous.IsDbMinTime(orderInDb.DeliveryTime))
+                else if ((orderInDb.State == OrderState.RETURNING) && ous.IsDbMinTime(orderInDb.DeliveryTime))
                 {
                     if (ous.IsDbMinTime(orderInDb.PrintTime) == false)
                     {
@@ -1283,7 +1250,7 @@ namespace ShopErp.Server.Service.Restful
             else if (onlineState == OrderState.SHIPPED)
             {
                 //如果在退款中，则标记为已发货
-                if (orderInDb.State == OrderState.RETURNING || orderInDb.State == OrderState.WAIT_REFUNED || orderInDb.State == OrderState.UNKNOWN)
+                if (orderInDb.State == OrderState.RETURNING)
                 {
                     if (IsDbMinTime(orderInDb.DeliveryTime))
                     {
@@ -1335,10 +1302,7 @@ namespace ShopErp.Server.Service.Restful
             }
 
             //本地已经关闭的订单则不允许更新状态
-            if (orderInDb.State != OrderState.CLOSED &&
-                orderInDb.State != OrderState.CANCLED &&
-                orderInDb.State != OrderState.CLOSEDAFTERTRADE &&
-                orderInDb.State != OrderState.REFUSED)
+            if (orderInDb.State != OrderState.CLOSED && orderInDb.State != OrderState.CANCLED)
             {
                 //有多个商品，则需要检查退货，取消退货这些情况
                 if (orderOnline.OrderGoodss != null && orderOnline.OrderGoodss.Count > 1)
@@ -1392,7 +1356,7 @@ namespace ShopErp.Server.Service.Restful
                                     {
 
                                     }
-                                    else if (ogInDb.State == OrderState.RETURNING || ogInDb.State == OrderState.WAIT_REFUNED || ogInDb.State == OrderState.UNKNOWN)
+                                    else if (ogInDb.State == OrderState.RETURNING)
                                     {
                                         if (ous.IsDbMinTime(orderInDb.DeliveryTime) == false)
                                         {
@@ -1456,8 +1420,7 @@ namespace ShopErp.Server.Service.Restful
                     orderInDb = ret.Datas[0];
                 }
 
-                if (orderStateOnline.State == orderInDb.State &&
-                    orderStateOnline.PopOrderStateValue == orderInDb.PopState)
+                if (orderStateOnline.State == orderInDb.State && orderStateOnline.PopOrderStateValue == orderInDb.PopState)
                 {
                     return new StringResponse(UPDATE_RET_NOUPDATED);
                 }
@@ -1476,8 +1439,7 @@ namespace ShopErp.Server.Service.Restful
                     {
                         targetState = OrderState.PAYED;
                     }
-                    else if ((orderInDb.State == OrderState.RETURNING || orderInDb.State == OrderState.WAIT_REFUNED || orderInDb.State == OrderState.UNKNOWN) &&
-                             ous.IsDbMinTime(orderInDb.DeliveryTime))
+                    else if ((orderInDb.State == OrderState.RETURNING) && ous.IsDbMinTime(orderInDb.DeliveryTime))
                     {
                         if (ous.IsDbMinTime(orderInDb.PrintTime) == false)
                         {
@@ -1492,7 +1454,7 @@ namespace ShopErp.Server.Service.Restful
                 else if (onlineState == OrderState.SHIPPED)
                 {
                     //如果在退款中，则标记为已发货
-                    if (orderInDb.State == OrderState.RETURNING || orderInDb.State == OrderState.WAIT_REFUNED || orderInDb.State == OrderState.UNKNOWN)
+                    if (orderInDb.State == OrderState.RETURNING)
                     {
                         if (IsDbMinTime(orderInDb.DeliveryTime))
                         {
@@ -1544,10 +1506,7 @@ namespace ShopErp.Server.Service.Restful
                 }
 
                 //本地已经关闭的订单则不允许更新状态
-                if (orderInDb.State != OrderState.CLOSED &&
-                    orderInDb.State != OrderState.CANCLED &&
-                    orderInDb.State != OrderState.CLOSEDAFTERTRADE &&
-                    orderInDb.State != OrderState.REFUSED)
+                if (orderInDb.State != OrderState.CLOSED && orderInDb.State != OrderState.CANCLED)
                 {
                     if (targetState != orderInDb.State)
                     {

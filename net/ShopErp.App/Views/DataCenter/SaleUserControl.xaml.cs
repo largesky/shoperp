@@ -245,7 +245,7 @@ namespace ShopErp.App.Views.DataCenter
             int i = 1;
             foreach (var dg in dateGroups)
             {
-                var os = dg.Where(obj => (int)obj.State <= (int)OrderState.SUCCESS && obj.State != OrderState.REFUSED).ToArray();
+                var os = dg.Where(obj => (int)obj.State <= (int)OrderState.SUCCESS).ToArray();
                 var orderMoney = os.Select(obj => obj.PopSellerGetMoney).Sum();
                 var costMoney = os.Select(obj => obj.ERPOrderDeliveryMoney + obj.ERPOrderGoodsMoney * obj.Count +
                                                  obj.PopSellerGetMoney * GetCommissionPer(obj.ShopId)).Sum();

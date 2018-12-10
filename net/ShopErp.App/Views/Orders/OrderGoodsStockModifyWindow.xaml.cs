@@ -1,5 +1,5 @@
-﻿ 
- 
+﻿
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,25 +31,13 @@ namespace ShopErp.App.Views.Orders
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (this.OrderGoods.State == OrderState.OUTOFSTOCK)
+            if (this.OrderGoods.State == OrderState.GETED)
             {
                 this.cbbStates.SelectedIndex = 0;
             }
             else if (this.OrderGoods.State == OrderState.CHECKFAIL)
             {
                 this.cbbStates.SelectedIndex = 1;
-            }
-            else if (this.OrderGoods.State == OrderState.CUSTOMIZING)
-            {
-                this.cbbStates.SelectedIndex = 2;
-            }
-            else if (this.OrderGoods.State == OrderState.NOTSALE)
-            {
-                this.cbbStates.SelectedIndex = 3;
-            }
-            else if (this.OrderGoods.State == OrderState.GETED)
-            {
-                this.cbbStates.SelectedIndex = 4;
             }
             else
             {
@@ -64,26 +52,14 @@ namespace ShopErp.App.Views.Orders
                 OrderState state = OrderState.NONE;
                 if (this.cbbStates.SelectedIndex == 0)
                 {
-                    state = OrderState.OUTOFSTOCK;
+                    state = OrderState.GETED;
                 }
                 else if (this.cbbStates.SelectedIndex == 1)
                 {
                     state = OrderState.CHECKFAIL;
                 }
-                else if (this.cbbStates.SelectedIndex == 2)
-                {
-                    state = OrderState.CUSTOMIZING;
-                }
-                else if (this.cbbStates.SelectedIndex == 3)
-                {
-                    state = OrderState.NOTSALE;
-                }
-                else if (this.cbbStates.SelectedIndex == 4)
-                {
-                    state = OrderState.GETED;
-                }
                 var ser = ServiceContainer.GetService<OrderService>();
-                ser.MarkOrderGoodsState(this.OrderGoods.OrderId,this.OrderGoods.Id, state, this.cbbComment.Text.Trim());
+                ser.UpdateOrderGoodsState(this.OrderGoods.OrderId, this.OrderGoods.Id, state, this.cbbComment.Text.Trim());
                 this.DialogResult = true;
             }
             catch (Exception ex)
@@ -103,16 +79,11 @@ namespace ShopErp.App.Views.Orders
 
                 if (this.cbbStates.SelectedIndex == 0)
                 {
-                    for (int i = 0; i < 5; i++)
+                    for (int i = 1; i <= this.OrderGoods.Count; i++)
                     {
-                        string s = "预计" + DateTime.Now.AddDays(i).ToString("dd") + "号";
-                        ss.Add(s);
+                        ss.Add("已拿" + i + "双");
                     }
-                    ss.Add("无此货号");
-                    ss.Add("无此颜色");
-                    ss.Add("无此版本");
-                    ss.Add("无此尺码");
-                    ss.Add("厂家不对");
+                    this.cbbComment.IsEditable = false;
                 }
                 else if (this.cbbStates.SelectedIndex == 1)
                 {
@@ -120,29 +91,6 @@ namespace ShopErp.App.Views.Orders
                     ss.Add("颜色不对");
                     ss.Add("货号不对");
                     ss.Add("商品瑕疵");
-                }
-                else if (this.cbbStates.SelectedIndex == 2)
-                {
-                    for (int i = 0; i < 5; i++)
-                    {
-                        string s = "预计" + DateTime.Now.AddDays(i).ToString("dd") + "号";
-                        ss.Add(s);
-                    }
-                }
-                else if (this.cbbStates.SelectedIndex == 3)
-                {
-                    ss.Add("");
-                    ss.Add("颜色下架");
-                    ss.Add("版本下架");
-                    ss.Add("尺码下架");
-                }
-                else if (this.cbbStates.SelectedIndex == 4)
-                {
-                    for (int i = 1; i <= this.OrderGoods.Count; i++)
-                    {
-                        ss.Add("已拿" + i + "双");
-                    }
-                    this.cbbComment.IsEditable = false;
                 }
                 else
                 {

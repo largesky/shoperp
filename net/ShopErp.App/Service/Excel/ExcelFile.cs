@@ -10,7 +10,6 @@ namespace ShopErp.App.Service.Excel
 {
     public class ExcelFile
     {
-        private static readonly char[] NUMBERS = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
         private Dictionary<string, string[][]> sheetDatas = new Dictionary<string, string[][]>();
 
         /// <summary>

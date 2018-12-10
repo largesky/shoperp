@@ -42,7 +42,7 @@ namespace ShopErp.Server.Service.Pop.Taobao
             }
             else if (state == "SIGN_IN")
             {
-                return OrderState.SIGNED;
+                return OrderState.SHIPPED;
             }
             else if (state == "TRADE_NO_CREATE_PAY" || state == "WAIT_BUYER_PAY")
             {
@@ -58,7 +58,7 @@ namespace ShopErp.Server.Service.Pop.Taobao
             }
             else if (state == "TRADE_BUYER_SIGNED")
             {
-                return OrderState.SIGNED;
+                return OrderState.SHIPPED;
             }
             else if (state == "TRADE_FINISHED")
             {

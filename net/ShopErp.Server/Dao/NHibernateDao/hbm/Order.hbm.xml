@@ -118,6 +118,9 @@
     <property name="ParseResult">
       <column name="ParseResult" sql-type="boolean" not-null="true" />
     </property>
+    <property name="Refused">
+      <column name="Refused" sql-type="boolean" not-null="true" />
+    </property>
     <property name="State">
       <column name="State" sql-type="int" not-null="true" />
     </property>

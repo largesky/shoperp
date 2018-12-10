@@ -27,7 +27,7 @@ namespace ShopErp.Server.Service.Pop.Pingduoduo
                 //去除内容头
                 bodyContent = bodyContent.Substring(bodyContent.IndexOf('{', 1));
                 bodyContent = bodyContent.Substring(0, bodyContent.LastIndexOf('}'));
-                bodyContent = bodyContent.Substring(0, bodyContent.LastIndexOf('}')+1);
+                bodyContent = bodyContent.Substring(0, bodyContent.LastIndexOf('}') + 1);
             }
             return bodyContent;
         }
@@ -104,13 +104,13 @@ namespace ShopErp.Server.Service.Pop.Pingduoduo
 
             if (s.refund_status == "0")
             {
-                os = Domain.OrderState.UNKNOWN;
+                os = Domain.OrderState.NONE;
             }
             else if (s.refund_status == "1")
             {
                 if (s.order_status == "0")
                 {
-                    os = Domain.OrderState.UNKNOWN;
+                    os = Domain.OrderState.NONE;
                 }
                 else if (s.order_status == "1")
                 {

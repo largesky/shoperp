@@ -44,6 +44,7 @@ namespace ShopErp.Domain
         public string DeliveryOperator { get; set; }
         public string CloseOperator { get; set; }
         public bool ParseResult { get; set; }
+        public bool Refused { get; set; }
         public OrderState State { get; set; }
         public IList<OrderGoods> OrderGoodss { get; set; }
     }

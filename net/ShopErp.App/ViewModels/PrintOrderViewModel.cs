@@ -15,32 +15,23 @@ namespace ShopErp.App.ViewModels
     public class PrintOrderViewModel : DependencyObject, IComparable<PrintOrderViewModel>
     {
 
-        public static readonly DependencyProperty IsCheckedProperty =
-            DependencyProperty.Register("IsChecked", typeof(bool), typeof(PrintOrderViewModel));
+        public static readonly DependencyProperty IsCheckedProperty = DependencyProperty.Register("IsChecked", typeof(bool), typeof(PrintOrderViewModel));
 
-        public static readonly DependencyProperty BackgroundProperty =
-            DependencyProperty.Register("Background", typeof(Brush), typeof(PrintOrderViewModel));
+        public static readonly DependencyProperty BackgroundProperty = DependencyProperty.Register("Background", typeof(Brush), typeof(PrintOrderViewModel));
 
-        public static readonly DependencyProperty StateProperty =
-            DependencyProperty.Register("State", typeof(string), typeof(PrintOrderViewModel));
+        public static readonly DependencyProperty StateProperty = DependencyProperty.Register("State", typeof(string), typeof(PrintOrderViewModel));
 
-        public static readonly DependencyProperty DeliveryCompanyProperty =
-            DependencyProperty.Register("DeliveryCompany", typeof(string), typeof(PrintOrderViewModel));
+        public static readonly DependencyProperty DeliveryCompanyProperty = DependencyProperty.Register("DeliveryCompany", typeof(string), typeof(PrintOrderViewModel));
 
-        public static readonly DependencyProperty DeliveryNumberProperty =
-            DependencyProperty.Register("DeliveryNumber", typeof(string), typeof(PrintOrderViewModel));
+        public static readonly DependencyProperty DeliveryNumberProperty = DependencyProperty.Register("DeliveryNumber", typeof(string), typeof(PrintOrderViewModel));
 
-        public static readonly DependencyProperty ReceiverNameProperty =
-            DependencyProperty.Register("ReceiverName", typeof(string), typeof(PrintOrderViewModel));
+        public static readonly DependencyProperty ReceiverNameProperty = DependencyProperty.Register("ReceiverName", typeof(string), typeof(PrintOrderViewModel));
 
-        public static readonly DependencyProperty ReceiverPhoneProperty =
-            DependencyProperty.Register("ReceiverPhone", typeof(string), typeof(PrintOrderViewModel));
+        public static readonly DependencyProperty ReceiverPhoneProperty = DependencyProperty.Register("ReceiverPhone", typeof(string), typeof(PrintOrderViewModel));
 
-        public static readonly DependencyProperty ReceiverMobileProperty =
-            DependencyProperty.Register("ReceiverMobile", typeof(string), typeof(PrintOrderViewModel));
+        public static readonly DependencyProperty ReceiverMobileProperty = DependencyProperty.Register("ReceiverMobile", typeof(string), typeof(PrintOrderViewModel));
 
-        public static readonly DependencyProperty ReceiverAddressProperty =
-            DependencyProperty.Register("ReceiverAddress", typeof(string), typeof(PrintOrderViewModel));
+        public static readonly DependencyProperty ReceiverAddressProperty = DependencyProperty.Register("ReceiverAddress", typeof(string), typeof(PrintOrderViewModel));
 
         public static readonly Brush DEFAULTBACKGROUND_LIGHTPINK = Brushes.LightPink;
         public static readonly Brush DEFAULTBACKGROUND_LIGHTGREEN = Brushes.LightGreen;
@@ -49,7 +40,7 @@ namespace ShopErp.App.ViewModels
 
         public Brush Background
         {
-            get { return (Brush) this.GetValue(BackgroundProperty); }
+            get { return (Brush)this.GetValue(BackgroundProperty); }
             set
             {
                 if (value == null) value = DefaultBackground;
@@ -59,49 +50,49 @@ namespace ShopErp.App.ViewModels
 
         public bool IsChecked
         {
-            get { return (bool) this.GetValue(IsCheckedProperty); }
+            get { return (bool)this.GetValue(IsCheckedProperty); }
             set { this.SetValue(IsCheckedProperty, value); }
         }
 
         public string State
         {
-            get { return (string) this.GetValue(StateProperty); }
+            get { return (string)this.GetValue(StateProperty); }
             set { this.SetValue(StateProperty, value); }
         }
 
         public string DeliveryCompany
         {
-            get { return (string) this.GetValue(DeliveryCompanyProperty); }
+            get { return (string)this.GetValue(DeliveryCompanyProperty); }
             set { this.SetValue(DeliveryCompanyProperty, value); }
         }
 
         public string DeliveryNumber
         {
-            get { return (string) this.GetValue(DeliveryNumberProperty); }
+            get { return (string)this.GetValue(DeliveryNumberProperty); }
             set { this.SetValue(DeliveryNumberProperty, value); }
         }
 
         public string ReceiverName
         {
-            get { return (string) this.GetValue(ReceiverNameProperty); }
+            get { return (string)this.GetValue(ReceiverNameProperty); }
             set { this.SetValue(ReceiverNameProperty, value); }
         }
 
         public string ReceiverPhone
         {
-            get { return (string) this.GetValue(ReceiverPhoneProperty); }
+            get { return (string)this.GetValue(ReceiverPhoneProperty); }
             set { this.SetValue(ReceiverPhoneProperty, value); }
         }
 
         public string ReceiverMobile
         {
-            get { return (string) this.GetValue(ReceiverMobileProperty); }
+            get { return (string)this.GetValue(ReceiverMobileProperty); }
             set { this.SetValue(ReceiverMobileProperty, value); }
         }
 
         public string ReceiverAddress
         {
-            get { return (string) this.GetValue(ReceiverAddressProperty); }
+            get { return (string)this.GetValue(ReceiverAddressProperty); }
             set { this.SetValue(ReceiverAddressProperty, value); }
         }
 
@@ -127,12 +118,9 @@ namespace ShopErp.App.ViewModels
         {
             StringBuilder sb = new StringBuilder();
             if (this.Source.OrderGoodss != null)
-                foreach (var goods in this.Source.OrderGoodss.Where(
-                    obj => obj.State != OrderState.CLOSED && obj.State != OrderState.CANCLED &&
-                           obj.State != OrderState.NOTSALE && obj.State != OrderState.SPILTED))
+                foreach (var goods in this.Source.OrderGoodss.Where(obj => obj.State != OrderState.CLOSED && obj.State != OrderState.CANCLED && obj.State != OrderState.SPILTED))
                 {
-                    sb.Append(VendorService.FormatVendorName(goods.Vendor) + " " + goods.Number + " " + goods.Edtion +
-                              " " + goods.Color + " " + goods.Size + " " + goods.Count + ", ");
+                    sb.Append(VendorService.FormatVendorName(goods.Vendor) + " " + goods.Number + " " + goods.Edtion + " " + goods.Color + " " + goods.Size + " " + goods.Count + ", ");
                 }
 
             this.Goods = sb.ToString();
@@ -143,12 +131,9 @@ namespace ShopErp.App.ViewModels
             string sb = "";
             if (this.Source.OrderGoodss != null)
             {
-                foreach (var goods in this.Source.OrderGoodss.Where(
-                    obj => obj.State != OrderState.CLOSED && obj.State != OrderState.CANCLED &&
-                           obj.State != OrderState.NOTSALE && obj.State != OrderState.SPILTED))
+                foreach (var goods in this.Source.OrderGoodss.Where(obj => obj.State != OrderState.CLOSED && obj.State != OrderState.CANCLED && obj.State != OrderState.SPILTED))
                 {
-                    string door = VendorService.FormatVendorDoor(ServiceContainer.GetService<VendorService>()
-                        .GetVendorAddress_InCach(goods.Vendor));
+                    string door = VendorService.FormatVendorDoor(ServiceContainer.GetService<VendorService>().GetVendorAddress_InCach(goods.Vendor));
                     if (sb.Contains(door) == false)
                     {
                         sb += door + " ";
@@ -189,12 +174,16 @@ namespace ShopErp.App.ViewModels
                 return 1;
             }
 
-            if (this.DoorNumber.Equals(other.DoorNumber) == false)
+            if (this.DoorNumber.Equals(other.DoorNumber, StringComparison.OrdinalIgnoreCase) == false)
             {
                 return this.DoorNumber.CompareTo(other.DoorNumber);
             }
 
-            return this.Goods.CompareTo(other.Goods);
+            if (this.Goods.Equals(other.Goods, StringComparison.OrdinalIgnoreCase) == false)
+            {
+                return this.Goods.CompareTo(other.Goods);
+            }
+            return this.Source.PopPayTime.CompareTo(other.Source.PopPayTime);
         }
     }
 }

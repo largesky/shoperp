@@ -233,7 +233,7 @@ namespace ShopErp.App.Views.Print
                            (obj.ReceiverMobile != null && obj.ReceiverMobile.Contains("**")) ||
                            (obj.ReceiverPhone != null && obj.ReceiverPhone.Contains("**"))))
                 {
-                    throw new Exception("订单收货人信息处理于模糊状态");
+                    throw new Exception("淘宝天猫有订单收货人信息处理于模糊状态");
                 }
                 if (selectedOrders.Select(obj => obj.PopPayType).Distinct().Count() != 1)
                 {
@@ -261,17 +261,12 @@ namespace ShopErp.App.Views.Print
                 {
                     throw new Exception("在线支付订单不能使用货到付款模板");
                 }
-                string printer =
-                    LocalConfigService.GetValue(
-                        printTemplate.PaperType == PaperType.HOT
-                            ? SystemNames.CONFIG_PRINTER_DELIVERY_HOT
-                            : SystemNames.CONFIG_PRINTER_DELIVERY_NORMAL, "");
+                string printer = LocalConfigService.GetValue(printTemplate.PaperType == PaperType.HOT ? SystemNames.CONFIG_PRINTER_DELIVERY_HOT : SystemNames.CONFIG_PRINTER_DELIVERY_NORMAL, "");
                 if (string.IsNullOrWhiteSpace(printer))
                 {
                     throw new Exception("系统中没有配置快递单打印机");
                 }
-                string popMessage = string.Format("{0}打印模板:{1}{2}打印设备:{3}{4}打印数据:{5}", Environment.NewLine,
-                    printTemplate.Name, Environment.NewLine, printer, Environment.NewLine, selectedOrders.Count());
+                string popMessage = string.Format("{0}打印模板:{1}{2}打印设备:{3}{4}打印数据:{5}", Environment.NewLine, printTemplate.Name, Environment.NewLine, printer, Environment.NewLine, selectedOrders.Count());
                 if (MessageBox.Show(popMessage, "确认打印", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
                 {
                     return;
@@ -332,11 +327,7 @@ namespace ShopErp.App.Views.Print
                 MessageBox.Show("排序字段为空", "排序失败");
                 return;
             }
-            var sortType = col.SortDirection == null
-                ? ListSortDirection.Ascending
-                : (col.SortDirection == ListSortDirection.Ascending
-                    ? ListSortDirection.Descending
-                    : ListSortDirection.Ascending);
+            var sortType = col.SortDirection == null ? ListSortDirection.Ascending : (col.SortDirection == ListSortDirection.Ascending ? ListSortDirection.Descending : ListSortDirection.Ascending);
             List<PrintOrderViewModel> newVms = null;
             if (sortPath.Contains("PopType"))
             {
@@ -472,8 +463,9 @@ namespace ShopErp.App.Views.Print
             }
             else if (sortPath.Contains("DoorNumber"))
             {
-                //两次排序，第一次根据门牌号排，然后根据货号排序,类型PrintOrderViewModel实际了比较接口
+                //两次排序，第一次根据门牌号排，然后根据货号排序,然后根据付款时间 类型PrintOrderViewModel实际了比较接口
                 List<PrintOrderViewModel> tmpList = p.OrderViewModels.ToList();
+                tmpList.Sort();
                 tmpList.Sort();
                 tmpList.Sort();
                 newVms = tmpList;
@@ -530,10 +522,7 @@ namespace ShopErp.App.Views.Print
             p.OrderViewModels.Clear();
             for (int i = 0; i < newVms.Count; i++)
             {
-                newVms[i].DefaultBackground = newVms[i].Background =
-                    (i % 2 == 0)
-                        ? PrintOrderViewModel.DEFAULTBACKGROUND_LIGHTGREEN
-                        : PrintOrderViewModel.DEFAULTBACKGROUND_LIGHTPINK;
+                newVms[i].DefaultBackground = newVms[i].Background = (i % 2 == 0) ? PrintOrderViewModel.DEFAULTBACKGROUND_LIGHTGREEN : PrintOrderViewModel.DEFAULTBACKGROUND_LIGHTPINK;
                 p.OrderViewModels.Add(newVms[i]);
             }
             col.SortDirection = sortType;
@@ -567,9 +556,7 @@ namespace ShopErp.App.Views.Print
             {
                 var item = this.GetMIOrder(sender);
                 MenuItem mi = sender as MenuItem;
-                var orders =
-                    (((ContextMenu)mi.Parent).PlacementTarget as DataGrid).ItemsSource as
-                    ObservableCollection<PrintOrderViewModel>;
+                var orders = (((ContextMenu)mi.Parent).PlacementTarget as DataGrid).ItemsSource as ObservableCollection<PrintOrderViewModel>;
                 int index = orders.IndexOf(item);
 
                 for (int i = 0; i < orders.Count; i++)
@@ -589,9 +576,7 @@ namespace ShopErp.App.Views.Print
             {
                 var item = this.GetMIOrder(sender);
                 MenuItem mi = sender as MenuItem;
-                var orders =
-                    (((ContextMenu)mi.Parent).PlacementTarget as DataGrid).ItemsSource as
-                    ObservableCollection<PrintOrderViewModel>;
+                var orders = (((ContextMenu)mi.Parent).PlacementTarget as DataGrid).ItemsSource as ObservableCollection<PrintOrderViewModel>;
                 int index = orders.IndexOf(item);
 
                 for (int i = 0; i < orders.Count; i++)
@@ -638,8 +623,7 @@ namespace ShopErp.App.Views.Print
             if (v == PopPayType.COD)
             {
                 ovms.ForEach(obj => obj.IsChecked = false);
-                ovms.Where(obj => obj.Flag == ColorFlag.GREEN || obj.Flag == ColorFlag.BLUE).ToList()
-                    .ForEach(obj => obj.IsChecked = true);
+                ovms.Where(obj => obj.Flag == ColorFlag.GREEN || obj.Flag == ColorFlag.BLUE).ToList().ForEach(obj => obj.IsChecked = true);
             }
             else
             {

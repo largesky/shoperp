@@ -390,6 +390,10 @@ namespace ShopErp.App.Views.Delivery
                             throw new Exception("订单不在本地系统中，保存后重新读取也不存在");
                         }
                     }
+                    else
+                    {
+
+                    }
                     orders.Add(o);
                     currentCount++;
                     this.tbMsg.Text = string.Format("已经下载：{0}/{1} {2} {3} ", currentCount, totalCount, v.id, v.orderInfo.createTime);

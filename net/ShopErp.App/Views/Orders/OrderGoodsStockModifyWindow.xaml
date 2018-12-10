@@ -15,14 +15,9 @@
             <ColumnDefinition Width="200" />
         </Grid.ColumnDefinitions>
         <TextBlock Grid.Row="0" Grid.Column="0" Text="状态:" Margin="3" VerticalAlignment="Center" />
-        <ComboBox Grid.Row="0" Grid.Column="1" Name="cbbStates" Margin="3" VerticalAlignment="Center"
-                  SelectionChanged="cbbStates_SelectionChanged">
-            <ComboBoxItem>未拿到货</ComboBoxItem>
-            <ComboBoxItem>检查未过</ComboBoxItem>
-            <ComboBoxItem>定做中</ComboBoxItem>
-            <ComboBoxItem>商品下架</ComboBoxItem>
+        <ComboBox Grid.Row="0" Grid.Column="1" Name="cbbStates" Margin="3" VerticalAlignment="Center" SelectionChanged="cbbStates_SelectionChanged">
             <ComboBoxItem>已拿货</ComboBoxItem>
-            <ComboBoxItem>只修改描述</ComboBoxItem>
+            <ComboBoxItem>检查未过</ComboBoxItem>
         </ComboBox>
         <TextBlock Grid.Row="1" Grid.Column="0" Text="描述:" Margin="3" VerticalAlignment="Center" />
         <ComboBox Grid.Row="1" Grid.Column="1" Name="cbbComment" Margin="3" VerticalAlignment="Center"

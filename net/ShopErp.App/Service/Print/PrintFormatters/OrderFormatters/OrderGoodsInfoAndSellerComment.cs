@@ -28,7 +28,7 @@ namespace ShopErp.App.Service.Print.OrderFormatters
                 if (order.OrderGoodss != null && order.OrderGoodss.Count > 0)
                 {
 
-                    foreach (var goods in order.OrderGoodss.Where(obj => (int)obj.State <= (int)OrderState.SHIPPED && obj.State != OrderState.NOTSALE))
+                    foreach (var goods in order.OrderGoodss.Where(obj => (int)obj.State <= (int)OrderState.SUCCESS))
                     {
                         string areaAndDoor = VendorService.FindAreaOrStreet(vs.GetVendorAddress_InCach(goods.Vendor), "区") + "-" + VendorService.FindDoor(vs.GetVendorAddress_InCach(goods.Vendor));
                         sb.AppendLine(areaAndDoor + " " + vs.GetVendorPingyingName(goods.Vendor).ToUpper() + " " + goods.Number + " " + goods.Edtion + " " + goods.Color + " " + goods.Size + " (" + goods.Count + ")");

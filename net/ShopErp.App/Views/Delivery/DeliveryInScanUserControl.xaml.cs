@@ -217,13 +217,8 @@ namespace ShopErp.App.Views.Delivery
                     //货到付款订单，标记已拒签
                     if (item.SourceOrder != null && item.SourceOrder.PopPayType == PopPayType.COD)
                     {
-                        item.SourceOrder.State = OrderState.REFUSED;
+                        item.SourceOrder.Refused = true;
                         ServiceContainer.GetService<OrderService>().Update(item.SourceOrder);
-                        if (item.SourceOrderGoods != null)
-                        {
-                            item.SourceOrderGoods.State = OrderState.REFUSED;
-                            ServiceContainer.GetService<OrderGoodsService>().Update(item.SourceOrderGoods);
-                        }
                     }
 
                     //上传记录

@@ -175,7 +175,7 @@ namespace ShopErp.Server.Service.Restful
                     or.Recipient = new CainiaoWaybillIiGetRequest.UserInfoDtoDomain { Phone = order.ReceiverPhone, Mobile = order.ReceiverMobile, Name = order.ReceiverName, Address = ParseTaobaoAddress(order.ReceiverAddress), };
                     or.OrderInfo = new CainiaoWaybillIiGetRequest.OrderInfoDtoDomain { OrderChannelsType = GetOrderChannleTypeCN(order.PopType), TradeOrderList = new List<string>(wuliuIds) };
                     or.PackageInfo = new CainiaoWaybillIiGetRequest.PackageInfoDtoDomain { Id = packageId == "" ? null : packageId, Items = new List<CainiaoWaybillIiGetRequest.ItemDomain>() };
-                    or.PackageInfo.Items.AddRange(order.OrderGoodss.Where(obj => (int)obj.State >= (int)OrderState.PAYED && (int)obj.State <= (int)OrderState.NOTSALE).Select(obj => new CainiaoWaybillIiGetRequest.ItemDomain { Name = obj.Number + "," + obj.Edtion + "," + obj.Color + "," + obj.Size, Count = obj.Count }));
+                    or.PackageInfo.Items.AddRange(order.OrderGoodss.Where(obj => (int)obj.State >= (int)OrderState.PAYED && (int)obj.State <= (int)OrderState.SUCCESS).Select(obj => new CainiaoWaybillIiGetRequest.ItemDomain { Name = obj.Number + "," + obj.Edtion + "," + obj.Color + "," + obj.Size, Count = obj.Count }));
                     if (or.PackageInfo.Items.Count < 1)
                     {
                         or.PackageInfo.Items.Add(new CainiaoWaybillIiGetRequest.ItemDomain { Name = "没有商品或者其它未定义商品", Count = 1 });

@@ -131,7 +131,7 @@ namespace ShopErp.App.Service.Restful
             return DoPost<ResponseBase>(para);
         }
 
-        public ResponseBase MarkOrderGoodsState(long orderId, long orderGoodsId, OrderState state, string stockComment)
+        public ResponseBase UpdateOrderGoodsState(long orderId, long orderGoodsId, OrderState state, string stockComment)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
             para["orderId"] = orderId;

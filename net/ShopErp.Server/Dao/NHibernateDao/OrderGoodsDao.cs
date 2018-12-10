@@ -94,7 +94,7 @@ namespace ShopErp.Server.Dao.NHibernateDao
                     f = " and " + "(" + f + ")";
                 }
 
-                String hsqlWhere = String.Format("from Order order,OrderGoods orderGoods where order.Id=orderGoods.OrderId and order.Type<>2 and order.PopPayTime>='{0}' and order.PopPayTime<='{1}' and orderGoods.GetedCount<orderGoods.Count and (PopPayType=1 or (PopPayType=2 {2})) and order.State>={3} and order.State<={4}", this.FormatDateTime(startTime), this.FormatDateTime(endTime), f, (int)OrderState.PAYED, (int)OrderState.GETED);
+                String hsqlWhere = String.Format("from Order order,OrderGoods orderGoods where order.Id=orderGoods.OrderId and order.Type<>2 and order.PopPayTime>='{0}' and order.PopPayTime<='{1}' and orderGoods.GetedCount<orderGoods.Count and (PopPayType=1 or (PopPayType=2 {2})) and order.State>={3} and order.State<{4}", this.FormatDateTime(startTime), this.FormatDateTime(endTime), f, (int)OrderState.PAYED, (int)OrderState.SHIPPED);
                 String contenthsql = "select order.Id,orderGoods.Vendor,orderGoods.Number,orderGoods.Edtion,orderGoods.Color,orderGoods.Size,orderGoods.Count,orderGoods.GetedCount,orderGoods.Price,order.PopPayTime,orderGoods.State, orderGoods.NumberId,order.PopType,order.DeliveryCompany,order.PrintPaperType ";
                 string hsqlData = contenthsql + hsqlWhere;
                 string hsqlCount = "select count(orderGoods.id) " + hsqlWhere;
@@ -138,7 +138,7 @@ namespace ShopErp.Server.Dao.NHibernateDao
                     }
                     gc.PrintPaperType = (PaperType)l[14];
 
-                    if ((int)gc.State < (int)OrderState.PAYED || (int)gc.State > (int)OrderState.GETED)
+                    if ((int)gc.State < (int)OrderState.PAYED || (int)gc.State >= (int)OrderState.SHIPPED)
                         continue;
                     counts.Add(gc);
                 }
