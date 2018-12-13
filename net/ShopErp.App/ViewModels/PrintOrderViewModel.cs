@@ -183,6 +183,7 @@ namespace ShopErp.App.ViewModels
             {
                 return this.Goods.CompareTo(other.Goods);
             }
+
             return this.Source.PopPayTime.CompareTo(other.Source.PopPayTime);
         }
     }
