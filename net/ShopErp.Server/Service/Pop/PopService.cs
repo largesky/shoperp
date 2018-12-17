@@ -6,7 +6,6 @@ using Microsoft.Win32;
 using ShopErp.Domain;
 using ShopErp.Domain.Pop;
 using ShopErp.Domain.RestfulResponse;
-using ShopErp.Server.Service.Pop.Chuchujie;
 using ShopErp.Server.Service.Pop.Pingduoduo;
 using ShopErp.Server.Service.Pop.Taobao;
 using ShopErp.Server.Service.Restful;

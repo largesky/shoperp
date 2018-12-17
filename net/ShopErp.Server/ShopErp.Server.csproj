@@ -125,18 +125,6 @@
     </Compile>
     <Compile Include="Service\AddressService.cs" />
     <Compile Include="Service\Net\MsHttpRestful.cs" />
-    <Compile Include="Service\Pop\Chuchujie\ChuchujieGetOrderResponse.cs" />
-    <Compile Include="Service\Pop\Chuchujie\ChuchujieGoodsResponse.cs" />
-    <Compile Include="Service\Pop\Chuchujie\ChuchujieGoodsResponseGoods.cs" />
-    <Compile Include="Service\Pop\Chuchujie\ChuchujieGoodsResponseGoodsSku.cs" />
-    <Compile Include="Service\Pop\Chuchujie\ChuchujieMarkDeliveryResponse.cs" />
-    <Compile Include="Service\Pop\Chuchujie\ChuchujieOrder.cs" />
-    <Compile Include="Service\Pop\Chuchujie\ChuchujieOrderAddress.cs" />
-    <Compile Include="Service\Pop\Chuchujie\ChuchujieOrderDetail.cs" />
-    <Compile Include="Service\Pop\Chuchujie\ChuchujieOrderGoods.cs" />
-    <Compile Include="Service\Pop\Chuchujie\ChuchujieOrderGoodsProp.cs" />
-    <Compile Include="Service\Pop\Chuchujie\ChuchujiePop.cs" />
-    <Compile Include="Service\Pop\Chuchujie\ChuchujieResponseBase.cs" />
     <Compile Include="Service\Pop\Pingduoduo\PingduoduoRspAccessToken.cs" />
     <Compile Include="Service\Pop\PopAccesstokenTimeOutException.cs" />
     <Compile Include="Service\Pop\PopBase.cs" />
