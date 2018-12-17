@@ -76,9 +76,6 @@
     <property name="DeliveryMoney">
       <column name="DeliveryMoney" sql-type="DECIMAL(22,2)" not-null="true" />
     </property>
-    <property name="PrintPaperType">
-      <column name="PrintPaperType" sql-type="int" not-null="true" />
-    </property>
     <property name="Weight">
       <column name="Weight" sql-type="DECIMAL(22,2)" not-null="true" />
     </property>

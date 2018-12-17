@@ -39,12 +39,6 @@ namespace ShopErp.App.Service.Print
         /// </summary>
         public string PrinterName { get; set; }
 
-
-        /// <summary>
-        /// 纸张的类型
-        /// </summary>
-        public PaperType PaperType { get; set; }
-
         /// <summary>
         /// 宽度
         /// </summary>

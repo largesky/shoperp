@@ -30,7 +30,6 @@ namespace ShopErp.Domain
         public string DeliveryCompany { get; set; }
         public string DeliveryNumber { get; set; }
         public float DeliveryMoney { get; set; }
-        public PaperType PrintPaperType { get; set; }
         public float Weight { get; set; }
         public DateTime PopCreateTime { get; set; }
         public DateTime PopPayTime { get; set; }

@@ -31,14 +31,13 @@ namespace ShopErp.App.Service.Restful
             return DoPost<DataCollectionResponse<Order>>(para);
         }
 
-        public ResponseBase UpdateDelivery(long id, long deliveryTemplateId, string deliveryCompany, string deliveryNumber, PaperType paperyType, DateTime printTime)
+        public ResponseBase UpdateDelivery(long id, long deliveryTemplateId, string deliveryCompany, string deliveryNumber, DateTime printTime)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
             para["id"] = id;
             para["deliveryTemplateId"] = deliveryTemplateId;
             para["deliveryCompany"] = deliveryCompany;
             para["deliveryNumber"] = deliveryNumber;
-            para["paperyType"] = paperyType;
             para["printTime"] = printTime;
             return DoPost<ResponseBase>(para);
         }
@@ -166,7 +165,7 @@ namespace ShopErp.App.Service.Restful
         }
 
 
-        public OrderDownloadCollectionResponse GetPopWaitSendOrders(Shop shop, PopPayType payType, int pageIndex,int pageSize)
+        public OrderDownloadCollectionResponse GetPopWaitSendOrders(Shop shop, PopPayType payType, int pageIndex, int pageSize)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
             para["shop"] = shop;

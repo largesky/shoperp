@@ -24,62 +24,21 @@ namespace ShopErp.App.Views.Print
             System.IO.Directory.CreateDirectory(DATA_DIR);
         }
 
-        public static Domain.PrintTemplate[] GetAll()
+        public static PrintTemplate[] GetAll()
         {
-            List<Domain.PrintTemplate> templates = new List<Domain.PrintTemplate>();
+            List<PrintTemplate> templates = new List<PrintTemplate>();
 
             foreach (string file in Directory.GetFiles(DATA_DIR, "*" + FILE_EXTENSION_OLD))
             {
                 using (Stream s = new FileStream(file, FileMode.Open, FileAccess.Read))
                 {
                     BinaryFormatter bf = new BinaryFormatter();
-                    var template = bf.Deserialize(s) as Domain.PrintTemplate;
+                    var template = bf.Deserialize(s) as PrintTemplate;
                     templates.Add(template);
                 }
             }
 
             return templates.ToArray();
-        }
-
-        public static Service.Print.PrintTemplate ConvertOld(Domain.PrintTemplate pt)
-        {
-            var npt = new Service.Print.PrintTemplate
-            {
-                AttachFiles = pt.AttachFiles,
-                BackgroundImage = pt.BackgroundImage,
-                DeliveryCompany = pt.DeliveryCompany,
-                Height = pt.Height,
-                Name = pt.Name,
-                PaperType = pt.PaperType,
-                PrinterName = pt.PrinterName,
-                Type = pt.Type,
-                Width = pt.Width,
-                XOffset = pt.XOffset,
-                YOffset = pt.YOffset,
-            };
-
-            foreach (var v in pt.Items)
-            {
-                npt.Items.Add(new Service.Print.PrintTemplateItem
-                {
-                    FontName = v.FontName,
-                    FontSize = v.FontSize,
-                    Format = v.Format,
-                    Height = v.Height,
-                    Id = v.Id,
-                    Opacity = v.Opacity,
-                    ScaleFormat = v.ScaleFormat,
-                    TextAlignment = v.TextAlignment,
-                    Type = v.Type,
-                    Value = v.Value,
-                    Value1 = v.Value1,
-                    Width = v.Width,
-                    X = v.X,
-                    Y = v.Y,
-                    RunTimeTag = v.RunTimeTag,
-                });
-            }
-            return npt;
         }
 
         public static Service.Print.PrintTemplate[] GetAllN()
@@ -98,6 +57,14 @@ namespace ShopErp.App.Views.Print
 
         public static void InsertN(Service.Print.PrintTemplate deliveryTemplate)
         {
+            var keys = deliveryTemplate.AttachFiles.Keys.ToArray();
+            foreach (string key in keys)
+            {
+                if (deliveryTemplate.Items.Any(obj => obj.Id.ToString() == key) == false)
+                {
+                    deliveryTemplate.AttachFiles.Remove(key);
+                }
+            }
             string file = System.IO.Path.Combine(DATA_DIR, deliveryTemplate.Name + FILE_EXTENSION);
             using (Stream stream = new FileStream(file, FileMode.Create, FileAccess.Write))
             {

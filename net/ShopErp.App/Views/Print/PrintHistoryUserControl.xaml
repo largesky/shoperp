@@ -22,13 +22,10 @@
             <TextBlock Text="运单编号:" Margin="3" VerticalAlignment="Center" />
             <TextBox Name="tbDeliveryNumber" Margin="3" VerticalAlignment="Center" Width="120" />
             <TextBlock Text="开始时间:" Margin="3" VerticalAlignment="Center" />
-            <xctk:DateTimePicker Name="dpStart" Margin="3" VerticalAlignment="Center" Width="160" Format="Custom"
-                                 FormatString="yyyy-MM-dd HH:mm:ss" />
+            <xctk:DateTimePicker Name="dpStart" Margin="3" VerticalAlignment="Center" Width="160" Format="Custom" FormatString="yyyy-MM-dd HH:mm:ss" />
             <TextBlock Text="结束时间:" Margin="3" VerticalAlignment="Center" />
-            <xctk:DateTimePicker Name="dpEnd" Margin="3" VerticalAlignment="Center" Width="160" Format="Custom"
-                                 FormatString="yyyy-MM-dd HH:mm:ss" />
-            <Button Name="btnSearch" Content="查询" Margin="3" VerticalAlignment="Center" Width="60"
-                    Click="btnSearch_Click" />
+            <xctk:DateTimePicker Name="dpEnd" Margin="3" VerticalAlignment="Center" Width="160" Format="Custom" FormatString="yyyy-MM-dd HH:mm:ss" />
+            <Button Name="btnSearch" Content="查询" Margin="3" VerticalAlignment="Center" Width="60" Click="btnSearch_Click" />
         </StackPanel>
 
         <TabControl Grid.Row="1" x:Name="tcOrderPages">
@@ -64,9 +61,6 @@
                                         <TextBlock Text="新的起始物流号:" Margin="3" VerticalAlignment="Center" />
                                         <TextBox x:Name="tbNewDeliveryNumber" Margin="3" VerticalAlignment="Center"
                                                  Width="100" />
-                                        <Button x:Name="btnAdjustDeliveryNumber" Content="修正单号" Margin="3"
-                                                VerticalAlignment="Center" Width="80"
-                                                Click="btnAdjustDeliveryNumber_Click" Tag="{Binding}" />
                                         <Button Name="btnDelete" Content="删除记录" Margin="3" VerticalAlignment="Center"
                                                 Click="btnDelete_Click" Width="80" Tag="{Binding}" />
                                         <Button Name="btnUpload" Content="上传记录" Margin="3" VerticalAlignment="Center"

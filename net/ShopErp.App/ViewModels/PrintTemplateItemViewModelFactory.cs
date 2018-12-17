@@ -46,12 +46,12 @@ namespace ShopErp.App.ViewModels
             //物流
             if (type == Service.Print.PrintTemplateItemType.DELIVERY_DELIVERYNUMBERBARCODE)
             {
-                return new PrintTemplateItemViewModelForDeliveryNumberBarcode(template);
+                return new PrintTemplateItemViewModelForBarcode(template);
             }
 
             if (type == Service.Print.PrintTemplateItemType.DELIVERY_CONSOLIDATIONCODE_BARCODE)
             {
-                return new PrintTemplateItemConsolidationCodeBarCode(template);
+                return new PrintTemplateItemViewModelForBarcode(template);
             }
 
             if (type == Service.Print.PrintTemplateItemType.DELIVERY_ROUTECODE)

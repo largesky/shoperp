@@ -38,23 +38,10 @@ namespace ShopErp.Server.Service.Restful
                 if (count == null)
                 {
                     count = orderGoods;
-                    count.DeliveryCountNormal = new Dictionary<string, int>();
-                    count.DeliveryCountHotPaper = new Dictionary<string, int>();
+                    count.DeliveryCounts = new List<DeliveryCount>();
                     count.DeliveryCompany = count.DeliveryCompany ?? string.Empty;
                     count.LastPayTime = count.FirstPayTime;
-                    //对PrintPaperType为None的，加入那个都无所谓，因没有打印
-                    if (count.PrintPaperType != PaperType.NORMAL)
-                    {
-                        count.DeliveryCountHotPaper[count.DeliveryCompany] = orderGoods.Count;
-                    }
-                    else
-                    {
-                        count.DeliveryCountNormal[count.DeliveryCompany] = orderGoods.Count;
-                    }
-                    //if ((int)count.State >= (int)OrderState.SHIPPED)
-                    //{
-                    //    count.ShipCount = count.Count;
-                    //}
+                    count.DeliveryCounts.Add(new DeliveryCount { DeliveryCompany = count.DeliveryCompany, Count = orderGoods.Count });
                     goodsCounts.Add(count);
                 }
                 else
@@ -65,39 +52,22 @@ namespace ShopErp.Server.Service.Restful
                     {
                         count.DeliveryCompany += "," + orderGoods.DeliveryCompany;
                     }
-                    if (orderGoods.PrintPaperType != PaperType.NORMAL)
+
+                    if (count.DeliveryCounts.FirstOrDefault(obj => obj.DeliveryCompany == count.DeliveryCompany) != null)
                     {
-                        if (count.DeliveryCountHotPaper.ContainsKey(orderGoods.DeliveryCompany))
-                        {
-                            count.DeliveryCountHotPaper[orderGoods.DeliveryCompany] += orderGoods.Count;
-                        }
-                        else
-                        {
-                            string d = orderGoods.DeliveryCompany ?? String.Empty;
-                            count.DeliveryCountHotPaper[d] = orderGoods.Count;
-                        }
+                        count.DeliveryCounts.FirstOrDefault(obj => obj.DeliveryCompany == count.DeliveryCompany).Count += orderGoods.Count;
                     }
                     else
                     {
-                        if (count.DeliveryCountNormal.ContainsKey(orderGoods.DeliveryCompany))
-                        {
-                            count.DeliveryCountNormal[orderGoods.DeliveryCompany] += orderGoods.Count;
-                        }
-                        else
-                        {
-                            string d = orderGoods.DeliveryCompany ?? String.Empty;
-                            count.DeliveryCountNormal[d] = orderGoods.Count;
-                        }
+                        string d = orderGoods.DeliveryCompany ?? String.Empty;
+                        count.DeliveryCounts.Add(new DeliveryCount { DeliveryCompany = d, Count = count.Count });
                     }
+
                     //需要设置天猫或者楚楚街优先级
                     if (count.PopType != PopType.TMALL && (orderGoods.PopType == PopType.TMALL || orderGoods.PopType == PopType.CHUCHUJIE))
                     {
                         count.PopType = orderGoods.PopType;
                     }
-                    //if ((int)orderGoods.State >= (int)OrderState.SHIPPED)
-                    //{
-                    //    count.ShipCount += orderGoods.Count;
-                    //}
                 }
 
                 //计算最小金额值
@@ -192,20 +162,12 @@ namespace ShopErp.Server.Service.Restful
                 if (string.IsNullOrWhiteSpace(goodsCount.DeliveryCompany) == false)
                 {
                     int count = 0;
-                    foreach (var vv in goodsCount.DeliveryCountHotPaper)
+                    foreach (var vv in goodsCount.DeliveryCounts)
                     {
-                        var dc = goodsCountMarks.FirstOrDefault(obj => obj.Name == vv.Key);
-                        if (dc != null && dc.HotPaperMark)
-                        {
-                            count += vv.Value;
-                        }
-                    }
-                    foreach (var vv in goodsCount.DeliveryCountNormal)
-                    {
-                        var dc = goodsCountMarks.FirstOrDefault(obj => obj.Name == vv.Key);
+                        var dc = goodsCountMarks.FirstOrDefault(obj => obj.Name == vv.DeliveryCompany);
                         if (dc != null && dc.NormalPaperMark)
                         {
-                            count += vv.Value;
+                            count += vv.Count;
                         }
                     }
                     if (count > 0)
@@ -213,11 +175,6 @@ namespace ShopErp.Server.Service.Restful
                         goodsCount.Comment = "☆" + count;
                     }
                 }
-            }
-            foreach (var gc in goodsCounts)
-            {
-                gc.DeliveryCountHotPaper = null;
-                gc.DeliveryCountNormal = null;
             }
             return goodsCounts.ToArray();
         }

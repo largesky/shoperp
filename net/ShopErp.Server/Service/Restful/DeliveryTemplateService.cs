@@ -139,11 +139,11 @@ namespace ShopErp.Server.Service.Restful
 
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/computedeliverymoney.html")]
-        public FloatResponse ComputeDeliveryMoney(string deliveryCompany, string address, bool empty, PaperType paperType, PopPayType popPayType, float weight)
+        public FloatResponse ComputeDeliveryMoney(string deliveryCompany, string address, bool empty, PopPayType popPayType, float weight)
         {
             try
             {
-                return new FloatResponse(ComputeDeliveryMoneyImpl(deliveryCompany, address, empty, paperType, popPayType, weight));
+                return new FloatResponse(ComputeDeliveryMoneyImpl(deliveryCompany, address, empty, popPayType, weight));
             }
             catch (Exception ex)
             {
@@ -151,11 +151,11 @@ namespace ShopErp.Server.Service.Restful
             }
         }
 
-        public float ComputeDeliveryMoneyImpl(string deliveryCompany, string address, bool empty, PaperType paperType, PopPayType popPayType, float weight)
+        public float ComputeDeliveryMoneyImpl(string deliveryCompany, string address, bool empty, PopPayType popPayType, float weight)
         {
             try
             {
-                var dt = this.GetAllInCach().FirstOrDefault(obj => obj.DeliveryCompany == deliveryCompany && ((obj.HotPaperUse && paperType == PaperType.HOT) || (obj.NormalPaperUse && paperType == PaperType.NORMAL)) && ((obj.OnlinePayTypeUse && popPayType == PopPayType.ONLINE) || (obj.CodPayTypeUse && popPayType == PopPayType.COD)));
+                var dt = this.GetAllInCach().FirstOrDefault(obj => obj.DeliveryCompany == deliveryCompany && ((obj.OnlinePayTypeUse && popPayType == PopPayType.ONLINE) || (obj.CodPayTypeUse && popPayType == PopPayType.COD)));
                 if (dt == null)
                 {
                     throw new Exception("未找到匹配的模板");
@@ -163,7 +163,7 @@ namespace ShopErp.Server.Service.Restful
 
                 if (empty)
                 {
-                    return paperType == PaperType.HOT ? dt.EmptyHotPaperMoney : dt.EmptyNormalPaperMoney;
+                    return dt.EmptyHotPaperMoney;
                 }
                 var p = AddressService.ParseProvince(address);
                 DeliveryTemplateArea da = dt.Areas.FirstOrDefault(obj => string.IsNullOrWhiteSpace(obj.Areas));

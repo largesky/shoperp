@@ -156,7 +156,6 @@ namespace ShopErp.App.Views.Delivery
                 PopState = "",
                 PopType = PopType.TMALL,
                 PrintOperator = "",
-                PrintPaperType = PaperType.NONE,
                 PrintTime = dbMineTime,
                 ReceiverAddress = "",
                 ReceiverMobile = "",

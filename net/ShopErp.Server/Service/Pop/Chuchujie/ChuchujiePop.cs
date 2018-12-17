@@ -117,7 +117,6 @@ namespace ShopErp.Server.Service.Pop.Chuchujie
                 State = Domain.OrderState.NONE,
                 CreateType = Domain.OrderCreateType.DOWNLOAD,
                 Type = Domain.OrderType.NORMAL,
-                PrintPaperType = Domain.PaperType.NONE,
                 PopBuyerPayMoney = order.order.order_pay_price,
                 PopSellerGetMoney = order.order.total_price - order.order.shop_coupon_price - order.order.shop_off_price,
             };

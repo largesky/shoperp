@@ -96,7 +96,7 @@ namespace ShopErp.Server.Service.Restful
         {
             try
             {
-                ServiceContainer.GetService<OrderService>().UpdateDelivery(ph.OrderId, -1, ph.DeliveryCompany, ph.DeliveryNumber, ph.PaperType, ph.CreateTime);
+                ServiceContainer.GetService<OrderService>().UpdateDelivery(ph.OrderId, -1, ph.DeliveryCompany, ph.DeliveryNumber, ph.CreateTime);
                 ph.UploadTime = DateTime.Now;
                 this.Update(ph);
                 return ResponseBase.SUCCESS;

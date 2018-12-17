@@ -38,7 +38,7 @@ namespace ShopErp.App.Views.Print
         private ObservableCollection<Service.Print.PrintTemplate> deliveryTemplates = new ObservableCollection<Service.Print.PrintTemplate>();
         private bool loaded = false;
 
-        PrintDialog pd = new PrintDialog();
+        PrintDialog pd = new System.Windows.Controls.PrintDialog();
 
         public PrintTemplateUserControl()
         {
@@ -182,7 +182,6 @@ namespace ShopErp.App.Views.Print
                 deliveryTemplate.DeliveryCompany = this.cbbDeliverCompanies.SelectedItem.ToString();
                 deliveryTemplate.Width = this.imgDelivery.Width;
                 deliveryTemplate.Height = this.imgDelivery.Height;
-                deliveryTemplate.PaperType = this.cbbPaperType.SelectedIndex == 0 ? PaperType.NORMAL : PaperType.HOT;
                 if (deliveryTemplate.DeliveryCompany == null)
                 {
                     throw new Exception("必须选择快递公司");
@@ -294,23 +293,11 @@ namespace ShopErp.App.Views.Print
                     return;
                 }
 
-                if (deliveryTemplate.PaperType == PaperType.HOT)
-                {
-                    this.cbbPaperType.SelectedIndex = 1;
-                }
-                else
-                {
-                    this.cbbPaperType.SelectedIndex = 0;
-                }
-
                 this.SetDeliverPrintTemplateBackgroundImage(deliveryTemplate.BackgroundImage, deliveryTemplate.Width,
                     deliveryTemplate.Height);
 
                 //生成视图对象
-                PrintTemplateItemViewModelCommon[] briges =
-                    deliveryTemplate.Items
-                        .Select(obj => PrintTemplateItemViewModelFactory.Create(deliveryTemplate, obj.Type, obj.Type))
-                        .ToArray();
+                PrintTemplateItemViewModelCommon[] briges = deliveryTemplate.Items.Select(obj => PrintTemplateItemViewModelFactory.Create(deliveryTemplate, obj.Type, obj.Type)).ToArray();
                 for (int i = 0; i < briges.Length; i++)
                 {
                     briges[i].ApplayStyleAndData(this.FindResource("ThumbStyle") as Style, deliveryTemplate.Items[i]);
@@ -349,8 +336,7 @@ namespace ShopErp.App.Views.Print
                 }
                 var deliveryTemplate = this.lstDeliveryPrintTemplates.SelectedItem as Service.Print.PrintTemplate;
                 PrintTemplateItemTypeViewModel vmItem = cb.DataContext as PrintTemplateItemTypeViewModel;
-                PrintTemplateItemViewModelCommon itemViewModel =
-                    PrintTemplateItemViewModelFactory.Create(deliveryTemplate, vmItem.Type, vmItem.Type);
+                PrintTemplateItemViewModelCommon itemViewModel = PrintTemplateItemViewModelFactory.Create(deliveryTemplate, vmItem.Type, vmItem.Type);
                 Service.Print.PrintTemplateItem item = new Service.Print.PrintTemplateItem();
                 item.RunTimeTag = itemViewModel;
                 item.Id = Guid.NewGuid();
@@ -398,6 +384,10 @@ namespace ShopErp.App.Views.Print
                 this.cDeliveryHost.Children.Remove(brige.UI);
                 var deliveryTemplate = this.lstDeliveryPrintTemplates.SelectedItem as Service.Print.PrintTemplate;
                 deliveryTemplate.Items.Remove(brige.Data);
+                if (deliveryTemplate.AttachFiles.ContainsKey(brige.Data.Id.ToString()))
+                {
+                    deliveryTemplate.AttachFiles.Remove(brige.Data.Id.ToString());
+                }
             }
             catch (Exception ex)
             {
@@ -428,14 +418,7 @@ namespace ShopErp.App.Views.Print
                     return;
                 }
 
-                bool? ret = pd.ShowDialog();
 
-                if (ret == null || ret.Value == false)
-                {
-                    return;
-                }
-                pd.PrintTicket.PageMediaSize =
-                    new System.Printing.PageMediaSize(printTemplate.Width, printTemplate.Height);
                 if (printTemplate.Type == Service.Print.PrintTemplate.TYPE_DELIVER)
                 {
                     Order[] orders = new Order[count];
@@ -447,17 +430,24 @@ namespace ShopErp.App.Views.Print
                         {
                             SortationName = "齐齐哈尔",
                             DeliveryCompany = printTemplate.DeliveryCompany,
-                            DeliveryNumber = "600156789001",
+                            DeliveryNumber = "80600156789001",
                             ConsolidationCode = "20789",
-                            RouteCode = "021D-456-789",
+                            RouteCode = "021D-456-789-540",
                             SortationNameAndRouteCode = "021D-456-789",
                         };
                     }
-                    OrderPrintDocument doc = new OrderPrintDocument();
-                    doc.GenPages(orders, wns, printTemplate);
-                    pd.PrintDocument(doc, "打印测试");
+                    DeliveryPrintDocument doc = new GDIDeliveryPrintDocument() { WuliuNumbers = wns };
+                    doc.StartPrint(orders, "", true, printTemplate);
+                    return;
                 }
-                else if (printTemplate.Type == Service.Print.PrintTemplate.TYPE_GOODS)
+
+                var ret = pd.ShowDialog();
+                if (ret.Value == false)
+                {
+                    return;
+                }
+                pd.PrintTicket.PageMediaSize = new System.Printing.PageMediaSize(printTemplate.Width, printTemplate.Height);
+                if (printTemplate.Type == Service.Print.PrintTemplate.TYPE_GOODS)
                 {
                     OrderGoods[] orderGoodss = new OrderGoods[count];
                     for (int i = 0; i < count; i++)
@@ -479,8 +469,6 @@ namespace ShopErp.App.Views.Print
                     od.GenPages(or, printTemplate);
                     pd.PrintDocument(od, "打印测试");
                 }
-
-
                 MessageBox.Show("打印完成");
             }
             catch (Exception ex)
@@ -515,7 +503,7 @@ namespace ShopErp.App.Views.Print
                 PopType = PopType.TAOBAO,
                 PrintOperator = OperatorService.LoginOperator.Number,
                 PrintTime = DateTime.Now,
-                ReceiverAddress = "四川省 成都市 金牛区 成都大道34号金家花园",
+                ReceiverAddress = "四川省 成都市 金牛区 成都大道34号金家花园 这是一个长地址 成都大道34号金家花园 这是一个长地址",
                 ReceiverMobile = "15882415366",
                 ReceiverName = "张三",
                 ReceiverPhone = "028-88452365",
@@ -621,13 +609,7 @@ namespace ShopErp.App.Views.Print
         {
             try
             {
-                var vv = FilePrintTemplateRepertory.GetAll();
-                var vn = vv.Select(obj => FilePrintTemplateRepertory.ConvertOld(obj)).ToArray();
-                foreach (var v in vn)
-                {
-                    FilePrintTemplateRepertory.InsertN(v);
-                }
-                vn = FilePrintTemplateRepertory.GetAllN();
+                throw new Exception("未实现");
             }
             catch (Exception ex)
             {

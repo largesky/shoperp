@@ -54,8 +54,6 @@ namespace ShopErp.App.Domain
         /// </summary>
         public List<Order> Orders { get; private set; }
 
-        public event Func<OrderPrintDocument, Order, Exception, bool> PrintError;
-
         private List<DocumentPage> pages = new List<DocumentPage>();
 
         public override DocumentPage GetPage(int pageNumber)
@@ -77,20 +75,10 @@ namespace ShopErp.App.Domain
             //生成页
             for (int i = 0; i < this.orderGoodss.Length; i++)
             {
-                try
-                {
-                    pi.PrintTime = DateTime.Now;
-                    pi.PageInfo = "第" + (i + 1).ToString() + "/" + count + "页";
-                    DocumentPage page = DrawingPage(this.orderGoodss[i], pi);
-                    this.pages.Add(page);
-                }
-                catch (Exception ex)
-                {
-                    if (this.PrintError == null)
-                    {
-                        throw ex;
-                    }
-                }
+                pi.PrintTime = DateTime.Now;
+                pi.PageInfo = "第" + (i + 1).ToString() + "/" + count + "页";
+                DocumentPage page = DrawingPage(this.orderGoodss[i], pi);
+                this.pages.Add(page);
             }
         }
 
@@ -145,7 +133,7 @@ namespace ShopErp.App.Domain
                     var image = data as Bitmap;
                     var bs = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(image.GetHbitmap(),
                         IntPtr.Zero, Int32Rect.Empty,
-                        BitmapSizeOptions.FromWidthAndHeight((int) printItem.Width, (int) printItem.Height));
+                        BitmapSizeOptions.FromWidthAndHeight((int)printItem.Width, (int)printItem.Height));
                     rendor.DrawImage(bs,
                         new Rect(printItem.X + template.XOffset, printItem.Y + template.YOffset, printItem.Width,
                             printItem.Height));

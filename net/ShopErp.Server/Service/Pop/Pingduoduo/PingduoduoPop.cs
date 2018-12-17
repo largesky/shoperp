@@ -204,7 +204,6 @@ namespace ShopErp.Server.Service.Pop.Pingduoduo
                     PopState = "",
                     PopType = Domain.PopType.PINGDUODUO,
                     PrintOperator = "",
-                    PrintPaperType = Domain.PaperType.NONE,
                     PrintTime = minTime,
                     ReceiverAddress = o.address,
                     ReceiverMobile = o.receiver_phone,

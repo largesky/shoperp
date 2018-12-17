@@ -348,14 +348,13 @@ namespace ShopErp.Server.Service.Restful
 
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/updatedelivery.html")]
-        public ResponseBase UpdateDelivery(long id, long deliveryTemplateId, string deliveryCompany, string deliveryNumber, PaperType paperyType, DateTime printTime)
+        public ResponseBase UpdateDelivery(long id, long deliveryTemplateId, string deliveryCompany, string deliveryNumber, DateTime printTime)
         {
             try
             {
                 var or = this.GetByIdWithException(id);
                 or.DeliveryCompany = deliveryCompany;
                 or.DeliveryNumber = deliveryNumber;
-                or.PrintPaperType = paperyType;
                 or.DeliveryTemplateId = deliveryTemplateId;
                 //快递单号为空，表示需要重置打印
                 if (string.IsNullOrWhiteSpace(deliveryNumber))
@@ -509,7 +508,7 @@ namespace ShopErp.Server.Service.Restful
                 }
 
                 //计算快递费用
-                double deliveryMoney = ServiceContainer.GetService<DeliveryTemplateService>().ComputeDeliveryMoneyImpl(orders[0].DeliveryCompany, orders[0].ReceiverAddress, orders[0].Type == OrderType.SHUA, orders[0].PrintPaperType, orders[0].PopPayType, weight);
+                double deliveryMoney = ServiceContainer.GetService<DeliveryTemplateService>().ComputeDeliveryMoneyImpl(orders[0].DeliveryCompany, orders[0].ReceiverAddress, orders[0].Type == OrderType.SHUA, orders[0].PopPayType, weight);
 
                 //更新订单状态，运费金额信息
                 List<object> objsToUpdate = new List<object>(totalOgs);
@@ -1045,7 +1044,7 @@ namespace ShopErp.Server.Service.Restful
         public ResponseBase ResetPrintState(long orderId)
         {
             var or = this.GetByIdWithException(orderId);
-            this.UpdateDelivery(orderId, -1, "", "", PaperType.NONE, this.GetDbMinTime());
+            this.UpdateDelivery(orderId, -1, "", "", this.GetDbMinTime());
             return ResponseBase.SUCCESS;
         }
 

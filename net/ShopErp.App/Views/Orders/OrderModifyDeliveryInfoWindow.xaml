@@ -19,8 +19,6 @@
         <ComboBox Grid.Row="0" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="cbbDeliveryCompany" IsEditable="True" />
         <TextBlock Grid.Row="1" Grid.Column="0" Text="物流单号" Margin="3" VerticalAlignment="Center" />
         <TextBox Grid.Row="1" Grid.Column="1" Name="tbDeliveryNumber" Margin="3" VerticalAlignment="Center" />
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="面单类型" Margin="3" VerticalAlignment="Center" />
-        <ComboBox Grid.Row="2" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="cbbPaperType" />
         <Button Grid.Row="4" Grid.Column="1" Margin="3" Width="60" VerticalAlignment="Center" Click="Button_Click"
                 Content="保存" HorizontalAlignment="Right" />
     </Grid>

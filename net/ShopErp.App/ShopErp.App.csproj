@@ -65,8 +65,8 @@
     <ApplicationIcon>网店ERP.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HtmlAgilityPack, Version=1.8.10.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
-      <HintPath>..\packages\HtmlAgilityPack.1.8.10\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    <Reference Include="HtmlAgilityPack, Version=1.8.11.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.8.11\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
@@ -74,8 +74,8 @@
     <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NPOI, Version=2.4.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
       <HintPath>..\packages\NPOI.2.4.0\lib\net40\NPOI.dll</HintPath>
@@ -153,21 +153,17 @@
     <Compile Include="Domain\GoodsCountPrintDocument.cs" />
     <Compile Include="Domain\GoodsCountPrintDocument2.cs" />
     <Compile Include="Domain\GoodsPrintDocument.cs" />
-    <Compile Include="Domain\PrintInfo.cs" />
-    <Compile Include="Domain\PrintTemplate.cs" />
-    <Compile Include="Domain\PrintTemplateItem.cs" />
-    <Compile Include="Domain\PrintTemplateItemType.cs" />
-    <Compile Include="Domain\PrintTemplateItemTypeGroup.cs" />
-    <Compile Include="Domain\PrintTemplateItemTypeGroupAttribute.cs" />
     <Compile Include="MenuConfig.cs" />
     <Compile Include="Service\Excel\ExcelFile.cs" />
     <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\CainiaoPrintDocumentPrintRequest.cs" />
     <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\CainiaoPrintDocumentPrintRequestTask.cs" />
     <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\CainiaoPrintDocumentPrintRequestTaskDocument.cs" />
     <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\CainiaoPrintDocumentPrintRequestTaskDocumentCotent.cs" />
-    <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\NetPrintDocument.cs" />
+    <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\GDIDeliveryPrintDocument.cs" />
     <Compile Include="Domain\OrderReturnOutPrintDocument.cs" />
     <Compile Include="Domain\OrderReturnPrintDocument.cs" />
+    <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\DeliveryPrintDocument.cs" />
+    <Compile Include="Service\Print\PrintDocument\FixedPrintDocument.cs" />
     <Compile Include="Service\Print\PrintInfo.cs" />
     <Compile Include="Service\Print\PrintTemplate.cs" />
     <Compile Include="Service\Print\PrintTemplateItem.cs" />
@@ -188,7 +184,6 @@
     <Compile Include="Service\Net\OrderDeliveryInfoChangedMessage.cs" />
     <Compile Include="Service\Net\OrderPopSellerCommentChangedMessage.cs" />
     <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\CainiaoPrintDocument.cs" />
-    <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\IDeliveryPrintDocument.cs" />
     <Compile Include="Service\Print\PrintFormatters\DeliveryFormatters\DeliveryRouteCode.cs" />
     <Compile Include="Service\Print\PrintFormatters\DeliveryFormatters\DeliverySortationName.cs" />
     <Compile Include="Service\Print\PrintFormatters\DeliveryFormatters\DeliverySortationNameAndRouteCode.cs" />
@@ -232,7 +227,7 @@
     <Compile Include="Service\Print\PrintFormatters\PrintInfoFormatters\PrintDatetime.cs" />
     <Compile Include="Service\Print\PrintFormatters\PrintInfoFormatters\PrintFormatterManager.cs" />
     <Compile Include="Service\Print\PrintFormatters\PrintInfoFormatters\PrintPageNumber.cs" />
-    <Compile Include="Service\Print\PrintDocument\IPrintDocument.cs" />
+    <Compile Include="Service\Print\PrintDocument\PrintDocumentBase.cs" />
     <Compile Include="Service\Print\PrintFormatters\ReturnFormatters\IReturnFormatter.cs" />
     <Compile Include="Service\Print\PrintFormatters\ReturnFormatters\ReturnFormatterManager.cs" />
     <Compile Include="Service\Print\PrintFormatters\ReturnFormatters\ReturnGoodsInfo.cs" />
@@ -302,13 +297,11 @@
     <Compile Include="ViewModels\PrintHistoryViewModel.cs" />
     <Compile Include="ViewModels\PrintOrderPageViewModel.cs" />
     <Compile Include="ViewModels\PrintOrderViewModel.cs" />
-    <Compile Include="ViewModels\PrintTemplateItemConsolidationCodeBarCode.cs" />
     <Compile Include="ViewModels\PrintTemplateItemTypeViewModel.cs" />
     <Compile Include="ViewModels\PrintTemplateItemViewModelCommon.cs" />
     <Compile Include="ViewModels\PrintTemplateItemViewModelFactory.cs" />
     <Compile Include="ViewModels\PrintTemplateItemViewModelForBarcode.cs" />
     <Compile Include="ViewModels\PrintTemplateItemViewModelForDate.cs" />
-    <Compile Include="ViewModels\PrintTemplateItemViewModelForDeliveryNumberBarcode.cs" />
     <Compile Include="ViewModels\PrintTemplateItemViewModelForGoodsInfoAndComment.cs" />
     <Compile Include="ViewModels\PrintTemplateItemViewModelForImage.cs" />
     <Compile Include="ViewModels\PrintTemplateItemViewModelForLine.cs" />
@@ -574,17 +567,11 @@
     <Compile Include="Views\Print\PrintTemplateItemDateUserControl.xaml.cs">
       <DependentUpon>PrintTemplateItemDateUserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Print\PrintTemplateItemDeliveryNumberBarcodeUserControl.xaml.cs">
-      <DependentUpon>PrintTemplateItemDeliveryNumberBarcodeUserControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Print\PrintTemplateItemImageUserControl.xaml.cs">
       <DependentUpon>PrintTemplateItemImageUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Print\PrintTemplateItemLineUserControl.xaml.cs">
       <DependentUpon>PrintTemplateItemLineUserControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Print\PrintTemplateItemConsolidationCodeBarCodeUserControl.xaml.cs">
-      <DependentUpon>PrintTemplateItemConsolidationCodeBarCodeUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Print\PrintTemplateItemPriceInBigUserControl.xaml.cs">
       <DependentUpon>PrintTemplateItemPriceInBigUserControl.xaml</DependentUpon>
@@ -928,19 +915,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Print\PrintTemplateItemDeliveryNumberBarcodeUserControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\Print\PrintTemplateItemImageUserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Print\PrintTemplateItemLineUserControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Print\PrintTemplateItemConsolidationCodeBarCodeUserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -45,10 +45,6 @@ namespace ShopErp.Domain
 
         public string Comment { get; set; }
 
-        public Dictionary<string, int> DeliveryCountNormal { get; set; }
-
-        public Dictionary<string, int> DeliveryCountHotPaper { get; set; }
-
-        public PaperType PrintPaperType { get; set; }
+        public List<DeliveryCount> DeliveryCounts{ get; set; }
     }
 }

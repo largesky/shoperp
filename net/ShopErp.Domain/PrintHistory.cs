@@ -17,7 +17,6 @@ namespace ShopErp.Domain
         public String ReceiverAddress { get; set; }
         public String GoodsInfo { get; set; }
         public String PopOrderId { get; set; }
-        public PaperType PaperType { get; set; }
         public DateTime CreateTime { get; set; }
         public DateTime UploadTime { get; set; }
         public int PageNumber { get; set; }

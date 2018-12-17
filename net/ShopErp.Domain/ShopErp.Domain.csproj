@@ -74,6 +74,7 @@
   <ItemGroup>
     <Compile Include="AddressNode.cs" />
     <Compile Include="DeliveryCompany.cs" />
+    <Compile Include="DeliveryCount.cs" />
     <Compile Include="DeliveryIn.cs" />
     <Compile Include="DeliveryOut.cs" />
     <Compile Include="DeliveryTemplate.cs" />
@@ -108,7 +109,6 @@
     <Compile Include="OrderState.cs" />
     <Compile Include="OrderType.cs" />
     <Compile Include="OrderUpdate.cs" />
-    <Compile Include="PaperType.cs" />
     <Compile Include="Pop\PopDeliveryInfo.cs" />
     <Compile Include="PopPayType.cs" />
     <Compile Include="PopRefundState.cs" />

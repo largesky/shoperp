@@ -124,7 +124,6 @@ namespace ShopErp.App.Views.Orders
                 {
                     DeliveryCompany = vm.Source.DeliveryCompany,
                     DeliveryNumber = vm.Source.DeliveryNumber,
-                    PrintPaperType = PaperType.NONE
                 };
                 bool? ret = window.ShowDialog();
                 if (ret != null && ret.Value)

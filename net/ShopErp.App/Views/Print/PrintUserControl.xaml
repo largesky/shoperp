@@ -86,10 +86,6 @@
                                                   VerticalAlignment="Center" Width="100" Margin="3"
                                                   ItemsSource="{Binding Path=DeliveryPrintTemplates,RelativeSource={RelativeSource Mode=FindAncestor,AncestorLevel=1, AncestorType=local:PrintUserControl}}"
                                                   SelectedItem="{Binding PrintTemplate}" />
-                                        <TextBlock Grid.Column="8" Text="快递起始单号：" VerticalAlignment="Center" Margin="3" />
-                                        <TextBox Grid.Column="9" Name="tbDeliveryNumber"
-                                                 Text="{Binding StartDeliveryNumber}" Margin="3"
-                                                 VerticalAlignment="Center" Width="150" />
                                         <TextBlock Grid.Column="8" Text="电子面单包裹号：" VerticalAlignment="Center"
                                                    Margin="3" />
                                         <TextBox Grid.Column="9" Name="tbPackgeId" Text="{Binding PackageId}"
@@ -124,8 +120,7 @@
                                                     <Setter.Value>
                                                         <DataTemplate>
                                                             <CheckBox
-                                                                IsChecked="{Binding Path=DataContext.IsChecked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}},Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                                                                VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                                                IsChecked="{Binding Path=DataContext.IsChecked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}},Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" HorizontalAlignment="Center" />
                                                         </DataTemplate>
                                                     </Setter.Value>
                                                 </Setter>
@@ -141,16 +136,13 @@
                                         <DataGrid.ContextMenu>
                                             <ContextMenu>
                                                 <MenuItem Header="向前选择" Name="miSelectPre" Click="miSelectPre_Click" />
-                                                <MenuItem Header="向后选择" Name="miSelectForward"
-                                                          Click="miSelectForward_Click" />
-                                                <MenuItem Header="编辑地址" Name="miEditOrderAddress"
-                                                          Click="miEditOrderAddress_Click" />
+                                                <MenuItem Header="向后选择" Name="miSelectForward" Click="miSelectForward_Click" />
+                                                <MenuItem Header="编辑地址" Name="miEditOrderAddress" Click="miEditOrderAddress_Click" />
                                             </ContextMenu>
                                         </DataGrid.ContextMenu>
 
                                         <DataGrid.Columns>
-                                            <DataGridTemplateColumn Header="颜色" Width="Auto" CanUserSort="True"
-                                                                    SortMemberPath="Source.PopFlag">
+                                            <DataGridTemplateColumn Header="颜色" Width="Auto" CanUserSort="True" SortMemberPath="Source.PopFlag">
                                                 <DataGridTemplateColumn.CellTemplate>
                                                     <DataTemplate>
                                                         <Image

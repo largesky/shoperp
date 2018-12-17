@@ -135,7 +135,7 @@ namespace ShopErp.App.Views.Delivery
                     throw new Exception("订单不存在");
                 }
                 float money = ServiceContainer.GetService<DeliveryTemplateService>().ComputeDeliveryMoney(order.DeliveryCompany,
-                    order.ReceiverAddress, order.Type == OrderType.SHUA, order.PrintPaperType, order.PopPayType,
+                    order.ReceiverAddress, order.Type == OrderType.SHUA, order.PopPayType,
                     order.Weight).data;
                 MessageBox.Show(money.ToString("F2"));
             }

@@ -73,69 +73,6 @@ namespace ShopErp.App.Views.Print
             return selected;
         }
 
-        /// <summary>
-        /// 修正单号
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnAdjustDeliveryNumber_Click(object sender, RoutedEventArgs e)
-        {
-            PrintHistoryGroupViewModel vm = (sender as Button).DataContext as PrintHistoryGroupViewModel;
-            PrintHistoryViewModel[] selected = this.GetSelected(sender);
-            if (selected.Length < 1)
-            {
-                return;
-            }
-
-            if (selected.Any(obj => obj.Source.PaperType == PaperType.HOT))
-            {
-                MessageBox.Show("修正的单号中不能包含电子面单", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            try
-            {
-                TextBox tb = ((sender as Button).Parent as StackPanel).FindName("tbNewDeliveryNumber") as TextBox;
-                ComboBox cbbDeliveryCompanies =
-                    ((sender as Button).Parent as StackPanel).FindName("cbbDeliveryCompanies") as ComboBox;
-                string newDeliveryNumber = tb.Text.Trim();
-                var printTemplate = cbbDeliveryCompanies.SelectedItem as Service.Print.PrintTemplate;
-                if (string.IsNullOrWhiteSpace(newDeliveryNumber) || printTemplate == null)
-                {
-                    MessageBox.Show("物流公司与快递单号不能为空");
-                    return;
-                }
-                this.ResetViewState(selected);
-
-                //进行分组，相同单号则需要变更为一个单号
-                var hotPhsGroups = selected.Where(obj => obj.Source.PaperType != PaperType.HOT)
-                    .GroupBy(obj => obj.Source.DeliveryNumber).ToArray();
-                foreach (var ph in hotPhsGroups)
-                {
-                    foreach (var p in ph)
-                    {
-                        p.Background = Brushes.Yellow;
-                        p.DeliveryNumber = newDeliveryNumber;
-                        p.DeliveryCompany = printTemplate.DeliveryCompany;
-                        p.Source.DeliveryNumber = p.DeliveryNumber;
-                        p.Source.DeliveryCompany = printTemplate.DeliveryCompany;
-                        p.Source.DeliveryTemplate = printTemplate.Name;
-                        p.Source.CreateTime = DateTime.Now;
-                        ServiceContainer.GetService<PrintHistoryService>().Update(p.Source);
-                        p.State = "已修正单号";
-                        p.Background = null;
-                        WPFHelper.DoEvents();
-                    }
-                    newDeliveryNumber = ServiceContainer.GetService<WuliuNumberService>().GenNormalWuliuNumber(printTemplate.DeliveryCompany, newDeliveryNumber, ph.First().Source.ReceiverAddress).First.DeliveryNumber;
-                }
-                MessageBox.Show("已完成");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "更新物流单号出错");
-            }
-        }
-
         private void btnSearch_Click(object sender, RoutedEventArgs e)
         {
             try

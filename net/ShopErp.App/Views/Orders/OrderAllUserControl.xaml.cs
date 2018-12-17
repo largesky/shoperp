@@ -267,10 +267,10 @@ namespace ShopErp.App.Views.Orders
                 {
                     throw new Exception("绑定信息不是Order对象");
                 }
-                OrderModifyDeliveryInfoWindow win = new OrderModifyDeliveryInfoWindow { DeliveryCompany = order.DeliveryCompany, DeliveryNumber = order.DeliveryNumber, PrintPaperType = order.PrintPaperType };
+                OrderModifyDeliveryInfoWindow win = new OrderModifyDeliveryInfoWindow { DeliveryCompany = order.DeliveryCompany, DeliveryNumber = order.DeliveryNumber};
                 if (win.ShowDialog().Value == true)
                 {
-                    this.orderService.UpdateDelivery(order.Id, 0, win.DeliveryCompany, win.DeliveryNumber, win.PrintPaperType, DateTime.Now);
+                    this.orderService.UpdateDelivery(order.Id, 0, win.DeliveryCompany, win.DeliveryNumber, DateTime.Now);
                     order.DeliveryCompany = win.DeliveryCompany;
                     order.DeliveryNumber = win.DeliveryNumber;
                     MessageBox.Show("更新成功");

@@ -214,24 +214,15 @@ namespace ShopErp.App.Views.Print
                 var orders = printOrderPage.OrderViewModels.ToArray();
                 var selectedOrders = orders.Where(obj => obj.IsChecked).Select(obj => obj.Source).ToArray();
                 var printTemplate = printOrderPage.PrintTemplate;
-                string deliveryNumber = printOrderPage.StartDeliveryNumber.Trim().ToUpper();
                 Grid grid = ((sender as Button).Parent as StackPanel).Parent as Grid;
                 DataGrid dg = grid.FindName("dgOrders") as DataGrid;
                 DataGridColumn goodsCol = dg.Columns.FirstOrDefault(col => col.Header.ToString() == "门牌编号");
-
-                if (printTemplate == null)
-                {
-                    throw new Exception("没行选择打印模板");
-                }
 
                 if (selectedOrders.Count() < 1)
                 {
                     throw new Exception("没有选择需要打印的订单");
                 }
-                if (selectedOrders.Where(obj => obj.PopType == PopType.TAOBAO || obj.PopType == PopType.TMALL).Any(
-                    obj => obj.ReceiverName.Contains("*") ||
-                           (obj.ReceiverMobile != null && obj.ReceiverMobile.Contains("**")) ||
-                           (obj.ReceiverPhone != null && obj.ReceiverPhone.Contains("**"))))
+                if (selectedOrders.Where(obj => obj.PopType == PopType.TAOBAO || obj.PopType == PopType.TMALL).Any(obj => obj.ReceiverName.Contains("*") || (obj.ReceiverMobile != null && obj.ReceiverMobile.Contains("**")) || (obj.ReceiverPhone != null && obj.ReceiverPhone.Contains("**"))))
                 {
                     throw new Exception("淘宝天猫有订单收货人信息处理于模糊状态");
                 }
@@ -242,10 +233,6 @@ namespace ShopErp.App.Views.Print
                 if (printTemplate == null)
                 {
                     throw new Exception("请选择相应的快递模板");
-                }
-                if (printTemplate.PaperType == PaperType.NORMAL && string.IsNullOrWhiteSpace(deliveryNumber))
-                {
-                    throw new Exception("普通面单必须输入起始单号");
                 }
 
                 if (goodsCol == null)
@@ -261,7 +248,7 @@ namespace ShopErp.App.Views.Print
                 {
                     throw new Exception("在线支付订单不能使用货到付款模板");
                 }
-                string printer = LocalConfigService.GetValue(printTemplate.PaperType == PaperType.HOT ? SystemNames.CONFIG_PRINTER_DELIVERY_HOT : SystemNames.CONFIG_PRINTER_DELIVERY_NORMAL, "");
+                string printer = LocalConfigService.GetValue(SystemNames.CONFIG_PRINTER_DELIVERY_HOT, "");
                 if (string.IsNullOrWhiteSpace(printer))
                 {
                     throw new Exception("系统中没有配置快递单打印机");
@@ -275,17 +262,7 @@ namespace ShopErp.App.Views.Print
                 goodsCol.SortDirection = null;
                 this.SortData(printOrderPage, dg, goodsCol);
                 WPFHelper.DoEvents();
-
-                //获取打印机对象
-                PrintDialog pd = PrintUtil.GetPrinter(printer);
-                pd.PrintTicket.PageMediaSize = new PageMediaSize(printTemplate.Width, printTemplate.Height);
-
-                //开始打印
-                string nextNumber = printOrderPage.Print(pd);
-                if (printTemplate.PaperType != PaperType.HOT)
-                {
-                    LocalConfigService.UpdateValue(printTemplate.Name, nextNumber);
-                }
+                printOrderPage.Print(printer);
             }
             catch (Exception ex)
             {
