@@ -24,21 +24,13 @@
                   CanUserDeleteRows="False" SelectionUnit="CellOrRowHeader" SelectionMode="Single">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="快递公司名称" Binding="{Binding Name}" />
-                <DataGridCheckBoxColumn Header="普通面单" Binding="{Binding NormalPaperMark}" />
-                <DataGridCheckBoxColumn Header="电子面单" Binding="{Binding HotPaperMark}" />
+                <DataGridCheckBoxColumn Header="拿货统计" Binding="{Binding PaperMark}" />
                 <DataGridTextColumn Header="快递100代码" Binding="{Binding PopMapKuaidi100}" />
                 <DataGridTextColumn Header="淘宝快递代码" Binding="{Binding PopMapTaobao}" />
-                <DataGridTextColumn Header="楚楚街快递代码" Binding="{Binding PopMapChuchujie}" />
                 <DataGridTextColumn Header="拼多多快递代码" Binding="{Binding PopMapPingduoduo}" />
                 <DataGridTextColumn Header="京东快递代码" Binding="{Binding PopMapJd}" />
-                <DataGridTextColumn Header="蘑菇街快递代码" Binding="{Binding PopMapMogujie}" />
-                <DataGridTextColumn Header="美丽说快递代码" Binding="{Binding PopMapMeiliShuo}" />
-                <DataGridTextColumn Header="创建时间"
-                                    Binding="{Binding CreateTime,Converter={StaticResource datetimeConverter}}"
-                                    IsReadOnly="True" />
-                <DataGridTextColumn Header="更新时间"
-                                    Binding="{Binding UpdateTime,Converter={StaticResource datetimeConverter}}"
-                                    IsReadOnly="True" />
+                <DataGridTextColumn Header="创建时间" Binding="{Binding CreateTime,Converter={StaticResource datetimeConverter}}" IsReadOnly="True" />
+                <DataGridTextColumn Header="更新时间" Binding="{Binding UpdateTime,Converter={StaticResource datetimeConverter}}" IsReadOnly="True" />
                 <DataGridTextColumn Header="更新人员" Binding="{Binding UpdateOperator}" IsReadOnly="True" />
             </DataGrid.Columns>
         </DataGrid>

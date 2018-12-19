@@ -55,7 +55,6 @@
                 <TextBlock Text="已超时订单" Margin="3" VerticalAlignment="Center" />
                 <Ellipse Width="20" Height="20" Fill="Yellow" Margin="3" />
                 <TextBlock Text="1小时内超时订单" Margin="3" VerticalAlignment="Center" />
-                <CheckBox Name="chkShow" Margin="20,3" VerticalAlignment="Center" Content="显示天猫订单" FlowDirection="RightToLeft"  IsChecked="False"/>
                 <Button Name="btnRefresh" Margin="3" VerticalAlignment="Center" Width="60" Content="刷新"
                         Click="btnRefresh_Click" />
                 <Button Name="btnMarkDelivery" Margin="3" VerticalAlignment="Center" Width="60" Content="标记发货"

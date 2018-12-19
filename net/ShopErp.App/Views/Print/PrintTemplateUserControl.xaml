@@ -57,12 +57,6 @@
                 <TextBlock Text="物流公司：" Margin="3" VerticalAlignment="Center" />
                 <ComboBox Name="cbbDeliverCompanies" Margin="3" VerticalAlignment="Center" Width="100"
                           SelectedItem="{Binding SelectedItem.DeliveryCompany, ElementName=lstDeliveryPrintTemplates, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBlock Text="面单类型：" Margin="3" VerticalAlignment="Center" />
-                <ComboBox Name="cbbPaperType" Margin="3" VerticalAlignment="Center" Width="60">
-                    <ComboBoxItem>普通</ComboBoxItem>
-                    <ComboBoxItem>电子</ComboBoxItem>
-                    <ComboBox.SelectedIndex>0</ComboBox.SelectedIndex>
-                </ComboBox>
                 <TextBlock Text="模板名称：" Margin="3" VerticalAlignment="Center" />
                 <TextBox Name="tbDeliveryTemplateName" Width="120" Margin="3" VerticalAlignment="Center"
                          Text="{Binding ElementName=lstDeliveryPrintTemplates,Path=SelectedItem.Name,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" />
@@ -131,7 +125,7 @@
                                 VerticalAlignment="Center" Click="btnCopyDeliveryPrintTemplate_Click" />
                         <Button Name="btnSaveDeliveryPrintTemplate" Content="保存当前模板" Margin="3,3,3,10"
                                 VerticalAlignment="Center" Click="btnSaveDeliveryPrintTemplate_Click" />
-                        <Button Name="btnConvert" Content="转换" Click="btnConvert_Click" Margin="3,3,3,10"/>
+                        <Button Name="btnConvert" Content="转换" Click="btnConvert_Click" Margin="3,3,3,10" Visibility="Collapsed"/>
                         <TextBlock Text="测试张数:" Margin="3,10,3,0" VerticalAlignment="Center" />
                         <TextBox Name="tbTestCount" Text="3" Margin="3,10,3,0" VerticalAlignment="Center" />
                         <Button Name="btnPrintTest" Content="打印测试" Margin="3,10,3,10" VerticalAlignment="Center"

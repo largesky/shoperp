@@ -7,11 +7,8 @@
     <property name="Name">
       <column name="Name" sql-type="string" not-null="true" />
     </property>
-    <property name="NormalPaperMark">
-      <column name="NormalPaperMark" sql-type="boolean" not-null="true" />
-    </property>
-    <property name="HotPaperMark">
-      <column name="HotPaperMark" sql-type="boolean" not-null="true" />
+    <property name="PaperMark">
+      <column name="PaperMark" sql-type="boolean" not-null="true" />
     </property>
     <property name="PopMapKuaidi100">
       <column name="PopMapKuaidi100" sql-type="string" not-null="true" />
@@ -19,20 +16,11 @@
     <property name="PopMapTaobao">
       <column name="PopMapTaobao" sql-type="string" not-null="true" />
     </property>
-    <property name="PopMapChuchujie">
-      <column name="PopMapChuchujie" sql-type="string" not-null="true" />
-    </property>
     <property name="PopMapPingduoduo">
       <column name="PopMapPingduoduo" sql-type="string" not-null="true" />
     </property>
     <property name="PopMapJd">
       <column name="PopMapJd" sql-type="string" not-null="true" />
-    </property>
-    <property name="PopMapMogujie">
-      <column name="PopMapMogujie" sql-type="string" not-null="true" />
-    </property>
-    <property name="PopMapMeiliShuo">
-      <column name="PopMapMeiliShuo" sql-type="string" not-null="true" />
     </property>
     <property name="CreateTime">
       <column name="CreateTime" sql-type="datetime" not-null="true" />

@@ -48,12 +48,8 @@ namespace ShopErp.App.Views.Delivery
                     MessageBox.Show("没有找到待发货的订单");
                     return;
                 }
-                //过虑不需要显示的订单
-                if (this.chkShow.IsChecked.Value == false)
-                {
-                    var showShops = shops.Where(obj => obj.PopType != PopType.TMALL && obj.PopType != PopType.TAOBAO).Select(obj => obj.Id).ToArray();
-                    orders = orders.Where(obj => showShops.Contains(obj.Source.ShopId)).ToArray();
-                }
+                var showShops = shops.Where(obj => obj.PopType != PopType.TMALL && obj.PopType != PopType.TAOBAO).Select(obj => obj.Id).ToArray();
+                orders = orders.Where(obj => showShops.Contains(obj.Source.ShopId)).ToArray();
                 //分析
                 foreach (var order in orders)
                 {

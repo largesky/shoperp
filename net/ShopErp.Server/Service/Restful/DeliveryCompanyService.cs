@@ -43,11 +43,8 @@ namespace ShopErp.Server.Service.Restful
                     throw new Exception("快递公司已经存在");
                 }
                 value.CreateTime = DateTime.Now;
-                value.PopMapChuchujie = value.PopMapChuchujie ?? "";
                 value.PopMapJd = value.PopMapJd ?? "";
                 value.PopMapKuaidi100 = value.PopMapKuaidi100 ?? "";
-                value.PopMapMeiliShuo = value.PopMapMeiliShuo ?? "";
-                value.PopMapMogujie = value.PopMapMogujie ?? "";
                 value.PopMapPingduoduo = value.PopMapPingduoduo ?? "";
                 value.PopMapTaobao = value.PopMapTaobao ?? "";
                 value.UpdateOperator = value.UpdateOperator ?? "";
@@ -83,11 +80,8 @@ namespace ShopErp.Server.Service.Restful
                     throw new Exception("已存在相同的快递公司名称");
                 }
 
-                value.PopMapChuchujie = value.PopMapChuchujie ?? "";
                 value.PopMapJd = value.PopMapJd ?? "";
                 value.PopMapKuaidi100 = value.PopMapKuaidi100 ?? "";
-                value.PopMapMeiliShuo = value.PopMapMeiliShuo ?? "";
-                value.PopMapMogujie = value.PopMapMogujie ?? "";
                 value.PopMapPingduoduo = value.PopMapPingduoduo ?? "";
                 value.PopMapTaobao = value.PopMapTaobao ?? "";
                 value.UpdateOperator = value.UpdateOperator ?? "";

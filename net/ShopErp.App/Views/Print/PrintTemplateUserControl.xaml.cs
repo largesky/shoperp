@@ -38,7 +38,7 @@ namespace ShopErp.App.Views.Print
         private ObservableCollection<Service.Print.PrintTemplate> deliveryTemplates = new ObservableCollection<Service.Print.PrintTemplate>();
         private bool loaded = false;
 
-        PrintDialog pd = new System.Windows.Controls.PrintDialog();
+        System.Windows.Controls.PrintDialog pd = new System.Windows.Controls.PrintDialog();
 
         public PrintTemplateUserControl()
         {
@@ -418,7 +418,7 @@ namespace ShopErp.App.Views.Print
                     return;
                 }
 
-
+              
                 if (printTemplate.Type == Service.Print.PrintTemplate.TYPE_DELIVER)
                 {
                     Order[] orders = new Order[count];
@@ -440,7 +440,6 @@ namespace ShopErp.App.Views.Print
                     doc.StartPrint(orders, "", true, printTemplate);
                     return;
                 }
-
                 var ret = pd.ShowDialog();
                 if (ret.Value == false)
                 {

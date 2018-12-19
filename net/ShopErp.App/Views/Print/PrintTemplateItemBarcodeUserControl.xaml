@@ -21,11 +21,10 @@
         <ComboBox Grid.Row="0" Grid.Column="1" Name="cbbTypes" ItemsSource="{Binding Types}"
                       SelectedItem="{Binding Path=Format,UpdateSourceTrigger=PropertyChanged}" Margin="3"
                       VerticalAlignment="Center" HorizontalAlignment="Stretch" />
-        <TextBlock Grid.Row="1" Grid.Column="0" Text="条码的值:" Margin="3" VerticalAlignment="Center" />
-        <TextBox Grid.Row="1" Grid.Column="1" Name="tbValue" Text="{Binding Path=Value,UpdateSourceTrigger=PropertyChanged}" Margin="3"
-                     VerticalAlignment="Center" HorizontalAlignment="Stretch" />
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="打印文本:" Margin="3" VerticalAlignment="Center" />
-        <ComboBox Grid.Row="2" Grid.Column="1" Name="cbbPrintText" SelectedItem="{Binding Path=Value1,UpdateSourceTrigger=PropertyChanged}"
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="条码的值:" Margin="3" VerticalAlignment="Center" />
+        <TextBox Grid.Row="2" Grid.Column="1" Name="tbValue" Text="{Binding Path=Value,UpdateSourceTrigger=PropertyChanged}" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="打印文本:" Margin="3" VerticalAlignment="Center" />
+        <ComboBox Grid.Row="1" Grid.Column="1" Name="cbbPrintText" SelectedItem="{Binding Path=Value1,UpdateSourceTrigger=PropertyChanged}"
                       Margin="3" VerticalAlignment="Center" HorizontalAlignment="Stretch"  />
     </Grid>
 </UserControl>

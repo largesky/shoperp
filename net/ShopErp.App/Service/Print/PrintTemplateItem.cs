@@ -79,8 +79,6 @@ namespace ShopErp.App.Service.Print
         /// </summary>
         public string Value1 { get; set; }
 
-
-
         /// <summary>
         /// 运行时的储存数据对象，不会序列化
         /// </summary>

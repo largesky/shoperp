@@ -417,6 +417,10 @@ namespace ShopErp.App.Views.Delivery
                 this.isRunning = true;
 
                 this.orders.Clear();
+                foreach (var col in this.dgvOrders.Columns)
+                {
+                    col.SortDirection = null;
+                }
                 string htmlRet = this.wb1.GetTextAsync().Result;
                 var shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas;
                 var shop = shops.FirstOrDefault(obj => htmlRet.Contains(obj.PopSellerId));

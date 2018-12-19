@@ -165,7 +165,7 @@ namespace ShopErp.Server.Service.Restful
                     foreach (var vv in goodsCount.DeliveryCounts)
                     {
                         var dc = goodsCountMarks.FirstOrDefault(obj => obj.Name == vv.DeliveryCompany);
-                        if (dc != null && dc.NormalPaperMark)
+                        if (dc != null && dc.PaperMark)
                         {
                             count += vv.Count;
                         }

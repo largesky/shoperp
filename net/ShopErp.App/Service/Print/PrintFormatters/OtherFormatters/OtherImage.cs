@@ -19,11 +19,12 @@ namespace ShopErp.App.Service.Print.OtherFormatters
                 throw new Exception("图片不存在");
             }
 
-            var bi = new BitmapImage();
-            bi.BeginInit();
-            bi.StreamSource = new MemoryStream(template.AttachFiles[item.Format], false);
-            bi.EndInit();
-            return bi;
+            System.Drawing.Image i = null;
+            using (var ms = new MemoryStream(template.AttachFiles[item.Format], false))
+            {
+                i = System.Drawing.Image.FromStream(ms);
+            }
+            return i;
         }
     }
 }

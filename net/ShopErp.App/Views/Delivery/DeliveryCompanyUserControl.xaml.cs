@@ -78,19 +78,15 @@ namespace ShopErp.App.Views.Delivery
             this.deliveryCompanys.Add(new DeliveryCompany
             {
                 CreateTime = DateTime.Now,
-                HotPaperMark = true,
+                PaperMark = true,
                 Id = 0,
                 Name = "",
-                NormalPaperMark = true,
-                PopMapChuchujie = "",
                 PopMapJd = "",
                 PopMapKuaidi100 = "",
                 PopMapPingduoduo = "",
                 PopMapTaobao = "",
                 UpdateOperator = "",
                 UpdateTime = DateTime.Now,
-                PopMapMogujie = "",
-                PopMapMeiliShuo = "",
             });
         }
 

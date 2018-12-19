@@ -5,7 +5,6 @@ namespace ShopErp.App.Service.Print.OtherFormatters
 {
     class OtherLine : IOtherFormatter
     {
-        private BrushConverter converter = new BrushConverter();
 
         public string AcceptType
         {
@@ -18,12 +17,13 @@ namespace ShopErp.App.Service.Print.OtherFormatters
             {
                 item.Format = Brushes.Black.ToString();
             }
-            var brush = this.converter.ConvertFromString(item.Format) as Brush;
-            var pen = new System.Windows.Media.Pen(brush, item.Height > item.Width ? item.Width : item.Height);
-            pen.DashStyle = item.Value == "是" ? new DashStyle(new double[] { 1, 1 }, 0) : null;
-            pen.DashCap = PenLineCap.Flat;
-            pen.EndLineCap = PenLineCap.Flat;
-            pen.StartLineCap = PenLineCap.Flat;
+            int argb = int.Parse(item.Format.Replace("#", ""), System.Globalization.NumberStyles.HexNumber);
+            System.Drawing.Color c = System.Drawing.Color.FromArgb((int)(item.Opacity * 255), System.Drawing.Color.FromArgb(argb));
+            System.Drawing.Pen pen = new System.Drawing.Pen(c, (float)(item.Height > item.Width ? item.Width : item.Height));
+            pen.DashStyle = item.Value == "是" ? System.Drawing.Drawing2D.DashStyle.Dot : System.Drawing.Drawing2D.DashStyle.Solid;
+            pen.DashCap = System.Drawing.Drawing2D.DashCap.Flat;
+            pen.EndCap = System.Drawing.Drawing2D.LineCap.Flat;
+            pen.StartCap = System.Drawing.Drawing2D.LineCap.Flat;
             return pen;
         }
     }

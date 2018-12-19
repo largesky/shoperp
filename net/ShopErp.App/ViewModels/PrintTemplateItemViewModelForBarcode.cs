@@ -1,5 +1,6 @@
 ﻿using ShopErp.App.Domain;
 using ShopErp.App.Service.Print;
+using ShopErp.App.Utils;
 using ShopErp.App.Views.Print;
 using System;
 using System.Collections.Generic;
@@ -25,26 +26,21 @@ namespace ShopErp.App.ViewModels
             this.PropertyUI = new PrintTemplateItemBarcodeUserControl();
             this.PropertyUI.DataContext = this;
             this.PreviewValue = new Image();
-            this.Value = "699999999988";
-            this.Value1 = "是";
+            this.Value = "是";
+            this.Value1 = "699999999988";
         }
 
         protected override void OnPropertyChanged(System.Windows.DependencyPropertyChangedEventArgs e)
         {
-            if (e.Property == PrintTemplateItemViewModelCommon.FormatProperty ||
-                e.Property == PrintTemplateItemViewModelCommon.FontSizeProperty ||
+            if (e.Property == PrintTemplateItemViewModelCommon.FontSizeProperty ||
                 e.Property == PrintTemplateItemViewModelCommon.FontNameProperty ||
                 e.Property == PrintTemplateItemViewModelCommon.WidthProperty ||
                 e.Property == PrintTemplateItemViewModelCommon.HeightProperty ||
+                e.Property == PrintTemplateItemViewModelCommon.FormatProperty ||
                 e.Property == PrintTemplateItemViewModelCommon.ValueProperty ||
                 e.Property == PrintTemplateItemViewModelCommon.Value1Property)
             {
                 this.GenImage();
-            }
-            else if (e.Property == PrintTemplateItemViewModelForBarcode.ValueProperty)
-            {
-                this.GenImage();
-                return;
             }
             base.OnPropertyChanged(e);
         }
@@ -55,35 +51,15 @@ namespace ShopErp.App.ViewModels
             {
                 return;
             }
-            var writer = new BarcodeWriter();
-            writer.Format = (BarcodeFormat) (Enum.Parse(typeof(BarcodeFormat), this.Format));
-            writer.Options = new ZXing.Common.EncodingOptions
-            {
-                Height = (int) this.Height,
-                Width = (int) this.Width,
-                Margin = 0,
-                PureBarcode = this.Value1 == "是" ? false : true,
-            };
-            if (writer.Renderer is BitmapRenderer)
-            {
-                ((BitmapRenderer) writer.Renderer).TextFont = new System.Drawing.Font(this.FontName,
-                    (float) this.FontSize <= 0 ? 12 : (float) this.FontSize);
-            }
-            else if (writer.Renderer is WriteableBitmapRenderer)
-            {
-                ((WriteableBitmapRenderer) writer.Renderer).FontFamily =
-                    new System.Windows.Media.FontFamily(this.FontName);
-                ((WriteableBitmapRenderer) writer.Renderer).FontSize = this.FontSize <= 0 ? 12 : this.FontSize;
-            }
             try
             {
-                var imageData = writer.Write(this.Value);
+                System.Drawing.Bitmap imageData = ZXingUtil.CreateImage(this.Value1, this.Format, (int)this.Width, (int)this.Height, this.Value == "是" ? false : true, this.FontName, (int)this.FontSize);
+                var bs = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(imageData.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromWidthAndHeight((int)imageData.Width, (int)imageData.Height));
+
                 if (this.PreviewValue is Image == false)
                     this.PreviewValue = new Image();
                 var image = this.PreviewValue as Image;
-                image.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(imageData.GetHbitmap(),
-                    IntPtr.Zero, Int32Rect.Empty,
-                    BitmapSizeOptions.FromWidthAndHeight((int) imageData.Width, (int) imageData.Height));
+                image.Source = bs;
             }
             catch (Exception ex)
             {
