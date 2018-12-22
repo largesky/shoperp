@@ -253,7 +253,21 @@ namespace ShopErp.App.Views.Delivery
                     add += reinfos[i];
                 }
             }
-            order.ReceiverAddress = add;
+            order.ReceiverAddress = add.Trim();
+            //删除最后的邮编
+            int digitIndex = order.ReceiverAddress.Length - 1;
+            while (digitIndex > 0)
+            {
+                if (Char.IsDigit(order.ReceiverAddress[digitIndex]) == false)
+                {
+                    break;
+                }
+                digitIndex--;
+            }
+            if (order.ReceiverAddress[digitIndex] == ' ' && order.ReceiverAddress.Length - digitIndex > 6)
+            {
+                order.ReceiverAddress = order.ReceiverAddress.Substring(0, digitIndex);
+            }
             //订单金额
             var contents = new List<TaobaoQueryOrderDetailResponseAmountCountContent>();
             foreach (var c in oi.amount.count)
@@ -417,10 +431,6 @@ namespace ShopErp.App.Views.Delivery
                 this.isRunning = true;
 
                 this.orders.Clear();
-                foreach (var col in this.dgvOrders.Columns)
-                {
-                    col.SortDirection = null;
-                }
                 string htmlRet = this.wb1.GetTextAsync().Result;
                 var shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas;
                 var shop = shops.FirstOrDefault(obj => htmlRet.Contains(obj.PopSellerId));
@@ -436,10 +446,6 @@ namespace ShopErp.App.Views.Delivery
                 {
                     MessageBox.Show("没有找到待发货的订单");
                     return;
-                }
-                foreach (var v in downloadOrders)
-                {
-                    Debug.WriteLine(v.Id + " " + v.PopOrderId + v.PopDeliveryTime);
                 }
                 //分析
                 foreach (var order in orders)

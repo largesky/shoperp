@@ -47,20 +47,28 @@ namespace ShopErp.App.Views.Print
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if (loaded)
+            try
             {
-                return;
+                if (loaded)
+                {
+                    return;
+                }
+                this.cbbTemplateTypes.ItemsSource = new string[] { "快递", "退货", "商品" };
+                this.cbbDeliverCompanies.ItemsSource = ServiceContainer.GetService<DeliveryCompanyService>().GetByAll().Datas.Select(obj => obj.Name).ToArray();
+                this.lstDeliveryPrintTemplateTypes.ItemsSource = ViewModels.PrintTemplateItemTypeViewModel.GetAllTypes();
+                this.cbbDeliveryPrintTemplateItemFontName.ItemsSource = new InstalledFontCollection().Families.Select(obj => obj.Name).ToArray();
+                this.cbbDeliveryPrintTemplateItemFontName.SelectedIndex = 0;
+                this.cbbDeliveryPrintTemplateItemTextAlignment.ItemsSource = Enum.GetValues(typeof(TextAlignment));
+                this.cbbDeliveryPrintTemplateItemScaleFormat.ItemsSource = new string[] { "否", "是" };
+                this.lstDeliveryPrintTemplates.ItemsSource = deliveryTemplates;
+                this.btnRefreshAllDeliveryPrintTemplate_Click(null, null);
+                loaded = true;
             }
-            this.cbbTemplateTypes.ItemsSource = new string[] { "快递", "退货", "商品" };
-            this.cbbDeliverCompanies.ItemsSource = ServiceContainer.GetService<DeliveryCompanyService>().GetByAll().Datas.Select(obj => obj.Name).ToArray();
-            this.lstDeliveryPrintTemplateTypes.ItemsSource = ViewModels.PrintTemplateItemTypeViewModel.GetAllTypes();
-            this.cbbDeliveryPrintTemplateItemFontName.ItemsSource = new InstalledFontCollection().Families.Select(obj => obj.Name).ToArray();
-            this.cbbDeliveryPrintTemplateItemFontName.SelectedIndex = 0;
-            this.cbbDeliveryPrintTemplateItemTextAlignment.ItemsSource = Enum.GetValues(typeof(TextAlignment));
-            this.cbbDeliveryPrintTemplateItemScaleFormat.ItemsSource = new string[] { "否", "是" };
-            this.lstDeliveryPrintTemplates.ItemsSource = deliveryTemplates;
-            this.btnRefreshAllDeliveryPrintTemplate_Click(null, null);
-            loaded = true;
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
         }
 
         private void AttachThumbEvents(PrintTemplateItemViewModelCommon thumb)
@@ -418,7 +426,7 @@ namespace ShopErp.App.Views.Print
                     return;
                 }
 
-              
+
                 if (printTemplate.Type == Service.Print.PrintTemplate.TYPE_DELIVER)
                 {
                     Order[] orders = new Order[count];
