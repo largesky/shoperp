@@ -1,9 +1,14 @@
 {
   "ExpandedNodes": [
-    "",
     "\\android",
-    "\\net"
+    "\\android\\gradle",
+    "\\net",
+    "\\net\\packages",
+    "\\net\\packages\\cef.redist.x64.3.3239.1723",
+    "\\net\\packages\\cef.redist.x86.3.3239.1723\\build",
+    "\\net\\packages\\CefSharp.Common.63.0.0\\build",
+    "\\net\\ShopErp.App",
+    "\\net\\ShopErp.Server"
   ],
-  "SelectedNode": "\\net",
   "PreviewInSolutionExplorer": false
 }

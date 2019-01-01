@@ -211,6 +211,16 @@ namespace ShopErp.App.Views.Print
             try
             {
                 var printOrderPage = (sender as Button).DataContext as PrintOrderPageViewModel;
+
+                if (printOrderPage.IsRunning)
+                {
+                    if (MessageBox.Show("是否停止打印", "提示", MessageBoxButton.YesNo, MessageBoxImage.Stop) == MessageBoxResult.Yes)
+                    {
+                        printOrderPage.Stop();
+                        return;
+                    }
+                }
+
                 var orders = printOrderPage.OrderViewModels.ToArray();
                 var selectedOrders = orders.Where(obj => obj.IsChecked).Select(obj => obj.Source).ToArray();
                 var printTemplate = printOrderPage.PrintTemplate;

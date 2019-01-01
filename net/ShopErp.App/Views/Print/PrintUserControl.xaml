@@ -73,34 +73,16 @@
                                     </Grid.RowDefinitions>
 
                                     <StackPanel Grid.Row="0" Margin="3" Orientation="Horizontal">
-                                        <CheckBox Content="选择" Name="chkSelectAll" IsChecked="{Binding Checked}"
-                                                  Margin="3" VerticalAlignment="Center" Tag="{Binding}" />
-                                        <TextBox Name="tbInputCount" Text="{Binding SelectTopCount}" Width="50"
-                                                 VerticalAlignment="Center" />
-                                        <TextBlock Text="已选择：" Margin="3" VerticalAlignment="Center"
-                                                   TextAlignment="Left" />
-                                        <TextBlock Name="tbSelected" Text="{Binding SelectedCount}" Margin="3"
-                                                   VerticalAlignment="Center" MinWidth="30" TextAlignment="Left" />
+                                        <CheckBox Content="选择" Name="chkSelectAll" IsChecked="{Binding Checked}" Margin="3" VerticalAlignment="Center" Tag="{Binding}" />
+                                        <TextBlock Text="已选择：" Margin="3" VerticalAlignment="Center" TextAlignment="Left" />
+                                        <TextBlock Name="tbSelected" Text="{Binding SelectedCount}" Margin="3" VerticalAlignment="Center" MinWidth="30" TextAlignment="Left" />
                                         <TextBlock Text="快递模板" VerticalAlignment="Center" Margin="3" />
-                                        <ComboBox x:Name="cbbDeliveryTemplates" DisplayMemberPath="Name"
-                                                  VerticalAlignment="Center" Width="100" Margin="3"
-                                                  ItemsSource="{Binding Path=DeliveryPrintTemplates,RelativeSource={RelativeSource Mode=FindAncestor,AncestorLevel=1, AncestorType=local:PrintUserControl}}"
-                                                  SelectedItem="{Binding PrintTemplate}" />
-                                        <TextBlock Grid.Column="8" Text="电子面单包裹号：" VerticalAlignment="Center"
-                                                   Margin="3" />
-                                        <TextBox Grid.Column="9" Name="tbPackgeId" Text="{Binding PackageId}"
-                                                 Margin="3" VerticalAlignment="Center" Width="50" />
-                                        <CheckBox Name="chkAutoHideOkOrders" Content="自动隐藏打印成功订单" Margin="3"
-                                                  VerticalAlignment="Center"
-                                                  IsChecked="{Binding AutoDeleteSucessOrder}" />
-                                        <Button Grid.Column="10" Name="btnPrint" Content="打印"
-                                                VerticalAlignment="Center" Width="60" ClickMode="Release"
-                                                Click="btnPrint_Click" Margin="3"
-                                                IsEnabled="{Binding CanStartPrint, Mode=OneWay}" />
-                                        <Button Grid.Column="10" Name="btnStop" Content="停止" VerticalAlignment="Center"
-                                                Width="60" ClickMode="Release" Click="btnPrint_Click" Margin="3"
-                                                IsEnabled="{Binding CanStopPrint, Mode=OneWay}" />
-                                        <TextBlock Margin="3" Text="{Binding State}" />
+                                        <ComboBox x:Name="cbbDeliveryTemplates" DisplayMemberPath="Name" VerticalAlignment="Center" Width="100" Margin="3" ItemsSource="{Binding Path=DeliveryPrintTemplates,RelativeSource={RelativeSource Mode=FindAncestor,AncestorLevel=1, AncestorType=local:PrintUserControl}}"  SelectedItem="{Binding PrintTemplate}" />
+                                        <TextBlock Grid.Column="8" Text="电子面单包裹号：" VerticalAlignment="Center" Margin="3" />
+                                        <TextBox Grid.Column="9" Name="tbPackgeId" Text="{Binding PackageId}" Margin="3" VerticalAlignment="Center" Width="50" />
+                                        <CheckBox Name="chkAutoHideOkOrders" Content="自动隐藏打印成功订单" Margin="3" VerticalAlignment="Center" IsChecked="{Binding AutoDeleteSucessOrder}" />
+                                        <Button Grid.Column="10" Name="btnPrint" Content="{Binding PrintButtonString}"  VerticalAlignment="Center" Width="60" ClickMode="Release"  Click="btnPrint_Click" Margin="3"/>
+                                        <TextBlock Margin="3" Text="{Binding WorkStateMessage}"  VerticalAlignment="Center"/>
                                     </StackPanel>
 
                                     <DataGrid Grid.Row="1" IsReadOnly="True" Margin="3" Name="dgOrders"
