@@ -48,7 +48,7 @@ namespace ShopErp.App.Utils
             {
                 programPath = programPath.Substring(0, programPath.IndexOf("%1")).Trim();
             }
-            Process.Start("\"" + programPath + "\"", string.Format("aliim:sendmsg?uid=cntaobao&touid=cntaobao{1}&siteid=cntaobao", popSellerId, popBuyerId));
+            Process.Start("\"" + programPath + "\"", string.Format("aliim:sendmsg?uid=cntaobao&touid=cntaobao{0}&siteid=cntaobao", popBuyerId));
         }
     }
 }

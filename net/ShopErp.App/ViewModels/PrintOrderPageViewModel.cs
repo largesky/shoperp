@@ -299,7 +299,7 @@ namespace ShopErp.App.ViewModels
                             v.State = ex.Message;
                             v.Background = Brushes.Red;
                         }
-                        throw ex;
+                        throw;
                     }
                 }
                 this.printDoc = new GDIDeliveryPrintDocument { WuliuNumbers = wuliuNumbers };
@@ -309,14 +309,14 @@ namespace ShopErp.App.ViewModels
                 this.printDoc.PrintStarting += PrintDoc_PrintStarting;
                 printDoc.StartPrint(mergedOrders.ToArray(), printer, false, this.PrintTemplate);
             }
-            catch (Exception ex)
+            catch
             {
                 this.IsRunning = false;
                 this.IsUserStop = true;
                 this.lastOpError = false;
                 this.PrintButtonString = "打印";
                 this.WorkStateMessage = "出现错误打印终止";
-                throw ex;
+                throw ;
             }
             finally
             {

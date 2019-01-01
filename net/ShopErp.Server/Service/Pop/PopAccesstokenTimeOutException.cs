@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace ShopErp.Server.Service.Pop
 {
+    [Serializable]
     public class PopAccesstokenTimeOutException : Exception
     {
         public PopAccesstokenTimeOutException()

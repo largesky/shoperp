@@ -61,7 +61,7 @@ namespace ShopErp.App.Domain
         {
             this.GoodsCount = goodsCount;
             FormattedText text = CreateText("中文", 16, "黑体");
-            this.rowPerPage = (int) ((this.PageSize.Height - TOP_MARGIN * 2) / (text.Height + ITEM_MARGIN_HEIGHT * 2)) -
+            this.rowPerPage = (int)((this.PageSize.Height - TOP_MARGIN * 2) / (text.Height + ITEM_MARGIN_HEIGHT * 2)) -
                               2;
             this.pageCount = (this.GoodsCount.Length + this.rowPerPage - 1) / this.rowPerPage;
             this.time = DateTime.Now;
@@ -137,20 +137,14 @@ namespace ShopErp.App.Domain
             //绘制标题
             double money = GetPageMoney(pageNumber);
             double totalMoney = GetTotalMoney();
-            string strTitle = string.Format("页码: {0}/{1} 总数量:{3} 本页金额:{4:F1} 打印时间:{5},打印人员:{6}", pageNumber + 1,
-                this.pageCount, totalMoney, this.GetPageCount(pageNumber), money,
-                this.time.ToString("yyyy-MM-dd HH:mm:ss"), OperatorService.LoginOperator.Number);
+            string strTitle = string.Format("页码: {0}/{1} 本页数量:{2} 本页金额:{3:F0} 打印时间:{4},打印人员:{5}", pageNumber + 1, this.pageCount, this.GetPageCount(pageNumber), money, this.time.ToString("yyyy-MM-dd HH:mm:ss"), OperatorService.LoginOperator.Number);
             FormattedText textTitle = CreateText(strTitle, 16, "黑体");
-            rendor.DrawText(textTitle,
-                new System.Windows.Point(LEFT_MARGIN + ITEM_MARGIN_WIDGHT, TOP_MARGIN + ITEM_MARGIN_HEIGHT));
-
+            rendor.DrawText(textTitle, new System.Windows.Point(LEFT_MARGIN + ITEM_MARGIN_WIDGHT, TOP_MARGIN + ITEM_MARGIN_HEIGHT));
             double eachItemHeight = textTitle.Height + ITEM_MARGIN_HEIGHT * 2;
             double[] itemWidth = this.GetItemWidth();
 
             Pen linePen = new Pen(Brushes.Black, 2);
-            int currentPageCount = (pageNumber + 1) == this.PageCount
-                ? (this.GoodsCount.Length - this.rowPerPage * pageNumber)
-                : this.rowPerPage;
+            int currentPageCount = (pageNumber + 1) == this.PageCount ? (this.GoodsCount.Length - this.rowPerPage * pageNumber) : this.rowPerPage;
 
             //绘制网格横线
             for (int i = 0; i <= currentPageCount + 1; i++)
@@ -297,7 +291,7 @@ namespace ShopErp.App.Domain
                 }
             }
             rendor.Close();
-            return new DocumentPage(visual, this.PageSize, new System.Windows.Rect(this.PageSize),new System.Windows.Rect(this.PageSize));
+            return new DocumentPage(visual, this.PageSize, new System.Windows.Rect(this.PageSize), new System.Windows.Rect(this.PageSize));
         }
     }
 }

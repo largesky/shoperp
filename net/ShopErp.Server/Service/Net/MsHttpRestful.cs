@@ -278,7 +278,7 @@ namespace ShopErp.Server.Service.Net
                     Debug.WriteLine(ex.Message + Environment.NewLine + ex.StackTrace);
                     if (i == retryCount - 1)
                     {
-                        throw ex;
+                        throw;
                     }
                     System.Threading.Thread.Sleep((i + 1) * 1500);
                 }

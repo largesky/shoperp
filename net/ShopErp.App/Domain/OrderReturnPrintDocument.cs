@@ -66,17 +66,10 @@ namespace ShopErp.App.Domain
             //生成页
             for (int i = 0; i < this.orderReturns.Length; i++)
             {
-                try
-                {
-                    pi.PrintTime = DateTime.Now;
-                    pi.PageInfo = "第" + (i + 1).ToString() + "/" + this.orderReturns.Length + "页";
-                    DocumentPage page = DrawingPage(this.orderReturns[i], pi);
-                    this.pages.Add(page);
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
+                pi.PrintTime = DateTime.Now;
+                pi.PageInfo = "第" + (i + 1).ToString() + "/" + this.orderReturns.Length + "页";
+                DocumentPage page = DrawingPage(this.orderReturns[i], pi);
+                this.pages.Add(page);
             }
         }
 
@@ -132,7 +125,7 @@ namespace ShopErp.App.Domain
                     var image = data as Bitmap;
                     var bs = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(image.GetHbitmap(),
                         IntPtr.Zero, Int32Rect.Empty,
-                        BitmapSizeOptions.FromWidthAndHeight((int) printItem.Width, (int) printItem.Height));
+                        BitmapSizeOptions.FromWidthAndHeight((int)printItem.Width, (int)printItem.Height));
                     rendor.DrawImage(bs,
                         new Rect(printItem.X + template.XOffset, printItem.Y + template.YOffset, printItem.Width,
                             printItem.Height));

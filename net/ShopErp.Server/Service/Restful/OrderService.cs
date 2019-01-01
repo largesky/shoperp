@@ -356,6 +356,7 @@ namespace ShopErp.Server.Service.Restful
                 or.DeliveryCompany = deliveryCompany;
                 or.DeliveryNumber = deliveryNumber;
                 or.DeliveryTemplateId = deliveryTemplateId;
+                string op = ServiceContainer.GetCurrentLoginInfo().op.Number;
                 //快递单号为空，表示需要重置打印
                 if (string.IsNullOrWhiteSpace(deliveryNumber))
                 {
@@ -372,7 +373,7 @@ namespace ShopErp.Server.Service.Restful
                         or.State = OrderState.PAYED;
                     }
                     or.PrintTime = this.GetDbMinTime();
-                    or.PrintOperator = "";
+                    or.PrintOperator = op;
                     this.dao.Update(or);
                 }
                 else
@@ -389,7 +390,7 @@ namespace ShopErp.Server.Service.Restful
                     {
                         or.State = OrderState.PRINTED;
                     }
-                    or.PrintOperator = "";
+                    or.PrintOperator = op;
                     or.PrintTime = printTime;
                     this.dao.Update(or);
                 }
@@ -569,11 +570,11 @@ namespace ShopErp.Server.Service.Restful
                             order.PopDeliveryTime = DateTime.Now;
                         }
                     }
-                    catch (Exception ex)
+                    catch
                     {
                         if (chkPopState)
                         {
-                            throw ex;
+                            throw;
                         }
                     }
                 }
@@ -606,9 +607,9 @@ namespace ShopErp.Server.Service.Restful
                 this.dao.Save(deliveryOut);
                 return new DataCollectionResponse<Order>(orders);
             }
-            catch (WebFaultException<ResponseBase> ex)
+            catch (WebFaultException<ResponseBase>)
             {
-                throw ex;
+                throw;
             }
             catch (Exception ex)
             {
@@ -671,9 +672,9 @@ namespace ShopErp.Server.Service.Restful
                 }
                 return ResponseBase.SUCCESS;
             }
-            catch (WebFaultException<ResponseBase> ex)
+            catch (WebFaultException<ResponseBase>)
             {
-                throw ex;
+                throw;
             }
             catch (Exception ex)
             {
@@ -807,9 +808,9 @@ namespace ShopErp.Server.Service.Restful
                 }
                 return ResponseBase.SUCCESS;
             }
-            catch (WebFaultException<ResponseBase> ex)
+            catch (WebFaultException<ResponseBase>)
             {
-                throw ex;
+                throw;
             }
             catch (Exception ex)
             {
@@ -1022,13 +1023,13 @@ namespace ShopErp.Server.Service.Restful
                     }
                     this.dao.Save(nOgs);
                 }
-                catch (Exception ex)
+                catch
                 {
                     if (nor.Id > 0)
                     {
                         this.dao.Delete(nor);
                     }
-                    throw ex;
+                    throw;
                 }
                 return ResponseBase.SUCCESS;
             }

@@ -15,7 +15,7 @@ namespace ShopErp.App.Service.Print.PrintDocument.DeliveryPrintDocument
 
         private static object ws_lock = new object();
 
-        static void InitWebSockt()
+        protected override void BenginPrint()
         {
             lock (ws_lock)
             {
@@ -32,11 +32,6 @@ namespace ShopErp.App.Service.Print.PrintDocument.DeliveryPrintDocument
                     ws.ConnectAsync(new Uri("ws://localhost:13528"), new System.Threading.CancellationToken()).Wait();
                 }
             }
-        }
-
-
-        protected override void BenginPrint()
-        {
         }
 
         protected override void EndPrint()

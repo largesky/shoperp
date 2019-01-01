@@ -136,12 +136,9 @@ namespace ShopErp.App.Domain
             //绘制标题
             double money = GetPageMoney(pageNumber);
             double totalMoney = GetTotalMoney();
-            string strTitle = string.Format("【胡平退货统计】 页码: {0}/{1} 总数量:{3} 本页金额:{4:F1} 打印时间:{5},打印人员:{6}",
-                pageNumber + 1, this.pageCount, totalMoney, this.GetPageCount(pageNumber), money,
-                this.time.ToString("yyyy-MM-dd HH:mm:ss"), OperatorService.LoginOperator.Number);
+            string strTitle = string.Format("【胡平退货统计】 页码: {0}/{1} 本页数量:{2} 本页金额:{3:F0} 打印时间:{4},打印人员:{5}", pageNumber + 1, this.pageCount, this.GetPageCount(pageNumber), money, this.time.ToString("yyyy-MM-dd HH:mm:ss"), OperatorService.LoginOperator.Number);
             FormattedText textTitle = CreateText(strTitle, 16, "黑体");
-            rendor.DrawText(textTitle,
-                new System.Windows.Point(LEFT_MARGIN + ITEM_MARGIN_WIDGHT, TOP_MARGIN + ITEM_MARGIN_HEIGHT));
+            rendor.DrawText(textTitle, new System.Windows.Point(LEFT_MARGIN + ITEM_MARGIN_WIDGHT, TOP_MARGIN + ITEM_MARGIN_HEIGHT));
 
             double eachItemHeight = textTitle.Height + ITEM_MARGIN_HEIGHT * 2;
             double[] itemWidth = this.GetItemWidth();

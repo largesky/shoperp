@@ -224,7 +224,7 @@ namespace ShopErp.App.Service.Spider.Go2
                     catch (Exception ex)
                     {
                         Debug.WriteLine(ex);
-                        throw ex;
+                        throw;
                     }
                 }
                 currentPage++;

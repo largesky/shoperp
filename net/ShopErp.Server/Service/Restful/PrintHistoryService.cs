@@ -101,6 +101,10 @@ namespace ShopErp.Server.Service.Restful
                 this.Update(ph);
                 return ResponseBase.SUCCESS;
             }
+            catch (WebFaultException<ResponseBase>)
+            {
+                throw ;
+            }
             catch (Exception ex)
             {
                 throw new WebFaultException<ResponseBase>(new ResponseBase(ex.Message), System.Net.HttpStatusCode.OK);

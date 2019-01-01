@@ -30,7 +30,7 @@ namespace ShopErp.Server.Service
                 catch (Exception ex)
                 {
                     Logger.Log("生成默认配置文件出错", ex);
-                    throw ex;
+                    throw;
                 }
             }
 

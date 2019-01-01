@@ -31,7 +31,7 @@ namespace ShopErp.Server
             catch (Exception e)
             {
                 Logger.Log("启动服务失败", e);
-                throw e;
+                throw;
             }
         }
 

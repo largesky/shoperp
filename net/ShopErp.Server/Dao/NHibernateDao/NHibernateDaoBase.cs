@@ -183,11 +183,11 @@ namespace ShopErp.Server.Dao.NHibernateDao
                 }
                 transaction.Commit();
             }
-            catch (Exception ex)
+            catch
             {
                 if (transaction != null)
                     transaction.Rollback();
-                throw ex;
+                throw;
             }
             finally
             {
@@ -225,11 +225,11 @@ namespace ShopErp.Server.Dao.NHibernateDao
                 }
                 transaction.Commit();
             }
-            catch (Exception ex)
+            catch
             {
                 if (transaction != null)
                     transaction.Rollback();
-                throw ex;
+                throw;
             }
             finally
             {
@@ -264,11 +264,11 @@ namespace ShopErp.Server.Dao.NHibernateDao
                 }
                 transaction.Commit();
             }
-            catch (Exception ex)
+            catch
             {
                 if (transaction != null)
                     transaction.Rollback();
-                throw ex;
+                throw;
             }
             finally
             {
@@ -318,11 +318,11 @@ namespace ShopErp.Server.Dao.NHibernateDao
                 }
                 transaction.Commit();
             }
-            catch (Exception ex)
+            catch 
             {
                 if (transaction != null)
                     transaction.Rollback();
-                throw ex;
+                throw;
             }
             finally
             {
