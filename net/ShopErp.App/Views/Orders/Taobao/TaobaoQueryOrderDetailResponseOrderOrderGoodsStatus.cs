@@ -8,6 +8,7 @@ namespace ShopErp.App.Views.Orders.Taobao
 {
     public class TaobaoQueryOrderDetailResponseOrderOrderGoodsStatus
     {
+        public TaobaoQueryOrderDetailResponseOrderOrderGoodsStatusStatusInfo[] statusInfo;
         public TaobaoQueryOrderDetailResponseOrderOrderGoodsStatusSubOrders[] subOrders;
     }
 }

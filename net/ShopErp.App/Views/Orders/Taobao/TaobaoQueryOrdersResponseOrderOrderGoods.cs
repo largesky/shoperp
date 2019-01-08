@@ -10,6 +10,8 @@ namespace ShopErp.App.Views.Orders.Taobao
     {
         public TaobaoQueryOrdersResponseOrderOrderGoodsItemInfo itemInfo;
 
+        public TaobaoQueryOrdersResponseOrderOrderGoodsOperation[] operations;
+
         public int quantity;
     }
 }

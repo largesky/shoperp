@@ -331,6 +331,8 @@
     <Compile Include="Views\DataCenter\SaleUserControl.xaml.cs">
       <DependentUpon>SaleUserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Orders\TaobaoQueryOrdersResponseOrderOrderGoodsOperation.cs" />
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOrderOrderGoodsStatusStatusInfo.cs" />
     <Compile Include="Views\Taobao\TaobaoKeywordCountUserControl.xaml.cs">
       <DependentUpon>TaobaoKeywordCountUserControl.xaml</DependentUpon>
     </Compile>

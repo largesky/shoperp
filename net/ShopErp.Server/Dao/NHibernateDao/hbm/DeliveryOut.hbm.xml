@@ -10,9 +10,6 @@
     <property name="OrderId">
       <column name="OrderId" sql-type="string" not-null="true" />
     </property>
-    <property name="PopType">
-      <column name="PopType" sql-type="int" not-null="true" />
-    </property>
     <property name="PopPayType">
       <column name="PopPayType" sql-type="int" not-null="true" />
     </property>

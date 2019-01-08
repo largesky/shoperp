@@ -53,6 +53,11 @@ namespace ShopErp.App.Service.Restful
             return DoPost<DataCollectionResponse<Order>>(para).Datas.ToArray();
         }
 
+        /// <summary>
+        /// 如果TIME参数为空，则将调用平台接口，标记发货。否则只更新平台发货时间
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="time">如果TIME参数为空，则将调用平台接口，标记发货。否则只更新平台发货时间</param>
         public void MarkPopDelivery(long id, string time)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
@@ -130,15 +135,6 @@ namespace ShopErp.App.Service.Restful
             return DoPost<ResponseBase>(para);
         }
 
-        public ResponseBase UpdateOrderGoodsState(long orderId, long orderGoodsId, OrderState state, string stockComment)
-        {
-            Dictionary<string, object> para = new Dictionary<string, object>();
-            para["orderId"] = orderId;
-            para["orderGoodsId"] = orderGoodsId;
-            para["state"] = state;
-            para["stockComment"] = stockComment;
-            return DoPost<ResponseBase>(para);
-        }
 
         public ResponseBase SpilteOrderGoods(long orderId, OrderSpilteInfo[] infos)
         {
@@ -164,7 +160,6 @@ namespace ShopErp.App.Service.Restful
             return DoPost<ResponseBase>(para);
         }
 
-
         public OrderDownloadCollectionResponse GetPopWaitSendOrders(Shop shop, PopPayType payType, int pageIndex, int pageSize)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
@@ -174,6 +169,27 @@ namespace ShopErp.App.Service.Restful
             para["pageSize"] = pageSize;
             return DoPost<OrderDownloadCollectionResponse>(para);
         }
+
+
+        public StringResponse UpdateOrderStateWithGoods(Order orderOnline, OrderUpdate orderInDb, Shop shop)
+        {
+            Dictionary<string, object> para = new Dictionary<string, object>();
+            para["orderOnline"] = orderOnline;
+            para["orderInDb"] = orderInDb;
+            para["shop"] = shop;
+            return DoPost<StringResponse>(para);
+        }
+
+        public ResponseBase UpdateOrderGoodsState(long orderId, long orderGoodsId, OrderState state, string stockComment)
+        {
+            Dictionary<string, object> para = new Dictionary<string, object>();
+            para["orderId"] = orderId;
+            para["orderGoodsId"] = orderGoodsId;
+            para["state"] = state;
+            para["stockComment"] = stockComment;
+            return DoPost<ResponseBase>(para);
+        }
+
 
         public StringResponse UpdateOrderState(PopOrderState orderStateOnline, OrderUpdate orderInDb, Shop shop)
         {

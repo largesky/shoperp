@@ -22,7 +22,7 @@ namespace ShopErp.Server.Service.Restful
         {
             try
             {
-                return this.dao.GetByAll(shopIds, popOrderId, popPayTimeStart,popPayTimeEnd, pageIndex, pageSize);
+                return this.dao.GetByAll(shopIds, popOrderId, popPayTimeStart, popPayTimeEnd, pageIndex, pageSize);
             }
             catch (Exception e)
             {
@@ -38,18 +38,22 @@ namespace ShopErp.Server.Service.Restful
             {
                 var shop = ServiceContainer.GetService<ShopService>().GetById(orderUpdate.ShopId).First;
                 var functionType = popService.GetOrderGetFunction(shop.PopType);
-                string error = "";
+                StringResponse ret = null;
                 if (functionType == PopOrderGetFunction.PAYED)
                 {
                     var nor = popService.GetOrderState(shop, orderUpdate.PopOrderId);
-                    error = ServiceContainer.GetService<OrderService>().UpdateOrderState(nor, orderUpdate, shop).data;
+                    ret = ServiceContainer.GetService<OrderService>().UpdateOrderState(nor, orderUpdate, shop);
                 }
                 else
                 {
                     var nor = popService.GetOrder(shop, orderUpdate.PopOrderId);
-                    error = ServiceContainer.GetService<OrderService>().UpdateOrderStateWithGoods(nor.Order, orderUpdate, shop).data;
+                    ret = ServiceContainer.GetService<OrderService>().UpdateOrderStateWithGoods(nor.Order, orderUpdate, shop);
                 }
-                return new StringResponse(error);
+                return ret;
+            }
+            catch (WebFaultException)
+            {
+                throw;
             }
             catch (Exception e)
             {
@@ -57,9 +61,9 @@ namespace ShopErp.Server.Service.Restful
             }
         }
 
-        public void UpdateOrderGoodsState(long orderId, string popInfo, int count, OrderState state)
+        public void UpdateOrderGoodsState(long orderGoodsId, OrderState state)
         {
-            this.dao.UpdateOrderGoodsState(orderId, popInfo, count, state);
+            this.dao.UpdateOrderGoodsState(orderGoodsId, state);
         }
 
         public void UpdateOrderGoodsStateByOrderId(long orderId, OrderState state)

@@ -115,7 +115,7 @@ namespace ShopErp.App.Views.Delivery
             return OrderState.WAITPAY;
         }
 
-        private void ParseOrder(TaobaoQueryOrdersResponseOrder v, long shopId)
+        private ShopErp.Domain.Order ParseOrder(TaobaoQueryOrdersResponseOrder v, long shopId)
         {
             var dm = ServiceContainer.GetService<SystemConfigService>().Get(-1, "DELIVERY_MONEY", "7");
             if (dm == null)
@@ -343,11 +343,28 @@ namespace ShopErp.App.Views.Delivery
                     Vendor = "",
                     IsPeijian = false,
                 };
+
+                if (so.operations != null && so.operations.FirstOrDefault(obj => obj.text.Trim() == "退款成功") != null)
+                {
+                    og.State = OrderState.CANCLED;
+                }
+                else if (so.operations != null && so.operations.FirstOrDefault(obj => obj.text.Trim() == "请卖家处理" || obj.text.Trim() == "请退款") != null)
+                {
+                    og.State = OrderState.RETURNING;
+                }
+                else
+                {
+                    og.State = OrderState.PAYED;
+                }
                 og.PopPrice = namePrice[so.itemInfo.title];
                 og.PopInfo = og.Number + "||颜色:" + og.Color + "|尺码:" + og.Size;
                 order.OrderGoodss.Add(og);
             }
-            ServiceContainer.GetService<OrderService>().Save(order);
+            if (order.OrderGoodss.Select(obj => obj.State).Distinct().Count() == 1)
+            {
+                order.State = order.OrderGoodss[0].State;
+            }
+            return order;
         }
 
         private List<Order> GetOrders()
@@ -393,24 +410,25 @@ namespace ShopErp.App.Views.Delivery
                 totalPage = or.page.totalPage;
                 foreach (var v in or.mainOrders)
                 {
+                    var order = ParseOrder(v, shop.Id);
                     var o = ServiceContainer.GetService<OrderService>().GetByPopOrderId(v.id).First;
                     if (o == null)
                     {
-                        ParseOrder(v, shop.Id);
-                        o = ServiceContainer.GetService<OrderService>().GetByPopOrderId(v.id).First;
-                        if (o == null)
-                        {
-                            throw new Exception("订单不在本地系统中，保存后重新读取也不存在");
-                        }
+                        ServiceContainer.GetService<OrderService>().Save(order);
                     }
                     else
                     {
-
+                        ServiceContainer.GetService<OrderService>().UpdateOrderStateWithGoods(order, null, shop);
                     }
+                    o = ServiceContainer.GetService<OrderService>().GetByPopOrderId(v.id).First;
                     orders.Add(o);
                     currentCount++;
                     this.tbMsg.Text = string.Format("已经下载：{0}/{1} {2} {3} ", currentCount, totalCount, v.id, v.orderInfo.createTime);
                     WPFHelper.DoEvents();
+                    if (this.isRunning == false)
+                    {
+                        break;
+                    }
                 }
                 currentPage++;
             }
@@ -478,7 +496,7 @@ namespace ShopErp.App.Views.Delivery
             }
         }
 
-        private PopOrderState ParseOrder(string popOrderId)
+        private PopOrderState ParseOrderState(string popOrderId)
         {
             var pos = new PopOrderState()
             {
@@ -552,7 +570,7 @@ namespace ShopErp.App.Views.Delivery
                     WPFHelper.DoEvents();
                     try
                     {
-                        var st = ParseOrder(o.Source.PopOrderId);
+                        var st = ParseOrderState(o.Source.PopOrderId);
                         if ((int)st.State >= (int)(OrderState.SHIPPED))
                         {
                             o.State = "订单已经发货";
@@ -663,6 +681,14 @@ namespace ShopErp.App.Views.Delivery
                 {
                     throw new Exception("该订单没有平台订单编号");
                 }
+
+                if ((int)item.Source.State >= (int)(OrderState.RETURNING))
+                {
+                    if (MessageBox.Show("订单状态不正确：" + item.Source.State + " 是否确认要发货？", "警告", MessageBoxButton.YesNo, MessageBoxImage.Error) != MessageBoxResult.Yes)
+                    {
+                        return;
+                    }
+                }
                 this.wb1.Load("https://wuliu.taobao.com/user/consign.htm?trade_id=" + item.Source.PopOrderId);
                 Clipboard.SetText(item.Source.DeliveryNumber);
                 this.tbMsg1.Text = "已自动复制:" + item.Source.DeliveryNumber;
@@ -695,7 +721,6 @@ namespace ShopErp.App.Views.Delivery
                 MessageBox.Show(ex.Message);
             }
         }
-
 
         private string FindNumbers(string ss, string mark)
         {

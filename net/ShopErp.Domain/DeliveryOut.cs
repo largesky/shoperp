@@ -8,7 +8,6 @@ namespace ShopErp.Domain
         public long Id { get; set; }
         public long ShopId { get; set; }
         public string OrderId { get; set; }
-        public PopType PopType { get; set; }
         public PopPayType PopPayType { get; set; }
         public string DeliveryCompany { get; set; }
         public string DeliveryNumber { get; set; }

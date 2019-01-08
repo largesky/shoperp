@@ -57,12 +57,12 @@ namespace ShopErp.Server.Dao.NHibernateDao
             ExcuteSqlUpdate(sql);
         }
 
-        public void UpdateOrderGoodsState(long orderId, string popInfo, int count, OrderState state)
+        public void UpdateOrderGoodsState(long orderGoodsId, OrderState state)
         {
             var s = this.OpenSession();
             try
             {
-                var query = s.CreateSQLQuery(string.Format("update OrderGoods set State={0} where OrderId={1} and PopInfo='{2}' and Count={3}", (int)state, orderId, popInfo, count));
+                var query = s.CreateSQLQuery(string.Format("update OrderGoods set State={0} where Id=", orderGoodsId, (int)state));
                 int ret = query.ExecuteUpdate();
             }
             finally
