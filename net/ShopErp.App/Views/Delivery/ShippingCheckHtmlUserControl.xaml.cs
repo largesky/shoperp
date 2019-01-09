@@ -350,7 +350,7 @@ namespace ShopErp.App.Views.Delivery
                 }
                 else if (so.operations != null && so.operations.FirstOrDefault(obj => obj.text.Trim() == "请卖家处理" || obj.text.Trim() == "请退款") != null)
                 {
-                    og.State = OrderState.RETURNING;
+                  og.State = OrderState.RETURNING;
                 }
                 else
                 {

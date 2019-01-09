@@ -436,24 +436,7 @@ namespace ShopErp.App.Service.Spider.Go2
                 }
             }
 
-            //商品类型
-            var typeNode = htmlDoc.DocumentNode.SelectNodes("//div[@class='product-data-categary']/p");
-            if (typeNode == null || typeNode.Count < 1)
-            {
-                throw new Exception("解析商品类型结点失败");
-            }
-            if (string.IsNullOrWhiteSpace(typeNode.First().InnerText))
-            {
-                throw new Exception("商品类型结点值为空");
-            }
-
-            if (typeNode.First().Attributes["title"] == null)
-            {
-                throw new Exception("商品类型结点值 title 属性 为空");
-            }
-
-            g.Type = FormatType(typeNode.First().Attributes["title"].Value.Trim());
-
+            g.Type = GetGoodsType(g.Url, vendorHomePage);
             var colorNode = htmlDoc.DocumentNode.SelectSingleNode("//div[@class='details-item']/div/ul/li[@class='details-attribute-item props-color']");
             if (colorNode != null)
             {
@@ -480,6 +463,60 @@ namespace ShopErp.App.Service.Spider.Go2
                 }
             }
             g.Material = g.Material ?? "";
+        }
+
+        public GoodsType GetGoodsType(string goodsUrl, string vendorHomePage)
+        {
+            string supplrUrl = vendorHomePage + "/supply.html";
+            Uri uri = new Uri(goodsUrl);
+            string html = MsHttpRestful.GetUrlEncodeBodyReturnString(supplrUrl, null);
+            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(html);
+
+            var nodes = doc.DocumentNode.SelectNodes("//li[@class='second-nav-item']/a");
+            if (nodes.Count < 1)
+            {
+                throw new Exception("无法自动分析商品类型，原因：网页中没有分类连接");
+            }
+
+            foreach (var v in nodes)
+            {
+                string onlick = v.GetAttributeValue("onclick", "");
+                string value = v.InnerText;
+
+                string cat = onlick.Replace("changeCat('", "").Replace("')", "").Replace(";", "");
+                string type = value.Substring(0, value.IndexOf("(")).Trim();
+
+                if (type.Contains("所有"))
+                {
+                    continue;
+                }
+
+                string lasthtml = "";
+                int i = 1;
+                while (true)
+                {
+                    string url = string.Format("{0}/products/supply-{1}-{2}-6", vendorHomePage, cat, i++);
+                    string goodsHtml = MsHttpRestful.GetUrlEncodeBodyReturnString(url, null);
+
+                    if (string.IsNullOrWhiteSpace(goodsHtml))
+                    {
+                        break;
+                    }
+
+                    if (goodsHtml.Contains(uri.AbsolutePath))
+                    {
+                        return FormatType(type);
+                    }
+
+                    if (lasthtml != "" && lasthtml == goodsHtml)
+                    {
+                        break;
+                    }
+                    lasthtml = goodsHtml;
+                }
+            }
+            throw new Exception("无法自动分析商品类型，原因：网页中没有分类连接");
         }
     }
 }
