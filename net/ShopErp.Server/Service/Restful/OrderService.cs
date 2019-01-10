@@ -1049,53 +1049,14 @@ namespace ShopErp.Server.Service.Restful
             try
             {
                 var ret = this.ps.GetOrders(shop, payType == PopPayType.COD ? PopService.QUERY_STATE_WAITSHIP_COD : PopService.QUERY_STATE_WAITSHIP, pageIndex, pageSize);
-                foreach (var or in ret.Datas)
-                {
-                    if (or.Order != null)
-                    {
-                        try
-                        {
-                            or.Order.ShopId = shop.Id;
-                            or.Order.PopType = shop.PopType;
-                            //检查订单是否存在存
-                            var count = GetColumnValueBySqlQuery<long>("select count(Id) from `Order` where PopOrderId='" + or.Order.PopOrderId + "'").First();
-                            if (count > 1)
-                            {
-                                or.Error = new OrderDownloadError(or.Order.PopOrderId, or.Order.ReceiverName, "系统中存在2个及以上相同订单");
-                                or.Order = null;
-                            }
-                            else if (count < 1)
-                            {
-                                Save(or.Order);
-                            }
-                            else
-                            {
-                                //本地已经有的需要更新，像退款的这些订单，也可能不需要更新但本地已经关闭，所以需要读取本地的
-                                string upRet = UpdateOrderStateWithGoods(or.Order, null, shop).data;
-                                or.Order = GetByPopOrderId(or.Order.PopOrderId).First;
-                            }
-                        }
-                        catch (WebFaultException<ResponseBase> we)
-                        {
-                            or.Error = new OrderDownloadError { Error = "订单从接口成功下载处理时错误：" + we.Detail.error, PopOrderId = or.Order.PopOrderId ?? "", ReceiverName = or.Order.ReceiverName ?? "", ShopId = shop.Id };
-                            or.Order = null;
-                        }
-                        catch (Exception ex)
-                        {
-                            or.Error = new OrderDownloadError { Error = "订单从接口成功下载处理时错误：" + ex.Message, PopOrderId = or.Order.PopOrderId ?? "", ReceiverName = or.Order.ReceiverName ?? "", ShopId = shop.Id };
-                            or.Order = null;
-                        }
-                    }
-                    else if (or.Error != null)
-                    {
-                        or.Error.ShopId = shop.Id;
-                    }
-                    else
-                    {
-                        or.Error = new OrderDownloadError { Error = "接口程序错误订单下载Order与Error均为空", PopOrderId = "", ReceiverName = "", ShopId = shop.Id };
-                    }
-                }
-                return ret;
+                var ret1 = SaveOrUpdateOrdersByPopOrderId(shop, ret.Datas);
+                ret1.Total = ret.Total;
+                ret1.IsTotalValid = ret.IsTotalValid;
+                return ret1;
+            }
+            catch (WebFaultException)
+            {
+                throw;
             }
             catch (Exception e)
             {
@@ -1104,56 +1065,79 @@ namespace ShopErp.Server.Service.Restful
         }
 
         /// <summary>
-        /// 将订单更新成已拿货
+        /// 保存或者更新下载下来的订单
         /// </summary>
-        /// <param name="orderId"></param>
+        /// <param name="shop"></param>
+        /// <param name="orders"></param>
         /// <returns></returns>
         [OperationContract]
-        [WebInvoke(ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, RequestFormat = WebMessageFormat.Json, UriTemplate = "/updateordertogeted.html")]
-        public ResponseBase UpdateOrderToGeted(long orderId)
+        [WebInvoke(ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, RequestFormat = WebMessageFormat.Json, UriTemplate = "/saveorupdateordersbypoporderid.html")]
+        public OrderDownloadCollectionResponse SaveOrUpdateOrdersByPopOrderId(Shop shop, List<OrderDownload> orders)
         {
             try
             {
-                string op = ServiceContainer.GetCurrentLoginInfo().op.Number;
-                var or = this.GetByIdWithException(orderId);
-                if ((int)or.State >= (int)OrderState.SHIPPED)
+                if (orders == null)
                 {
-                    throw new Exception("订单已经发货无法标记");
-                }
-                if ((int)or.State < (int)OrderState.PRINTED)
-                {
-                    throw new Exception("订单未打印无法标记");
+                    throw new Exception("参数orders 为空");
                 }
 
-                if (or.OrderGoodss == null || or.OrderGoodss.Count < 1)
+                foreach (var or in orders)
                 {
-                    return ResponseBase.SUCCESS;
-                }
-                List<object> objs = new List<object>();
-                or.State = OrderState.GETED;
-                foreach (var og in or.OrderGoodss)
-                {
-                    if (((int)or.State < (int)OrderState.PAYED || (int)or.State > (int)OrderState.SUCCESS))
+                    if (or == null)
+                    {
+                        throw new Exception("OrderDownload有空参数");
+                    }
+
+                    if (or.Error != null)
                     {
                         continue;
                     }
-                    og.State = OrderState.GETED;
-                    og.GetedCount = og.Count;
-                    og.Comment = "已拿" + og.Count + "双";
-                    og.StockOperator = op;
-                    og.StockTime = DateTime.Now;
-                    objs.Add(og);
+
+                    if (or.Order == null)
+                    {
+                        or.Error = new OrderDownloadError { Error = "保存或者更新订单错误:Order与Error均为空", PopOrderId = "", ReceiverName = "", ShopId = shop.Id };
+                        continue;
+                    }
+
+                    try
+                    {
+                        //检查订单是否存在存
+                        var count = GetColumnValueBySqlQuery<long>("select count(Id) from `Order` where PopOrderId='" + or.Order.PopOrderId + "'").First();
+                        if (count > 1)
+                        {
+                            or.Error = new OrderDownloadError(or.Order.PopOrderId, or.Order.ReceiverName, "系统中存在2个及以上相同订单");
+                            or.Order = null;
+                        }
+                        else if (count < 1)
+                        {
+                            Save(or.Order);
+                        }
+                        else
+                        {
+                            //本地已经有的需要更新，像退款的这些订单，也可能不需要更新但本地已经关闭，所以需要读取本地的
+                            string upRet = UpdateOrderStateWithGoods(or.Order, null, shop).data;
+                            or.Order = GetByPopOrderId(or.Order.PopOrderId).First;
+                        }
+                    }
+                    catch (WebFaultException<ResponseBase> we)
+                    {
+                        or.Error = new OrderDownloadError { Error = "保存或者更新订单错误：" + we.Detail.error, PopOrderId = or.Order.PopOrderId ?? "", ReceiverName = or.Order.ReceiverName ?? "", ShopId = shop.Id };
+                        or.Order = null;
+                    }
+                    catch (Exception ex)
+                    {
+                        or.Error = new OrderDownloadError { Error = "保存或者更新订单错误：" + ex.Message, PopOrderId = or.Order.PopOrderId ?? "", ReceiverName = or.Order.ReceiverName ?? "", ShopId = shop.Id };
+                        or.Order = null;
+                    }
                 }
-                objs.Add(or);
-                this.dao.Update(objs.ToArray());
-                return ResponseBase.SUCCESS;
+                OrderDownloadCollectionResponse resp = new OrderDownloadCollectionResponse(orders);
+                return resp;
             }
             catch (Exception ex)
             {
                 throw new WebFaultException<ResponseBase>(new ResponseBase(ex.Message), HttpStatusCode.OK);
             }
         }
-
 
         /// <summary>
         /// 更新订单商品状态
@@ -1220,6 +1204,52 @@ namespace ShopErp.Server.Service.Restful
             catch (Exception ex)
             {
                 throw new WebFaultException<ResponseBase>(new ResponseBase(ex.Message), System.Net.HttpStatusCode.OK);
+            }
+        }
+
+        /// <summary>
+        /// 将订单更新成已拿货
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        [OperationContract]
+        [WebInvoke(ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, RequestFormat = WebMessageFormat.Json, UriTemplate = "/updateordertogeted.html")]
+        public ResponseBase UpdateOrderToGeted(long orderId)
+        {
+            try
+            {
+                string op = ServiceContainer.GetCurrentLoginInfo().op.Number;
+                var or = this.GetByIdWithException(orderId);
+                if ((int)or.State < (int)OrderState.PRINTED || (int)or.State >= (int)OrderState.SHIPPED)
+                {
+                    throw new Exception("订单状态不正确");
+                }
+                if (or.OrderGoodss == null || or.OrderGoodss.Count < 1)
+                {
+                    throw new Exception("订单没有商品不需要标记");
+                }
+                List<object> objs = new List<object>();
+                or.State = OrderState.GETED;
+                foreach (var og in or.OrderGoodss)
+                {
+                    if (((int)or.State < (int)OrderState.PAYED || (int)or.State > (int)OrderState.SUCCESS))
+                    {
+                        continue;
+                    }
+                    og.State = OrderState.GETED;
+                    og.GetedCount = og.Count;
+                    og.Comment = "已拿" + og.Count + "双";
+                    og.StockOperator = op;
+                    og.StockTime = DateTime.Now;
+                    objs.Add(og);
+                }
+                objs.Add(or);
+                this.dao.Update(objs.ToArray());
+                return ResponseBase.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                throw new WebFaultException<ResponseBase>(new ResponseBase(ex.Message), HttpStatusCode.OK);
             }
         }
 
@@ -1345,7 +1375,7 @@ namespace ShopErp.Server.Service.Restful
 
                 //由于多数订单中只有一个商品，所以采取不同试更新，理提供更新速度
                 //多个订单
-                if (orderOnline.OrderGoodss != null && orderOnline.OrderGoodss.Count > 0)
+                if (orderOnline.OrderGoodss != null && orderOnline.OrderGoodss.Count > 1)
                 {
                     var ogsInDb = ServiceContainer.GetService<OrderGoodsService>().GetByOrderId(orderInDb.Id).Datas.Where(obj => obj.State != OrderState.CANCLED && obj.State != OrderState.CLOSED && obj.State != OrderState.SPILTED).ToArray();
                     foreach (var og in ogsInDb)
@@ -1489,7 +1519,7 @@ namespace ShopErp.Server.Service.Restful
                     Logger.Log("更新订单失败未知状态[" + onlineState + "]");
                     return new StringResponse("更新订单失败未知状态[" + onlineState + "]");
                 }
-                 
+
                 if (targetState == OrderState.NONE)
                 {
                     throw new Exception("要更新成的订单状态不能为:" + targetState);

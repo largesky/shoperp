@@ -42,6 +42,23 @@ namespace ShopErp.Server.Dao.NHibernateDao
             }
         }
 
+        public void UpdateOrderGoodsState(long orderGoodsId, OrderState state)
+        {
+            var s = this.OpenSession();
+            try
+            {
+                var query = s.CreateSQLQuery(string.Format("update OrderGoods set State={0} where Id={1}", (int)state, orderGoodsId));
+                int ret = query.ExecuteUpdate();
+            }
+            finally
+            {
+                if (s != null)
+                {
+                    s.Close();
+                }
+            }
+        }
+
         public void UpdateEx(OrderUpdate ou, bool updateState)
         {
             if (ou == null)
@@ -55,23 +72,6 @@ namespace ShopErp.Server.Dao.NHibernateDao
                 sql += ",State=" + (int)ou.State;
             sql += " where Id=" + ou.Id;
             ExcuteSqlUpdate(sql);
-        }
-
-        public void UpdateOrderGoodsState(long orderGoodsId, OrderState state)
-        {
-            var s = this.OpenSession();
-            try
-            {
-                var query = s.CreateSQLQuery(string.Format("update OrderGoods set State={0} where Id=", orderGoodsId, (int)state));
-                int ret = query.ExecuteUpdate();
-            }
-            finally
-            {
-                if (s != null)
-                {
-                    s.Close();
-                }
-            }
         }
     }
 }

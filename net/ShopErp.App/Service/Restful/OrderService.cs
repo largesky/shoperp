@@ -135,7 +135,6 @@ namespace ShopErp.App.Service.Restful
             return DoPost<ResponseBase>(para);
         }
 
-
         public ResponseBase SpilteOrderGoods(long orderId, OrderSpilteInfo[] infos)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
@@ -170,6 +169,13 @@ namespace ShopErp.App.Service.Restful
             return DoPost<OrderDownloadCollectionResponse>(para);
         }
 
+        public OrderDownloadCollectionResponse SaveOrUpdateOrdersByPopOrderId(Shop shop, List<OrderDownload> orders)
+        {
+            Dictionary<string, object> para = new Dictionary<string, object>();
+            para["shop"] = shop;
+            para["orders"] = orders;
+            return DoPost<OrderDownloadCollectionResponse>(para);
+        }
 
         public StringResponse UpdateOrderStateWithGoods(Order orderOnline, OrderUpdate orderInDb, Shop shop)
         {
@@ -189,7 +195,6 @@ namespace ShopErp.App.Service.Restful
             para["stockComment"] = stockComment;
             return DoPost<ResponseBase>(para);
         }
-
 
         public StringResponse UpdateOrderState(PopOrderState orderStateOnline, OrderUpdate orderInDb, Shop shop)
         {

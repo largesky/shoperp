@@ -117,12 +117,6 @@ namespace ShopErp.App.Views.Delivery
 
         private ShopErp.Domain.Order ParseOrder(TaobaoQueryOrdersResponseOrder v, long shopId)
         {
-            var dm = ServiceContainer.GetService<SystemConfigService>().Get(-1, "DELIVERY_MONEY", "7");
-            if (dm == null)
-            {
-                throw new Exception("数据库没有快递运费：DELIVERY_MONEY");
-            }
-            var deliveryMoney = float.Parse(dm);
             var dbMineTime = ServiceContainer.GetService<OrderService>().GetDBMinTime();
             var order = new Order
             {
@@ -135,7 +129,7 @@ namespace ShopErp.App.Views.Delivery
                 DeliveryNumber = "",
                 DeliveryOperator = "",
                 DeliveryTime = dbMineTime,
-                DeliveryMoney = deliveryMoney,
+                DeliveryMoney = 0,
                 Id = 0,
                 PopDeliveryTime = dbMineTime,
                 OrderGoodss = new List<OrderGoods>(),
@@ -350,7 +344,7 @@ namespace ShopErp.App.Views.Delivery
                 }
                 else if (so.operations != null && so.operations.FirstOrDefault(obj => obj.text.Trim() == "请卖家处理" || obj.text.Trim() == "请退款") != null)
                 {
-                  og.State = OrderState.RETURNING;
+                    og.State = OrderState.RETURNING;
                 }
                 else
                 {
@@ -367,9 +361,9 @@ namespace ShopErp.App.Views.Delivery
             return order;
         }
 
-        private List<Order> GetOrders()
+        private List<OrderDownload> GetOrders()
         {
-            List<Order> orders = new List<Order>();
+            List<OrderDownload> allOrders = new List<OrderDownload>();
 
             int totalCount = 0, currentCount = 0;
             int totalPage = 0, currentPage = 1;
@@ -397,7 +391,7 @@ namespace ShopErp.App.Views.Delivery
 
                 if (or.mainOrders == null || or.mainOrders.Length < 1)
                 {
-                    if (orders.Count < 1)
+                    if (allOrders.Count < 1)
                     {
                         throw new Exception("没有订单");
                     }
@@ -408,31 +402,40 @@ namespace ShopErp.App.Views.Delivery
                 }
                 totalCount = or.page.totalNumber;
                 totalPage = or.page.totalPage;
+
+                List<OrderDownload> orders = new List<OrderDownload>(1);
                 foreach (var v in or.mainOrders)
                 {
-                    var order = ParseOrder(v, shop.Id);
-                    var o = ServiceContainer.GetService<OrderService>().GetByPopOrderId(v.id).First;
-                    if (o == null)
+                    OrderDownload od = new OrderDownload();
+                    orders.Clear();
+                    orders.Add(od);
+                    try
                     {
-                        ServiceContainer.GetService<OrderService>().Save(order);
+                        var order = ParseOrder(v, shop.Id);
+                        od.Order = order;
+                        var resp = ServiceContainer.GetService<OrderService>().SaveOrUpdateOrdersByPopOrderId(shop, orders);
+                        od = resp.First;
+                        currentCount++;
+                        this.tbMsg.Text = string.Format("已经下载：{0}/{1} {2} {3} ", currentCount, totalCount, v.id, v.orderInfo.createTime);
+                        WPFHelper.DoEvents();
+                        if (this.isRunning == false)
+                        {
+                            break;
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        ServiceContainer.GetService<OrderService>().UpdateOrderStateWithGoods(order, null, shop);
+                        od.Error = new OrderDownloadError { Error = ex.Message, PopOrderId = v.id, ReceiverName = "", ShopId = shop.Id };
                     }
-                    o = ServiceContainer.GetService<OrderService>().GetByPopOrderId(v.id).First;
-                    orders.Add(o);
-                    currentCount++;
-                    this.tbMsg.Text = string.Format("已经下载：{0}/{1} {2} {3} ", currentCount, totalCount, v.id, v.orderInfo.createTime);
-                    WPFHelper.DoEvents();
-                    if (this.isRunning == false)
+                    finally
                     {
-                        break;
+                        allOrders.Add(od);
                     }
+
                 }
                 currentPage++;
             }
-            return orders;
+            return allOrders;
         }
 
         private void btnRefresh_Click(object sender, RoutedEventArgs e)
@@ -459,7 +462,7 @@ namespace ShopErp.App.Views.Delivery
                     return;
                 }
                 var os = ServiceContainer.GetService<OrderService>();
-                var orders = downloadOrders.Where(obj => string.IsNullOrWhiteSpace(obj.PopOrderId) == false && os.IsDBMinTime(obj.PopDeliveryTime)).Select(obj => new OrderViewModel(obj)).OrderBy(obj => obj.Source.PopPayTime).ToArray();
+                var orders = downloadOrders.Where(obj => obj.Order != null).Select(obj => obj.Order).Where(obj => string.IsNullOrWhiteSpace(obj.PopOrderId) == false && os.IsDBMinTime(obj.PopDeliveryTime)).Select(obj => new OrderViewModel(obj)).OrderBy(obj => obj.Source.PopPayTime).ToArray();
                 if (orders.Length < 1)
                 {
                     MessageBox.Show("没有找到待发货的订单");
@@ -484,6 +487,13 @@ namespace ShopErp.App.Views.Delivery
                 }
                 this.dgvOrders.ItemsSource = this.orders;
                 this.tbTotal.Text = "当前共 : " + orders.Length + " 条记录";
+
+                var error = downloadOrders.Where(obj => obj.Error != null).Select(obj => obj.Error).ToArray();
+                if (error.Length > 0)
+                {
+                    string msg = string.Format("下载失败订单列表：{0}", string.Join(",", error.Select(obj => obj.PopOrderId)));
+                    MessageBox.Show(msg, "警告", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             catch (Exception ex)
             {
