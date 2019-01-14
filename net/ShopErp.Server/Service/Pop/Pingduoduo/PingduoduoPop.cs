@@ -209,7 +209,7 @@ namespace ShopErp.Server.Service.Pop.Pingduoduo
                     ReceiverMobile = o.receiver_phone,
                     ReceiverName = o.receiver_name,
                     ReceiverPhone = "",
-                    ShopId = 0,
+                    ShopId = shop.Id,
                     State = Domain.OrderState.NONE,
                     Type = Domain.OrderType.NORMAL,
                     Weight = 0,

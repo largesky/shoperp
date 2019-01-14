@@ -302,6 +302,10 @@ namespace ShopErp.App.ViewModels
                         throw;
                     }
                 }
+                if (this.IsUserStop)
+                {
+                    throw new Exception("用户已停止打印");
+                }
                 this.printDoc = new GDIDeliveryPrintDocument { WuliuNumbers = wuliuNumbers };
                 this.printDoc.PagePrintStarting += PrintDoc_PagePrintStarting;
                 this.printDoc.PagePrintEnded += PrintDoc_PagePrintEnded;
@@ -316,7 +320,7 @@ namespace ShopErp.App.ViewModels
                 this.lastOpError = false;
                 this.PrintButtonString = "打印";
                 this.WorkStateMessage = "出现错误打印终止";
-                throw ;
+                throw;
             }
             finally
             {
@@ -466,10 +470,7 @@ namespace ShopErp.App.ViewModels
 
         public void Stop()
         {
-            if (this.IsUserStop && this.printDoc != null)
-            {
-                this.IsUserStop = false;
-            }
+            this.IsUserStop = true;
         }
 
         #endregion
