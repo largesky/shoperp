@@ -109,7 +109,10 @@ namespace ShopErp.App.Views.Goods
                 this.pb1.CurrentCount = data.Datas.Count;
                 this.models.Clear();
                 this.models.AddRange(data.Datas.Select(obj => new GoodsViewModel(obj)));
-                this.SortData();
+                this.dgvGoods.ItemsSource = null;
+                this.dgvGoods.ItemsSource = this.models;
+                this.lstGoods.ItemsSource = null;
+                this.lstGoods.ItemsSource = this.models;
             }
             catch (Exception ex)
             {
@@ -207,11 +210,7 @@ namespace ShopErp.App.Views.Goods
                     throw new Exception("无法支持的排序类型:" + sortType);
                 }
             }
-            this.models = nms;
-            this.dgvGoods.ItemsSource = null;
-            this.dgvGoods.ItemsSource = this.models;
-            this.lstGoods.ItemsSource = null;
-            this.lstGoods.ItemsSource = this.models;
+           
         }
 
         private void btnCreate_Click(object sender, RoutedEventArgs e)
@@ -476,15 +475,6 @@ namespace ShopErp.App.Views.Goods
             {
                 MessageBox.Show(ex.Message);
             }
-        }
-
-        private void cbbSortType_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (this.models == null || this.models.Count < 1)
-            {
-                return;
-            }
-            this.SortData();
         }
 
         private void star_Clicked(object sender, RoutedEventArgs e)

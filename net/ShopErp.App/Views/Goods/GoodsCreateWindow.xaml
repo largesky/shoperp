@@ -1,16 +1,16 @@
 ﻿<Window x:Class="ShopErp.App.Views.Goods.GoodsCreateWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="新建私款" Height="800" Width="400" ResizeMode="CanMinimize" SizeToContent="Height" Loaded="Window_Loaded"
+        Title="新建私款" Height="800" Width="800" ResizeMode="CanMinimize" SizeToContent="WidthAndHeight" Loaded="Window_Loaded"
         WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="400" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
         <Button Grid.Column="0" Name="btnChooseImage" Click="btnChooseImage_Click" Margin="3" VerticalAlignment="Top">
-            <Image Width="80" Height="80" Name="img" />
+            <Image Width="400" Height="400" Name="img" />
         </Button>
 
         <Grid Grid.Column="1">

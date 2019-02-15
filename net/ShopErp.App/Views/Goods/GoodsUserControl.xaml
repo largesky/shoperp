@@ -31,7 +31,7 @@
                     <ComboBoxItem>图片</ComboBoxItem>
                     <ComboBox.SelectedIndex>1</ComboBox.SelectedIndex>
                 </ComboBox>
-                <ComboBox Name="cbbSortType" SelectionChanged="cbbSortType_SelectionChanged" VerticalAlignment="Center">
+                <ComboBox Name="cbbSortType" VerticalAlignment="Center">
                     <ComboBoxItem Tag="CreateTime asc">时间升序</ComboBoxItem>
                     <ComboBoxItem Tag="CreateTime desc">时间降序</ComboBoxItem>
                     <ComboBoxItem Tag="Vendor asc">厂家升序</ComboBoxItem>
