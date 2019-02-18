@@ -164,6 +164,7 @@
     <Compile Include="Domain\OrderReturnPrintDocument.cs" />
     <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\DeliveryPrintDocument.cs" />
     <Compile Include="Service\Print\PrintDocument\FixedPrintDocument.cs" />
+    <Compile Include="Service\Print\PrintFormatters\DeliveryFormatters\DeliveryConsolidationnName.cs" />
     <Compile Include="Service\Print\PrintInfo.cs" />
     <Compile Include="Service\Print\PrintTemplate.cs" />
     <Compile Include="Service\Print\PrintTemplateItem.cs" />

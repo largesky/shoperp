@@ -198,6 +198,7 @@ namespace ShopErp.Server.Service.Restful
                 wuliuNumber.DeliveryCompany = deliveryCompany;
                 wuliuNumber.DeliveryNumber = resp.data.waybillCode;
                 wuliuNumber.ConsolidationCode = resp.data.routingInfo.consolidation.code ?? "";
+                wuliuNumber.ConsolidationName = resp.data.routingInfo.consolidation.name ?? "";
                 wuliuNumber.OriginCode = resp.data.routingInfo.origin.code ?? "";
                 wuliuNumber.OriginName = resp.data.routingInfo.origin.name ?? "";
                 wuliuNumber.RouteCode = resp.data.routingInfo.routeCode ?? "";
@@ -666,56 +667,13 @@ namespace ShopErp.Server.Service.Restful
         /// <returns></returns>
         private static string GetCPCodeCN(string deliveryCompany)
         {
-            if (deliveryCompany.Contains("圆通"))
-                return "YTO";
-            if (deliveryCompany.Contains("顺丰"))
-                return "SF";
-            if (deliveryCompany.Contains("小包"))
-                return "POSTB";
-            if (deliveryCompany.Contains("EMS") && deliveryCompany.Contains("标准"))
-                return "EMS";
-            if (deliveryCompany.Contains("EMS") && deliveryCompany.Contains("经济"))
-                return "EYB";
-            if (deliveryCompany.Contains("宅急送"))
-                return "ZJS";
-            if (deliveryCompany.Contains("中通"))
-                return "ZTO";
-            if (deliveryCompany.Contains("汇通"))
-                return "HTKY";
-            if (deliveryCompany.Contains("优速"))
-                return "UC";
-            if (deliveryCompany.Contains("申通"))
-                return "STO";
-            if (deliveryCompany.Contains("天天"))
-                return "TTKDEX";
-            if (deliveryCompany.Contains("全峰"))
-                return "QFKD";
-            if (deliveryCompany.Contains("快捷"))
-                return "FAST";
-            if (deliveryCompany.Contains("国通"))
-                return "GTO";
-            if (deliveryCompany.Contains("韵达"))
-                return "YUNDA";
-            throw new Exception("快递公司：" + deliveryCompany + " 不在淘宝电子面单内");
+            var dc = ServiceContainer.GetService<DeliveryCompanyService>().GetDeliveryCompany(deliveryCompany);
+            return dc.First.PopMapTaobao;
         }
 
         private static string GetOrderChannleTypeCN(PopType type)
         {
             return "OTHERS";
-
-            //if (type == PopType.TAOBAO)
-            //{
-            //    return "TB";
-            //}
-            //if (type == PopType.TMALL)
-            //{
-            //    return "TM";
-            //}
-            //if (type == PopType.JINGDONG)
-            //{
-            //    return "JD";
-            //}
-            //return "OTHERS";
         }
 
         private static CainiaoWaybillIiGetRequest.AddressDtoDomain ParseTaobaoAddress(string address)
@@ -852,6 +810,7 @@ namespace ShopErp.Server.Service.Restful
     public class CainiaoPrintDataRoutingInfoConsolidation
     {
         public string code;
+        public string name;
     }
 
     public class CainiaoPrintDataRoutingInfoOrigin

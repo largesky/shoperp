@@ -40,6 +40,9 @@
     <property name="ConsolidationCode">
       <column name="ConsolidationCode" sql-type="string" not-null="true" />
     </property>
+    <property name="ConsolidationName">
+      <column name="ConsolidationName" sql-type="string" not-null="true" />
+    </property>
     <property name="OriginCode">
       <column name="OriginCode" sql-type="string" not-null="true" />
     </property>

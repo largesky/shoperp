@@ -18,7 +18,6 @@ namespace ShopErp.Domain
 
         public string PopMapJd { get; set; }
 
-
         public DateTime CreateTime { get; set; }
 
         public DateTime UpdateTime { get; set; }

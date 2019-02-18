@@ -46,6 +46,11 @@ namespace ShopErp.Domain
         public string ConsolidationCode { get; set; }
 
         /// <summary>
+        /// 集包地名称
+        /// </summary>
+        public string ConsolidationName { get; set; }
+
+        /// <summary>
         /// 发货地数字编号
         /// </summary>
         public string OriginCode { get; set; }

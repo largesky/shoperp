@@ -12,8 +12,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using ShopErp.App.Service.Restful;
 using ShopErp.App.Views.Extenstions;
- 
- 
+
+
 
 namespace ShopErp.App.Views.Vendor
 {
@@ -33,7 +33,7 @@ namespace ShopErp.App.Views.Vendor
         {
             if (this.Vendor == null)
             {
-                this.Vendor = new ShopErp.Domain.Vendor();
+                this.Vendor = new ShopErp.Domain.Vendor { Alias = "", AveragePrice = 0, Comment = "", Count = 0, CreateTime = DateTime.Now, HomePage = "", Id = 0, MarketAddress = "", Name = "", Phone = "", PingyingName = "", Watch = false };
                 this.Title = "添加厂家";
             }
             else

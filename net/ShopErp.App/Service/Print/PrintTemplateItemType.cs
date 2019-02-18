@@ -63,6 +63,9 @@ namespace ShopErp.App.Service.Print
         public const string DELIVERY_CONSOLIDATIONCODE_BARCODE = "集包地代码条码";
 
         [PrintTemplateItemTypeGroup(PrintTemplateItemTypeGroup.DELIVERY)]
+        public const string DELIVERY_CONSOLIDATIONNAME = "集包地名称";
+
+        [PrintTemplateItemTypeGroup(PrintTemplateItemTypeGroup.DELIVERY)]
         public const string DELIVERY_DELIVERYNUMBERBARCODE = "快递单号(条码)";
 
         [PrintTemplateItemTypeGroup(PrintTemplateItemTypeGroup.DELIVERY)]
