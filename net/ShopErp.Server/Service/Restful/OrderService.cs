@@ -477,7 +477,7 @@ namespace ShopErp.Server.Service.Restful
                 }
 
                 //检查重量
-                if (chkWeight)
+                if (chkWeight && normalOrders.Length > 0)
                 {
                     //除去配件的订单商品
                     var ordergoods = totalOgs.Where(obj => obj.IsPeijian == false).ToArray();
@@ -1096,6 +1096,12 @@ namespace ShopErp.Server.Service.Restful
                     if (or.Order == null)
                     {
                         or.Error = new OrderDownloadError { Error = "保存或者更新订单错误:Order与Error均为空", PopOrderId = "", ReceiverName = "", ShopId = shop.Id };
+                        continue;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(or.Order.PopOrderId))
+                    {
+                        or.Error = new OrderDownloadError { Error = "保存或者更新订单错误:PopOrderId为空", PopOrderId = "", ReceiverName = "", ShopId = shop.Id };
                         continue;
                     }
 

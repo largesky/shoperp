@@ -199,5 +199,36 @@ namespace ShopErp.App.Service.Excel
             }
         }
 
+        public static void WriteXlsx(string file, Dictionary<string, string[][]> sheetDatas)
+        {
+            IWorkbook book = null;
+            if (file.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase))
+            {
+                book = new NPOI.XSSF.UserModel.XSSFWorkbook();
+            }
+            else
+            {
+                book = new NPOI.HSSF.UserModel.HSSFWorkbook();
+            }
+            foreach (var pair in sheetDatas)
+            {
+                ISheet sheet = book.CreateSheet(pair.Key);
+
+                for (int i = 0; i < pair.Value.Length; i++)
+                {
+                    var row = sheet.CreateRow(i);
+                    for (int k = 0; k < pair.Value[i].Length; k++)
+                    {
+                        var cell = row.CreateCell(k, CellType.String);
+                        cell.SetCellValue(pair.Value[i][k]);
+                    }
+                }
+                using (FileStream fs = new FileStream(file, FileMode.Create))
+                {
+                    book.Write(fs);
+                }
+            }
+        }
+
     }
 }

@@ -609,6 +609,12 @@
     <Compile Include="Views\Shops\ShopUserControl.xaml.cs">
       <DependentUpon>ShopUserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Taobao\TaobaoTopKeyword.cs" />
+    <Compile Include="Views\Taobao\TaobaoTopKeywordResponse.cs" />
+    <Compile Include="Views\Taobao\TaobaoTopKeywordResponseData.cs" />
+    <Compile Include="Views\Taobao\TaobaoTopKeywordUserControl.xaml.cs">
+      <DependentUpon>TaobaoTopKeywordUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Users\RightsViewModel.cs" />
     <Compile Include="Views\Users\UserEditWindow.xaml.cs">
       <DependentUpon>UserEditWindow.xaml</DependentUpon>
@@ -969,6 +975,10 @@
     <Page Include="Views\Shops\ShopUserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Taobao\TaobaoTopKeywordUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Users\UserEditWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
