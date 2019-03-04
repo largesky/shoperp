@@ -477,7 +477,7 @@ namespace ShopErp.Server.Service.Restful
                 }
 
                 //检查重量
-                if (chkWeight && normalOrders.Length > 0)
+                if (chkWeight && totalOgs.Count > 0)
                 {
                     //除去配件的订单商品
                     var ordergoods = totalOgs.Where(obj => obj.IsPeijian == false).ToArray();
