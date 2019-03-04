@@ -527,7 +527,6 @@ namespace ShopErp.Server.Service.Restful
                 }
 
                 string comment = string.Format("¡¾·¢»õ{0}¡¿", DateTime.Now.ToString("MM-dd HH:mm"));
-
                 foreach (var order in allOrders)
                 {
                     order.DeliveryMoney = (float)Math.Round(deliveryMoney / (normalOrders.Length > 0 ? normalOrders.Length : allOrders.Count), 2);
@@ -540,13 +539,12 @@ namespace ShopErp.Server.Service.Restful
                     int endIndex = order.PopSellerComment.IndexOf('¡¿', startIndex < 0 ? 0 : startIndex);
                     if (startIndex >= 0 && endIndex > startIndex)
                     {
-                        comment = order.PopSellerComment.Replace(order.PopSellerComment.Substring(startIndex, endIndex - startIndex + 1), comment);
+                        order.PopSellerComment = order.PopSellerComment.Replace(order.PopSellerComment.Substring(startIndex, endIndex - startIndex + 1), comment);
                     }
                     else
                     {
-                        comment = order.PopSellerComment + comment;
+                        order.PopSellerComment = order.PopSellerComment + comment;
                     }
-                    order.PopSellerComment = comment;
                     objsToUpdate.Add(order);
                     if (order.ShopId < 1 || string.IsNullOrWhiteSpace(order.PopOrderId))
                     {
