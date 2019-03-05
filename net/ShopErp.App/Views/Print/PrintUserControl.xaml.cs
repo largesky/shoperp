@@ -226,7 +226,7 @@ namespace ShopErp.App.Views.Print
                 var printTemplate = printOrderPage.PrintTemplate;
                 Grid grid = ((sender as Button).Parent as StackPanel).Parent as Grid;
                 DataGrid dg = grid.FindName("dgOrders") as DataGrid;
-                DataGridColumn goodsCol = dg.Columns.FirstOrDefault(col => col.Header.ToString() == "门牌编号");
+                DataGridColumn goodsCol = dg.Columns.FirstOrDefault(col => col.Header != null && col.Header.ToString() == "门牌编号");
 
                 if (selectedOrders.Count() < 1)
                 {
@@ -577,7 +577,7 @@ namespace ShopErp.App.Views.Print
             }
         }
 
-        private void miEditOrderAddress_Click(object sender, RoutedEventArgs e)
+        private void miEditOrder_Click(object sender, RoutedEventArgs e)
         {
             try
             {

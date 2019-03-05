@@ -43,6 +43,7 @@ namespace ShopErp.App
             mc.Add("退货出单", typeof(OrderReturnOutUserControl));
             mc.Add("货物统计", typeof(GoodsCountUserControl));
             mc.Add("拿货扫描", typeof(OrderGetedMarkUserControl));
+            mc.Add("订单导出", typeof(OrderExportUserControl));
             mcs.Add(mc);
 
             mc = new MenuConfig("商品与厂家", null);

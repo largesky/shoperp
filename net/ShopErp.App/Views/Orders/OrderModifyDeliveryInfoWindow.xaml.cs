@@ -50,12 +50,6 @@ namespace ShopErp.App.Views.Orders
             {
                 string number = this.tbDeliveryNumber.Text.Trim();
                 var dt = this.cbbDeliveryCompany.Text.Trim();
-
-                if (string.IsNullOrWhiteSpace(dt))
-                {
-                    MessageBox.Show("选择快递公司");
-                    return;
-                }
                 this.DeliveryCompany = dt;
                 this.DeliveryNumber = number;
                 this.DialogResult = true;

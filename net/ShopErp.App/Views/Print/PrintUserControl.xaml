@@ -9,6 +9,44 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="1200" Loaded="UserControl_Loaded" Name="ucPrint">
     <UserControl.Resources>
+        <Style x:Key="OrderDataGridStyle" TargetType="{x:Type DataGrid}">
+            <Setter Property="AutoGenerateColumns" Value="false" />
+            <Setter Property="CanUserAddRows" Value="false" />
+            <Setter Property="CanUserDeleteRows" Value="false" />
+            <Setter Property="CanUserReorderColumns" Value="false" />
+            <Setter Property="CanUserResizeRows" Value="false" />
+            <Setter Property="IsReadOnly" Value="False" />
+            <Setter Property="RowDetailsVisibilityMode" Value="VisibleWhenSelected" />
+            <Setter Property="RowHeight" Value="20" />
+            <Setter Property="SelectionMode" Value="Extended" />
+            <Setter Property="SelectionUnit" Value="CellOrRowHeader" />
+            <Setter Property="RowHeaderWidth" Value="25" />
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="RowStyle">
+                <Setter.Value>
+                    <Style TargetType="{x:Type DataGridRow}">
+                        <Setter Property="Background" Value="{Binding Background}" />
+                    </Style>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="CellStyle">
+                <Setter.Value>
+                    <Style TargetType="DataGridCell">
+                        <Style.Triggers>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsReadOnly" Value="False" />
+                                    <Condition Property="IsMouseOver" Value="True" />
+                                </MultiTrigger.Conditions>
+                                <MultiTrigger.Setters>
+                                    <Setter Property="IsEditing" Value="True" />
+                                </MultiTrigger.Setters>
+                            </MultiTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -73,7 +111,6 @@
                                     </Grid.RowDefinitions>
 
                                     <StackPanel Grid.Row="0" Margin="3" Orientation="Horizontal">
-                                        <CheckBox Content="选择" Name="chkSelectAll" IsChecked="{Binding Checked}" Margin="3" VerticalAlignment="Center" Tag="{Binding}" />
                                         <TextBlock Text="已选择：" Margin="3" VerticalAlignment="Center" TextAlignment="Left" />
                                         <TextBlock Name="tbSelected" Text="{Binding SelectedCount}" Margin="3" VerticalAlignment="Center" MinWidth="30" TextAlignment="Left" />
                                         <TextBlock Text="快递模板" VerticalAlignment="Center" Margin="3" />
@@ -85,30 +122,7 @@
                                         <TextBlock Margin="3" Text="{Binding WorkStateMessage}"  VerticalAlignment="Center"/>
                                     </StackPanel>
 
-                                    <DataGrid Grid.Row="1" IsReadOnly="True" Margin="3" Name="dgOrders"
-                                              AutoGenerateColumns="False"
-                                              CanUserAddRows="False"
-                                              CanUserDeleteRows="False"
-                                              CanUserResizeRows="False"
-                                              CanUserSortColumns="True"
-                                              RowHeaderWidth="25"
-                                              SelectionMode="Extended"
-                                              SelectionUnit="CellOrRowHeader"
-                                              Sorting="DataGrid_Sorting"
-                                              ItemsSource="{Binding OrderViewModels}" Tag="{Binding}">
-                                        <DataGrid.RowHeaderStyle>
-                                            <Style TargetType="DataGridRowHeader">
-                                                <Setter Property="ContentTemplate">
-                                                    <Setter.Value>
-                                                        <DataTemplate>
-                                                            <CheckBox
-                                                                IsChecked="{Binding Path=DataContext.IsChecked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}},Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                                        </DataTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style>
-                                        </DataGrid.RowHeaderStyle>
-
+                                    <DataGrid Grid.Row="1" IsReadOnly="True" Margin="3" Name="dgOrders" Sorting="DataGrid_Sorting"  Style="{StaticResource ResourceKey=OrderDataGridStyle}" ItemsSource="{Binding OrderViewModels}" Tag="{Binding}">
                                         <DataGrid.RowStyle>
                                             <Style TargetType="{x:Type DataGridRow}">
                                                 <Setter Property="Background" Value="{Binding Background}" />
@@ -119,12 +133,19 @@
                                             <ContextMenu>
                                                 <MenuItem Header="向前选择" Name="miSelectPre" Click="miSelectPre_Click" />
                                                 <MenuItem Header="向后选择" Name="miSelectForward" Click="miSelectForward_Click" />
-                                                <MenuItem Header="编辑地址" Name="miEditOrderAddress" Click="miEditOrderAddress_Click" />
+                                                <MenuItem Header="编辑订单" Name="miEditOrder" Click="miEditOrder_Click" />
                                             </ContextMenu>
                                         </DataGrid.ContextMenu>
-
                                         <DataGrid.Columns>
-                                            <DataGridTemplateColumn Header="颜色" Width="Auto" CanUserSort="True" SortMemberPath="Source.PopFlag">
+                                            <DataGridCheckBoxColumn  Binding="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="False" >
+                                                <DataGridCheckBoxColumn.HeaderTemplate>
+                                                    <DataTemplate>
+                                                        <CheckBox IsChecked="{Binding SelectedItem.Checked, ElementName=tc1}"  />
+                                                    </DataTemplate>
+                                                </DataGridCheckBoxColumn.HeaderTemplate>
+
+                                            </DataGridCheckBoxColumn>
+                                            <!--<DataGridTemplateColumn Header="颜色" Width="Auto" CanUserSort="True" SortMemberPath="Source.PopFlag" IsReadOnly="True">
                                                 <DataGridTemplateColumn.CellTemplate>
                                                     <DataTemplate>
                                                         <Image
@@ -132,38 +153,22 @@
                                                             Stretch="Fill" Width="14" Height="14" />
                                                     </DataTemplate>
                                                 </DataGridTemplateColumn.CellTemplate>
-                                            </DataGridTemplateColumn>
-                                            <DataGridTextColumn Header="类型"
-                                                                Binding="{Binding Source.Type,Converter={StaticResource descriptionConverter}}" />
-                                            <DataGridTextColumn Header="编号" Binding="{Binding Source.Id}" Width="Auto" />
-                                            <DataGridTextColumn Header="店铺"
-                                                                Binding="{Binding Source.ShopId,Converter={StaticResource shopMarkConverter}}"
-                                                                Width="Auto" />
-                                            <DataGridTextColumn Header="买家账号" Binding="{Binding Source.PopBuyerId}"
-                                                                Width="Auto" />
-                                            <DataGridTextColumn Header="付款时间"
-                                                                Binding="{Binding Source.PopPayTime, Converter={StaticResource datetimeConverter}}"
-                                                                Width="Auto" />
-                                            <DataGridTextColumn Header="商品信息" Binding="{Binding Goods}" Width="Auto" />
-                                            <DataGridTextColumn Header="门牌编号" Binding="{Binding DoorNumber}"
-                                                                Width="Auto" />
-                                            <DataGridTextColumn Header="打印状态" Binding="{Binding State}" Width="Auto" />
-                                            <DataGridTextColumn Header="快递单号" Binding="{Binding DeliveryNumber}"
-                                                                Width="Auto" />
-                                            <DataGridTextColumn Header="卖家备注"
-                                                                Binding="{Binding Source.PopSellerComment}"
-                                                                Width="Auto" />
-                                            <DataGridTextColumn Header="买家备注"
-                                                                Binding="{Binding Source.PopBuyerComment}" Width="Auto" />
-                                            <DataGridTextColumn Header="收件人地址" Binding="{Binding ReceiverAddress}"
-                                                                Width="Auto" />
-                                            <DataGridTextColumn Header="收件人姓名" Binding="{Binding ReceiverName}"
-                                                                Width="Auto" />
-                                            <DataGridTextColumn Header="收件人电话" Binding="{Binding ReceiverPhone}"
-                                                                Width="Auto" />
-                                            <DataGridTextColumn Header="收件人手机" Binding="{Binding ReceiverMobile}"
-                                                                Width="Auto" />
-
+                                            </DataGridTemplateColumn>-->
+                                            <DataGridTextColumn Header="类型" Binding="{Binding Source.Type,Converter={StaticResource descriptionConverter}}" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="编号" Binding="{Binding Source.Id}" Width="Auto" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="店铺" Binding="{Binding Source.ShopId,Converter={StaticResource shopMarkConverter}}" Width="Auto" IsReadOnly="True" />
+                                            <DataGridTextColumn Header="买家账号" Binding="{Binding Source.PopBuyerId}" Width="Auto" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="付款时间" Binding="{Binding Source.PopPayTime, Converter={StaticResource datetimeConverter}}" Width="Auto" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="商品信息" Binding="{Binding Goods}" MaxWidth="250" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="门牌编号" Binding="{Binding DoorNumber}" Width="Auto" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="处理状态" Binding="{Binding State}" Width="Auto" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="快递单号" Binding="{Binding DeliveryNumber}" Width="Auto" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="卖家备注" Binding="{Binding Source.PopSellerComment}" Width="Auto" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="买家备注" Binding="{Binding Source.PopBuyerComment}" Width="Auto" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="收件人姓名" Binding="{Binding ReceiverName}" Width="Auto" IsReadOnly="True" />
+                                            <DataGridTextColumn Header="收件人电话" Binding="{Binding ReceiverPhone}" Width="Auto" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="收件人手机" Binding="{Binding ReceiverMobile}" Width="Auto" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="收件人地址" Binding="{Binding ReceiverAddress}" Width="Auto" IsReadOnly="True"/>
                                         </DataGrid.Columns>
                                     </DataGrid>
                                 </Grid>

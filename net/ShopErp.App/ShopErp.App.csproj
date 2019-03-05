@@ -332,6 +332,9 @@
     <Compile Include="Views\DataCenter\SaleUserControl.xaml.cs">
       <DependentUpon>SaleUserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Orders\OrderExportUserControl.xaml.cs">
+      <DependentUpon>OrderExportUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Orders\TaobaoQueryOrdersResponseOrderOrderGoodsOperation.cs" />
     <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOrderOrderGoodsStatusStatusInfo.cs" />
     <Compile Include="Views\Taobao\TaobaoKeywordCountUserControl.xaml.cs">
@@ -671,6 +674,10 @@
     <Page Include="Views\DataCenter\SaleUserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Orders\OrderExportUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Taobao\TaobaoKeywordCountUserControl.xaml">
       <SubType>Designer</SubType>
