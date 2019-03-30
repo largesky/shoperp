@@ -117,19 +117,20 @@ namespace ShopErp.App.ViewModels
         private void UpdateGoodsInfo()
         {
             StringBuilder sb = new StringBuilder();
-            if (this.Source.OrderGoodss != null)
+            if (this.Source.OrderGoodss != null && this.Source.OrderGoodss.Count > 0 && this.Source.Type != OrderType.SHUA)
+            {
                 foreach (var goods in this.Source.OrderGoodss.Where(obj => obj.State != OrderState.CLOSED && obj.State != OrderState.CANCLED && obj.State != OrderState.SPILTED))
                 {
                     sb.Append(VendorService.FormatVendorName(goods.Vendor) + " " + goods.Number + " " + goods.Edtion + " " + goods.Color + " " + goods.Size + " " + goods.Count + ", ");
                 }
-
+            }
             this.Goods = sb.ToString();
         }
 
         private void UpdateDoorNumber()
         {
             string sb = "";
-            if (this.Source.OrderGoodss != null)
+            if (this.Source.OrderGoodss != null && this.Source.OrderGoodss.Count > 0 && this.Source.Type != OrderType.SHUA)
             {
                 foreach (var goods in this.Source.OrderGoodss.Where(obj => obj.State != OrderState.CLOSED && obj.State != OrderState.CANCLED && obj.State != OrderState.SPILTED))
                 {

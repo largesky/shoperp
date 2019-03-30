@@ -20,12 +20,23 @@ namespace ShopErp.Server.Service.Restful
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Multiple, AddressFilterMode = AddressFilterMode.Exact)]
     class WuliuNumberService : ServiceBase<WuliuNumber, WuliuNumberDao>
     {
-
         /// <summary>
         /// 淘宝平台接口
         /// </summary>
         private const string API_SERVER_URL = "https://eco.taobao.com/router/rest";
         private static List<CainiaoCloudprintStdtemplatesGetResponse.StandardTemplateResultDomain> caiNiaoTemplates;
+
+        private bool MatchAddres(CainiaoPrintDataDataRecipientAddress address, string receiverAddress)
+        {
+            address.district = address.district ?? "";
+            address.town = address.town ?? "";
+            var tbAdd = ParseTaobaoAddress(receiverAddress);
+            return tbAdd.Province.Equals(address.province) &&
+               tbAdd.City.Equals(address.city) &&
+               tbAdd.District.Equals(address.district) &&
+               tbAdd.Town.Equals(address.town) &&
+               tbAdd.Detail.Equals(address.detail);
+        }
 
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/delete.html")]
@@ -56,22 +67,6 @@ namespace ShopErp.Server.Service.Restful
             }
         }
 
-
-        [OperationContract]
-        [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/gennormalwuliunumber.html")]
-        public DataCollectionResponse<WuliuNumber> GenNormalWuliuNumber(string deliveryCompany, string current, string address)
-        {
-            try
-            {
-                throw new NotImplementedException();
-            }
-            catch (Exception ex)
-            {
-                throw new WebFaultException<ResponseBase>(new ResponseBase(ex.Message), System.Net.HttpStatusCode.OK);
-            }
-        }
-
-
         /// <summary>
         /// 获取菜鸟电子面单
         /// </summary>
@@ -79,14 +74,11 @@ namespace ShopErp.Server.Service.Restful
         /// <returns></returns>
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/gencainiaowuliunumber.html")]
-        public DataCollectionResponse<WuliuNumber> GenCainiaoWuliuNumber(string deliveryCompany, Order order, string[] wuliuIds, string packageId)
+        public DataCollectionResponse<WuliuNumber> GenCainiaoWuliuNumber(string deliveryCompany, Order order, string[] wuliuIds, string packageId, string senderName, string senderPhone, string senderAddress)
         {
             try
             {
-                //RefreshTaobaoCainiaoAccessInfo();
                 //初始化信息及检查，这些信息有可能会随便更新，所以每次都要获取最新的
-                var senderName = ServiceContainer.GetService<SystemConfigService>().GetEx(-1, SystemNames.CONFIG_CAINIAO_SENDER_NAME, "");
-                var senderPhone = ServiceContainer.GetService<SystemConfigService>().GetEx(-1, SystemNames.CONFIG_CAINIAO_SENDER_PHONE, "");
                 var popSellerNumberId = ServiceContainer.GetService<SystemConfigService>().GetEx(-1, SystemNames.CONFIG_CAINIAO_SELLER_ID, "");
                 var appKey = ServiceContainer.GetService<SystemConfigService>().GetEx(-1, SystemNames.CONFIG_CAINIAO_APP_KEY, "");
                 var appSecret = ServiceContainer.GetService<SystemConfigService>().GetEx(-1, SystemNames.CONFIG_CAINIAO_APP_SECRET, "");
@@ -166,7 +158,7 @@ namespace ShopErp.Server.Service.Restful
                     CainiaoWaybillIiGetRequest req = new CainiaoWaybillIiGetRequest();
                     var reqBody = new CainiaoWaybillIiGetRequest.WaybillCloudPrintApplyNewRequestDomain();
                     reqBody.CpCode = GetCPCodeCN(deliveryCompany);
-                    reqBody.Sender = new CainiaoWaybillIiGetRequest.UserInfoDtoDomain { Phone = "", Name = senderName, Mobile = senderPhone, Address = GetShippingAddress() };
+                    reqBody.Sender = new CainiaoWaybillIiGetRequest.UserInfoDtoDomain { Phone = "", Name = senderName, Mobile = senderPhone, Address = GetShippingAddress(senderAddress) };
                     //订单信息，一个请求里面可以包含多个订单，我们系统里面，默认一个
                     reqBody.TradeOrderInfoDtos = new List<CainiaoWaybillIiGetRequest.TradeOrderInfoDtoDomain>();
                     var or = new CainiaoWaybillIiGetRequest.TradeOrderInfoDtoDomain { ObjectId = Guid.NewGuid().ToString() };
@@ -224,18 +216,6 @@ namespace ShopErp.Server.Service.Restful
             }
         }
 
-        private bool MatchAddres(CainiaoPrintDataDataRecipientAddress address, string receiverAddress)
-        {
-            address.district = address.district ?? "";
-            address.town = address.town ?? "";
-            var tbAdd = ParseTaobaoAddress(receiverAddress);
-            return tbAdd.Province.Equals(address.province) &&
-               tbAdd.City.Equals(address.city) &&
-               tbAdd.District.Equals(address.district) &&
-               tbAdd.Town.Equals(address.town) &&
-               tbAdd.Detail.Equals(address.detail);
-        }
-
         /// <summary>
         /// 获取菜鸟电子面单
         /// </summary>
@@ -255,6 +235,49 @@ namespace ShopErp.Server.Service.Restful
             }
         }
 
+        [OperationContract]
+        [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/getwuliubrachs.html")]
+        public DataCollectionResponse<WuliuBranch> GetWuliuBrachs(string type, string code)
+        {
+            try
+            {
+                var appKey = ServiceContainer.GetService<SystemConfigService>().GetEx(-1, SystemNames.CONFIG_CAINIAO_APP_KEY, "");
+                var appSecret = ServiceContainer.GetService<SystemConfigService>().GetEx(-1, SystemNames.CONFIG_CAINIAO_APP_SECRET, "");
+                var appSession = ServiceContainer.GetService<SystemConfigService>().GetEx(-1, SystemNames.CONFIG_CAINIAO_APP_SESSION, "");
+                if (string.IsNullOrWhiteSpace(appKey) || string.IsNullOrWhiteSpace(appSecret) || string.IsNullOrWhiteSpace(appSession))
+                {
+                    throw new Exception("淘宝菜鸟接口授权信息不完整请配置");
+                }
+                var req = new CainiaoWaybillIiSearchRequest() { CpCode = code };
+                var rep = InvokeOpenApi<CainiaoWaybillIiSearchResponse>(appKey, appSecret, appSession, req);
+                var datas = new List<WuliuBranch>();
+
+                foreach (var v in rep.WaybillApplySubscriptionCols)
+                {
+                    foreach (var vv in v.BranchAccountCols)
+                    {
+                        foreach (var vvv in vv.ShippAddressCols)
+                        {
+                            var data = new WuliuBranch();
+                            data.Type = v.CpCode;
+                            data.Name = vv.BranchName;
+                            data.Number = vv.BranchCode;
+                            data.Quantity = vv.Quantity;
+                            data.SenderName = "";
+                            data.SenderPhone = "";
+                            data.SenderAddress = vvv.Province + " " + vvv.City + " " + vvv.District + " " + vvv.Detail;
+                            datas.Add(data);
+                        }
+                    }
+                }
+                return new DataCollectionResponse<WuliuBranch>(datas);
+            }
+            catch (Exception ex)
+            {
+                throw new WebFaultException<ResponseBase>(new ResponseBase(ex.Message), System.Net.HttpStatusCode.OK);
+            }
+        }
+
         /// <summary>
         /// 更新淘宝地址库
         /// </summary>
@@ -266,22 +289,9 @@ namespace ShopErp.Server.Service.Restful
         {
             try
             {
-                var senderName = ServiceContainer.GetService<SystemConfigService>().GetEx(-1, SystemNames.CONFIG_CAINIAO_SENDER_NAME, "");
-                var senderPhone = ServiceContainer.GetService<SystemConfigService>().GetEx(-1, SystemNames.CONFIG_CAINIAO_SENDER_PHONE, "");
-                var popSellerNumberId = ServiceContainer.GetService<SystemConfigService>().GetEx(-1, SystemNames.CONFIG_CAINIAO_SELLER_ID, "");
                 var appKey = ServiceContainer.GetService<SystemConfigService>().GetEx(-1, SystemNames.CONFIG_CAINIAO_APP_KEY, "");
                 var appSecret = ServiceContainer.GetService<SystemConfigService>().GetEx(-1, SystemNames.CONFIG_CAINIAO_APP_SECRET, "");
                 var appSession = ServiceContainer.GetService<SystemConfigService>().GetEx(-1, SystemNames.CONFIG_CAINIAO_APP_SESSION, "");
-
-                if (string.IsNullOrWhiteSpace(senderName) || string.IsNullOrWhiteSpace(senderPhone))
-                {
-                    throw new Exception("淘宝接口发货人不完整请配置");
-                }
-
-                if (string.IsNullOrWhiteSpace(popSellerNumberId))
-                {
-                    throw new Exception("淘宝卖家数据编号为空");
-                }
 
                 if (string.IsNullOrWhiteSpace(appKey) || string.IsNullOrWhiteSpace(appSecret) || string.IsNullOrWhiteSpace(appSession))
                 {
@@ -349,252 +359,6 @@ namespace ShopErp.Server.Service.Restful
             }
         }
 
-        #region 普通单号生成方法
-
-
-        public static string GenBashihutong(string current)
-        {
-            if (current.Length != 12)
-            {
-                throw new Exception("百世汇通快递单号生成失败,当前快递快递单号不为12位:" + current);
-            }
-
-            long l = long.Parse(current);
-            l++;
-            return l.ToString();
-        }
-
-
-        public static string GenChinapostXiaobao(string current)
-        {
-            if (current.Length != 13)
-            {
-                throw new Exception("邮政快递单号生成失败,当前快递快递单号不为13位:" + current);
-            }
-
-            long l = long.Parse(current);
-            l++;
-            return l.ToString();
-        }
-
-        public static string GenEms(string current)
-        {
-            if (string.IsNullOrWhiteSpace(current) || current.Length != 13)
-            {
-                throw new Exception("EMS快递问题格式不正确" + current);
-            }
-            int[] multy = new int[] { 8, 6, 4, 2, 3, 5, 9, 7 };
-            string pre = current.Substring(0, 2);
-            string last = current.Substring(11, 2);
-            long number = long.Parse(current.Substring(2, 8)) + 1;
-            int[] numbers = number.ToString("D8").Select(c => int.Parse(c.ToString())).ToArray();
-            int total = 0;
-
-            for (int i = 0; i < numbers.Length; i++)
-            {
-                total += multy[i] * numbers[i];
-            }
-
-            int res = 11 - total % 11;
-            if (res == 10)
-            {
-                res = 0;
-            }
-            else if (res == 11)
-            {
-                res = 5;
-            }
-            string newNumber = pre + number.ToString("D8") + res + last;
-            return newNumber;
-        }
-
-        public static string GenSF(string current)
-        {
-            if (string.IsNullOrWhiteSpace(current) || current.Length != 12)
-            {
-                throw new Exception("顺丰快递单号不为12位:" + current);
-            }
-
-            string area = current.Substring(0, 3);
-            string number = current.Substring(3, 8);
-            string lastNumber = current.Substring(11, 1);
-            string newNumber = number;
-            long next = long.Parse(number) + 1;
-
-            if (current[10] != '9')
-            {
-                newNumber = area + next.ToString("D8") + (int.Parse(lastNumber) + 9) % 10;
-                return newNumber;
-            }
-
-            if ("0124578".Any(c => c == current[9]))
-            {
-                newNumber = area + next.ToString("D8") + (int.Parse(lastNumber) + 6) % 10;
-                return newNumber;
-            }
-
-            if ("36".Any(c => c == current[9]))
-            {
-                newNumber = area + next.ToString("D8") + (int.Parse(lastNumber) + 5) % 10;
-                return newNumber;
-            }
-
-            if ("02468".Any(c => c == current[8]))
-            {
-                newNumber = area + next.ToString("D8") + (int.Parse(lastNumber) + 3) % 10;
-                return newNumber;
-            }
-
-            if ("1357".Any(c => c == current[8]))
-            {
-                newNumber = area + next.ToString("D8") + (int.Parse(lastNumber) + 2) % 10;
-                return newNumber;
-            }
-
-            if ("036".Any(c => c == current[7]))
-            {
-                newNumber = area + next.ToString("D8") + (int.Parse(lastNumber) + 0) % 10;
-                return newNumber;
-            }
-
-            if ("124578".Any(c => c == current[7]))
-            {
-                newNumber = area + next.ToString("D8") + (int.Parse(lastNumber) + 9) % 10;
-                return newNumber;
-            }
-
-            if ("0".Any(c => c == current[6]))
-            {
-                newNumber = area + next.ToString("D8") + (int.Parse(lastNumber) + 7) % 10;
-                return newNumber;
-            }
-
-            if ("12345678".Any(c => c == current[6]))
-            {
-                newNumber = area + next.ToString("D8") + (int.Parse(lastNumber) + 6) % 10;
-                return newNumber;
-            }
-
-            if ("012345678".Any(c => c == current[5]))
-            {
-                newNumber = area + next.ToString("D8") + (int.Parse(lastNumber) + 3) % 10;
-                return newNumber;
-            }
-
-            if ("0124578".Any(c => c == current[4]))
-            {
-                newNumber = area + next.ToString("D8") + (int.Parse(lastNumber) + 9) % 10;
-                return newNumber;
-            }
-
-            if ("36".Any(c => c == current[4]))
-            {
-                newNumber = area + next.ToString("D8") + (int.Parse(lastNumber) + 8) % 10;
-                return newNumber;
-            }
-
-            if ("02468".Any(c => c == current[3]))
-            {
-                newNumber = area + next.ToString("D8") + (int.Parse(lastNumber) + 5) % 10;
-                return newNumber;
-            }
-
-            if ("1357".Any(c => c == current[3]))
-            {
-                newNumber = area + next.ToString("D8") + (int.Parse(lastNumber) + 4) % 10;
-                return newNumber;
-            }
-            throw new Exception("顺丰快递无法计算下一个快递单号：" + current);
-        }
-
-        public static string GenSto(string current)
-        {
-            if (String.IsNullOrWhiteSpace(current) || current.Length != 12)
-            {
-                throw new Exception("申通快递当前单号不为12位:" + current);
-            }
-
-            long l = long.Parse(current);
-            l++;
-            return l.ToString();
-        }
-
-        public static string GenTiantian(string current)
-        {
-            if (string.IsNullOrWhiteSpace(current) || current.Length != 12)
-            {
-                throw new Exception("天天快递单号生成错误，当前单号不为12位：" + current);
-            }
-            long l = long.Parse(current);
-            l++;
-            return l.ToString();
-        }
-
-        public static string GenYto(string current)
-        {
-            if (string.IsNullOrWhiteSpace(current) || (current.Length != 10 && current.Length != 12 && current.Length != 16))
-            {
-                throw new Exception("圆通快递单号必须为10,12,16位:" + current);
-            }
-            int numberStartIndex = current.IndexOfAny("0123456789".ToArray());
-            string prefix = numberStartIndex > 0 ? current.Substring(0, numberStartIndex) : "";
-            long currentNumber = long.Parse(current.Substring(numberStartIndex));
-            long nextNumber = currentNumber + 1;
-            string newNumber = prefix + nextNumber.ToString("D" + (current.Length - prefix.Length));
-            return newNumber;
-        }
-
-        public static string GenYunda(string current)
-        {
-            if (current.Length != 13)
-            {
-                throw new Exception("韵达快递单号生成失败,当前快递快递单号不为13位:" + current);
-            }
-
-            long l = long.Parse(current);
-            l++;
-            return l.ToString();
-        }
-
-        public static string GenZjs(string current)
-        {
-            if (current.Length != 10)
-            {
-                throw new Exception("宅急送运单号为长度为10");
-            }
-
-            int d1 = int.Parse(current.Substring(0, 3));
-            int d2 = int.Parse(current.Substring(3, 3));
-            int d3 = int.Parse(current.Substring(6, 3));
-            int d4 = int.Parse(current.Substring(9, 1));
-
-            d4 = (++d4) % 7;
-            d2 += (++d3) / 1000;
-            d1 += (d2 + 1) / 1000;
-
-            d3 = d3 % 1000;
-            d2 = d2 % 1000;
-
-            string ret = string.Format("{0:d3}{1:d3}{2:d3}{3}", d1, d2, d3, d4);
-            return ret;
-        }
-
-        public static string GenZto(string current)
-        {
-            //中通快递格式718616673883
-            if (string.IsNullOrWhiteSpace(current) || current.Length != 12)
-            {
-                throw new Exception("中通快递单号生成失败，当前单号格式不为12位：" + current);
-            }
-
-            long l = long.Parse(current);
-            l++;
-
-            return l.ToString();
-        }
-
-        #endregion
-
         #region 菜鸟电子面单相关方法
 
         public static T InvokeOpenApi<T>(string appKey, string appSecret, string session, ITopRequest<T> request) where T : TopResponse
@@ -608,9 +372,9 @@ namespace ShopErp.Server.Service.Restful
             return ret;
         }
 
-        private static CainiaoWaybillIiGetRequest.AddressDtoDomain GetShippingAddress()
+        private static CainiaoWaybillIiGetRequest.AddressDtoDomain GetShippingAddress(string address)
         {
-            string add = ServiceContainer.GetService<SystemConfigService>().GetEx(-1, SystemNames.CONFIG_CAINIAO_SENDER_ADDRESS, "");
+            string add = address;
             if (string.IsNullOrWhiteSpace(add))
             {
                 throw new Exception("系统没有配置发货地址，请在系统配置设置");

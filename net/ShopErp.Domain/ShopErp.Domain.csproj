@@ -150,6 +150,7 @@
     <Compile Include="TaobaoKeyword.cs" />
     <Compile Include="TaobaoKeywordDetail.cs" />
     <Compile Include="Vendor.cs" />
+    <Compile Include="WuliuBranch.cs" />
     <Compile Include="WuliuNumber.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -35,7 +35,7 @@ namespace ShopErp.App
             List<MenuConfig> mcs = new List<MenuConfig>();
             MenuConfig mc = null;
 
-            mc = new MenuConfig("所有订单", null);
+            mc = new MenuConfig("订单管理", null);
             mc.Add("所有订单", typeof(OrderAllUserControl));
             mc.Add("订单同步", typeof(OrderSyncUserControl));
             mc.Add("订单同步-网页", typeof(OrderSyncHtmlUserControl));

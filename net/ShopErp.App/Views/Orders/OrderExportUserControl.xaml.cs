@@ -82,6 +82,10 @@ namespace ShopErp.App.Views.Orders
                 {
                     var v = pair.Key;
                     string[] ss = new string[] { EnumUtil.GetEnumValueDescription(v.Source.Type), shops.FirstOrDefault(obj => obj.Id == v.Source.ShopId).Mark, v.Source.PopPayTime.ToString("yyyy-MM-dd HH:mm:ss"), pair.Value, v.Source.DeliveryNumber, v.Source.PopSellerComment, v.Source.ReceiverName, string.IsNullOrWhiteSpace(v.Source.ReceiverPhone) ? v.Source.ReceiverMobile : v.Source.ReceiverMobile + "," + v.Source.ReceiverPhone, v.Source.ReceiverAddress };
+                    if (pair.Key.Source.PopType != ShopErp.Domain.PopType.TMALL)
+                    {
+                        ss[5] += "不放合格证，放2元好评卡";
+                    }
                     contents.Add(ss);
                 }
                 dicContents.Add("订单", contents.ToArray());
@@ -89,6 +93,7 @@ namespace ShopErp.App.Views.Orders
                 sfd.AddExtension = true;
                 sfd.DefaultExt = "xlsx";
                 sfd.Filter = "*.xlsx|Office 2007 文件";
+                sfd.FileName = "贾勇 " + DateTime.Now.ToString("MM-dd") + ".xlsx";
                 if (sfd.ShowDialog().Value == false)
                 {
                     return;
@@ -111,7 +116,7 @@ namespace ShopErp.App.Views.Orders
                     MessageBox.Show("系统中没有任何店铺");
                     return;
                 }
-                var orders = ServiceContainer.GetService<OrderService>().GetPayedAndPrintedOrders(shopids, ShopErp.Domain.OrderCreateType.NONE, ShopErp.Domain.PopPayType.None, 0, 0).Datas.Select(obj => new OrderViewModel(obj)).ToArray();
+                var orders = ServiceContainer.GetService<OrderService>().GetPayedAndPrintedOrders(shopids, ShopErp.Domain.OrderCreateType.NONE, ShopErp.Domain.PopPayType.None, 0, 0).Datas.OrderBy(obj => obj.PopPayTime).Select(obj => new OrderViewModel(obj)).ToArray();
                 this.dgOrders.ItemsSource = orders;
             }
             catch (Exception ex)

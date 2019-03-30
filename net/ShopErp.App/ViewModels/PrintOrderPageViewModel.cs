@@ -45,7 +45,8 @@ namespace ShopErp.App.ViewModels
 
         public static readonly DependencyProperty PackageIdProperty = DependencyProperty.Register("PackageId", typeof(int), typeof(PrintOrderPageViewModel), new PropertyMetadata(0));
 
-        private DeliveryPrintDocument printDoc = null;
+        public static readonly DependencyProperty WuliuBrachProperty = DependencyProperty.Register("WuliuBrach", typeof(WuliuBranch), typeof(PrintOrderPageViewModel));
+
 
         private PrintHistoryService printHistoryService = ServiceContainer.GetService<PrintHistoryService>();
 
@@ -53,7 +54,11 @@ namespace ShopErp.App.ViewModels
 
         public System.Collections.ObjectModel.ObservableCollection<PrintOrderViewModel> OrderViewModels { get; set; }
 
-        private Dictionary<Order, List<PrintOrderViewModel>> orderVmToOrder = null;
+        public ObservableCollection<WuliuBranch> WuliuBranches { get; set; }
+
+        private DeliveryPrintDocument printDoc;
+
+        private Dictionary<Order, List<PrintOrderViewModel>> orderVmToOrder;
 
         private bool lastOpError = false;
 
@@ -109,10 +114,17 @@ namespace ShopErp.App.ViewModels
             set { this.SetValue(PackageIdProperty, value); }
         }
 
+        public WuliuBranch WuliuBranch
+        {
+            get { return (WuliuBranch)this.GetValue(WuliuBrachProperty); }
+            set { this.SetValue(WuliuBrachProperty, value); }
+        }
+
 
         public PrintOrderPageViewModel(PrintOrderViewModel[] orders)
         {
             this.OrderViewModels = new ObservableCollection<PrintOrderViewModel>();
+            this.WuliuBranches = new ObservableCollection<WuliuBranch>();
             DependencyPropertyDescriptor notiy = DependencyPropertyDescriptor.FromProperty(PrintOrderViewModel.IsCheckedProperty, typeof(PrintOrderViewModel));
             foreach (var v in orders)
             {
@@ -179,6 +191,32 @@ namespace ShopErp.App.ViewModels
                     this.OrderViewModels[i].IsChecked = this.Checked;
                 }
             }
+
+            if (e.Property == PrintOrderPageViewModel.PrintTemplateProperty)
+            {
+                WuliuBranches.Clear();
+                if (e.NewValue == null)
+                {
+                    this.WuliuBranch = null;
+                    return;
+                }
+                try
+                {
+                    var dc = ServiceContainer.GetService<DeliveryCompanyService>().GetDeliveryCompany(((PrintTemplate)e.NewValue).DeliveryCompany);
+                    var wbs = ServiceContainer.GetService<WuliuNumberService>().GetWuliuBrachs("", dc.PopMapTaobao);
+                    foreach (var v in wbs.Datas)
+                    {
+                        this.WuliuBranches.Add(v);
+                    }
+                    //搜索与配置地址第一个匹配的
+                    string defaultAddress = ServiceContainer.GetService<SystemConfigService>().Get(-1, SystemNames.CONFIG_CAINIAO_SENDER_ADDRESS, "");
+                    this.WuliuBranch = this.WuliuBranches.FirstOrDefault(obj => string.IsNullOrWhiteSpace(defaultAddress) == false && defaultAddress.Replace(" ", "").Equals(obj.SenderAddress.Replace(" ", "")));
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("获取发货网点失败：" + ex.Message);
+                }
+            }
         }
 
 
@@ -201,6 +239,14 @@ namespace ShopErp.App.ViewModels
                 this.IsUserStop = false;
                 this.IsRunning = true;
                 this.PrintButtonString = "停止";
+
+                string senderName = ServiceContainer.GetService<SystemConfigService>().Get(-1, SystemNames.CONFIG_CAINIAO_SENDER_NAME, "");
+                string senderPhone = ServiceContainer.GetService<SystemConfigService>().Get(-1, SystemNames.CONFIG_CAINIAO_SENDER_PHONE, "");
+
+                if (string.IsNullOrWhiteSpace(senderName) || string.IsNullOrWhiteSpace(senderPhone))
+                {
+                    throw new Exception("系统中没有配置发货姓名和电话无法打印");
+                }
 
                 this.WorkStateMessage = "第一步：正在检查与合并订单...";
 
@@ -280,7 +326,7 @@ namespace ShopErp.App.ViewModels
                     try
                     {
                         this.WorkStateMessage = string.Format("第二步：正在生成单号{0}/{1}...", i + 1, wuliuNumbers.Length);
-                        wuliuNumbers[i] = ServiceContainer.GetService<WuliuNumberService>().GenCainiaoWuliuNumber(this.PrintTemplate.DeliveryCompany, mergedOrders[i], GetMatchOrderViewModelsWuliuId(mergedOrders[i]), this.PackageId > 0 ? this.PackageId.ToString() : "").First;
+                        wuliuNumbers[i] = ServiceContainer.GetService<WuliuNumberService>().GenCainiaoWuliuNumber(this.PrintTemplate.DeliveryCompany, mergedOrders[i], GetMatchOrderViewModelsWuliuId(mergedOrders[i]), this.PackageId > 0 ? this.PackageId.ToString() : "", senderName, senderPhone, this.WuliuBranch.SenderAddress).First;
                         foreach (var ov in GetMatchOrderViewModels(mergedOrders[i]))
                         {
                             ov.WuliuNumber = wuliuNumbers[i];

@@ -39,6 +39,7 @@ namespace ShopErp.App.Views.Print
         public static readonly DependencyProperty DeliveryPrintTemplatesProperty = DependencyProperty.Register("DeliveryPrintTemplates", typeof(ObservableCollection<Service.Print.PrintTemplate>), typeof(PrintUserControl));
 
         private OrderService orderService = ServiceContainer.GetService<OrderService>();
+
         private object printLock = new object();
 
         public System.Collections.ObjectModel.ObservableCollection<Service.Print.PrintTemplate> DeliveryPrintTemplates
@@ -228,6 +229,11 @@ namespace ShopErp.App.Views.Print
                 DataGrid dg = grid.FindName("dgOrders") as DataGrid;
                 DataGridColumn goodsCol = dg.Columns.FirstOrDefault(col => col.Header != null && col.Header.ToString() == "门牌编号");
 
+                if (printOrderPage.WuliuBranch == null)
+                {
+                    throw new Exception("未选择发货网点");
+                }
+
                 if (selectedOrders.Count() < 1)
                 {
                     throw new Exception("没有选择需要打印的订单");
@@ -263,7 +269,7 @@ namespace ShopErp.App.Views.Print
                 {
                     throw new Exception("系统中没有配置快递单打印机");
                 }
-                string popMessage = string.Format("{0}打印模板:{1}{2}打印设备:{3}{4}打印数据:{5}", Environment.NewLine, printTemplate.Name, Environment.NewLine, printer, Environment.NewLine, selectedOrders.Count());
+                string popMessage = string.Format("发货网点：{0}{1}打印模板：{2}{3}打印设备：{4}{5}打印数据：{6}", printOrderPage.WuliuBranch.Name, Environment.NewLine, printTemplate.Name, Environment.NewLine, printer, Environment.NewLine, selectedOrders.Count());
                 if (MessageBox.Show(popMessage, "确认打印", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
                 {
                     return;

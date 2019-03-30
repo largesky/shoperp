@@ -36,13 +36,16 @@ namespace ShopErp.App.Service.Restful
             return DoPost<DataCollectionResponse<WuliuNumber>>(para);
         }
 
-        public DataCollectionResponse<WuliuNumber> GenCainiaoWuliuNumber(string deliveryCompany, Order order, string[] wuliuIds, string packageId)
+        public DataCollectionResponse<WuliuNumber> GenCainiaoWuliuNumber(string deliveryCompany, Order order, string[] wuliuIds, string packageId, string senderName, string senderPhone, string senderAddress)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
             para["deliveryCompany"] = deliveryCompany;
             para["order"] = order;
             para["wuliuIds"] = wuliuIds;
             para["packageId"] = packageId;
+            para["senderName"] = senderName;
+            para["senderPhone"] = senderPhone;
+            para["senderAddress"] = senderAddress;
             return DoPost<DataCollectionResponse<WuliuNumber>>(para);
         }
 
@@ -51,6 +54,14 @@ namespace ShopErp.App.Service.Restful
             Dictionary<string, object> para = new Dictionary<string, object>();
             para["deliveryNumber"] = deliveryNumber;
             return DoPost<ResponseBase>(para);
+        }
+
+        public DataCollectionResponse<WuliuBranch> GetWuliuBrachs(string type, string code)
+        {
+            Dictionary<string, object> para = new Dictionary<string, object>();
+            para["type"] = type;
+            para["code"] = code;
+            return DoPost<DataCollectionResponse<WuliuBranch>>(para);
         }
 
         public StringResponse UpdateAddressArea()
