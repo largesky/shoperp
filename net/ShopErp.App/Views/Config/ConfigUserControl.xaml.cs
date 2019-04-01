@@ -49,8 +49,7 @@ namespace ShopErp.App.Views.Config
                 this.cbbDeviceTypes.ItemsSource = new IDevice[] { new KunhongDevice() };
                 foreach (var item in this.cbbDeviceTypes.ItemsSource)
                 {
-                    if (item.GetType().AssemblyQualifiedName ==
-                        LocalConfigService.GetValue(SystemNames.CONFIG_WEIGHT_DEVICE, ""))
+                    if (item.GetType().AssemblyQualifiedName == LocalConfigService.GetValue(SystemNames.CONFIG_WEIGHT_DEVICE, ""))
                     {
                         this.cbbDeviceTypes.SelectedItem = item;
                         break;

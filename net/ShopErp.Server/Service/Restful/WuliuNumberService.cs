@@ -374,54 +374,33 @@ namespace ShopErp.Server.Service.Restful
 
         private static CainiaoWaybillIiGetRequest.AddressDtoDomain GetShippingAddress(string address)
         {
-            string add = address;
-            if (string.IsNullOrWhiteSpace(add))
+            var p = AddressService.ParseProvince(address);
+            var c = AddressService.ParseCity(address);
+            var a = AddressService.ParseRegion(address);
+            if (p == null)
             {
-                throw new Exception("系统没有配置发货地址，请在系统配置设置");
+                throw new Exception("地址解析失败未找出省");
             }
-            var adds = add.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            if (adds.Length < 4)
+            if (c == null)
             {
-                throw new Exception("系统中配置的发货地址不对，至少包含4部分以空格分开");
+                throw new Exception("地址解析失败未找出市");
             }
-            var wa = new CainiaoWaybillIiGetRequest.AddressDtoDomain { Province = adds[0], City = adds[1], District = adds[2] };
-            if (adds.Length > 4)
-            {
-                wa.Town = adds[3];
-                wa.Detail = adds[4];
-            }
-            else
-            {
-                wa.Detail = adds[3];
-                wa.Town = "";
-            }
-            return wa;
-        }
 
-        private static CainiaoWaybillIiUpdateRequest.AddressDtoDomain GetShippingAddressUpdate()
-        {
-            string add = ServiceContainer.GetService<SystemConfigService>().GetEx(-1, "TAOBAO_SENDER_ADDRESS", "");
-            if (string.IsNullOrWhiteSpace(add))
+            string ad = AddressService.TrimStart(address, p.Name, 2);
+            ad = AddressService.TrimStart(ad, c.Name, 2);
+            if (a != null)
             {
-                throw new Exception("系统没有配置发货地址，请在系统配置设置");
+                ad = AddressService.TrimStart(ad, a.Name, 2);
             }
-            var adds = add.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            if (adds.Length < 4)
+            var wd = new CainiaoWaybillIiGetRequest.AddressDtoDomain
             {
-                throw new Exception("系统中配置的发货地址不对，至少包含4部分以空格分开");
-            }
-            var wa = new CainiaoWaybillIiUpdateRequest.AddressDtoDomain { Province = adds[0], City = adds[1], District = adds[2] };
-            if (adds.Length > 4)
-            {
-                wa.Town = adds[3];
-                wa.Detail = adds[4];
-            }
-            else
-            {
-                wa.Detail = adds[3];
-                wa.Town = "";
-            }
-            return wa;
+                Province = p.Name,
+                City = c.Name,
+                District = a == null ? "" : a.Name,
+                Detail = ad,
+                Town = "",
+            };
+            return wd;
         }
 
         /// <summary>
