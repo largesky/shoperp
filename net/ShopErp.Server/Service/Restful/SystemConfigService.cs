@@ -39,9 +39,7 @@ namespace ShopErp.Server.Service.Restful
             {
                 sc = new SystemConfig { Id = 0, Name = name, Value = value, OwnerId = ownerId, UpdateTime = DateTime.Now, CreateTime = DateTime.Now, UpdateOperator = ServiceContainer.GetCurrentLoginInfo().op.Number };
                 this.dao.Save(sc);
-                this.CheckAndLoadCach();
-                if (this.GetFirstOrDefaultInCach(obj => obj.Id == sc.Id) == null)
-                    this.AndInCach(sc);
+                this.AndOrReplaceInCach(sc, obj => obj.Id == sc.Id);
                 return sc.Id;
             }
         }

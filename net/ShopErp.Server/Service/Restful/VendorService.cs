@@ -48,9 +48,7 @@ namespace ShopErp.Server.Service.Restful
                     throw new Exception("已存在相同网址的厂家");
                 }
                 this.dao.Save(value);
-                this.CheckAndLoadCach();
-                if (this.GetFirstOrDefaultInCach(obj => obj.Id == value.Id) == null)
-                    this.AndInCach(value);
+                this.AndOrReplaceInCach(value, obj => obj.Id == value.Id);
                 return new LongResponse(value.Id);
             }
             catch (Exception ex)
@@ -71,8 +69,7 @@ namespace ShopErp.Server.Service.Restful
                     throw new Exception("数据未保存过，不能直接更新");
                 }
                 this.dao.Update(value);
-                this.RemoveCach(obj => obj.Id == value.Id);
-                this.AndInCach(value);
+                this.AndOrReplaceInCach(value, obj => obj.Id == value.Id);
                 return ResponseBase.SUCCESS;
             }
             catch (Exception ex)

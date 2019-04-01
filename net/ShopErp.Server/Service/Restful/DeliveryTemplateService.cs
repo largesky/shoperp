@@ -57,9 +57,7 @@ namespace ShopErp.Server.Service.Restful
                     }
                     dao.Save(value.Areas.ToArray());
                 }
-                this.CheckAndLoadCach();
-                if (this.GetFirstOrDefaultInCach(obj => obj.Id == value.Id) == null)
-                    this.AndInCach(value);
+                this.AndOrReplaceInCach(value, obj => obj.Id == value.Id);
                 return new LongResponse(value.Id);
             }
             catch (Exception ex)
@@ -92,8 +90,7 @@ namespace ShopErp.Server.Service.Restful
                     v.DeliveryTemplateId = value.Id;
                 }
                 dao.Save(value.Areas.ToArray());
-                this.RemoveCach(obj => obj.Id == value.Id);
-                this.AndInCach(value);
+                this.AndOrReplaceInCach(value, obj => obj.Id == value.Id);
                 return ResponseBase.SUCCESS;
             }
             catch (Exception ex)

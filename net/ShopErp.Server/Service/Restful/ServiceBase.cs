@@ -40,11 +40,12 @@ namespace ShopErp.Server.Service.Restful
             }
         }
 
-        protected void AndInCach(E e)
+        protected void AndOrReplaceInCach(E e, Predicate<E> matchOld)
         {
             this.CheckAndLoadCach();
             lock (scs_lock)
             {
+                this.RemoveCach(matchOld);
                 this.scs.Add(e);
             }
         }

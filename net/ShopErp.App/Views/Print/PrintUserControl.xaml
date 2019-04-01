@@ -161,7 +161,7 @@
                                             <DataGridTextColumn Header="店铺" Binding="{Binding Source.ShopId,Converter={StaticResource shopMarkConverter}}" Width="Auto" IsReadOnly="True" />
                                             <DataGridTextColumn Header="买家账号" Binding="{Binding Source.PopBuyerId}" Width="Auto" IsReadOnly="True"/>
                                             <DataGridTextColumn Header="付款时间" Binding="{Binding Source.PopPayTime, Converter={StaticResource datetimeConverter}}" Width="Auto" IsReadOnly="True"/>
-                                            <DataGridTextColumn Header="商品信息" Binding="{Binding Goods}" MaxWidth="250" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="商品信息" Binding="{Binding Goods}" Width="250" IsReadOnly="True"/>
                                             <DataGridTextColumn Header="门牌编号" Binding="{Binding DoorNumber}" Width="Auto" IsReadOnly="True"/>
                                             <DataGridTextColumn Header="处理状态" Binding="{Binding State}" Width="Auto" IsReadOnly="True"/>
                                             <DataGridTextColumn Header="快递单号" Binding="{Binding DeliveryNumber}" Width="Auto" IsReadOnly="True"/>

@@ -41,7 +41,7 @@ namespace ShopErp.Server.Service.Restful
                     throw new Exception("已经存在相同的类型");
                 }
                 this.dao.Save(value);
-                this.AndInCach(value);
+                this.AndOrReplaceInCach(value, obj => obj.Id == value.Id);
                 return new LongResponse(value.Id);
             }
             catch (Exception ex)

@@ -37,9 +37,7 @@ namespace ShopErp.Server.Service.Restful
                 value.CreateTime = DateTime.Now;
                 value.UpdateTime = DateTime.Now;
                 this.dao.Save(value);
-                this.CheckAndLoadCach();
-                if (this.GetFirstOrDefaultInCach(obj => obj.Id == value.Id) == null)
-                    this.AndInCach(value);
+                this.AndOrReplaceInCach(value, obj => obj.Id == value.Id);
                 return new LongResponse(value.Id);
             }
             catch (Exception ex)
@@ -60,8 +58,7 @@ namespace ShopErp.Server.Service.Restful
                 }
                 value.UpdateTime = DateTime.Now;
                 this.dao.Update(value);
-                this.RemoveCach(o => o.Id == value.Id);
-                this.AndInCach(value);
+                this.AndOrReplaceInCach(value, o => o.Id == value.Id);
                 return ResponseBase.SUCCESS;
             }
             catch (Exception ex)
