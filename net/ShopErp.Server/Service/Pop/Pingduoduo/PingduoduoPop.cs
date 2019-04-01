@@ -406,7 +406,7 @@ namespace ShopErp.Server.Service.Pop.Pingduoduo
 
         public override string GetShopOauthUrl(Shop shop)
         {
-            string url = string.Format("http://mms.pinduoduo.com/open.html?response_type=code&client_id={0}&redirect_uri={1}&state={2}", shop.AppKey, shop.AppCallbackUrl, shop.Id);
+            string url = string.Format("https://mms.pinduoduo.com/open.html?response_type=code&client_id={0}&redirect_uri={1}&state={2}", shop.AppKey, shop.AppCallbackUrl, shop.Id + "_" + shop.AppKey + "_" + shop.AppSecret);
             return url;
         }
 

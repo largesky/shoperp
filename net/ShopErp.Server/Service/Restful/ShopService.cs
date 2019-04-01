@@ -145,14 +145,24 @@ namespace ShopErp.Server.Service.Restful
                     throw new Exception("拼多多授权返回数据没有state");
                 }
 
-                var shop = this.GetFirstOrDefaultInCach(obj => obj.Id == long.Parse(state));
+                string[] states = state.Split(new char[] { '_' }, StringSplitOptions.RemoveEmptyEntries);
+                long shopId = long.Parse(states[0]);
+                var shop = this.GetFirstOrDefaultInCach(obj => obj.Id == shopId);
                 if (shop == null)
                 {
-                    throw new Exception("没有找到指定店铺");
+                    shop = new Shop { AppKey = states[1], AppSecret = states[2], PopType = PopType.PINGDUODUO };
                 }
                 var s = new PopService().GetAcessTokenInfo(shop, code);
-                this.Update(s);
-                return "拼多多授权成功，请关闭程序重新登录";
+
+                if (shop.Id > 0)
+                {
+                    this.Update(s);
+                    return "拼多多授权成功，请关闭程序重新登录";
+                }
+                else
+                {
+                    return string.Format("授权成功,复制以下数据到店铺配置里面。App AccessToken:{0},App Refresh Token:{1}", s.AppAccessToken, s.AppRefreshToken);
+                }
             }
             catch (Exception ex)
             {
