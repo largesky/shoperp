@@ -46,6 +46,7 @@
                     <DataGridTextColumn Header="订单编号" Binding="{Binding PopOrderId}" />
                     <DataGridTextColumn Header="收货人姓名" Binding="{Binding ReceiverName}" />
                     <DataGridTextColumn Header="错误原因" Binding="{Binding Error}" />
+                    <DataGridTextColumn Header="异常堆栈" Binding="{Binding StackTrace}" />
                 </DataGrid.Columns>
             </DataGrid>
         </GroupBox>

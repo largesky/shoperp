@@ -266,7 +266,7 @@ namespace ShopErp.Server.Service.Pop.Pingduoduo
             }
             catch (Exception e)
             {
-                od.Error = new OrderDownloadError(popOrderId, "", e.Message);
+                od.Error = new OrderDownloadError(shop.Id, popOrderId, "", e.Message, e.StackTrace);
             }
             return od;
         }

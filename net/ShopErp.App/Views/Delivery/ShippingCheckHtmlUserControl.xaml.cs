@@ -425,7 +425,7 @@ namespace ShopErp.App.Views.Delivery
                     }
                     catch (Exception ex)
                     {
-                        od.Error = new OrderDownloadError { Error = ex.Message, PopOrderId = v.id, ReceiverName = "", ShopId = shop.Id };
+                        od.Error = new OrderDownloadError(shop.Id, v.id, "", ex.Message, ex.StackTrace);
                     }
                     finally
                     {

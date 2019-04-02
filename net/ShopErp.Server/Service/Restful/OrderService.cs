@@ -1052,7 +1052,7 @@ namespace ShopErp.Server.Service.Restful
                 ret1.IsTotalValid = ret.IsTotalValid;
                 return ret1;
             }
-            catch (WebFaultException)
+            catch (WebFaultException<ResponseBase>)
             {
                 throw;
             }
@@ -1093,13 +1093,13 @@ namespace ShopErp.Server.Service.Restful
 
                     if (or.Order == null)
                     {
-                        or.Error = new OrderDownloadError { Error = "保存或者更新订单错误:Order与Error均为空", PopOrderId = "", ReceiverName = "", ShopId = shop.Id };
+                        or.Error = new OrderDownloadError(shop.Id, "", "", "保存或者更新订单错误:Order与Error均为空", "");
                         continue;
                     }
 
                     if (string.IsNullOrWhiteSpace(or.Order.PopOrderId))
                     {
-                        or.Error = new OrderDownloadError { Error = "保存或者更新订单错误:PopOrderId为空", PopOrderId = "", ReceiverName = "", ShopId = shop.Id };
+                        or.Error = new OrderDownloadError(shop.Id, "", "", "保存或者更新订单错误:PopOrderId为空", "");
                         continue;
                     }
 
@@ -1109,7 +1109,7 @@ namespace ShopErp.Server.Service.Restful
                         var count = GetColumnValueBySqlQuery<long>("select count(Id) from `Order` where PopOrderId='" + or.Order.PopOrderId + "'").First();
                         if (count > 1)
                         {
-                            or.Error = new OrderDownloadError(or.Order.PopOrderId, or.Order.ReceiverName, "系统中存在2个及以上相同订单");
+                            or.Error = new OrderDownloadError(shop.Id, or.Order.PopOrderId, or.Order.ReceiverName, "系统中存在2个及以上相同订单", "");
                             or.Order = null;
                         }
                         else if (count < 1)
@@ -1125,12 +1125,12 @@ namespace ShopErp.Server.Service.Restful
                     }
                     catch (WebFaultException<ResponseBase> we)
                     {
-                        or.Error = new OrderDownloadError { Error = "保存或者更新订单错误：" + we.Detail.error, PopOrderId = or.Order.PopOrderId ?? "", ReceiverName = or.Order.ReceiverName ?? "", ShopId = shop.Id };
+                        or.Error = new OrderDownloadError(shop.Id, or.Order.PopOrderId, or.Order.ReceiverName, we.Detail.error, we.StackTrace);
                         or.Order = null;
                     }
                     catch (Exception ex)
                     {
-                        or.Error = new OrderDownloadError { Error = "保存或者更新订单错误：" + ex.Message, PopOrderId = or.Order.PopOrderId ?? "", ReceiverName = or.Order.ReceiverName ?? "", ShopId = shop.Id };
+                        or.Error = new OrderDownloadError(shop.Id, or.Order.PopOrderId, or.Order.ReceiverName, ex.Message, ex.StackTrace);
                         or.Order = null;
                     }
                 }

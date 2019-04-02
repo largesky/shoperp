@@ -13,16 +13,17 @@ namespace ShopErp.Domain.Pop
 
         public string Error { get; set; }
 
-        public OrderDownloadError()
-        {
-        }
+        public string StackTrace { get; set; }
 
+        public OrderDownloadError() { }
 
-        public OrderDownloadError(string popOrderId, string receiverName, string error)
+        public OrderDownloadError(long shopId, string popOrderId, string receiverName, string error, string stackTrace)
         {
+            this.ShopId = shopId;
             this.PopOrderId = popOrderId;
             this.ReceiverName = receiverName;
             this.Error = error;
+            this.StackTrace = stackTrace;
         }
 
         public override string ToString()

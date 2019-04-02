@@ -28,22 +28,13 @@ namespace ShopErp.App.Views.Orders
     {
         public PopPayType PayType { get; set; }
 
-        public List<Order> Orders
-        {
-            get
-            {
-                var ors = new List<Order>();
-                foreach (var v in this.orders.Values)
-                {
-                    ors.AddRange(v);
-                }
-                return ors;
-            }
-        }
+        public List<Order> Orders { get { return this.allOrders; } }
+
         private Task task = null;
         private bool hasError = false;
         private List<ShopDownloadViewModel> shopVms = new List<ShopDownloadViewModel>();
-        private Dictionary<Shop, List<Order>> orders = new Dictionary<Shop, List<Order>>();
+        private Dictionary<Shop, List<Order>> shopOrders = new Dictionary<Shop, List<Order>>();
+        private List<Order> allOrders = new List<Order>();
         private System.Collections.ObjectModel.ObservableCollection<OrderDownloadError> failOrders = new System.Collections.ObjectModel.ObservableCollection<OrderDownloadError>();
 
         public OrderDownloadWindow()
@@ -56,10 +47,11 @@ namespace ShopErp.App.Views.Orders
             try
             {
                 var shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas.Where(obj => obj.Enabled && obj.AppEnabled).ToArray();
-                shopVms.AddRange(shops.Select(obj => new ShopDownloadViewModel(obj)));
+
                 foreach (var shop in shops)
                 {
-                    orders.Add(shop, new List<Order>());
+                    shopVms.Add(new ShopDownloadViewModel(shop));
+                    shopOrders.Add(shop, new List<Order>());
                 }
                 this.lstShops.ItemsSource = this.shopVms;
                 this.dgvFailOrders.ItemsSource = failOrders;
@@ -82,10 +74,12 @@ namespace ShopErp.App.Views.Orders
 
         private void btnStart_Click(object sender, RoutedEventArgs e)
         {
+            //清空数据
             this.failOrders.Clear();
-            foreach (var v in orders)
+            this.allOrders.Clear();
+            foreach (var paire in shopOrders)
             {
-                v.Value.Clear();
+                paire.Value.Clear();
             }
             foreach (var v in shopVms)
             {
@@ -109,7 +103,7 @@ namespace ShopErp.App.Views.Orders
                 this.hasError = false;
                 this.Dispatcher.BeginInvoke(new Action(() => this.Title = "订单下载："));
                 this.Dispatcher.BeginInvoke(new Action(() => this.btnStart.IsEnabled = false));
-                Task.WaitAll(orders.Keys.Select(obj => Task.Factory.StartNew(() => DownloadOneShopTask(obj))).ToArray());
+                Task.WaitAll(shopOrders.Keys.Select(obj => Task.Factory.StartNew(() => DownloadOneShopTask(obj))).ToArray());
             }
             catch (Exception e)
             {
@@ -118,6 +112,10 @@ namespace ShopErp.App.Views.Orders
             }
             finally
             {
+                foreach (var v in shopOrders)
+                {
+                    this.allOrders.AddRange(v.Value);
+                }
                 this.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     try
@@ -160,7 +158,7 @@ namespace ShopErp.App.Views.Orders
 
         private void DownloadOneShopTask(Shop shop)
         {
-            int pageIndex = 0, pageSize = 20, downloaded = 0;
+            int pageIndex = 0, pageSize = 20;
             try
             {
                 var os = ServiceContainer.GetService<OrderService>();
@@ -173,26 +171,40 @@ namespace ShopErp.App.Views.Orders
                     {
                         break;
                     }
-                    this.orders[shop].AddRange(ret.Datas.Where(obj => obj.Order != null).Select(obj => obj.Order).ToArray());
-                    this.Dispatcher.BeginInvoke(new Action(() =>
+                    //添加下载结果
+                    foreach (var v in ret.Datas)
                     {
-                        foreach (var v in ret.Datas.Where(obj => obj.Error != null).Select(obj => obj.Error).ToArray())
+                        if (v.Error != null)
                         {
-                            failOrders.Add(v);
+                            this.Dispatcher.BeginInvoke(new Action(() =>
+                            {
+                                failOrders.Add(v.Error);
+                            }));
                         }
-                    }));
+                        else if (v.Order != null)
+                        {
+                            if (this.shopOrders[shop].FirstOrDefault(obj => obj.PopOrderId == v.Order.PopOrderId) == null)
+                            {
+                                this.shopOrders[shop].Add(v.Order);
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception("服务端返回有Error和Order都为空的对象");
+                        }
+                    }
+
                     this.hasError = this.hasError ? true : ret.Datas.Any(obj => obj.Error != null);
-                    downloaded += ret.Datas.Count;
-                    this.UpdateShopState(shop, ret.IsTotalValid, ret.Total, downloaded, string.Format("每页{0}条订单，已下载第{1}页", pageSize, pageIndex + 1), null);
+                    this.UpdateShopState(shop, ret.IsTotalValid, ret.Total, this.shopOrders[shop].Count, string.Format("每页{0}条订单，已下载第{1}页", pageSize, pageIndex + 1), null);
                     pageIndex++;
                 }
-                if (downloaded == 0)
+                if (this.shopOrders[shop].Count == 0)
                 {
                     this.UpdateShopState(shop, true, 1, 0, "没有订单", null);
                 }
                 else
                 {
-                    this.UpdateShopState(shop, true, 1, 1, "已成功下载订单：" + downloaded, null);
+                    this.UpdateShopState(shop, true, 1, 1, "已成功下载订单：" + this.shopOrders[shop].Count, null);
                 }
             }
             catch (Exception e)
@@ -206,14 +218,22 @@ namespace ShopErp.App.Views.Orders
             }
         }
 
-
         /// <summary>
-        /// 下载待发货订单
+        /// 获取已付款和已打印的订单，同时会调用接口下载订单
         /// </summary>
         /// <param name="payType">支付类型</param>
         /// <returns></returns>
         public static List<Order> DownloadOrder(PopPayType payType)
         {
+            var allShops = ServiceContainer.GetService<ShopService>().GetByAll().Datas.Where(obj => obj.Enabled).ToList();
+            var allAppEnabledShops = allShops.Where(obj => obj.AppEnabled).ToArray();
+            var allAppUnEnabledShops = allShops.Where(obj => obj.AppEnabled == false).ToArray();
+
+            if (allShops.Count < 1)
+            {
+                return new List<Order>();
+            }
+
             string mode = LocalConfigService.GetValue(SystemNames.CONFIG_ORDER_DOWNLOAD_MODE, "").Trim();
             if (mode.Equals("本地读取"))
             {
@@ -226,20 +246,27 @@ namespace ShopErp.App.Views.Orders
             {
                 return new List<Order>();
             }
-
-            var shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas.Where(obj => obj.Enabled).ToList();
-
-
             var onlineOrders = win.Orders.Where(obj => obj.PopPayType == payType).ToList();
 
-            //对于采用自动下载订单的店铺，需要再读取其手动创建的订单
-            var orders = ServiceContainer.GetService<OrderService>().GetPayedAndPrintedOrders(shops.Where(obj => win.shopVms.FirstOrDefault(o => o.Source.Id == obj.Id) != null).Select(obj => obj.Id).ToArray(), OrderCreateType.MANUAL, payType, 0, 0).Datas;
-            if (orders.Count > 0)
-                onlineOrders.AddRange(orders);
-            //对于没有自动下载的订单需要读取所有的订单
-            orders = ServiceContainer.GetService<OrderService>().GetPayedAndPrintedOrders(shops.Where(obj => win.shopVms.FirstOrDefault(o => o.Source.Id == obj.Id) == null).Select(obj => obj.Id).ToArray(), OrderCreateType.NONE, payType, 0, 0).Datas;
-            if (orders.Count > 0)
-                onlineOrders.AddRange(orders);
+            if(allAppEnabledShops.Length>0)
+            {
+                //对于采用自动下载订单的店铺，需要再读取其手动创建的订单
+                var orders = ServiceContainer.GetService<OrderService>().GetPayedAndPrintedOrders(allAppEnabledShops.Select(obj => obj.Id).ToArray(), OrderCreateType.MANUAL, payType, 0, 0).Datas;
+                if (orders.Count > 0)
+                {
+                    onlineOrders.AddRange(orders);
+                }
+            }
+
+            if(allAppUnEnabledShops.Length>0)
+            {
+                //对于没有自动下载的订单需要读取所有的订单
+                var orders = ServiceContainer.GetService<OrderService>().GetPayedAndPrintedOrders(allAppUnEnabledShops.Select(obj => obj.Id).ToArray(), OrderCreateType.NONE, payType, 0, 0).Datas;
+                if (orders.Count > 0)
+                {
+                    onlineOrders.AddRange(orders);
+                }
+            }
 
             return onlineOrders;
         }

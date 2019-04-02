@@ -356,7 +356,7 @@ namespace ShopErp.Server.Service.Pop.Taobao
             }
             catch (Exception ex)
             {
-                od.Error = new OrderDownloadError { Error = ex.Message, PopOrderId = popOrderId, ReceiverName = "", ShopId = shop.Id };
+                od.Error = new OrderDownloadError(shop.Id, popOrderId, "", ex.Message, ex.StackTrace);
             }
             return od;
         }

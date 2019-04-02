@@ -36,25 +36,23 @@ namespace ShopErp.App.Views.Delivery
             try
             {
                 this.orders.Clear();
-                var shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas.Where(obj => obj.Enabled).ToList();
+                var showShops = ServiceContainer.GetService<ShopService>().GetByAll().Datas.Where(obj => obj.Enabled && obj.AppEnabled).ToList();
+                var showShopIds = showShops.Select(obj => obj.Id).ToArray();
                 var downloadOrders = OrderDownloadWindow.DownloadOrder(PopPayType.ONLINE);
                 if (downloadOrders == null || downloadOrders.Count < 1)
                 {
                     return;
                 }
-                var orders = downloadOrders.Where(obj => string.IsNullOrWhiteSpace(obj.PopOrderId) == false).Select(obj => new OrderViewModel(obj)).OrderBy(obj => obj.Source.PopPayTime).ToArray();
+                var orders = downloadOrders.Where(obj => string.IsNullOrWhiteSpace(obj.PopOrderId) == false && showShopIds.Contains(obj.ShopId)).Select(obj => new OrderViewModel(obj)).OrderBy(obj => obj.Source.PopPayTime).ToArray();
                 if (orders.Length < 1)
                 {
-                    MessageBox.Show("没有找到待发货的订单");
                     return;
                 }
-                var showShops = shops.Where(obj => obj.PopType != PopType.TMALL && obj.PopType != PopType.TAOBAO).Select(obj => obj.Id).ToArray();
-                orders = orders.Where(obj => showShops.Contains(obj.Source.ShopId)).ToArray();
                 //分析
                 foreach (var order in orders)
                 {
                     var time = DateTime.Now.Subtract(order.Source.PopPayTime).TotalHours;
-                    var sTime = shops.FirstOrDefault(obj => obj.Id == order.Source.ShopId).ShippingHours;
+                    var sTime = showShops.FirstOrDefault(obj => obj.Id == order.Source.ShopId).ShippingHours;
                     if (time >= sTime)
                     {
                         order.Background = Brushes.Red;
