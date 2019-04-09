@@ -33,7 +33,6 @@ namespace ShopErp.App.Views.Delivery
         {
             var allNumbers = deliveryNumbers.Where(obj => string.IsNullOrWhiteSpace(obj) == false);
             List<string> eNumbers = new List<string>(); //电子面单没有段号，
-            List<long> nNumbers = new List<long>(); //普通面单
             List<long> dNumbers = new List<long>(); //货到付款订单
             foreach (var s in allNumbers)
             {
@@ -41,34 +40,15 @@ namespace ShopErp.App.Views.Delivery
                 {
                     dNumbers.Add(long.Parse(s.TrimStart('D', 'd')));
                 }
-                else if (s.Length == 12)
-                {
-                    nNumbers.Add(long.Parse(s));
-                }
                 else
                 {
                     eNumbers.Add(s);
                 }
             }
             //计算普通起始单号，个数
-            nNumbers.Sort();
             eNumbers.Sort();
             dNumbers.Sort();
-            var start = nNumbers.Select(obj => obj / 1000);
-            Dictionary<long, int> ccN = new Dictionary<long, int>();
-            foreach (var l in nNumbers.Distinct())
-            {
-                var lt = l / 1000;
-                if (ccN.ContainsKey(lt))
-                {
-                    ccN[lt]++;
-                }
-                else
-                {
-                    ccN[lt] = 1;
-                }
-            }
-            start = dNumbers.Select(obj => obj / 1000);
+            var start = dNumbers.Select(obj => obj / 1000);
             Dictionary<long, int> ccD = new Dictionary<long, int>();
             foreach (var l in dNumbers.Distinct())
             {
@@ -85,15 +65,8 @@ namespace ShopErp.App.Views.Delivery
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("文件内总数：" + allNumbers.Count());
             sb.AppendLine("有效总数：" + allNumbers.Distinct().Count());
-
-            sb.AppendLine(string.Format("普通面单现付:总数 {0},有效总数 {1}", nNumbers.Count, nNumbers.Distinct().Count()));
             sb.AppendLine(string.Format("普通面单代收:总数 {0},有效总数 {1}", dNumbers.Count, dNumbers.Distinct().Count()));
             sb.AppendLine(string.Format("电子面单:总数 {0},有效总数 {1}", eNumbers.Count, eNumbers.Distinct().Count()));
-            sb.AppendLine("普通面单现付明细:");
-            foreach (var c in ccN)
-            {
-                sb.AppendLine(c.Key + "001  个数:" + c.Value);
-            }
             sb.AppendLine("普通面单代收明细:");
             foreach (var c in ccD)
             {
