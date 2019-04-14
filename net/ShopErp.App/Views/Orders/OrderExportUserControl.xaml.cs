@@ -38,12 +38,6 @@ namespace ShopErp.App.Views.Orders
                     MessageBox.Show("没有任何数据");
                     return;
                 }
-                items = items.Where(obj => obj.IsChecked).ToArray();
-                if (items == null || items.Length < 1)
-                {
-                    MessageBox.Show("没有选择任何数据");
-                    return;
-                }
 
                 //进行检查，以防止有些订单没有标记到。根据收货人电话号码进行检查,先检查手机号，手机号为空的检查座机
                 List<string> failPhones = new List<string>();
@@ -57,6 +51,14 @@ namespace ShopErp.App.Views.Orders
                         return;
                     }
                 }
+
+                items = items.Where(obj => obj.IsChecked).ToArray();
+                if (items == null || items.Length < 1)
+                {
+                    MessageBox.Show("没有选择任何数据");
+                    return;
+                }
+
                 var shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas;
                 string[] columnsHeader = new string[] { "类型", "店铺", "付款时间", "商品信息", "快递单号", "备注", "姓名", "手机", "地址" };
                 Dictionary<string, string[][]> dicContents = new Dictionary<string, string[][]>();
@@ -116,7 +118,12 @@ namespace ShopErp.App.Views.Orders
                     MessageBox.Show("系统中没有任何店铺");
                     return;
                 }
+                var dcs = ServiceContainer.GetService<DeliveryCompanyService>().GetByAll().Datas.Where(obj => obj.PaperMark);
                 var orders = ServiceContainer.GetService<OrderService>().GetPayedAndPrintedOrders(shopids, ShopErp.Domain.OrderCreateType.NONE, ShopErp.Domain.PopPayType.None, 0, 0).Datas.OrderBy(obj => obj.PopPayTime).Select(obj => new OrderViewModel(obj)).ToArray();
+                foreach (var order in orders)
+                {
+                    order.IsChecked = order.Source.Type == ShopErp.Domain.OrderType.SHUA ? false : string.IsNullOrWhiteSpace(order.DeliveryCompany) || dcs.Any(obj => obj.PaperMark && obj.Name == order.DeliveryCompany);
+                }
                 this.dgOrders.ItemsSource = orders;
             }
             catch (Exception ex)
