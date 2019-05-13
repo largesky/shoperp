@@ -57,6 +57,7 @@ namespace ShopErp.App.Views.Shops
                     AppRefreshToken = "",
                     LastUpdateOperator = "",
                     AppEnabled = false,
+                    WuliuEnabled = false,
                 };
             }
             this.cbbPopTypes.SetSelectedEnum(this.Shop.PopType);

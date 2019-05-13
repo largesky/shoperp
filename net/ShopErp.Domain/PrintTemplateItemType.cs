@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ShopErp.App.Service.Print
+namespace ShopErp.Domain
 {
     public class PrintTemplateItemType
     {

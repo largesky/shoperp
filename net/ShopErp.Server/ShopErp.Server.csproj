@@ -173,6 +173,7 @@
     <Compile Include="Service\Restful\VendorService.cs" />
     <Compile Include="Service\Restful\WuliuNumberService.cs" />
     <Compile Include="Service\Restful\TaobaoKeywordService.cs" />
+    <Compile Include="Service\Restful\PrintTemplateService.cs" />
     <Compile Include="ShopErpService.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -194,7 +195,9 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <EmbeddedResource Include="Dao\NHibernateDao\hbm\DeliveryCompany.hbm.xml" />
+    <EmbeddedResource Include="Dao\NHibernateDao\hbm\DeliveryCompany.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Dao\NHibernateDao\hbm\DeliveryIn.hbm.xml" />
     <EmbeddedResource Include="Dao\NHibernateDao\hbm\DeliveryOut.hbm.xml" />
     <EmbeddedResource Include="Dao\NHibernateDao\hbm\DeliveryTemplate.hbm.xml" />

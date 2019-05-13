@@ -1,6 +1,7 @@
 ﻿using ShopErp.App.Domain;
 using ShopErp.App.Service.Print;
 using ShopErp.App.Views.Print;
+using ShopErp.Domain;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,7 +18,7 @@ namespace ShopErp.App.ViewModels
     {
         private BrushConverter converter = new BrushConverter();
 
-        public PrintTemplateItemViewModelForLine(Service.Print.PrintTemplate template)
+        public PrintTemplateItemViewModelForLine(PrintTemplate template)
             : base(template)
         {
             this.PropertyUI = new PrintTemplateItemLineUserControl();

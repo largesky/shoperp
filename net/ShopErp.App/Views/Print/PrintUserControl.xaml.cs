@@ -36,20 +36,11 @@ namespace ShopErp.App.Views.Print
     /// </summary>
     public partial class PrintUserControl : UserControl
     {
-        public static readonly DependencyProperty DeliveryPrintTemplatesProperty = DependencyProperty.Register("DeliveryPrintTemplates", typeof(ObservableCollection<Service.Print.PrintTemplate>), typeof(PrintUserControl));
-
         private OrderService orderService = ServiceContainer.GetService<OrderService>();
 
         private object printLock = new object();
 
-        public System.Collections.ObjectModel.ObservableCollection<Service.Print.PrintTemplate> DeliveryPrintTemplates
-        {
-            get { return (ObservableCollection<Service.Print.PrintTemplate>)this.GetValue(DeliveryPrintTemplatesProperty); }
-            set { this.SetValue(DeliveryPrintTemplatesProperty, value); }
-        }
-
-        private System.Collections.ObjectModel.ObservableCollection<PrintOrderPageViewModel> printOrderPages =
-            new ObservableCollection<PrintOrderPageViewModel>();
+        private System.Collections.ObjectModel.ObservableCollection<PrintOrderPageViewModel> printOrderPages = new ObservableCollection<PrintOrderPageViewModel>();
 
         private bool myLoaded = false;
 
@@ -62,17 +53,10 @@ namespace ShopErp.App.Views.Print
         {
             try
             {
-                //快递公司
-                if (DeliveryPrintTemplates == null)
+                foreach (var pp in printOrderPages)
                 {
-                    DeliveryPrintTemplates = new System.Collections.ObjectModel.ObservableCollection<Service.Print.PrintTemplate>();
+                    pp.LoadBarValue();
                 }
-                DeliveryPrintTemplates.Clear();
-                foreach (var item in FilePrintTemplateRepertory.GetAllN().Where(obj => obj.Type == Service.Print.PrintTemplate.TYPE_DELIVER))
-                {
-                    DeliveryPrintTemplates.Add(item);
-                }
-
                 if (this.myLoaded == true)
                 {
                     return;
@@ -125,6 +109,7 @@ namespace ShopErp.App.Views.Print
             {
                 var p = new PrintOrderPageViewModel(g.ToArray());
                 this.printOrderPages.Add(p);
+                p.LoadBarValue();
             }
         }
 
@@ -238,14 +223,12 @@ namespace ShopErp.App.Views.Print
                 {
                     throw new Exception("没有选择需要打印的订单");
                 }
-                if (selectedOrders.Where(obj => obj.PopType == PopType.TAOBAO || obj.PopType == PopType.TMALL).Any(obj => obj.ReceiverName.Contains("*") || (obj.ReceiverMobile != null && obj.ReceiverMobile.Contains("**")) || (obj.ReceiverPhone != null && obj.ReceiverPhone.Contains("**"))))
-                {
-                    throw new Exception("淘宝天猫有订单收货人信息处理于模糊状态");
-                }
+
                 if (selectedOrders.Select(obj => obj.PopPayType).Distinct().Count() != 1)
                 {
                     throw new Exception("不同支付类型的订单不能一起打印");
                 }
+
                 if (printTemplate == null)
                 {
                     throw new Exception("请选择相应的快递模板");
@@ -264,10 +247,10 @@ namespace ShopErp.App.Views.Print
                 {
                     throw new Exception("在线支付订单不能使用货到付款模板");
                 }
-                string printer = LocalConfigService.GetValue(SystemNames.CONFIG_PRINTER_DELIVERY_HOT, "");
+                string printer = printOrderPage.Printer;
                 if (string.IsNullOrWhiteSpace(printer))
                 {
-                    throw new Exception("系统中没有配置快递单打印机");
+                    throw new Exception("没有选择打印机");
                 }
                 string popMessage = string.Format("发货网点：{0}{1}打印模板：{2}{3}打印设备：{4}{5}打印数据：{6}", printOrderPage.WuliuBranch.Name, Environment.NewLine, printTemplate.Name, Environment.NewLine, printer, Environment.NewLine, selectedOrders.Count());
                 if (MessageBox.Show(popMessage, "确认打印", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
@@ -278,11 +261,11 @@ namespace ShopErp.App.Views.Print
                 goodsCol.SortDirection = null;
                 this.SortData(printOrderPage, dg, goodsCol);
                 WPFHelper.DoEvents();
-                printOrderPage.Print(printer);
+                printOrderPage.Print();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

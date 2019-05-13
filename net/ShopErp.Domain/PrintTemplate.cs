@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using ShopErp.Domain;
 
-namespace ShopErp.App.Service.Print
+namespace ShopErp.Domain
 {
     /// <summary>
     /// 所有打印模板的基类
     /// </summary>
-    [Serializable]
     public class PrintTemplate
     {
         public const string TYPE_DELIVER = "快递";
@@ -18,21 +17,29 @@ namespace ShopErp.App.Service.Print
 
 
         /// <summary>
-        /// 模板类型
+        /// 模板类型,是快递单，商品，还是退货
         /// </summary>
         public string Type { get; set; }
 
+        /// <summary>
+        /// 模板来源
+        /// </summary>
+        public PrintTemplateSourceType SourceType { get; set; }
 
         /// <summary>
         /// 模板名称
         /// </summary>
         public string Name { get; set; }
 
-
         /// <summary>
         ///快递公司
         /// </summary>
         public string DeliveryCompany { get; set; }
+
+        /// <summary>
+        /// 快递公司编码，如果是像菜鸟或者拼多多上下载的才有，这个值
+        /// </summary>
+        public string CpCode { get; set; }
 
         /// <summary>
         /// 打印机名称
@@ -65,19 +72,39 @@ namespace ShopErp.App.Service.Print
         public List<PrintTemplateItem> Items { get; private set; }
 
         /// <summary>
-        /// 背景图片
-        /// </summary>
-        public byte[] BackgroundImage { get; set; }
-
-        /// <summary>
         /// 其它图片
         /// </summary>
-        public Dictionary<string, byte[]> AttachFiles { get; set; }
+        public List<PrintTemplateAttachFiles> AttachFiles { get; set; }
+
+        /// <summary>
+        /// 模板编号
+        /// </summary>
+        public string StandTemplateId { get; set; }
+
+        /// <summary>
+        /// 标准模板URL
+        /// </summary>
+        public string StandTemplateUrl { get; set; }
+
+        /// <summary>
+        /// 如果是用户或者ISV自定义模板则有值
+        /// </summary>
+        public string UserOrIsvTemplateAreaId { get; set; }
+
+        /// <summary>
+        /// 如果是用户或者ISV自定义模板则有值
+        /// </summary>
+        public string UserOrIsvTemplateAreaUrl { get; set; }
+
+        /// <summary>
+        /// 是否是ISV提供的模板
+        /// </summary>
+        public bool IsIsv { get; set; }
 
         public PrintTemplate()
         {
             this.Items = new List<PrintTemplateItem>();
-            this.AttachFiles = new Dictionary<string, byte[]>();
+            this.AttachFiles = new List<PrintTemplateAttachFiles>();
         }
     }
 }

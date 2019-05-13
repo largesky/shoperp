@@ -30,14 +30,12 @@ namespace ShopErp.App.Views.Print
     public partial class PrintHistoryUserControl : UserControl
     {
         private PrintHistoryService printHistoryService = ServiceContainer.GetService<PrintHistoryService>();
-        public Service.Print.PrintTemplate[] AllCompanies { get; set; }
 
         private bool myLoaded = false;
 
         public PrintHistoryUserControl()
         {
             InitializeComponent();
-            this.AllCompanies = FilePrintTemplateRepertory.GetAllN();
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)

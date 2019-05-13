@@ -27,12 +27,17 @@ namespace ShopErp.App.Service.Restful
             return DoPost<DataCollectionResponse<WuliuNumber>>(para);
         }
 
-        public DataCollectionResponse<WuliuNumber> GenNormalWuliuNumber(string deliveryCompany, string current, string address)
+        public DataCollectionResponse<WuliuNumber> GenWuliuNumber(Shop shop, PrintTemplate wuliuTemplate, Order order, string[] wuliuIds, string packageId, string senderName, string senderPhone, string senderAddress)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
-            para["deliveryCompany"] = deliveryCompany;
-            para["current"] = current;
-            para["address"] = address;
+            para["shop"] = shop;
+            para["wuliuTemplate"] = wuliuTemplate;
+            para["order"] = order;
+            para["wuliuIds"] = wuliuIds;
+            para["packageId"] = packageId;
+            para["senderName"] = senderName;
+            para["senderPhone"] = senderPhone;
+            para["senderAddress"] = senderAddress;
             return DoPost<DataCollectionResponse<WuliuNumber>>(para);
         }
 
@@ -56,11 +61,10 @@ namespace ShopErp.App.Service.Restful
             return DoPost<ResponseBase>(para);
         }
 
-        public DataCollectionResponse<WuliuBranch> GetWuliuBrachs(string type, string code)
+        public DataCollectionResponse<WuliuBranch> GetWuliuBrachs(PrintTemplate wuliuTemplate)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
-            para["type"] = type;
-            para["code"] = code;
+            para["wuliuTemplate"] = wuliuTemplate;
             return DoPost<DataCollectionResponse<WuliuBranch>>(para);
         }
 

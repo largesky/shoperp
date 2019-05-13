@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 using ShopErp.App.Domain;
 using ShopErp.App.Service.Print;
 using ShopErp.App.Views.Print;
+using ShopErp.Domain;
 
 namespace ShopErp.App.ViewModels
 {
     class PrintTemplateItemViewModelForRouteCode : PrintTemplateItemViewModelCommon
     {
-        public PrintTemplateItemViewModelForRouteCode(Service.Print.PrintTemplate template) : base(template)
+        public PrintTemplateItemViewModelForRouteCode(PrintTemplate template) : base(template)
         {
             this.PropertyUI = new PrintTemplateItemViewModelRouteCodeUserControl();
             this.PropertyUI.DataContext = this;

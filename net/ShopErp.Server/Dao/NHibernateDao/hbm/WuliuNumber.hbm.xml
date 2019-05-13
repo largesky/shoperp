@@ -4,6 +4,9 @@
     <id name="Id" column="Id">
       <generator class="identity" />
     </id>
+    <property name="SourceType">
+      <column name="SourceType" sql-type="int" not-null="true" />
+    </property>
     <property name="WuliuIds">
       <column name="WuliuIds" sql-type="string" not-null="true" />
     </property>
@@ -30,27 +33,6 @@
     </property>
     <property name="DeliveryNumber">
       <column name="DeliveryNumber" sql-type="string" not-null="true" />
-    </property>
-    <property name="SortationName">
-      <column name="SortationName" sql-type="string" not-null="true" />
-    </property>
-    <property name="RouteCode">
-      <column name="RouteCode" sql-type="string" not-null="true" />
-    </property>
-    <property name="ConsolidationCode">
-      <column name="ConsolidationCode" sql-type="string" not-null="true" />
-    </property>
-    <property name="ConsolidationName">
-      <column name="ConsolidationName" sql-type="string" not-null="true" />
-    </property>
-    <property name="OriginCode">
-      <column name="OriginCode" sql-type="string" not-null="true" />
-    </property>
-    <property name="OriginName">
-      <column name="OriginName" sql-type="string" not-null="true" />
-    </property>
-    <property name="SortationNameAndRouteCode">
-      <column name="SortationNameAndRouteCode" sql-type="string" not-null="true" />
     </property>
   </class>
 </hibernate-mapping>

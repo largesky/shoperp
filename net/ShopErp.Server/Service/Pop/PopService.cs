@@ -10,6 +10,7 @@ using ShopErp.Server.Service.Pop.Pingduoduo;
 using ShopErp.Server.Service.Pop.Taobao;
 using ShopErp.Server.Service.Restful;
 using ShopErp.Domain.RestfulResponse.DomainResponse;
+using System.Xml.Linq;
 
 namespace ShopErp.Server.Service.Pop
 {
@@ -49,93 +50,155 @@ namespace ShopErp.Server.Service.Pop
             return first.OrderGetFunctionType;
         }
 
-        private T InvokeFuncWithRetry<T>(Shop shop, Func<T> func)
+        private void RefreshAccessToken(Shop shop)
+        {
+            var s = this.GetPop(shop.PopType).GetRefreshTokenInfo(shop);
+            var rs = ServiceContainer.GetService<ShopService>().Update(shop);
+        }
+
+        private T InvokeWithRefreshAccessToken<T>(Shop shop, Func<T> func)
         {
             try
             {
-                if (shop.AppEnabled == false)
-                {
-                    throw new Exception("店铺接口已禁用，无法调用相应接口操作");
-                }
                 return func();
             }
             catch (PopAccesstokenTimeOutException)
             {
-                var s = this.GetPop(shop.PopType).GetRefreshTokenInfo(shop);
-                var rs = ServiceContainer.GetService<ShopService>().Update(shop);
-                if (rs.error != ResponseBase.SUCCESS.error)
-                {
-                    throw new Exception("店铺：" + shop.Id + "授权到期，刷新新授权码的时候无法保存到系统");
-                }
+                RefreshAccessToken(shop);
                 return func();
             }
         }
 
-        private void InvokeActionWithRetry(Shop shop, Action action)
+        private void InvokeWithRefreshAccessToken(Shop shop, Action action)
         {
             try
             {
-                if (shop.AppEnabled == false)
-                {
-                    throw new Exception("店铺接口已禁用，无法调用相应接口操作");
-                }
                 action();
             }
             catch (PopAccesstokenTimeOutException)
             {
-                var s = this.GetPop(shop.PopType).GetRefreshTokenInfo(shop);
-                var rs = ServiceContainer.GetService<ShopService>().Update(shop);
-                if (rs.error != ResponseBase.SUCCESS.error)
-                {
-                    throw new Exception("店铺：" + shop.Id + "授权到期，刷新新授权码的时候无法保存到系统");
-                }
+                RefreshAccessToken(shop);
                 action();
             }
         }
 
         public OrderDownload GetOrder(Shop shop, string popOrderId)
         {
-            return this.InvokeFuncWithRetry<OrderDownload>(shop, () => this.GetPop(shop.PopType).GetOrder(shop, popOrderId));
+            if (shop.AppEnabled == false)
+            {
+                throw new Exception("店铺订单发货接口已禁用，无法调用相应接口操作");
+            }
+            return this.InvokeWithRefreshAccessToken<OrderDownload>(shop, () => this.GetPop(shop.PopType).GetOrder(shop, popOrderId));
         }
 
         public OrderDownloadCollectionResponse GetOrders(Shop shop, string state, int pageIndex, int pageSize)
         {
-            return this.InvokeFuncWithRetry<OrderDownloadCollectionResponse>(shop, () => GetPop(shop.PopType).GetOrders(shop, state, pageIndex, pageSize));
+            if (shop.AppEnabled == false)
+            {
+                throw new Exception("店铺订单发货接口已禁用，无法调用相应接口操作");
+            }
+            return this.InvokeWithRefreshAccessToken<OrderDownloadCollectionResponse>(shop, () => GetPop(shop.PopType).GetOrders(shop, state, pageIndex, pageSize));
         }
 
         public PopOrderState GetOrderState(Shop shop, string popOrderId)
         {
-            return this.InvokeFuncWithRetry<PopOrderState>(shop, () => GetPop(shop.PopType).GetOrderState(shop, popOrderId));
+            if (shop.AppEnabled == false)
+            {
+                throw new Exception("店铺订单发货接口已禁用，无法调用相应接口操作");
+            }
+            return this.InvokeWithRefreshAccessToken<PopOrderState>(shop, () => GetPop(shop.PopType).GetOrderState(shop, popOrderId));
         }
 
         public List<PopGoods> SearchPopGoods(Shop shop, PopGoodsState state, int pageIndex, int pageSize)
         {
-            return this.InvokeFuncWithRetry<List<PopGoods>>(shop, () => GetPop(shop.PopType).SearchPopGoods(shop, state, pageIndex, pageSize));
+            if (shop.AppEnabled == false)
+            {
+                throw new Exception("店铺订单发货接口已禁用，无法调用相应接口操作");
+            }
+            return this.InvokeWithRefreshAccessToken<List<PopGoods>>(shop, () => GetPop(shop.PopType).SearchPopGoods(shop, state, pageIndex, pageSize));
         }
 
         public void ModifyComment(Shop shop, string popOrderId, string comment, ColorFlag flag)
         {
-            this.InvokeActionWithRetry(shop, () => GetPop(shop.PopType).ModifyComment(shop, popOrderId, comment, flag));
+            if (shop.AppEnabled == false)
+            {
+                throw new Exception("店铺订单发货接口已禁用，无法调用相应接口操作");
+            }
+            this.InvokeWithRefreshAccessToken(shop, () => GetPop(shop.PopType).ModifyComment(shop, popOrderId, comment, flag));
         }
 
         public void MarkDelivery(Shop shop, string popOrderId, PopPayType payType, string deliveryCompany, string deliveryNumber)
         {
-            this.InvokeActionWithRetry(shop, () => GetPop(shop.PopType).MarkDelivery(shop, popOrderId, payType, deliveryCompany, deliveryNumber));
+            if (shop.AppEnabled == false)
+            {
+                throw new Exception("店铺订单发货接口已禁用，无法调用相应接口操作");
+            }
+            this.InvokeWithRefreshAccessToken(shop, () => GetPop(shop.PopType).MarkDelivery(shop, popOrderId, payType, deliveryCompany, deliveryNumber));
         }
 
         public PopDeliveryInfo GetDeliveryInfo(Shop shop, string popOrderId)
         {
-            return this.InvokeFuncWithRetry<PopDeliveryInfo>(shop, () => GetPop(shop.PopType).GetDeliveryInfo(shop, popOrderId));
+            if (shop.AppEnabled == false)
+            {
+                throw new Exception("店铺订单发货接口已禁用，无法调用相应接口操作");
+            }
+            return this.InvokeWithRefreshAccessToken<PopDeliveryInfo>(shop, () => GetPop(shop.PopType).GetDeliveryInfo(shop, popOrderId));
         }
 
         public string GetShopOauthUrl(Shop shop)
         {
+
             return this.GetPop(shop.PopType).GetShopOauthUrl(shop);
         }
 
         public Shop GetAcessTokenInfo(Shop shop, string code)
         {
             return this.GetPop(shop.PopType).GetAcessTokenInfo(shop, code);
+        }
+
+        public List<WuliuBranch> GetWuliuBranchs(Shop shop, string cpCode)
+        {
+            if (shop.WuliuEnabled == false)
+            {
+                throw new Exception("店铺电子面单接口已禁用，无法调用相应接口操作");
+            }
+            return this.InvokeWithRefreshAccessToken<List<WuliuBranch>>(shop, () => GetPop(shop.PopType).GetWuliuBranchs(shop, cpCode));
+        }
+
+        public List<PrintTemplate> GetAllWuliuTemplates(Shop shop)
+        {
+            if (shop.WuliuEnabled == false)
+            {
+                throw new Exception("店铺电子面单接口已禁用，无法调用相应接口操作");
+            }
+            return this.InvokeWithRefreshAccessToken<List<PrintTemplate>>(shop, () => GetPop(shop.PopType).GetAllWuliuTemplates(shop));
+        }
+
+        public WuliuNumber GetWuliuNumber(Shop shop, string popSellerNumberId, PrintTemplate wuliuTemplate, Order order, string[] wuliuIds, string packageId, string senderName, string senderPhone, string senderAddress)
+        {
+            if (shop.WuliuEnabled == false)
+            {
+                throw new Exception("店铺电子面单接口已禁用，无法调用相应接口操作");
+            }
+            return this.InvokeWithRefreshAccessToken<WuliuNumber>(shop, () => GetPop(shop.PopType).GetWuliuNumber(shop, popSellerNumberId, wuliuTemplate, order, wuliuIds, packageId, senderName, senderPhone, senderAddress));
+        }
+
+        public void UpdateWuliuNumber(Shop shop, PrintTemplate wuliuTemplate, Order order, WuliuNumber wuliuNumber)
+        {
+            if (shop.WuliuEnabled == false)
+            {
+                throw new Exception("店铺电子面单接口已禁用，无法调用相应接口操作");
+            }
+            this.InvokeWithRefreshAccessToken(shop, (Action)(() => GetPop(shop.PopType).GetAllWuliuTemplates(shop)));
+        }
+
+        public XDocument GetAddress(Shop shop)
+        {
+            if (shop.WuliuEnabled == false)
+            {
+                throw new Exception("店铺电子面单接口已禁用，无法调用相应接口操作");
+            }
+            return this.InvokeWithRefreshAccessToken<XDocument>(shop, () => GetPop(shop.PopType).GetAddress(shop));
         }
     }
 }

@@ -16,8 +16,14 @@
     <property name="PopMapTaobao">
       <column name="PopMapTaobao" sql-type="string" not-null="true" />
     </property>
+    <property name="PopMapTaobaoWuliu">
+      <column name="PopMapTaobaoWuliu" sql-type="string" not-null="true" />
+    </property>
     <property name="PopMapPingduoduo">
       <column name="PopMapPingduoduo" sql-type="string" not-null="true" />
+    </property>
+    <property name="PopMapPinduoduoWuliu">
+      <column name="PopMapPinduoduoWuliu" sql-type="string" not-null="true" />
     </property>
     <property name="PopMapJd">
       <column name="PopMapJd" sql-type="string" not-null="true" />

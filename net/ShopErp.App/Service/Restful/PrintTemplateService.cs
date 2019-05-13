@@ -1,68 +1,49 @@
-﻿using ShopErp.App.Domain;
+﻿using ShopErp.App.Utils;
+using ShopErp.Domain;
+using ShopErp.Domain.RestfulResponse;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
-using ShopErp.App.Utils;
-using ShopErp.App.Service.Print;
+using System.Threading.Tasks;
 
-namespace ShopErp.App.Views.Print
+namespace ShopErp.App.Service.Restful
 {
-    public class FilePrintTemplateRepertory
+    class PrintTemplateService : ServiceBase<PrintTemplate>
     {
         private const string FILE_EXTENSION = ".pt";
 
-        private const string FILE_EXTENSION_OLD = ".pto";
-
         private static readonly string DATA_DIR = EnvironmentDirHelper.DIR_DATA + @"\PrintTemplate";
 
-        static FilePrintTemplateRepertory()
+        static PrintTemplateService()
         {
             System.IO.Directory.CreateDirectory(DATA_DIR);
         }
 
-        public static PrintTemplate[] GetAll()
+        public static PrintTemplate[] GetAllLocal()
         {
             List<PrintTemplate> templates = new List<PrintTemplate>();
-
-            foreach (string file in Directory.GetFiles(DATA_DIR, "*" + FILE_EXTENSION_OLD))
-            {
-                using (Stream s = new FileStream(file, FileMode.Open, FileAccess.Read))
-                {
-                    BinaryFormatter bf = new BinaryFormatter();
-                    var template = bf.Deserialize(s) as PrintTemplate;
-                    templates.Add(template);
-                }
-            }
-
-            return templates.ToArray();
-        }
-
-        public static Service.Print.PrintTemplate[] GetAllN()
-        {
-            List<Service.Print.PrintTemplate> templates = new List<Service.Print.PrintTemplate>();
 
             foreach (string file in Directory.GetFiles(DATA_DIR, "*" + FILE_EXTENSION))
             {
                 string content = File.ReadAllText(file, Encoding.UTF8);
-                var template = Newtonsoft.Json.JsonConvert.DeserializeObject<Service.Print.PrintTemplate>(content);
+                var template = Newtonsoft.Json.JsonConvert.DeserializeObject<PrintTemplate>(content);
                 templates.Add(template);
             }
 
             return templates.ToArray();
         }
 
-        public static void InsertN(Service.Print.PrintTemplate deliveryTemplate)
+        public static void InsertLocal(PrintTemplate deliveryTemplate)
         {
-            var keys = deliveryTemplate.AttachFiles.Keys.ToArray();
+            var keys = deliveryTemplate.AttachFiles.Select(obj => obj.Name).ToArray();
             foreach (string key in keys)
             {
                 if (deliveryTemplate.Items.Any(obj => obj.Id.ToString() == key) == false)
                 {
-                    deliveryTemplate.AttachFiles.Remove(key);
+                    var af = deliveryTemplate.AttachFiles.FirstOrDefault(obj => obj.Name == key);
+                    deliveryTemplate.AttachFiles.Remove(af);
                 }
             }
             string file = System.IO.Path.Combine(DATA_DIR, deliveryTemplate.Name + FILE_EXTENSION);
@@ -74,7 +55,7 @@ namespace ShopErp.App.Views.Print
             }
         }
 
-        public static void UpdateN(Service.Print.PrintTemplate deliveryTemplate, string newName)
+        public static void UpdateLocal(PrintTemplate deliveryTemplate, string newName)
         {
             if (deliveryTemplate.Name.Equals(newName) == false)
             {
@@ -84,12 +65,12 @@ namespace ShopErp.App.Views.Print
                     throw new Exception("已有相同模板名称存在");
                 }
             }
-            DeleteN(deliveryTemplate.Name);
+            DeleteLocal(deliveryTemplate.Name);
             deliveryTemplate.Name = newName;
-            InsertN(deliveryTemplate);
+            InsertLocal(deliveryTemplate);
         }
 
-        public static void DeleteN(string name)
+        public static void DeleteLocal(string name)
         {
             var files = Directory.GetFiles(DATA_DIR, name + FILE_EXTENSION);
             if (files.Length > 0)
@@ -98,5 +79,12 @@ namespace ShopErp.App.Views.Print
             }
         }
 
+        public DataCollectionResponse<PrintTemplate> GetPrintTemplate(Shop shop)
+        {
+            Dictionary<string, object> para = new Dictionary<string, object>();
+            para["shop"] = shop;
+            var datas = DoPost<DataCollectionResponse<PrintTemplate>>(para);
+            return datas;
+        }
     }
 }

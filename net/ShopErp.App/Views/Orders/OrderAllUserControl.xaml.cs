@@ -27,6 +27,7 @@ using ShopErp.App.Utils;
 using ShopErp.Domain;
 using ShopErp.Domain.RestfulResponse;
 using ShopErp.App.Service.Print;
+using ShopErp.App.Service.Print.PrintDocument;
 
 namespace ShopErp.App.Views.Orders
 {
@@ -267,7 +268,7 @@ namespace ShopErp.App.Views.Orders
                 {
                     throw new Exception("绑定信息不是Order对象");
                 }
-                OrderModifyDeliveryInfoWindow win = new OrderModifyDeliveryInfoWindow { DeliveryCompany = order.DeliveryCompany, DeliveryNumber = order.DeliveryNumber};
+                OrderModifyDeliveryInfoWindow win = new OrderModifyDeliveryInfoWindow { DeliveryCompany = order.DeliveryCompany, DeliveryNumber = order.DeliveryNumber };
                 if (win.ShowDialog().Value == true)
                 {
                     this.orderService.UpdateDelivery(order.Id, 0, win.DeliveryCompany, win.DeliveryNumber, DateTime.Now);
@@ -541,16 +542,14 @@ namespace ShopErp.App.Views.Orders
                 {
                     throw new Exception("系统中没有配置商品模板不能打印");
                 }
-                var template = Print.FilePrintTemplateRepertory.GetAllN().FirstOrDefault(obj => obj.Type == Service.Print.PrintTemplate.TYPE_GOODS && obj.Name == goodsTemplate);
+                var template = PrintTemplateService.GetAllLocal().FirstOrDefault(obj => obj.Type == PrintTemplate.TYPE_GOODS && obj.Name == goodsTemplate);
                 if (template == null)
                 {
                     throw new Exception("系统中配置的商品模板:" + goodsTemplate + "不存在，或者类型不对");
                 }
                 var gpd = new GoodsPrintDocument();
-                gpd.GenPages(new OrderGoods[] { orderGoods }, template);
                 string printer = LocalConfigService.GetValue(SystemNames.CONFIG_PRINTER_GOODS_BARCODE, "");
-                var p = PrintUtil.GetPrinter(printer);
-                p.PrintDocument(gpd, "商品");
+                gpd.StartPrint(new OrderGoods[] { orderGoods }, printer, false, template);
             }
             catch (Exception ex)
             {

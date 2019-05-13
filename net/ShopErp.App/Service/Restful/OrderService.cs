@@ -66,6 +66,32 @@ namespace ShopErp.App.Service.Restful
             DoPost<ResponseBase>(para);
         }
 
+        /// <summary>
+        /// 查询订单
+        /// </summary>
+        /// <param name="popBuyerId">买家昵称，模糊匹配，为空或者NULL表示不查询</param>
+        /// <param name="receiverPhone">买家座机，模糊匹配，为空或者NULL表示不查询</param>
+        /// <param name="receiverMobile">买家手机，模糊匹配，为空或者NULL表示不查询</param>
+        /// <param name="receiverName">买家姓名，模糊匹配，为空或者NULL表示不查询</param>
+        /// <param name="receiverAddress">买家地址，模糊匹配，为空或者NULL表示不查询</param>
+        /// <param name="timeType">时间类型：0 PopCreateTime 平台创建时间，1 PopPayTime 平台付款时间，2 PopDeliveryTime 平台发货时间，3 CreateTime 本地创建时间，4 PrintTime 本地打印时间，5 DeliveryTime 本地发货时间，6 CloseTime 本地关闭时间</param>
+        /// <param name="startTime">开始时间，如果为1970-01-01 表示不使用</param>
+        /// <param name="endTime">结束时间，如果为1970-01-01 表示不使用</param>
+        /// <param name="deliveryCompany">快递公司，精确匹配</param>
+        /// <param name="deliveryNumber">快递单号，精确匹配</param>
+        /// <param name="state">订单状态，NONE表示不查询</param>
+        /// <param name="payType">付款类型，NONE表示不查询</param>
+        /// <param name="vendorName">厂家名称，模糊匹配，为空或者NULL表示不查询</param>
+        /// <param name="number">货号，模糊匹配，为空或者NULL表示不查询</param>
+        /// <param name="ofs">颜色旗帜，如果为空NULL或者空数组，表示不查询</param>
+        /// <param name="parseResult">解析结果，-1表示不查询</param>
+        /// <param name="comment">卖家备注，模糊匹配，为空或者NULL表示不查询</param>
+        /// <param name="shopId">店铺编号，0表示查询</param>
+        /// <param name="createType">创建类型，NONE表示不查询</param>
+        /// <param name="type">订单类型， NONE表示不查询</param>
+        /// <param name="pageIndex">页下标，从0开始</param>
+        /// <param name="pageSize">每页数据大小，0表示不分页</param>
+        /// <returns></returns>
         public DataCollectionResponse<Order> GetByAll(string popBuyerId, string receiverPhone, string receiverMobile,
             string receiverName, string receiverAddress,
             int timeType, DateTime startTime, DateTime endTime, string deliveryCompany, string deliveryNumber,

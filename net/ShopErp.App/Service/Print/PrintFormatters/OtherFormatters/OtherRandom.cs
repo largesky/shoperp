@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using ShopErp.App.Domain;
+using ShopErp.Domain;
 
 namespace ShopErp.App.Service.Print.OtherFormatters
 {

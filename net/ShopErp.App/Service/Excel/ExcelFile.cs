@@ -12,6 +12,83 @@ namespace ShopErp.App.Service.Excel
     {
         private Dictionary<string, string[][]> sheetDatas = new Dictionary<string, string[][]>();
 
+
+        /// <summary>
+        /// 将数字列如 3 转换成 EXCEL 列 C
+        /// </summary>
+        /// <param name="columnNumber"></param>
+        /// <returns></returns>
+        public static string GetExcelColumnName(int columnNumber)
+        {
+            int dividend = columnNumber;
+            string columnName = String.Empty;
+            int modulo;
+
+            if (columnNumber < 1)
+            {
+                throw new ArgumentException("columnNumber 不能小于1");
+            }
+
+            while (dividend > 0)
+            {
+                modulo = (dividend - 1) % 26;
+                columnName = Convert.ToChar(65 + modulo).ToString() + columnName;
+                dividend = (int)((dividend - modulo) / 26);
+            }
+
+            return columnName;
+        }
+
+        /// <summary>
+        /// 将 EXCEL 列 C 转换成 数字列 3 
+        /// </summary>
+        /// <param name="columnNumber"></param>
+        /// <returns></returns>
+        public static int GetExcelColumnIndex(string colName)
+        {
+            if (string.IsNullOrWhiteSpace(colName))
+            {
+                throw new ArgumentException("colName不能为空");
+            }
+
+            var colIndex = 0;
+            for (int ind = 0, pow = colName.Count() - 1; ind < colName.Count(); ++ind, --pow)
+            {
+                var cVal = Convert.ToInt32(colName[ind]) - 64; //col A is index 1
+                colIndex += cVal * ((int)Math.Pow(26, pow));
+            }
+            return colIndex;
+        }
+
+        /// <summary>
+        /// 搜索指定列下标 
+        /// </summary>
+        /// <param name="datas"></param>
+        /// <param name="conent"></param>
+        /// <param name="fullMatch"></param>
+        /// <returns></returns>
+        public static int GetIndex(string[] datas, string conent, bool fullMatch)
+        {
+            for (int i = 0; i < datas.Length; i++)
+            {
+                if (fullMatch)
+                {
+                    if (datas[i].Equals(conent, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return i;
+                    }
+                }
+                else
+                {
+                    if (datas[i].IndexOf(conent, StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        return i;
+                    }
+                }
+            }
+            return -1;
+        }
+
         /// <summary>
         /// 获取某个表格的所有数据
         /// </summary>
@@ -35,42 +112,6 @@ namespace ShopErp.App.Service.Excel
             return this.sheetDatas.First().Value;
         }
 
-        public static string GetExcelColumnName(int columnNumber)
-        {
-            int dividend = columnNumber;
-            string columnName = String.Empty;
-            int modulo;
-
-            if (columnNumber < 1)
-            {
-                throw new ArgumentException("columnNumber 不能小于1");
-            }
-
-            while (dividend > 0)
-            {
-                modulo = (dividend - 1) % 26;
-                columnName = Convert.ToChar(65 + modulo).ToString() + columnName;
-                dividend = (int)((dividend - modulo) / 26);
-            }
-
-            return columnName;
-        }
-
-        public static int GetExcelColumnIndex(string colName)
-        {
-            if (string.IsNullOrWhiteSpace(colName))
-            {
-                throw new ArgumentException("colName不能为空");
-            }
-
-            var colIndex = 0;
-            for (int ind = 0, pow = colName.Count() - 1; ind < colName.Count(); ++ind, --pow)
-            {
-                var cVal = Convert.ToInt32(colName[ind]) - 64; //col A is index 1
-                colIndex += cVal * ((int)Math.Pow(26, pow));
-            }
-            return colIndex;
-        }
 
         /// <summary>
         /// 打开一个文件

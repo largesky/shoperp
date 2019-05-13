@@ -58,5 +58,8 @@
     <property name="AppEnabled">
       <column name="AppEnabled" sql-type="boolean" not-null="true" />
     </property>
+    <property name="WuliuEnabled">
+      <column name="WuliuEnabled" sql-type="boolean" not-null="true" />
+    </property>
   </class>
 </hibernate-mapping>

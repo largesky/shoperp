@@ -1,6 +1,7 @@
 ﻿using ShopErp.App.Domain;
 using ShopErp.App.Service.Print;
 using ShopErp.App.Views.Print;
+using ShopErp.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace ShopErp.App.ViewModels
 {
     class PrintTemplateItemViewModelForReciverInfoAll : PrintTemplateItemViewModelCommon
     {
-        public PrintTemplateItemViewModelForReciverInfoAll(Service.Print.PrintTemplate template) : base(template)
+        public PrintTemplateItemViewModelForReciverInfoAll(PrintTemplate template) : base(template)
         {
             this.PropertyUI = new PrintTemplateItemReciverPhoneUserControl();
             this.PropertyUI.DataContext = this;

@@ -34,8 +34,6 @@
                 <DataGridTextColumn Header="包裹号" Binding="{Binding PackageId}"/>
                 <DataGridTextColumn Header="快递公司" Binding="{Binding DeliveryCompany}"/>
                 <DataGridTextColumn Header="快递单号" Binding="{Binding DeliveryNumber}"/>
-                <DataGridTextColumn Header="大头笔" Binding="{Binding SortationName}"/>
-                <DataGridTextColumn Header="三段码" Binding="{Binding RouteCode}"/>
                 <DataGridTextColumn Header="收货人姓名" Binding="{Binding ReceiverName}"/>
                 <DataGridTextColumn Header="收货人电话" Binding="{Binding ReceiverPhone}"/>
                 <DataGridTextColumn Header="收货人手机" Binding="{Binding ReceiverMobile}"/>

@@ -1,4 +1,5 @@
 ﻿using ShopErp.App.Views.Print;
+using ShopErp.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace ShopErp.App.ViewModels
 {
     public class PrintTemplateItemViewModelForGoodsInfoAndComment : PrintTemplateItemViewModelCommon
     {
-        public PrintTemplateItemViewModelForGoodsInfoAndComment(Service.Print.PrintTemplate template) : base(template)
+        public PrintTemplateItemViewModelForGoodsInfoAndComment(PrintTemplate template) : base(template)
         {
             this.PropertyUI = new PrintTemplateItemViewModelGoodsInfoAndCommentUserControl();
             this.PropertyUI.DataContext = this;

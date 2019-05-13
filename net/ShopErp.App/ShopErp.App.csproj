@@ -144,6 +144,7 @@
     <Compile Include="Converters\VendorNameFormatConverter.cs" />
     <Compile Include="Converters\VideoTypeConverter.cs" />
     <Compile Include="Converters\WebUrlImageConverter.cs" />
+    <Compile Include="Converters\WuliuTemplateConverter.cs" />
     <Compile Include="Device\IDevice.cs" />
     <Compile Include="Device\IDeviceConfigUI.cs" />
     <Compile Include="Device\Kunhong\KunhongConfigUI.xaml.cs">
@@ -152,25 +153,21 @@
     <Compile Include="Device\Kunhong\KunhongDevice.cs" />
     <Compile Include="Domain\GoodsCountPrintDocument.cs" />
     <Compile Include="Domain\GoodsCountPrintDocument2.cs" />
-    <Compile Include="Domain\GoodsPrintDocument.cs" />
+    <Compile Include="Service\Print\PrintDocument\OrderReturnPrintDocument.cs" />
+    <Compile Include="Service\Print\PrintDocument\GoodsPrintDocument.cs" />
     <Compile Include="MenuConfig.cs" />
     <Compile Include="Service\Excel\ExcelFile.cs" />
-    <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\CainiaoPrintDocumentPrintRequest.cs" />
-    <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\CainiaoPrintDocumentPrintRequestTask.cs" />
-    <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\CainiaoPrintDocumentPrintRequestTaskDocument.cs" />
-    <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\CainiaoPrintDocumentPrintRequestTaskDocumentCotent.cs" />
     <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\GDIDeliveryPrintDocument.cs" />
+    <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\TaobaoCainiao\CainiaoPrintDocumentRequestPrint.cs" />
+    <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\TaobaoCainiao\CainiaoPrintDocumentRequestPrintTask.cs" />
+    <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\TaobaoCainiao\CainiaoPrintDocumentRequestPrintTaskDocument.cs" />
+    <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\TaobaoCainiao\CainiaoPrintDocumentRequestPrintTaskDocumentCotent.cs" />
     <Compile Include="Domain\OrderReturnOutPrintDocument.cs" />
-    <Compile Include="Domain\OrderReturnPrintDocument.cs" />
     <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\DeliveryPrintDocument.cs" />
-    <Compile Include="Service\Print\PrintDocument\FixedPrintDocument.cs" />
-    <Compile Include="Service\Print\PrintFormatters\DeliveryFormatters\DeliveryConsolidationnName.cs" />
-    <Compile Include="Service\Print\PrintInfo.cs" />
-    <Compile Include="Service\Print\PrintTemplate.cs" />
-    <Compile Include="Service\Print\PrintTemplateItem.cs" />
-    <Compile Include="Service\Print\PrintTemplateItemType.cs" />
-    <Compile Include="Service\Print\PrintTemplateItemTypeGroup.cs" />
-    <Compile Include="Service\Print\PrintTemplateItemTypeGroupAttribute.cs" />
+    <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\TaobaoCainiao\CainiaoPrintDocumentRequest.cs" />
+    <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\TaobaoCainiao\CainiaoPrintDocumentRequestPrintTaskDocumentSelfCotent.cs" />
+    <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\TaobaoCainiao\CainiaoPrintDocumentResponse.cs" />
+    <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\TaobaoCainiao\CainiaoPrintDocumentResponsePrint.cs" />
     <Compile Include="Log\Logger.cs" />
     <Compile Include="Service\Delivery\DeliveryService.cs" />
     <Compile Include="Service\Delivery\DeliveryTransation.cs" />
@@ -184,15 +181,10 @@
     <Compile Include="Service\Net\MsHttpRestful.cs" />
     <Compile Include="Service\Net\OrderDeliveryInfoChangedMessage.cs" />
     <Compile Include="Service\Net\OrderPopSellerCommentChangedMessage.cs" />
-    <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\CainiaoPrintDocument.cs" />
-    <Compile Include="Service\Print\PrintFormatters\DeliveryFormatters\DeliveryRouteCode.cs" />
-    <Compile Include="Service\Print\PrintFormatters\DeliveryFormatters\DeliverySortationName.cs" />
-    <Compile Include="Service\Print\PrintFormatters\DeliveryFormatters\DeliverySortationNameAndRouteCode.cs" />
+    <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\TaobaoCainiao\CainiaoPrintDocument.cs" />
     <Compile Include="Service\Print\PrintFormatters\DeliveryFormatters\DeliveryFormatterManager.cs" />
     <Compile Include="Service\Print\PrintFormatters\DeliveryFormatters\DeliveryNumberBarcode.cs" />
     <Compile Include="Service\Print\PrintFormatters\DeliveryFormatters\DeliveryNumberText.cs" />
-    <Compile Include="Service\Print\PrintFormatters\DeliveryFormatters\DeliveryConsolidationCode.cs" />
-    <Compile Include="Service\Print\PrintFormatters\DeliveryFormatters\DeliveryConsolidationCodeBarCode.cs" />
     <Compile Include="Service\Print\PrintFormatters\DeliveryFormatters\IDeliveryFormatter.cs" />
     <Compile Include="Service\Print\PrintFormatters\GoodsFormatters\GoodsColor.cs" />
     <Compile Include="Service\Print\PrintFormatters\GoodsFormatters\GoodsFormatterManager.cs" />
@@ -228,7 +220,7 @@
     <Compile Include="Service\Print\PrintFormatters\PrintInfoFormatters\PrintDatetime.cs" />
     <Compile Include="Service\Print\PrintFormatters\PrintInfoFormatters\PrintFormatterManager.cs" />
     <Compile Include="Service\Print\PrintFormatters\PrintInfoFormatters\PrintPageNumber.cs" />
-    <Compile Include="Service\Print\PrintDocument\PrintDocumentBase.cs" />
+    <Compile Include="Service\Print\PrintDocument\GdiPrintDocumentBase.cs" />
     <Compile Include="Service\Print\PrintFormatters\ReturnFormatters\IReturnFormatter.cs" />
     <Compile Include="Service\Print\PrintFormatters\ReturnFormatters\ReturnFormatterManager.cs" />
     <Compile Include="Service\Print\PrintFormatters\ReturnFormatters\ReturnGoodsInfo.cs" />
@@ -270,6 +262,7 @@
     <Compile Include="Service\Restful\TaobaoKeywordService.cs" />
     <Compile Include="Service\Restful\VendorService.cs" />
     <Compile Include="Service\Restful\WuliuNumberService.cs" />
+    <Compile Include="Service\Restful\PrintTemplateService.cs" />
     <Compile Include="Service\ScriptManager.cs" />
     <Compile Include="Service\Speaker.cs" />
     <Compile Include="Service\Spider\Go2\Go2Spider.cs" />
@@ -332,10 +325,16 @@
     <Compile Include="Views\DataCenter\SaleUserControl.xaml.cs">
       <DependentUpon>SaleUserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Orders\OrderBatchEditUserControl.xaml.cs">
+      <DependentUpon>OrderBatchEditUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Orders\OrderExportUserControl.xaml.cs">
       <DependentUpon>OrderExportUserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Orders\TaobaoQueryOrdersResponseOrderOrderGoodsOperation.cs" />
+    <Compile Include="Views\Orders\OrderImportUserControl.xaml.cs">
+      <DependentUpon>OrderImportUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrdersResponseOrderOrderGoodsOperation.cs" />
     <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOrderOrderGoodsStatusStatusInfo.cs" />
     <Compile Include="Views\Taobao\TaobaoKeywordCountUserControl.xaml.cs">
       <DependentUpon>TaobaoKeywordCountUserControl.xaml</DependentUpon>
@@ -557,7 +556,6 @@
       <DependentUpon>PageBarUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageBar\PageChangeEventArgs.cs" />
-    <Compile Include="Views\Print\FilePrintTemplateRepertory.cs" />
     <Compile Include="Views\Orders\GoodsCountSortByDoor.cs" />
     <Compile Include="Views\Orders\GoodsCountSortByStreet.cs" />
     <Compile Include="Views\Orders\GoodsCountUserControl.xaml.cs">
@@ -638,7 +636,6 @@
       <DependentUpon>VendorUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\WPFHelper.cs" />
-    <Compile Include="Win32\Monitor.cs" />
     <Page Include="Device\Kunhong\KunhongConfigUI.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -675,7 +672,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Orders\OrderBatchEditUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Orders\OrderExportUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Orders\OrderImportUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

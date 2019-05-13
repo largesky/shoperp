@@ -115,6 +115,10 @@ namespace ShopErp.Server.Service.Restful
                 {
                     url = ps.GetShopOauthUrl(shop);
                 }
+                else if (shop.PopType == PopType.TAOBAO || shop.PopType == PopType.TMALL)
+                {
+                    url = ps.GetShopOauthUrl(shop);
+                }
                 else
                 {
                     throw new Exception("自动授权接口当前不支持该平台");

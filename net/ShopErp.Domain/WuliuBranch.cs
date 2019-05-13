@@ -42,7 +42,20 @@ namespace ShopErp.Domain
 
         public override string ToString()
         {
-            return string.Format("{0}-{1}-{2}", Type, Quantity, SenderAddress);
+            string[] adds = SenderAddress.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string add = "";
+            if (adds.Length >= 3)
+            {
+                for (int i = 2; i < adds.Length; i++)
+                {
+                    add += adds[i] + " ";
+                }
+            }
+            if (string.IsNullOrWhiteSpace(add))
+            {
+                add = SenderAddress;
+            }
+            return string.Format("{0}-{1}-{2}", Type, Quantity, add.Trim());
         }
     }
 }

@@ -22,6 +22,7 @@ using ShopErp.App.Service;
 using ShopErp.App.Service.Restful;
 using ShopErp.Domain;
 using ShopErp.App.Service.Print;
+using ShopErp.App.Service.Print.PrintDocument;
 
 namespace ShopErp.App.Views.Orders
 {
@@ -219,25 +220,19 @@ namespace ShopErp.App.Views.Orders
                     return;
                 }
                 OrderReturnViewModel vm = fe.DataContext as OrderReturnViewModel;
-
                 if ((int)vm.Source.State < (int)OrderReturnState.WAITPROCESS)
                 {
                     MessageBox.Show("订单没有处理，不能被打印");
                     return;
                 }
-
                 OrderReturnPrintDocument orp = new OrderReturnPrintDocument();
-                var printTemplate = Print.FilePrintTemplateRepertory.GetAllN().FirstOrDefault(obj => obj.Type == Service.Print.PrintTemplate.TYPE_RETURN);
+                var printTemplate = PrintTemplateService.GetAllLocal().FirstOrDefault(obj => obj.Type == PrintTemplate.TYPE_RETURN);
                 if (printTemplate == null)
                 {
                     throw new Exception("未找到退货模板");
                 }
-                orp.GenPages(new OrderReturn[] { vm.Source }, printTemplate);
-                //获取打印机对象
                 string printer = LocalConfigService.GetValue(SystemNames.CONFIG_PRINTER_RETURN_BARCODE);
-                PrintDialog pd = PrintUtil.GetPrinter(printer);
-                pd.PrintTicket.PageMediaSize = new PageMediaSize(printTemplate.Width, printTemplate.Height);
-                pd.PrintDocument(orp, "退货");
+                orp.StartPrint(new OrderReturn[] { vm.Source }, printer, false, printTemplate);
             }
             catch (Exception ex)
             {

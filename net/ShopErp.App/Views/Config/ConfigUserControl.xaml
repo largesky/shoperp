@@ -80,18 +80,16 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="200" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Row="0" Grid.Column="0" Margin="3" Text="纸质快递:" VerticalAlignment="Center" />
-                <ComboBox Grid.Row="0" Grid.Column="1" Margin="3" Name="cbbPrinterDeliveryNormal" />
-                <TextBlock Grid.Row="1" Grid.Column="0" Margin="3" Text="热敏快递:" VerticalAlignment="Center" />
-                <ComboBox Grid.Row="1" Grid.Column="1" Margin="3" Name="cbbPrinterDeliveryHot" />
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="退货条码:" Margin="3" VerticalAlignment="Center" />
-                <ComboBox Grid.Row="2" Grid.Column="1" x:Name="cbbPrinterReturnBarCode" Margin="3"
+                <TextBlock Grid.Row="0" Grid.Column="0" Margin="3" Text="热敏快递:" VerticalAlignment="Center" />
+                <ComboBox Grid.Row="0" Grid.Column="1" Margin="3" Name="cbbPrinterDeliveryHot" />
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="退货条码:" Margin="3" VerticalAlignment="Center" />
+                <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbbPrinterReturnBarCode" Margin="3"
                           VerticalAlignment="Center" />
-                <TextBlock Grid.Row="3" Grid.Column="0" Text="商品条码:" Margin="3" VerticalAlignment="Center" />
-                <ComboBox Grid.Row="3" Grid.Column="1" x:Name="cbbPrinterGoodsBarCode" Margin="3"
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="商品条码:" Margin="3" VerticalAlignment="Center" />
+                <ComboBox Grid.Row="2" Grid.Column="1" x:Name="cbbPrinterGoodsBarCode" Margin="3"
                           VerticalAlignment="Center" />
-                <TextBlock Grid.Row="4" Grid.Column="0" Margin="3" Text="A4 清单:" VerticalAlignment="Center" />
-                <ComboBox Grid.Row="4" Grid.Column="1" Margin="3" Name="cbbPrinterA4" />
+                <TextBlock Grid.Row="3" Grid.Column="0" Margin="3" Text="A4 清单:" VerticalAlignment="Center" />
+                <ComboBox Grid.Row="3" Grid.Column="1" Margin="3" Name="cbbPrinterA4" />
             </Grid>
         </GroupBox>
 
@@ -138,81 +136,23 @@
             </Grid>
         </GroupBox>
 
-        <GroupBox Header="菜鸟接口" Grid.Row="1" Grid.Column="2">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="200" />
-                </Grid.ColumnDefinitions>
-
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="App Key:" Margin="3" VerticalAlignment="Center" />
-                <TextBox Grid.Row="0" Grid.Column="1" x:Name="tbAppKey" Margin="3" VerticalAlignment="Center" />
-
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="App Secret:" Margin="3" VerticalAlignment="Center" />
-                <TextBox Grid.Row="1" Grid.Column="1" x:Name="tbAppSecret" Margin="3" VerticalAlignment="Center" />
-
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="App Session:" Margin="3" VerticalAlignment="Center" />
-                <TextBox Grid.Row="2" Grid.Column="1" x:Name="tbAppSession" Margin="3" VerticalAlignment="Center" />
-
-                <TextBlock Grid.Row="3" Grid.Column="0" Text="App Refresh Session:" Margin="3" VerticalAlignment="Center" />
-                <TextBox Grid.Row="3" Grid.Column="1" x:Name="tbAppRefreshSession" Margin="3" VerticalAlignment="Center" />
-
-                <TextBlock Grid.Row="4" Grid.Column="0" Text="Seller Number Id:" Margin="3" VerticalAlignment="Center" />
-                <TextBox Grid.Row="4" Grid.Column="1" x:Name="tbSellerNumberId" Margin="3" VerticalAlignment="Center" />
-               
-                <Button Grid.Row="5" Grid.Column="1" x:Name="btnGoOauth" Margin="3" VerticalAlignment="Center" Content="前往授权" Click="btnGoOauth_Click"/>
-            </Grid>
-        </GroupBox>
-
         <GroupBox Header="菜鸟接口发货人信息" Grid.Row="1" Grid.Column="3">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="200" />
                 </Grid.ColumnDefinitions>
-
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="发货人姓名:" Margin="3" VerticalAlignment="Center" />
                 <TextBox Grid.Row="0" Grid.Column="1" x:Name="tbSenderName" Margin="3" VerticalAlignment="Center" />
-
                 <TextBlock Grid.Row="1" Grid.Column="0" Text="发货人电话:" Margin="3" VerticalAlignment="Center" />
                 <TextBox Grid.Row="1" Grid.Column="1" x:Name="tbSenderPhone" Margin="3" VerticalAlignment="Center" />
-
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="发货人地址" Margin="3" VerticalAlignment="Center" />
-                <TextBox Grid.Row="2" Grid.Column="1" x:Name="tbSenderAddress" Margin="3" VerticalAlignment="Center" />
-
             </Grid>
         </GroupBox>
-
         <Button x:Name="btnSave" Grid.Row="3" Content="保存" Width="60" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnSave_Click" Margin="3" />
-
-        <Button x:Name="btnUpdateAddressArea" Grid.Row="3" Grid.Column="1" Content="更新系统地址模板" VerticalAlignment="Center" Click="btnUpdateAddressArea_Click" Margin="3"/>
-
-
+        <Button x:Name="btnUpdateAddressArea" Grid.Row="3" Grid.Column="1" Content="更新淘宝系统地址模板" VerticalAlignment="Center" Click="btnUpdateAddressArea_Click" Margin="3"/>
     </Grid>
 </UserControl>

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ShopErp.App.Views.Shops"
         mc:Ignorable="d"
-        Title="ShopEditWindow" Height="400" Width="400" SizeToContent="Height" Loaded="Window_Loaded">
+        Title="ShopEditWindow" Height="400" Width="600" SizeToContent="Height" Loaded="Window_Loaded">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -29,48 +29,43 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Grid.Column="0" Text="平台类型:" Margin="3" VerticalAlignment="Center" />
         <ComboBox Grid.Row="0" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="cbbPopTypes" />
         <TextBlock Grid.Row="1" Grid.Column="0" Text="卖家账号:" Margin="3" VerticalAlignment="Center" />
-        <TextBox Grid.Row="1" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbPopSellerId"
-                 Text="{Binding PopSellerId}" />
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="店铺标记:" Margin="3" VerticalAlignment="Center" />
-        <TextBox Grid.Row="2" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbMark" Text="{Binding Mark}" />
-        <TextBlock Grid.Row="3" Grid.Column="0" Text="扣点比例:" Margin="3" VerticalAlignment="Center" />
-        <TextBox Grid.Row="3" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbCommissionPer"
-                 Text="{Binding CommissionPer,StringFormat=f3}" />
-        <TextBlock Grid.Row="4" Grid.Column="0" Text="接口App Key:" Margin="3" VerticalAlignment="Center" />
-        <TextBox Grid.Row="4" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbAppKey"
-                 Text="{Binding AppKey}" />
-        <TextBlock Grid.Row="5" Grid.Column="0" Text="接口App Secret:" Margin="3" VerticalAlignment="Center" />
-        <TextBox Grid.Row="5" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbAppSecret"
-                 Text="{Binding AppSecret}" />
-        <TextBlock Grid.Row="6" Grid.Column="0" Text="接口App AccessToken:" Margin="3" VerticalAlignment="Center" />
-        <TextBox Grid.Row="6" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbAppAccessToken"
-                 Text="{Binding AppAccessToken}" />
-        <TextBlock Grid.Row="7" Grid.Column="0" Text="接口App RefreshToken:" Margin="3" VerticalAlignment="Center" />
-        <TextBox Grid.Row="7" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbAppRefreshToken"
-                 Text="{Binding AppRefreshToken}" />
-        <TextBlock Grid.Row="8" Grid.Column="0" Text="接口App 回调URL:" Margin="3" VerticalAlignment="Center" />
-        <TextBox Grid.Row="8" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbAppCallbackUrl"
-                 Text="{Binding AppCallbackUrl}" />
-        <TextBlock Grid.Row="9" Grid.Column="0" Text="是否启用接口:" Margin="3" VerticalAlignment="Center" />
-        <CheckBox Grid.Row="9" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="chkAppEnabled"
-                  IsChecked="{Binding AppEnabled}" />
-        <TextBlock Grid.Row="10" Grid.Column="0" Text="是否启用店铺:" Margin="3" VerticalAlignment="Center" />
-        <CheckBox Grid.Row="10" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="chkEnabled"
-                  IsChecked="{Binding Enabled}" />
-        <TextBlock Grid.Row="11" Grid.Column="0" Text="发货时限:" Margin="3" VerticalAlignment="Center" />
-        <TextBox Grid.Row="11" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbShippingHours"
-                 Text="{Binding ShippingHours}" />
-        <TextBlock Grid.Row="12" Grid.Column="0" Text="第一条物流时限:" Margin="3" VerticalAlignment="Center" />
-        <TextBox Grid.Row="12" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbFirstDeliveryHours"
-                 Text="{Binding FirstDeliveryHours}" />
-        <TextBlock Grid.Row="13" Grid.Column="0" Text="第二条物流时限:" Margin="3" VerticalAlignment="Center" />
-        <TextBox Grid.Row="13" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbSecondDeliveryHours"
-                 Text="{Binding SecondDeliveryHours}" />
-        <Button Grid.Row="15" Grid.Column="1" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Left"
-                Content="保存" Click="Button_Click" Width="60" />
+        <TextBox Grid.Row="1" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbPopSellerId" Text="{Binding PopSellerId}" />
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="卖家数字编号:" Margin="3" VerticalAlignment="Center" />
+        <TextBox Grid.Row="2" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbPopSellerNumberId" Text="{Binding PopSellerNumberId}" />
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="店铺标记:" Margin="3" VerticalAlignment="Center" />
+        <TextBox Grid.Row="3" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbMark" Text="{Binding Mark}" />
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="扣点比例:" Margin="3" VerticalAlignment="Center" />
+        <TextBox Grid.Row="4" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbCommissionPer"  Text="{Binding CommissionPer,StringFormat=f3}" />
+        <TextBlock Grid.Row="5" Grid.Column="0" Text="App Key:" Margin="3" VerticalAlignment="Center" />
+        <TextBox Grid.Row="5" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbAppKey" Text="{Binding AppKey}" />
+        <TextBlock Grid.Row="6" Grid.Column="0" Text="App Secret:" Margin="3" VerticalAlignment="Center" />
+        <TextBox Grid.Row="6" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbAppSecret"  Text="{Binding AppSecret}" />
+        <TextBlock Grid.Row="7" Grid.Column="0" Text="App AccessToken:" Margin="3" VerticalAlignment="Center" />
+        <TextBox Grid.Row="7" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbAppAccessToken" Text="{Binding AppAccessToken}" />
+        <TextBlock Grid.Row="8" Grid.Column="0" Text="App RefreshToken:" Margin="3" VerticalAlignment="Center" />
+        <TextBox Grid.Row="8" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbAppRefreshToken" Text="{Binding AppRefreshToken}" />
+        <TextBlock Grid.Row="9" Grid.Column="0" Text="App 回调URL:" Margin="3" VerticalAlignment="Center" />
+        <TextBox Grid.Row="9" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbAppCallbackUrl" Text="{Binding AppCallbackUrl}" />
+        <TextBlock Grid.Row="10" Grid.Column="0" Text="启用店铺:" Margin="3" VerticalAlignment="Center" />
+        <CheckBox Grid.Row="10" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="chkEnabled" IsChecked="{Binding Enabled}" />
+        <TextBlock Grid.Row="11" Grid.Column="0" Text="启用订单发货接口:" Margin="3" VerticalAlignment="Center" />
+        <CheckBox Grid.Row="11" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="chkAppEnabled" IsChecked="{Binding AppEnabled}" />
+        <TextBlock Grid.Row="12" Grid.Column="0" Text="启用电子面单接口:" Margin="3" VerticalAlignment="Center" />
+        <CheckBox Grid.Row="12" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="chkWuliuEnabled" IsChecked="{Binding WuliuEnabled}" />
+        <TextBlock Grid.Row="13" Grid.Column="0" Text="发货时限:" Margin="3" VerticalAlignment="Center" />
+        <TextBox Grid.Row="13" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbShippingHours" Text="{Binding ShippingHours}" />
+        <TextBlock Grid.Row="14" Grid.Column="0" Text="第一条物流时限:" Margin="3" VerticalAlignment="Center" />
+        <TextBox Grid.Row="14" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbFirstDeliveryHours" Text="{Binding FirstDeliveryHours}" />
+        <TextBlock Grid.Row="15" Grid.Column="0" Text="第二条物流时限:" Margin="3" VerticalAlignment="Center" />
+        <TextBox Grid.Row="15" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbSecondDeliveryHours" Text="{Binding SecondDeliveryHours}" />
+        <Button Grid.Row="16" Grid.Column="1" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Left" Content="保存" Click="Button_Click" Width="60" />
     </Grid>
 </Window>

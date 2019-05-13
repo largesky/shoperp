@@ -22,8 +22,7 @@ namespace ShopErp.App.Service.Restful
 
         public static List<string> GetDeliveryCompaniyNames()
         {
-            return ServiceContainer.GetService<DeliveryCompanyService>().GetByAll().Datas.Select(obj => obj.Name)
-                .ToList();
+            return ServiceContainer.GetService<DeliveryCompanyService>().GetByAll().Datas.Select(obj => obj.Name).ToList();
         }
     }
 }

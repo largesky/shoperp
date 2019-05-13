@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ShopErp.App.Service.Print
+namespace ShopErp.Domain
 {
 
     /// <summary>

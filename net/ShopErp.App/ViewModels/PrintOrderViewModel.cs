@@ -34,6 +34,7 @@ namespace ShopErp.App.ViewModels
         public static readonly DependencyProperty ReceiverAddressProperty = DependencyProperty.Register("ReceiverAddress", typeof(string), typeof(PrintOrderViewModel));
 
         public static readonly Brush DEFAULTBACKGROUND_LIGHTPINK = Brushes.LightPink;
+
         public static readonly Brush DEFAULTBACKGROUND_LIGHTGREEN = Brushes.LightGreen;
 
         public Brush DefaultBackground { get; set; }

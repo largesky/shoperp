@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ShopErp.App.Service.Print
+namespace ShopErp.Domain
 {
     [AttributeUsage(AttributeTargets.Field)]
     public class PrintTemplateItemTypeGroupAttribute : Attribute

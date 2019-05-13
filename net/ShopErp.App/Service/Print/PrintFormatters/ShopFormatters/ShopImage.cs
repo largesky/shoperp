@@ -4,6 +4,7 @@ using System.Windows.Media.Imaging;
 using ShopErp.App.Domain;
 using ShopErp.App.Service.Restful;
 using ShopErp.App.Utils;
+using ShopErp.Domain;
 
 namespace ShopErp.App.Service.Print.ShopFormatters
 {

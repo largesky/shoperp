@@ -62,8 +62,6 @@ namespace ShopErp.App.Views.Config
 
                 //打印机配置
                 string[] names = System.Drawing.Printing.PrinterSettings.InstalledPrinters.OfType<string>().ToArray();
-                this.cbbPrinterDeliveryNormal.ItemsSource = names;
-                this.cbbPrinterDeliveryNormal.SelectedItem = LocalConfigService.GetValue(SystemNames.CONFIG_PRINTER_DELIVERY_NORMAL, "");
                 this.cbbPrinterDeliveryHot.ItemsSource = names;
                 this.cbbPrinterDeliveryHot.SelectedItem = LocalConfigService.GetValue(SystemNames.CONFIG_PRINTER_DELIVERY_HOT, "");
                 this.cbbPrinterReturnBarCode.ItemsSource = names;
@@ -79,18 +77,10 @@ namespace ShopErp.App.Views.Config
                 this.tbImageDir.Text = LocalConfigService.GetValue(SystemNames.CONFIG_WEB_IMAGE_DIR, "");
                 this.tbName.Text = LocalConfigService.GetValue("GOODS_NAME", "贾勇");
                 this.tbPhone.Text = LocalConfigService.GetValue("GOODS_PHONE", "15590065809");
-                this.cbbGoodsTemplateType.ItemsSource = Print.FilePrintTemplateRepertory.GetAllN().Where(obj => obj.Type == Service.Print.PrintTemplate.TYPE_GOODS).Select(obj => obj.Name).ToArray();
+                this.cbbGoodsTemplateType.ItemsSource = PrintTemplateService.GetAllLocal().Where(obj => obj.Type == PrintTemplate.TYPE_GOODS).Select(obj => obj.Name).ToArray();
                 this.cbbGoodsTemplateType.SelectedItem = LocalConfigService.GetValue(SystemNames.CONFIG_GOODS_TEMPLATE, "");
-
-                this.tbAppKey.Text = ServiceContainer.GetService<SystemConfigService>().Get(-1, SystemNames.CONFIG_CAINIAO_APP_KEY, "");
-                this.tbAppSecret.Text = ServiceContainer.GetService<SystemConfigService>().Get(-1, SystemNames.CONFIG_CAINIAO_APP_SECRET, "");
-                this.tbAppSession.Text = ServiceContainer.GetService<SystemConfigService>().Get(-1, SystemNames.CONFIG_CAINIAO_APP_SESSION, "");
-                this.tbAppRefreshSession.Text = ServiceContainer.GetService<SystemConfigService>().Get(-1, SystemNames.CONFIG_CAINIAO_APP_REFRESH_SESSION, "");
-                this.tbSellerNumberId.Text = ServiceContainer.GetService<SystemConfigService>().Get(-1, SystemNames.CONFIG_CAINIAO_SELLER_ID, "");
-
                 this.tbSenderName.Text = ServiceContainer.GetService<SystemConfigService>().Get(-1, SystemNames.CONFIG_CAINIAO_SENDER_NAME, "贾兴红");
                 this.tbSenderPhone.Text = ServiceContainer.GetService<SystemConfigService>().Get(-1, SystemNames.CONFIG_CAINIAO_SENDER_PHONE, "15590065809");
-                this.tbSenderAddress.Text = ServiceContainer.GetService<SystemConfigService>().Get(-1, SystemNames.CONFIG_CAINIAO_SENDER_ADDRESS, "四川省 成都市 新都区 国际商贸城");
             }
             catch (Exception ex)
             {
@@ -128,7 +118,6 @@ namespace ShopErp.App.Views.Config
                 LocalConfigService.UpdateValue(SystemNames.CONFIG_WEB_IMAGE_MODE, this.cbbImageMode.Text.Trim());
 
                 //打印机设置
-                LocalConfigService.UpdateValue(SystemNames.CONFIG_PRINTER_DELIVERY_NORMAL, this.cbbPrinterDeliveryNormal.Text.Trim());
                 LocalConfigService.UpdateValue(SystemNames.CONFIG_PRINTER_DELIVERY_HOT, this.cbbPrinterDeliveryHot.Text.Trim());
                 LocalConfigService.UpdateValue(SystemNames.CONFIG_PRINTER_RETURN_BARCODE, this.cbbPrinterReturnBarCode.Text.Trim());
                 LocalConfigService.UpdateValue(SystemNames.CONFIG_PRINTER_GOODS_BARCODE, this.cbbPrinterGoodsBarCode.Text.Trim());
@@ -141,15 +130,8 @@ namespace ShopErp.App.Views.Config
                 LocalConfigService.UpdateValue("GOODS_NAME", this.tbName.Text.Trim());
                 LocalConfigService.UpdateValue(SystemNames.CONFIG_GOODS_TEMPLATE, this.cbbGoodsTemplateType.Text.Trim());
 
-                ServiceContainer.GetService<SystemConfigService>().SaveOrUpdate(-1, SystemNames.CONFIG_CAINIAO_APP_KEY, this.tbAppKey.Text.Trim());
-                ServiceContainer.GetService<SystemConfigService>().SaveOrUpdate(-1, SystemNames.CONFIG_CAINIAO_APP_SECRET, this.tbAppSecret.Text.Trim());
-                ServiceContainer.GetService<SystemConfigService>().SaveOrUpdate(-1, SystemNames.CONFIG_CAINIAO_APP_SESSION, this.tbAppSession.Text.Trim());
-                ServiceContainer.GetService<SystemConfigService>().SaveOrUpdate(-1, SystemNames.CONFIG_CAINIAO_APP_REFRESH_SESSION, this.tbAppRefreshSession.Text.Trim());
-                ServiceContainer.GetService<SystemConfigService>().SaveOrUpdate(-1, SystemNames.CONFIG_CAINIAO_SELLER_ID, this.tbSellerNumberId.Text.Trim());
-
                 ServiceContainer.GetService<SystemConfigService>().SaveOrUpdate(-1, SystemNames.CONFIG_CAINIAO_SENDER_NAME, this.tbSenderName.Text.Trim());
                 ServiceContainer.GetService<SystemConfigService>().SaveOrUpdate(-1, SystemNames.CONFIG_CAINIAO_SENDER_PHONE, this.tbSenderPhone.Text.Trim());
-                ServiceContainer.GetService<SystemConfigService>().SaveOrUpdate(-1, SystemNames.CONFIG_CAINIAO_SENDER_ADDRESS, this.tbSenderAddress.Text.Trim());
 
                 MessageBox.Show("保存成功");
             }
@@ -165,24 +147,6 @@ namespace ShopErp.App.Views.Config
             {
                 var resp = ServiceContainer.GetService<WuliuNumberService>().UpdateAddressArea();
                 MessageBox.Show("更新成功");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        private void btnGoOauth_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                string appkey = this.tbAppKey.Text.Trim();
-                if (string.IsNullOrWhiteSpace(appkey))
-                {
-                    throw new Exception("App Key 不能为空");
-                }
-                string url = "https://oauth.taobao.com/authorize?response_type=token&view=web&client_id=" + appkey;
-                System.Diagnostics.Process.Start(url);
             }
             catch (Exception ex)
             {

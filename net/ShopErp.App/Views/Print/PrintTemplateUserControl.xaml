@@ -52,28 +52,19 @@
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="3">
                 <TextBlock Text="模板类型：" Margin="3" VerticalAlignment="Center" />
-                <ComboBox Name="cbbTemplateTypes" Margin="3" VerticalAlignment="Center" Width="50"
-                          SelectedItem="{Binding SelectedItem.Type, ElementName=lstDeliveryPrintTemplates, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <ComboBox Name="cbbTemplateTypes" SelectedItem="{Binding  ElementName=lstDeliveryPrintTemplates,Path=SelectedItem.Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"   Margin="3" VerticalAlignment="Center" Width="50"/>
                 <TextBlock Text="物流公司：" Margin="3" VerticalAlignment="Center" />
-                <ComboBox Name="cbbDeliverCompanies" Margin="3" VerticalAlignment="Center" Width="100"
-                          SelectedItem="{Binding SelectedItem.DeliveryCompany, ElementName=lstDeliveryPrintTemplates, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <ComboBox Name="cbbDeliverCompanies" SelectedItem="{Binding ElementName=lstDeliveryPrintTemplates, Path=SelectedItem.DeliveryCompany,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="3" VerticalAlignment="Center" Width="100"/>
                 <TextBlock Text="模板名称：" Margin="3" VerticalAlignment="Center" />
-                <TextBox Name="tbDeliveryTemplateName" Width="120" Margin="3" VerticalAlignment="Center"
-                         Text="{Binding ElementName=lstDeliveryPrintTemplates,Path=SelectedItem.Name,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Name="tbDeliveryTemplateName" Text="{Binding ElementName=lstDeliveryPrintTemplates,Path=SelectedItem.Name,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Width="120" Margin="3" VerticalAlignment="Center"/>
                 <TextBlock Text="宽度：" Margin="3" VerticalAlignment="Center" />
-                <TextBox Name="tbWidth" Width="40" Margin="3" VerticalAlignment="Center"
-                         Text="{Binding ElementName=imgDelivery,Path=Width,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Name="tbWidth" Text="{Binding ElementName=lstDeliveryPrintTemplates,Path=SelectedItem.Width,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="40" Margin="3" VerticalAlignment="Center"/>
                 <TextBlock Text="高度：" Margin="3" VerticalAlignment="Center" />
-                <TextBox Name="tbHeight" Width="40" Margin="3" VerticalAlignment="Center"
-                         Text="{Binding ElementName=imgDelivery,Path=Height,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Name="tbHeight" Text="{Binding ElementName=lstDeliveryPrintTemplates,Path=SelectedItem.Height,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Width="40" Margin="3" VerticalAlignment="Center"/>
                 <TextBlock Text="水平偏移:" Margin="3" VerticalAlignment="Center" />
-                <TextBox Name="tbXOffset" Margin="3" VerticalAlignment="Center" Width="40"
-                         Text="{Binding ElementName=lstDeliveryPrintTemplates,Path=SelectedItem.XOffset,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Name="tbXOffset" Text="{Binding ElementName=lstDeliveryPrintTemplates,Path=SelectedItem.XOffset,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Margin="3" VerticalAlignment="Center" Width="40"/>
                 <TextBlock Text="垂直偏移：" Margin="3" VerticalAlignment="Center" />
-                <TextBox Name="tbYOffset" Margin="3" VerticalAlignment="Center" Width="40"
-                         Text="{Binding ElementName=lstDeliveryPrintTemplates,Path=SelectedItem.YOffset,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
-                <Button Name="btnChooseFile" Content="选择图片" Margin="3" Click="btnChooseFile_Click" Width="80"
-                        VerticalAlignment="Center" />
+                <TextBox Name="tbYOffset" Text="{Binding ElementName=lstDeliveryPrintTemplates,Path=SelectedItem.YOffset,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Margin="3" VerticalAlignment="Center" Width="40"/>
             </StackPanel>
 
             <ListBox Grid.Row="1" Name="lstDeliveryPrintTemplateTypes"
@@ -100,7 +91,7 @@
 
             <Canvas Name="cDeliveryHost" Grid.Row="2">
                 <Border BorderBrush="Gray" BorderThickness="2">
-                    <Image Name="imgDelivery" Width="0" Height="0" Stretch="Fill" />
+                    <Image Name="imgDelivery" Width="{Binding ElementName=lstDeliveryPrintTemplates,Path=SelectedItem.Width,Mode=OneWay}" Height="{Binding ElementName=lstDeliveryPrintTemplates,Path=SelectedItem.Height,Mode=OneWay}" Stretch="Fill" />
                 </Border>
             </Canvas>
         </Grid>

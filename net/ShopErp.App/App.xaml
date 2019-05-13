@@ -21,6 +21,7 @@
             <converters:OrderGoodsStateConverter x:Key="OrderGoodsStateConverter"/>
             <converters:FinanceAccountConverter x:Key="FinanceAccountConverter"></converters:FinanceAccountConverter>
             <converters:VideoTypeConverter x:Key="VideoTypeConverter"/>
+            <converters:WuliuTemplateConverter x:Key="WuliuTemplateConverter"/>
             <Style x:Key="ImageButton" TargetType="Button">
                 <Setter Property="Template">
                     <Setter.Value>

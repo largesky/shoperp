@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using System.Windows;
 
-namespace ShopErp.App.Service.Print
+namespace ShopErp.Domain
 {
     [Serializable]
     public class PrintTemplateItem
@@ -83,6 +84,7 @@ namespace ShopErp.App.Service.Print
         /// 运行时的储存数据对象，不会序列化
         /// </summary>
         [NonSerialized]
+        [IgnoreDataMemberAttribute]
         public object RunTimeTag = null;
 
 

@@ -14,7 +14,11 @@ namespace ShopErp.Domain
 
         public string PopMapTaobao { get; set; }
 
+        public string PopMapTaobaoWuliu { get; set; }
+
         public string PopMapPingduoduo { get; set; }
+
+        public string PopMapPinduoduoWuliu { get; set; }
 
         public string PopMapJd { get; set; }
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using ShopErp.Domain.Pop;
 using ShopErp.Domain.RestfulResponse;
 using ShopErp.Domain.RestfulResponse.DomainResponse;
+using System.Xml.Linq;
 
 namespace ShopErp.Server.Service.Pop
 {
@@ -31,10 +32,20 @@ namespace ShopErp.Server.Service.Pop
 
         public abstract PopDeliveryInfo GetDeliveryInfo(Shop shop, string popOrderId);
 
-        public abstract string GetShopOauthUrl(Shop sop);
+        public abstract string GetShopOauthUrl(Shop shop);
 
         public abstract Shop GetAcessTokenInfo(Shop shop, string code);
 
         public abstract Shop GetRefreshTokenInfo(Shop shop);
+
+        public abstract List<WuliuBranch> GetWuliuBranchs(Shop shop, string cpCode);
+
+        public abstract List<PrintTemplate> GetAllWuliuTemplates(Shop shop);
+
+        public abstract WuliuNumber GetWuliuNumber(Shop shop, string popSellerNumberId, PrintTemplate wuliuTemplate, Order order, string[] wuliuIds, string packageId, string senderName, string senderPhone, string senderAddress);
+
+        public abstract void UpdateWuliuNumber(Shop shop, PrintTemplate wuliuTemplate, Order order, WuliuNumber wuliuNumber);
+
+        public abstract XDocument GetAddress(Shop shop);
     }
 }

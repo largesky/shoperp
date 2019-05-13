@@ -10,6 +10,7 @@ using ShopErp.Server.Utils;
 using System.Text;
 using System.Diagnostics;
 using ShopErp.Domain.RestfulResponse.DomainResponse;
+using System.Xml.Linq;
 
 namespace ShopErp.Server.Service.Pop.Pingduoduo
 {
@@ -482,6 +483,31 @@ namespace ShopErp.Server.Service.Pop.Pingduoduo
             shop.AppRefreshToken = t.refresh_token;
             shop.PopSellerNumberId = t.owner_id;
             return shop;
+        }
+
+        public override List<WuliuBranch> GetWuliuBranchs(Shop shop, string cpCode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override List<PrintTemplate> GetAllWuliuTemplates(Shop shop)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override WuliuNumber GetWuliuNumber(Shop shop, string popSellerNumberId, PrintTemplate wuliuTemplate, Order order, string[] wuliuIds, string packageId, string senderName, string senderPhone, string senderAddress)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void UpdateWuliuNumber(Shop shop, PrintTemplate wuliuTemplate, Order order, WuliuNumber wuliuNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override XDocument GetAddress(Shop shop)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -10,6 +10,7 @@ using System.Windows.Input;
 using ShopErp.App.Domain;
 using System.Windows.Media;
 using ShopErp.App.Service.Print;
+using ShopErp.Domain;
 
 namespace ShopErp.App.ViewModels
 {
@@ -58,7 +59,7 @@ namespace ShopErp.App.ViewModels
         /// <summary>
         /// 所属的模板
         /// </summary>
-        public Service.Print.PrintTemplate Template { get; set; }
+        public PrintTemplate Template { get; set; }
 
         public double X
         {
@@ -147,13 +148,13 @@ namespace ShopErp.App.ViewModels
 
         public Thumb UI { get; protected set; }
 
-        public Service.Print.PrintTemplateItem Data { get; protected set; }
+        public PrintTemplateItem Data { get; protected set; }
 
         public FrameworkElement PropertyUI { get; protected set; }
 
         public event MouseEventHandler PreviewMouseLeftButtonDown;
 
-        public PrintTemplateItemViewModelCommon(Service.Print.PrintTemplate template)
+        public PrintTemplateItemViewModelCommon(PrintTemplate template)
         {
             this.Format = "";
             this.Template = template;
@@ -358,7 +359,7 @@ namespace ShopErp.App.ViewModels
             }
         }
 
-        public void ApplayStyleAndData(System.Windows.Style uiStyle, Service.Print.PrintTemplateItem item)
+        public void ApplayStyleAndData(System.Windows.Style uiStyle, PrintTemplateItem item)
         {
             //创建UI
             this.UI = new Thumb { DataContext = this };

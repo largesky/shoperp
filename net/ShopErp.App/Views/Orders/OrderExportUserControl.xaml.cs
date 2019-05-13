@@ -60,7 +60,7 @@ namespace ShopErp.App.Views.Orders
                 }
 
                 var shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas;
-                string[] columnsHeader = new string[] { "类型", "店铺", "付款时间", "商品信息", "快递单号", "备注", "姓名", "手机", "地址" };
+                string[] columnsHeader = new string[] {"店铺", "付款时间", "商品信息", "快递单号", "备注", "姓名", "手机", "地址" };
                 Dictionary<string, string[][]> dicContents = new Dictionary<string, string[][]>();
                 List<string[]> contents = new List<string[]>();
                 contents.Add(columnsHeader);
@@ -83,10 +83,10 @@ namespace ShopErp.App.Views.Orders
                 foreach (var pair in cc)
                 {
                     var v = pair.Key;
-                    string[] ss = new string[] { EnumUtil.GetEnumValueDescription(v.Source.Type), shops.FirstOrDefault(obj => obj.Id == v.Source.ShopId).Mark, v.Source.PopPayTime.ToString("yyyy-MM-dd HH:mm:ss"), pair.Value, v.Source.DeliveryNumber, v.Source.PopSellerComment, v.Source.ReceiverName, string.IsNullOrWhiteSpace(v.Source.ReceiverPhone) ? v.Source.ReceiverMobile : v.Source.ReceiverMobile + "," + v.Source.ReceiverPhone, v.Source.ReceiverAddress };
+                    string[] ss = new string[] { shops.FirstOrDefault(obj => obj.Id == v.Source.ShopId).Mark, v.Source.PopPayTime.ToString("yyyy-MM-dd HH:mm:ss"), pair.Value, v.Source.DeliveryNumber, v.Source.PopSellerComment, v.Source.ReceiverName, string.IsNullOrWhiteSpace(v.Source.ReceiverPhone) ? v.Source.ReceiverMobile : v.Source.ReceiverMobile + "," + v.Source.ReceiverPhone, v.Source.ReceiverAddress };
                     if (pair.Key.Source.PopType != ShopErp.Domain.PopType.TMALL)
                     {
-                        ss[5] += "不放合格证，放2元好评卡";
+                        ss[4] += "不放合格证，放2元好评卡";
                     }
                     contents.Add(ss);
                 }
@@ -252,6 +252,37 @@ namespace ShopErp.App.Views.Orders
                 {
                     v.IsChecked = isCheck;
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void btnCopyAdd_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var items = this.dgOrders.ItemsSource as OrderViewModel[];
+                if (items == null || items.Length < 1)
+                {
+                    MessageBox.Show("没有数据");
+                    return;
+                }
+                items = items.Where(obj => obj.IsChecked).ToArray();
+                if (items == null || items.Length < 1)
+                {
+                    MessageBox.Show("没有数据");
+                    return;
+                }
+
+                string content = "";
+                foreach (var v in items)
+                {
+                    content += v.Source.ReceiverName + "," + v.Source.ReceiverMobile + "," + v.Source.ReceiverAddress + "," + Environment.NewLine;
+                }
+                Clipboard.SetText(content);
+                MessageBox.Show("复制成功");
             }
             catch (Exception ex)
             {

@@ -48,19 +48,7 @@
                                         <RowDefinition Height="*" />
                                     </Grid.RowDefinitions>
                                     <StackPanel Grid.Row="0" Orientation="Horizontal">
-                                        <CheckBox Content="全选" Margin="3" VerticalAlignment="Center"
-                                                  Checked="CheckBox_CheckedChanged" Unchecked="CheckBox_CheckedChanged"
-                                                  Tag="{Binding}" />
-                                        <TextBlock Text="当前共:" Margin="3" VerticalAlignment="Center" />
-                                        <TextBlock Text="{Binding OrderViewModels.Count}" Margin="3"
-                                                   VerticalAlignment="Center" />
-                                        <TextBlock Text="新的物流公司:" Margin="3" VerticalAlignment="Center" />
-                                        <ComboBox x:Name="cbbDeliveryCompanies" Width="100" DisplayMemberPath="Name"
-                                                  VerticalAlignment="Center"
-                                                  ItemsSource="{Binding AllCompanies, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PrintHistoryUserControl}}}" />
-                                        <TextBlock Text="新的起始物流号:" Margin="3" VerticalAlignment="Center" />
-                                        <TextBox x:Name="tbNewDeliveryNumber" Margin="3" VerticalAlignment="Center"
-                                                 Width="100" />
+                                        <CheckBox Content="全选" Margin="3" VerticalAlignment="Center" Checked="CheckBox_CheckedChanged" Unchecked="CheckBox_CheckedChanged" Tag="{Binding}" />
                                         <Button Name="btnDelete" Content="删除记录" Margin="3" VerticalAlignment="Center"
                                                 Click="btnDelete_Click" Width="80" Tag="{Binding}" />
                                         <Button Name="btnUpload" Content="上传记录" Margin="3" VerticalAlignment="Center"

@@ -48,6 +48,7 @@
             <StackPanel Orientation="Horizontal" Grid.Row="2">
                 <Button Name="btnQuery" Margin="3" VerticalAlignment="Center" Width="60" Content="查询" Click="btnQuery_Click" />
                 <Button Name="btnExport" Margin="3" VerticalAlignment="Center" Width="60" Content="导出" Click="btnExport_Click" />
+                <Button Name="btnCopyAdd" Margin="3" VerticalAlignment="Center" Width="60" Content="复制地址" Click="btnCopyAdd_Click"/>
                 <TextBlock Name="tbTotal" Margin="3" VerticalAlignment="Center" />
             </StackPanel>
         </StackPanel>

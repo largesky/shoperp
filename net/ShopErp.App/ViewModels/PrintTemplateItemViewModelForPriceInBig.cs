@@ -1,6 +1,7 @@
 ﻿using ShopErp.App.Domain;
 using ShopErp.App.Service.Print;
 using ShopErp.App.Views.Print;
+using ShopErp.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace ShopErp.App.ViewModels
 {
     class PrintTemplateItemViewModelForPriceInBig : PrintTemplateItemViewModelCommon
     {
-        public PrintTemplateItemViewModelForPriceInBig(Service.Print.PrintTemplate template) :
+        public PrintTemplateItemViewModelForPriceInBig(PrintTemplate template) :
             base(template)
         {
             this.Format = "万 千 百 十 个";

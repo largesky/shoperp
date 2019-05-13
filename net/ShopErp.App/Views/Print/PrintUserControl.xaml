@@ -81,12 +81,9 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
                 <TextBlock Text="付款时间到:" Margin="3" VerticalAlignment="Center" />
-                <xctk:DateTimePicker Grid.Row="1" xctk:Format="Custom" xctk:TimeFormatString="yyyy-MM-dd HH:mm:ss"
-                                     Grid.Column="5" Name="dpEnd" Margin="3" VerticalAlignment="Center" MinWidth="140" />
-                <Button x:Name="btnDownloadOrder" Content="搜索订单" Click="btnDownloadOrder_Click" Margin="3"
-                        VerticalAlignment="Center" Width="100" />
-                <Button Name="btnGetRefundOrder" Content="搜索退款中订单" Click="btnGetRefundOrder_Click" Margin="3"
-                        VerticalAlignment="Center" Width="100" />
+                <xctk:DateTimePicker Grid.Row="1" xctk:Format="Custom" xctk:TimeFormatString="yyyy-MM-dd HH:mm:ss" Grid.Column="5" Name="dpEnd" Margin="3" VerticalAlignment="Center" MinWidth="140" />
+                <Button x:Name="btnDownloadOrder" Content="搜索订单" Click="btnDownloadOrder_Click" Margin="3" VerticalAlignment="Center" Width="100" />
+                <Button Name="btnGetRefundOrder" Content="搜索退款中订单" Click="btnGetRefundOrder_Click" Margin="3" VerticalAlignment="Center" Width="100" />
                 <TextBlock Name="tbTotalCount" Margin="3" VerticalAlignment="Center" />
             </StackPanel>
         </Grid>
@@ -113,14 +110,25 @@
                                     <StackPanel Grid.Row="0" Margin="3" Orientation="Horizontal">
                                         <TextBlock Text="已选择：" Margin="3" VerticalAlignment="Center" TextAlignment="Left" />
                                         <TextBlock Name="tbSelected" Text="{Binding SelectedCount}" Margin="3" VerticalAlignment="Center" MinWidth="30" TextAlignment="Left" />
+                                        <TextBlock Text="电子面单授权店铺:" VerticalAlignment="Center" Margin="3" />
+                                        <ComboBox x:Name="cbbShops"  VerticalAlignment="Center" Width="60" DisplayMemberPath="Mark" Margin="3" ItemsSource="{Binding Shops}"  SelectedItem="{Binding Shop}"  />
                                         <TextBlock Text="快递模板:" VerticalAlignment="Center" Margin="3" />
-                                        <ComboBox x:Name="cbbDeliveryTemplates" DisplayMemberPath="Name" VerticalAlignment="Center" Width="100" Margin="3" ItemsSource="{Binding Path=DeliveryPrintTemplates,RelativeSource={RelativeSource Mode=FindAncestor,AncestorLevel=1, AncestorType=local:PrintUserControl}}"  SelectedItem="{Binding PrintTemplate}" />
+                                        <ComboBox x:Name="cbbDeliveryTemplates"  VerticalAlignment="Center" Width="120" Margin="3" ItemsSource="{Binding PrintTemplates}"  SelectedItem="{Binding PrintTemplate}"  >
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Converter={StaticResource WuliuTemplateConverter}}"/>
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
                                         <TextBlock Text="发货网点:" VerticalAlignment="Center" Margin="3" />
-                                        <ComboBox x:Name="cbbWuliuBrachs" ItemsSource="{Binding WuliuBranches}" Margin="3" VerticalAlignment="Center" SelectedItem="{Binding WuliuBranch,Mode=TwoWay}" MinWidth="350" IsSynchronizedWithCurrentItem="True"/>
-                                        <TextBlock Grid.Column="8" Text="电子面单包裹号:" VerticalAlignment="Center" Margin="3" />
-                                        <TextBox Grid.Column="9" Name="tbPackgeId" Text="{Binding PackageId}" Margin="3" VerticalAlignment="Center" Width="50" />
-                                        <CheckBox Name="chkAutoHideOkOrders" Content="自动隐藏打印成功订单" Margin="3" VerticalAlignment="Center" IsChecked="{Binding AutoDeleteSucessOrder}" />
-                                        <Button Grid.Column="10" Name="btnPrint" Content="{Binding PrintButtonString}"  VerticalAlignment="Center" Width="60" ClickMode="Release"  Click="btnPrint_Click" Margin="3"/>
+                                        <ComboBox x:Name="cbbWuliuBrachs" ItemsSource="{Binding WuliuBranches}" Margin="3" VerticalAlignment="Center" SelectedItem="{Binding WuliuBranch,Mode=TwoWay}" MinWidth="150" IsSynchronizedWithCurrentItem="True"/>
+                                        <TextBlock Text="电子面单包裹号:" VerticalAlignment="Center" Margin="3" />
+                                        <TextBox  Name="tbPackgeId" Text="{Binding PackageId}" Margin="3" VerticalAlignment="Center" Width="30" />
+                                        <TextBlock Text="打印组件服务地址:" VerticalAlignment="Center" Margin="3" />
+                                        <TextBox  Name="tbPrintServerAdd" Text="{Binding PrintServerAdd}" Margin="3" VerticalAlignment="Center" />
+                                        <TextBlock Text="打印机：" Margin="3" VerticalAlignment="Center"/>
+                                        <ComboBox x:Name="cbbPritners" ItemsSource="{Binding Printers}" SelectedItem="{Binding Printer}" Width="150" VerticalAlignment="Center"/>
+                                        <Button Name="btnPrint" Content="{Binding PrintButtonString}"  VerticalAlignment="Center" Width="60" ClickMode="Release"  Click="btnPrint_Click" Margin="3"/>
                                         <TextBlock Margin="3" Text="{Binding WorkStateMessage}"  VerticalAlignment="Center"/>
                                     </StackPanel>
 

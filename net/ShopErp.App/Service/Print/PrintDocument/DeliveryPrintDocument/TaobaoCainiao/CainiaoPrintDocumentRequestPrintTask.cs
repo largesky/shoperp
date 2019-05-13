@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShopErp.App.Service.Print.PrintDocument.DeliveryPrintDocument
+namespace ShopErp.App.Service.Print.PrintDocument.DeliveryPrintDocument.TaobaoCainiao
 {
-    public class CainiaoPrintDocumentPrintRequestTask
+    public class CainiaoPrintDocumentRequestPrintTask
     {
         public string taskID = Guid.NewGuid().ToString();
 
@@ -16,11 +16,10 @@ namespace ShopErp.App.Service.Print.PrintDocument.DeliveryPrintDocument
 
         public string printer;
 
-        public int firstDocumentNumber = 1;
+        public int firstDocumentNumber = 0;
 
-        public int totalDocumentCount = 1;
+        public int totalDocumentCount = 0;
 
-
-
+        public CainiaoPrintDocumentRequestPrintTaskDocument[] documents;
     }
 }

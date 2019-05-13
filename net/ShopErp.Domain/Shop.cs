@@ -42,5 +42,6 @@ namespace ShopErp.Domain
 
         public bool AppEnabled { get; set; }
 
+        public bool WuliuEnabled { get; set; }
     }
 }

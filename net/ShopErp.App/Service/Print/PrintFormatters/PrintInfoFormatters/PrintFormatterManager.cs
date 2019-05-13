@@ -1,4 +1,5 @@
 ﻿using ShopErp.App.Service.Print;
+using ShopErp.Domain;
 
 namespace ShopErp.App.Service.Print.PrintFormatters.PrintInfoFormatters
 {

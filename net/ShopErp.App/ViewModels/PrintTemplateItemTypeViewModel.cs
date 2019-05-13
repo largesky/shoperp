@@ -1,5 +1,6 @@
 ﻿using ShopErp.App.Domain;
 using ShopErp.App.Service.Print;
+using ShopErp.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace ShopErp.App.ViewModels
 
         public static PrintTemplateItemTypeViewModel[] GetAllTypes()
         {
-            var type = typeof(Service.Print.PrintTemplateItemType);
+            var type = typeof(PrintTemplateItemType);
             var ff = type.GetFields().Where(f => f.FieldType == typeof(string)).ToArray();
             var vms = ff.Select(obj => new PrintTemplateItemTypeViewModel { Type = obj.GetRawConstantValue().ToString() }).ToArray();
             return vms;

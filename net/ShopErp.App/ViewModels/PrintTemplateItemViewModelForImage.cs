@@ -1,6 +1,7 @@
 ﻿using ShopErp.App.Domain;
 using ShopErp.App.Service.Print;
 using ShopErp.App.Views.Print;
+using ShopErp.Domain;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,7 +14,7 @@ namespace ShopErp.App.ViewModels
 {
     public class PrintTemplateItemViewModelForImage : PrintTemplateItemViewModelCommon
     {
-        public PrintTemplateItemViewModelForImage(Service.Print.PrintTemplate template)
+        public PrintTemplateItemViewModelForImage(PrintTemplate template)
             : base(template)
         {
             this.PropertyUI = new PrintTemplateItemImageUserControl();
@@ -34,11 +35,12 @@ namespace ShopErp.App.ViewModels
                 //检查文件名称是否是GUID
                 try
                 {
-                    if (this.Template.AttachFiles.ContainsKey(e.NewValue.ToString()))
+                    var af = this.Template.AttachFiles.FirstOrDefault(obj => obj.Name == e.NewValue.ToString());
+                    if (af != null)
                     {
                         var bi = new BitmapImage();
                         bi.BeginInit();
-                        bi.StreamSource = new MemoryStream(this.Template.AttachFiles[e.NewValue.ToString()], false);
+                        bi.StreamSource = new MemoryStream(af.Value, false);
                         bi.EndInit();
                         image.Source = bi;
                         return;
@@ -57,9 +59,9 @@ namespace ShopErp.App.ViewModels
                 FileInfo fi = new FileInfo(file);
                 if (this.Template.AttachFiles == null)
                 {
-                    this.Template.AttachFiles = new Dictionary<string, byte[]>();
+                    this.Template.AttachFiles = new List<PrintTemplateAttachFiles>();
                 }
-                this.Template.AttachFiles[this.Data.Id.ToString()] = File.ReadAllBytes(file);
+                this.Template.AttachFiles.Add(new PrintTemplateAttachFiles { Name = this.Data.Id.ToString(), Value = File.ReadAllBytes(file) });
                 this.Format = this.Data.Id.ToString(); //设置format属性，将再次引发该事件，从而刷新图片
                 this.Data.Format = this.Data.Id.ToString();
                 return;
