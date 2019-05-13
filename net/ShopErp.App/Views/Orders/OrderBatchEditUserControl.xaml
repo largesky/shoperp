@@ -65,7 +65,7 @@
                 <ComboBox.SelectedIndex>1</ComboBox.SelectedIndex>
             </ComboBox>
             <TextBlock Grid.Column="2" Margin="3" VerticalAlignment="Center" Text="输入订单列表："  />
-            <TextBox Grid.Column="3" Name="tbPopOrderId" Margin="3" VerticalAlignment="Center" AcceptsReturn="True" AcceptsTab="True" Height="18" />
+            <TextBox Grid.Column="3" Name="tbPopOrderId" Margin="3" VerticalAlignment="Center" AcceptsReturn="True" AcceptsTab="True" Height="18" TextChanged="tbPopOrderId_TextChanged" />
             <TextBlock Grid.Column="4" Margin="3" VerticalAlignment="Center" Text="未读取订单列表："  />
             <TextBox Grid.Column="5" Name="tbPopOrderIdFail" Margin="3" VerticalAlignment="Center" />
             <Button Grid.Column="6" Name="btnQuery" VerticalAlignment="Center" Content="读取订单" Margin="3" Click="btnQuery_Click"/>

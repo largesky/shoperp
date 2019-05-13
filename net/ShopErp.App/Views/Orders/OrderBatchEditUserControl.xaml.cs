@@ -161,5 +161,23 @@ namespace ShopErp.App.Views.Orders
                 MessageBox.Show(ex.Message);
             }
         }
+
+        private void tbPopOrderId_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                string txt = this.tbPopOrderId.Text.Trim();
+                string[] popOrderIds = this.tbPopOrderId.Text.Trim().Split(new string[] { " ", Environment.NewLine, ",", "，", "\t" }, StringSplitOptions.RemoveEmptyEntries);
+                string nTxt = string.Join(",", popOrderIds);
+                if (txt != nTxt)
+                {
+                    this.tbPopOrderId.Text = nTxt;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
     }
 }
