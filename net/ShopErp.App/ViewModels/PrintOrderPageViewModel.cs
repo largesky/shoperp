@@ -261,7 +261,7 @@ namespace ShopErp.App.ViewModels
                             throw new Exception("暂时不支持的平台");
                         }
                     }
-                    var wbs = ServiceContainer.GetService<WuliuNumberService>().GetWuliuBrachs(wt);
+                    var wbs = ServiceContainer.GetService<WuliuNumberService>().GetWuliuBrachs(this.Shop, wt);
                     foreach (var v in wbs.Datas)
                     {
                         this.WuliuBranches.Add(v);
@@ -444,7 +444,7 @@ namespace ShopErp.App.ViewModels
                     this.WorkStateMessage = string.Format("第五步：正在生成自定义数据{0}/{1}...", i + 1, wuliuNumbers.Length);
                     WPFHelper.DoEvents();
                     userDatas[i] = new Dictionary<string, string>();
-                    userDatas[i].Add("payTime", mergedOrders[i].PopPayTime.ToString("yyyy-MM-dd HH:mm:ss"));
+                    userDatas[i].Add("payTime", "付款：" + mergedOrders[i].PopPayTime.ToString("yyyy-MM-dd HH:mm:ss"));
                     userDatas[i].Add("shopMark", allShops.FirstOrDefault(obj => obj.Id == mergedOrders[i].ShopId).Mark);
                     userDatas[i].Add("goodsCount", mergedOrders[i].OrderGoodss.Select(obj => obj.Count).Sum().ToString());
                     StringBuilder goods_commment = new StringBuilder();

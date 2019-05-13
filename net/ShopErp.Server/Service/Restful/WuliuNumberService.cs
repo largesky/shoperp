@@ -107,17 +107,11 @@ namespace ShopErp.Server.Service.Restful
 
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/getwuliubrachs.html")]
-        public DataCollectionResponse<WuliuBranch> GetWuliuBrachs(PrintTemplate wuliuTemplate)
+        public DataCollectionResponse<WuliuBranch> GetWuliuBrachs(Shop shop, PrintTemplate wuliuTemplate)
         {
             try
             {
                 var ps = new PopService();
-                var shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas.Where(obj => obj.WuliuEnabled).ToArray();
-                var shop = shops.FirstOrDefault(obj => wuliuTemplate.SourceType == PrintTemplateSourceType.PINDUODUO ? obj.PopType == PopType.PINGDUODUO : obj.PopType == PopType.TMALL);
-                if (shop == null)
-                {
-                    throw new Exception("没有找到合适的电子面单店铺，请在店铺管理里面配置");
-                }
                 var wbs = ps.GetWuliuBranchs(shop, wuliuTemplate.CpCode);
                 return new DataCollectionResponse<WuliuBranch>(wbs);
             }

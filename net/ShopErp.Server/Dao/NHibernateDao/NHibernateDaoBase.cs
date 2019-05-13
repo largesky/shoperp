@@ -126,7 +126,6 @@ namespace ShopErp.Server.Dao.NHibernateDao
                     ret.Total = data.Count;
                 }
                 return ret;
-
             }
             finally
             {

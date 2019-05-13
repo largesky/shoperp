@@ -61,9 +61,10 @@ namespace ShopErp.App.Service.Restful
             return DoPost<ResponseBase>(para);
         }
 
-        public DataCollectionResponse<WuliuBranch> GetWuliuBrachs(PrintTemplate wuliuTemplate)
+        public DataCollectionResponse<WuliuBranch> GetWuliuBrachs(Shop shop, PrintTemplate wuliuTemplate)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
+            para["shop"] = shop;
             para["wuliuTemplate"] = wuliuTemplate;
             return DoPost<DataCollectionResponse<WuliuBranch>>(para);
         }

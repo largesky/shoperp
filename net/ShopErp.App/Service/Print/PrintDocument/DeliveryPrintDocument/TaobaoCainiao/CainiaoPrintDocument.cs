@@ -16,6 +16,12 @@ namespace ShopErp.App.Service.Print.PrintDocument.DeliveryPrintDocument.TaobaoCa
     {
         static Random r = new Random((int)DateTime.Now.Ticks);
 
+        private AutoResetEvent autoResetEvent = new AutoResetEvent(false);
+
+        private string data = "";
+
+        private string error = "";
+
         public CainiaoPrintDocument(Order[] orders, WuliuNumber[] wuliuNumbers, Dictionary<string, string>[] userDatas, PrintTemplate wuliuTemplate) : base(orders, wuliuNumbers, userDatas, wuliuTemplate)
         {
         }
@@ -55,40 +61,40 @@ namespace ShopErp.App.Service.Print.PrintDocument.DeliveryPrintDocument.TaobaoCa
 
         private T SendAndReciveObject<T>(CainiaoPrintDocumentRequest request, string printServerAdd) where T : CainiaoPrintDocumentResponse
         {
-            ClientWebSocket ws = new ClientWebSocket();
-            CancellationToken ct = new CancellationToken();
+            WebSocketSharp.WebSocket webSocket = new WebSocketSharp.WebSocket(printServerAdd);
+
             try
             {
-                //创建连接
-                if (ws.State != WebSocketState.Open)
+                webSocket.OnMessage += WebSocket_OnMessage;
+                webSocket.OnOpen += WebSocket_OnOpen;
+                webSocket.OnError += WebSocket_OnError;
+
+                this.data = "";
+                this.error = "";
+                this.autoResetEvent.Reset();
+                //连接
+                webSocket.Connect();
+                if (autoResetEvent.WaitOne(20 * 1000) == false)
                 {
-                    var connectTask = ws.ConnectAsync(new Uri(printServerAdd), ct);
-                    if (connectTask.Wait(20 * 1000) == false)
-                    {
-                        throw new Exception("连接打印组件超时，等待时间(秒)：" + 20);
-                    }
+                    throw new Exception("等待回收数据超时:20秒");
+                }
+                if (string.IsNullOrWhiteSpace(this.error) == false || webSocket.ReadyState != WebSocketSharp.WsState.OPEN)
+                {
+                    throw new Exception("连接菜鸟打印组件错误，请菜鸟打印是否开启:" + this.error);
                 }
 
                 //发送数据
-                var textData = Newtonsoft.Json.JsonConvert.SerializeObject(request);
-                var bData = Encoding.UTF8.GetBytes(textData);
-                var task = ws.SendAsync(new ArraySegment<byte>(bData), WebSocketMessageType.Text, true, ct);
-                if (task.Wait(20 * 1000) == false)
+                webSocket.Send(Newtonsoft.Json.JsonConvert.SerializeObject(request));
+                if (autoResetEvent.WaitOne(20 * 1000) == false)
                 {
-                    throw new Exception("向打印组件发送数据超时，等待时间(秒)：" + 20);
+                    throw new Exception("等待回收数据超时:20秒");
+                }
+                if (string.IsNullOrWhiteSpace(this.data))
+                {
+                    throw new Exception("菜鸟组件发送数据失败，有可能是没有返回数据：" + this.error);
                 }
 
-                //接收数据
-                var buf = new byte[1024];
-                var readTask = ws.ReceiveAsync(new ArraySegment<byte>(buf), ct);
-                if (readTask.Wait(20 * 1000) == false)
-                {
-                    throw new Exception("向打印组件读取数据超时，等待时间(秒)：" + 20);
-                }
-                string ret = Encoding.UTF8.GetString(buf, 0, readTask.Result.Count);
-                Debug.WriteLine(DateTime.Now + ": " + ret);
-                var response = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(ret);
-
+                var response = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(this.data);
                 if (request.requestID != response.requestID)
                 {
                     throw new Exception("发送的请求：" + request.requestID + " 与返回的请求不匹配：" + response.requestID);
@@ -102,11 +108,28 @@ namespace ShopErp.App.Service.Print.PrintDocument.DeliveryPrintDocument.TaobaoCa
             finally
             {
                 //关闭连接
-                if (ws != null && ws.State != WebSocketState.Closed)
+                if (webSocket != null && webSocket.IsAlive)
                 {
-                    ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "", new System.Threading.CancellationToken());
+                    webSocket.Close();
                 }
             }
+        }
+
+        private void WebSocket_OnError(object sender, WebSocketSharp.ErrorEventArgs e)
+        {
+            this.error = e.Message;
+            this.autoResetEvent.Set();
+        }
+
+        private void WebSocket_OnOpen(object sender, EventArgs e)
+        {
+            this.autoResetEvent.Set();
+        }
+
+        private void WebSocket_OnMessage(object sender, WebSocketSharp.MessageEventArgs e)
+        {
+            this.data = e.Data;
+            this.autoResetEvent.Set();
         }
 
         public override string StartPrint(string printer, string printServerAdd)
