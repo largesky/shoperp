@@ -15,6 +15,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ShopErp.App.Views.Extenstions;
+using ShopErp.Domain;
 
 namespace ShopErp.App.Views.Orders
 {
@@ -23,9 +25,21 @@ namespace ShopErp.App.Views.Orders
     /// </summary>
     public partial class OrderExportUserControl : UserControl
     {
+        private bool myLoaded = false;
+
         public OrderExportUserControl()
         {
             InitializeComponent();
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (this.myLoaded)
+            {
+                return;
+            }
+            this.cbbOrderTypes.Bind<OrderType>();
+            this.myLoaded = true;
         }
 
         private void btnExport_Click(object sender, RoutedEventArgs e)
@@ -60,7 +74,7 @@ namespace ShopErp.App.Views.Orders
                 }
 
                 var shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas;
-                string[] columnsHeader = new string[] {"店铺", "付款时间", "商品信息", "快递单号", "备注", "姓名", "手机", "地址" };
+                string[] columnsHeader = new string[] { "店铺", "付款时间", "商品信息", "快递单号", "备注", "姓名", "手机", "地址" };
                 Dictionary<string, string[][]> dicContents = new Dictionary<string, string[][]>();
                 List<string[]> contents = new List<string[]>();
                 contents.Add(columnsHeader);
@@ -120,6 +134,11 @@ namespace ShopErp.App.Views.Orders
                 }
                 var dcs = ServiceContainer.GetService<DeliveryCompanyService>().GetByAll().Datas.Where(obj => obj.PaperMark);
                 var orders = ServiceContainer.GetService<OrderService>().GetPayedAndPrintedOrders(shopids, ShopErp.Domain.OrderCreateType.NONE, ShopErp.Domain.PopPayType.None, 0, 0).Datas.OrderBy(obj => obj.PopPayTime).Select(obj => new OrderViewModel(obj)).ToArray();
+                var selType = this.cbbOrderTypes.GetSelectedEnum<OrderType>();
+                if (selType != OrderType.NONE)
+                {
+                    orders = orders.Where(obj => obj.Source.Type == selType).ToArray();
+                }
                 foreach (var order in orders)
                 {
                     order.IsChecked = order.Source.Type == ShopErp.Domain.OrderType.SHUA ? false : string.IsNullOrWhiteSpace(order.DeliveryCompany) || dcs.Any(obj => obj.PaperMark && obj.Name == order.DeliveryCompany);
@@ -289,5 +308,7 @@ namespace ShopErp.App.Views.Orders
                 MessageBox.Show(ex.Message);
             }
         }
+
+
     }
 }

@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ShopErp.App.Views.Orders"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
     <UserControl.Resources>
         <Style x:Key="OrderDataGridStyle" TargetType="{x:Type DataGrid}">
             <Setter Property="AutoGenerateColumns" Value="false" />
@@ -46,6 +46,8 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal">
             <StackPanel Orientation="Horizontal" Grid.Row="2">
+                <TextBlock Text="订单类型：" Margin="3" VerticalAlignment="Center"/>
+                <ComboBox Name="cbbOrderTypes" Margin="3" VerticalAlignment="Center" Width="60"/>
                 <Button Name="btnQuery" Margin="3" VerticalAlignment="Center" Width="60" Content="查询" Click="btnQuery_Click" />
                 <Button Name="btnExport" Margin="3" VerticalAlignment="Center" Width="60" Content="导出" Click="btnExport_Click" />
                 <Button Name="btnCopyAdd" Margin="3" VerticalAlignment="Center" Width="60" Content="复制地址" Click="btnCopyAdd_Click"/>
