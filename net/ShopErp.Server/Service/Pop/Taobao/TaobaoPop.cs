@@ -855,7 +855,7 @@ namespace ShopErp.Server.Service.Pop.Taobao
                 }
                 var wuliuTemplate = new PrintTemplate { CpCode = "", Name = v.ResourceName, SourceType = PrintTemplateSourceType.CAINIAO, UserOrIsvTemplateAreaUrl = v.ResourceUrl, UserOrIsvTemplateAreaId = v.ResourceId.ToString(), StandTemplateId = "", StandTemplateUrl = "", IsIsv = true };
                 //这是中通标准二联面单
-                if (wuliuTemplate.UserOrIsvTemplateAreaId == "285955")
+                if (wuliuTemplate.Name.Contains("中通") && wuliuTemplate.Name.Contains("二联"))
                 {
                     var std = stdWuliuTemplats.FirstOrDefault(obj => obj.StandTemplateId == "301");
                     if (std != null)
@@ -867,7 +867,7 @@ namespace ShopErp.Server.Service.Pop.Taobao
                     }
                 }
                 //圆通标准二联面单
-                if (wuliuTemplate.UserOrIsvTemplateAreaId == "236136")
+                if (wuliuTemplate.Name.Contains("圆通") && wuliuTemplate.Name.Contains("二联"))
                 {
                     var std = stdWuliuTemplats.FirstOrDefault(obj => obj.StandTemplateId == "101");
                     if (std != null)

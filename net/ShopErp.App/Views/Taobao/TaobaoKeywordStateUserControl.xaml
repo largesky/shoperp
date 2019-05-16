@@ -22,7 +22,7 @@
                 <xctk:DateTimePicker Name="dpEnd" Margin="3" VerticalAlignment="Center" Width="150" xctk:Format="Custom" xctk:TimeFormatString="yyyy-MM-dd HH:mm:ss" />
                 <Button Name="btnQuery" Content="查询数据" Margin="3" VerticalAlignment="Center" Width="100" Click="btnQuery_Click" HorizontalAlignment="Right"/>
             </StackPanel>
-            <DataGrid Name="dgvItems" Grid.Row="1" FontSize="16" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" SelectionMode="Extended" SelectionUnit="CellOrRowHeader" RowHeight="40"/>
+            <DataGrid Name="dgvItems" Grid.Row="1" FontSize="16" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" SelectionMode="Extended" SelectionUnit="CellOrRowHeader" RowHeight="40" FrozenColumnCount="1"/>
         </Grid>
     </Grid>
 </UserControl>

@@ -60,8 +60,7 @@
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="订单类型：" Margin="3" VerticalAlignment="Center" />
-                <ComboBox Name="cbbPopPayTypes" Margin="3" VerticalAlignment="Center" Width="80"
-                          SelectionChanged="cbbPopPayTypes_SelectionChanged" />
+                <ComboBox Name="cbbPopPayTypes" Margin="3" VerticalAlignment="Center" Width="80" SelectionChanged="cbbPopPayTypes_SelectionChanged" />
                 <TextBlock Text="旗帜颜色:" Margin="3" VerticalAlignment="Center" />
                 <ListBox Grid.Row="3" Grid.Column="3" Name="cbbFlags" Margin="3" VerticalAlignment="Center"
                          BorderBrush="White">
@@ -113,7 +112,7 @@
                                         <TextBlock Text="电子面单授权店铺:" VerticalAlignment="Center" Margin="3" />
                                         <ComboBox x:Name="cbbShops"  VerticalAlignment="Center" Width="60" DisplayMemberPath="Mark" Margin="3" ItemsSource="{Binding Shops}"  SelectedItem="{Binding Shop}"  />
                                         <TextBlock Text="快递模板:" VerticalAlignment="Center" Margin="3" />
-                                        <ComboBox x:Name="cbbDeliveryTemplates"  VerticalAlignment="Center" Width="120" Margin="3" ItemsSource="{Binding PrintTemplates}"  SelectedItem="{Binding PrintTemplate}"  >
+                                        <ComboBox x:Name="cbbDeliveryTemplates"  VerticalAlignment="Center" Width="100" Margin="3" ItemsSource="{Binding PrintTemplates}"  SelectedItem="{Binding PrintTemplate}"  >
                                             <ComboBox.ItemTemplate>
                                                 <DataTemplate>
                                                     <TextBlock Text="{Binding Converter={StaticResource WuliuTemplateConverter}}"/>
@@ -121,13 +120,13 @@
                                             </ComboBox.ItemTemplate>
                                         </ComboBox>
                                         <TextBlock Text="发货网点:" VerticalAlignment="Center" Margin="3" />
-                                        <ComboBox x:Name="cbbWuliuBrachs" ItemsSource="{Binding WuliuBranches}" Margin="3" VerticalAlignment="Center" SelectedItem="{Binding WuliuBranch,Mode=TwoWay}" MinWidth="150" IsSynchronizedWithCurrentItem="True"/>
+                                        <ComboBox x:Name="cbbWuliuBrachs" ItemsSource="{Binding WuliuBranches}" Margin="3" VerticalAlignment="Center" SelectedItem="{Binding WuliuBranch,Mode=TwoWay}" MaxWidth="150" IsSynchronizedWithCurrentItem="True"/>
                                         <TextBlock Text="电子面单包裹号:" VerticalAlignment="Center" Margin="3" />
                                         <TextBox  Name="tbPackgeId" Text="{Binding PackageId}" Margin="3" VerticalAlignment="Center" Width="30" />
                                         <TextBlock Text="打印组件服务地址:" VerticalAlignment="Center" Margin="3" />
                                         <TextBox  Name="tbPrintServerAdd" Text="{Binding PrintServerAdd}" Margin="3" VerticalAlignment="Center" />
                                         <TextBlock Text="打印机：" Margin="3" VerticalAlignment="Center"/>
-                                        <ComboBox x:Name="cbbPritners" ItemsSource="{Binding Printers}" SelectedItem="{Binding Printer}" Width="150" VerticalAlignment="Center"/>
+                                        <ComboBox x:Name="cbbPritners" ItemsSource="{Binding Printers}" SelectedItem="{Binding Printer}" Width="100" VerticalAlignment="Center"/>
                                         <Button Name="btnPrint" Content="{Binding PrintButtonString}"  VerticalAlignment="Center" Width="60" ClickMode="Release"  Click="btnPrint_Click" Margin="3"/>
                                         <TextBlock Margin="3" Text="{Binding WorkStateMessage}"  VerticalAlignment="Center"/>
                                     </StackPanel>
