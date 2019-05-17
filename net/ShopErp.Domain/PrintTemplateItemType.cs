@@ -8,69 +8,6 @@ namespace ShopErp.Domain
     {
         private static Dictionary<string, PrintTemplateItemTypeGroup> typeGroups = new Dictionary<string, PrintTemplateItemTypeGroup>();
 
-        [PrintTemplateItemTypeGroup(PrintTemplateItemTypeGroup.ORDER)]
-        public const string ORDER_RECEIVER_NAME = "收货人姓名";
-
-        [PrintTemplateItemTypeGroup(PrintTemplateItemTypeGroup.ORDER)]
-        public const string ORDER_RECEIVER_PHONE = "收货人座机";
-
-        [PrintTemplateItemTypeGroup(PrintTemplateItemTypeGroup.ORDER)]
-        public const string ORDER_RECEIVER_MOBILE = "收货人手机";
-
-        [PrintTemplateItemTypeGroup(PrintTemplateItemTypeGroup.ORDER)]
-        public const string ORDER_RECEIVER_ADDRESS = "收货人地址";
-
-        [PrintTemplateItemTypeGroup(PrintTemplateItemTypeGroup.ORDER)]
-        public const string ORDER_RECEIVER_INFOALL = "收货人所有信息";
-
-        [PrintTemplateItemTypeGroup(PrintTemplateItemTypeGroup.ORDER)]
-        public const string ORDER_GOODS_INFO_AND_SELLER_COMMENT = "商品信息&卖家备注";
-
-        [PrintTemplateItemTypeGroup(PrintTemplateItemTypeGroup.ORDER)]
-        public const string ORDER_GOODS_COUNT = "商品总数";
-
-        [PrintTemplateItemTypeGroup(PrintTemplateItemTypeGroup.ORDER)]
-        public const string ORDER_POPPAYTYPE = "付款类型";
-
-        [PrintTemplateItemTypeGroup(PrintTemplateItemTypeGroup.ORDER)]
-        public const string ORDER_POP = "订单平台";
-
-        [PrintTemplateItemTypeGroup(PrintTemplateItemTypeGroup.ORDER)]
-        public const string ORDER_WEIGHT = "订单重量";
-
-        [PrintTemplateItemTypeGroup(PrintTemplateItemTypeGroup.ORDER)]
-        public const string ORDER_MONEY = "订单金额";
-
-        [PrintTemplateItemTypeGroup(PrintTemplateItemTypeGroup.ORDER)]
-        public const string ORDER_MONEY_INBIG = "订单金额(大写)";
-
-        [PrintTemplateItemTypeGroup(PrintTemplateItemTypeGroup.ORDER)]
-        public const string ORDER_PAYTIME = "付款时间";
-
-        [PrintTemplateItemTypeGroup(PrintTemplateItemTypeGroup.DELIVERY)]
-        public const string DELIVERY_SORTATIONNAME = "大头笔";
-
-        [PrintTemplateItemTypeGroup(PrintTemplateItemTypeGroup.DELIVERY)]
-        public const string DELIVERY_SORTATIONNAMEANDROUTECODE = "大头笔&三段码";
-
-        [PrintTemplateItemTypeGroup(PrintTemplateItemTypeGroup.DELIVERY)]
-        public const string DELIVERY_ROUTECODE = "三段码";
-
-        [PrintTemplateItemTypeGroup(PrintTemplateItemTypeGroup.DELIVERY)]
-        public const string DELIVERY_CONSOLIDATIONCODE = "集包地代码";
-
-        [PrintTemplateItemTypeGroup(PrintTemplateItemTypeGroup.DELIVERY)]
-        public const string DELIVERY_CONSOLIDATIONCODE_BARCODE = "集包地代码条码";
-
-        [PrintTemplateItemTypeGroup(PrintTemplateItemTypeGroup.DELIVERY)]
-        public const string DELIVERY_CONSOLIDATIONNAME = "集包地名称";
-
-        [PrintTemplateItemTypeGroup(PrintTemplateItemTypeGroup.DELIVERY)]
-        public const string DELIVERY_DELIVERYNUMBERBARCODE = "快递单号(条码)";
-
-        [PrintTemplateItemTypeGroup(PrintTemplateItemTypeGroup.DELIVERY)]
-        public const string DELIVERY_DELIVERYNUMBERTEXT = "快递单号(文本)";
-
         [PrintTemplateItemTypeGroup(PrintTemplateItemTypeGroup.SHOP)]
         public const string SHOP_MARK = "店铺标识";
 

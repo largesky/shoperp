@@ -18,48 +18,6 @@ namespace ShopErp.App.ViewModels
                 return new PrintTemplateItemViewModelForBarcode(template);
             }
 
-            //订单类型
-            if (type == PrintTemplateItemType.ORDER_PAYTIME)
-            {
-                return new PrintTemplateItemViewModelForDate(template);
-            }
-
-            if (type == PrintTemplateItemType.ORDER_MONEY_INBIG)
-            {
-                return new PrintTemplateItemViewModelForPriceInBig(template);
-            }
-
-            if (type == PrintTemplateItemType.ORDER_RECEIVER_PHONE || type == PrintTemplateItemType.ORDER_RECEIVER_MOBILE)
-            {
-                return new PrintTemplateItemViewModelForReciverPhone(template);
-            }
-
-            if (type == PrintTemplateItemType.ORDER_RECEIVER_INFOALL)
-            {
-                return new PrintTemplateItemViewModelForReciverInfoAll(template);
-            }
-
-            if (type == PrintTemplateItemType.ORDER_GOODS_INFO_AND_SELLER_COMMENT)
-            {
-                return new PrintTemplateItemViewModelForGoodsInfoAndComment(template);
-            }
-
-            //物流
-            if (type ==PrintTemplateItemType.DELIVERY_DELIVERYNUMBERBARCODE)
-            {
-                return new PrintTemplateItemViewModelForBarcode(template);
-            }
-
-            if (type == PrintTemplateItemType.DELIVERY_CONSOLIDATIONCODE_BARCODE)
-            {
-                return new PrintTemplateItemViewModelForBarcode(template);
-            }
-
-            if (type == PrintTemplateItemType.DELIVERY_ROUTECODE)
-            {
-                return new PrintTemplateItemViewModelForRouteCode(template);
-            }
-
             //其它
             if (type == PrintTemplateItemType.OTHER_RANDOM)
             {
