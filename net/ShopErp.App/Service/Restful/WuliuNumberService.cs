@@ -6,9 +6,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Top.Api;
-using Top.Api.Request;
-using Top.Api.Response;
 
 namespace ShopErp.App.Service.Restful
 {
