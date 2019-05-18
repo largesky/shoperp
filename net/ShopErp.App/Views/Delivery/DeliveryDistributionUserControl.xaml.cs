@@ -281,8 +281,7 @@ namespace ShopErp.App.Views.Delivery
             }
             string message = "订单总数:" + this.orders.Count + ",";
             var group = this.orders.GroupBy(obj => obj.DeliveryCompany).ToArray();
-            string ss = string.Join(",",
-                group.Select(obj => (string.IsNullOrWhiteSpace(obj.Key) ? "未分配" : obj.Key) + ":" + obj.Count()));
+            string ss = string.Join(",", group.Select(obj => (string.IsNullOrWhiteSpace(obj.Key) ? "未分配" : obj.Key) + ":" + obj.Count()));
             this.tbTotal.Text = message + ss;
         }
 
@@ -320,12 +319,8 @@ namespace ShopErp.App.Views.Delivery
                     }
 
                     //读取本地历史订单
-                    var localHistoryOrders = ServiceContainer.GetService<OrderService>().GetOrdersByInfoIdNotEqual(
-                        order.Source.PopBuyerId, order.Source.ReceiverPhone, order.Source.ReceiverMobile
-                        , order.Source.ReceiverAddress, order.Source.Id);
-                    order.HistoryOrders = localHistoryOrders.Datas
-                        .Where(obj => orders.Any(ov => ov.Source.Id == obj.Id) == false)
-                        .Select(obj => new OrderViewModel(obj)).ToList();
+                    var localHistoryOrders = ServiceContainer.GetService<OrderService>().GetOrdersByInfoIdNotEqual(order.Source.PopBuyerId, order.Source.ReceiverPhone, order.Source.ReceiverMobile, order.Source.ReceiverAddress, order.Source.Id);
+                    order.HistoryOrders = localHistoryOrders.Datas.Where(obj => orders.Any(ov => ov.Source.Id == obj.Id) == false).Select(obj => new OrderViewModel(obj)).ToList();
                 }
                 this.orders.Clear();
                 this.orders.AddRange(orders);

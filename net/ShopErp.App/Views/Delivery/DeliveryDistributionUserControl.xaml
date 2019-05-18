@@ -80,12 +80,11 @@
                 </ContextMenu>
             </DataGrid.ContextMenu>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="店铺" Width="Auto"
-                                    Binding="{Binding Source.ShopId,Converter={StaticResource shopMarkConverter}}" />
+                <DataGridTextColumn Header="店铺" Width="Auto" Binding="{Binding Source.ShopId,Converter={StaticResource shopMarkConverter}}" />
+                <DataGridTextColumn Header="订单编号" Width="Auto" Binding="{Binding Source.Id}" />
                 <DataGridTextColumn Header="买家账号" Width="Auto" Binding="{Binding Source.PopBuyerId}" />
                 <DataGridTextColumn Header="购买信息" Width="Auto" Binding="{Binding GoodsInfo}" />
-                <DataGridTextColumn Header="付款时间" Width="Auto"
-                                    Binding="{Binding Source.PopPayTime, Converter={StaticResource datetimeConverter}}" />
+                <DataGridTextColumn Header="付款时间" Width="Auto" Binding="{Binding Source.PopPayTime, Converter={StaticResource datetimeConverter}}" />
                 <DataGridTextColumn Header="快递公司" Width="Auto" Binding="{Binding DeliveryCompany}" />
                 <DataGridTextColumn Header="收货人" Width="Auto" Binding="{Binding Source.ReceiverName}" />
                 <DataGridTextColumn Header="联系方式" Width="Auto" Binding="{Binding Phone}" />

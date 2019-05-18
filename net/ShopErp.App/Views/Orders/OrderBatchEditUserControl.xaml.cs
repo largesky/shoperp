@@ -52,7 +52,7 @@ namespace ShopErp.App.Views.Orders
                     }
                     else if (type == 1)
                     {
-                        orders = ServiceContainer.GetService<OrderService>().GetByPopOrderId(popOrderId).Datas;
+                        orders = ServiceContainer.GetService<OrderService>().GetById(popOrderId).Datas;
                     }
                     if (orders == null || orders.Count < 1)
                     {

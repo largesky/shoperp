@@ -76,11 +76,11 @@ namespace ShopErp.Server.Dao.NHibernateDao
             string hsql = "from " + this.GetEntiyName() + " where Id<>" + id + " and (";
             List<object> objs = new List<object>();
 
-            //if (string.IsNullOrWhiteSpace(popBuyerId) == false)
-            //{
-            //    hsql += "PopBuyerId=? or ";
-            //    objs.Add(popBuyerId);
-            //}
+            if (string.IsNullOrWhiteSpace(popBuyerId) == false)
+            {
+                hsql += "PopBuyerId=? or ";
+                objs.Add(popBuyerId);
+            }
 
             if (string.IsNullOrWhiteSpace(receiverPhone) == false)
             {
@@ -93,12 +93,6 @@ namespace ShopErp.Server.Dao.NHibernateDao
                 hsql += "ReceiverMobile=? or ";
                 objs.Add(receiverMobile);
             }
-
-            //if (string.IsNullOrWhiteSpace(ReceiverName) == false)
-            //{
-            //    hsql += "ReceiverName=? or ";
-            //    objs.Add(ReceiverName);
-            //}
 
             if (string.IsNullOrWhiteSpace(receiverAddress) == false)
             {
