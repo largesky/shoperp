@@ -189,7 +189,7 @@ namespace ShopErp.Server.Service.Pop
             {
                 throw new Exception("店铺电子面单接口已禁用，无法调用相应接口操作");
             }
-            this.InvokeWithRefreshAccessToken(shop, (Action)(() => GetPop(shop.PopType).GetAllWuliuTemplates(shop)));
+            this.InvokeWithRefreshAccessToken(shop, (Action)(() => GetPop(shop.PopType).UpdateWuliuNumber(shop, wuliuTemplate, order, wuliuNumber)));
         }
 
         public XDocument GetAddress(Shop shop)

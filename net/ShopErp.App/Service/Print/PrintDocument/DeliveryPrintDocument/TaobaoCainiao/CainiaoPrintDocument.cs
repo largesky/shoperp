@@ -91,7 +91,7 @@ namespace ShopErp.App.Service.Print.PrintDocument.DeliveryPrintDocument.TaobaoCa
                 }
                 if (string.IsNullOrWhiteSpace(this.data))
                 {
-                    throw new Exception("菜鸟组件发送数据失败，有可能是没有返回数据：" + this.error);
+                    throw new Exception("菜鸟组件发送数据失败，没有返回数据：" + this.error);
                 }
 
                 var response = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(this.data);
