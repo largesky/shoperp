@@ -928,6 +928,7 @@ namespace ShopErp.Server.Service.Restful
                         Vendor = og.Vendor,
                         Weight = og.Weight,
                         PopNumber = og.PopNumber,
+                        PopRefundState = PopRefundState.NOT,
                     };
                     nor.OrderGoodss.Add(nog);
 
@@ -955,18 +956,14 @@ namespace ShopErp.Server.Service.Restful
                 // 保存数据
                 try
                 {
+                    //更新老订单
                     List<object> objs = new List<object>();
                     objs.Add(or);
                     objs.AddRange(or.OrderGoodss.ToArray());
                     this.dao.Update(objs.ToArray());
-                    var nOgs = nor.OrderGoodss.ToArray();
-                    nor.OrderGoodss.Clear();
+
+                    //保存新订单
                     this.Save(nor);
-                    foreach (var og in nOgs)
-                    {
-                        og.OrderId = nor.Id;
-                    }
-                    this.dao.Save(nOgs);
                 }
                 catch
                 {
@@ -977,6 +974,10 @@ namespace ShopErp.Server.Service.Restful
                     throw;
                 }
                 return ResponseBase.SUCCESS;
+            }
+            catch (WebFaultException<ResponseBase>)
+            {
+                throw;
             }
             catch (Exception ex)
             {

@@ -1,8 +1,10 @@
 ﻿using ShopErp.App.Service.Restful;
+using ShopErp.App.Utils;
 using ShopErp.App.ViewModels;
 using ShopErp.Domain;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -85,10 +87,10 @@ namespace ShopErp.App.Views.Orders
 
                 foreach (var ov in this.orderViewModels)
                 {
-                    ov.Source.Type = ov.Source.Type == ShopErp.Domain.OrderType.SHUA ? ShopErp.Domain.OrderType.NORMAL : ShopErp.Domain.OrderType.SHUA;
+                    ov.Source.Type = ShopErp.Domain.OrderType.SHUA;
                     ServiceContainer.GetService<OrderService>().Update(ov.Source);
                 }
-                MessageBox.Show("反向更新完成");
+                MessageBox.Show("设置成功");
             }
             catch (Exception ex)
             {

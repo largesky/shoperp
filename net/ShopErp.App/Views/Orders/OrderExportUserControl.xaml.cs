@@ -17,6 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ShopErp.App.Views.Extenstions;
 using ShopErp.Domain;
+using System.ComponentModel;
 
 namespace ShopErp.App.Views.Orders
 {
@@ -245,39 +246,6 @@ namespace ShopErp.App.Views.Orders
 
         #endregion
 
-
-        private void chkAll_Checked(object sender, RoutedEventArgs e)
-        {
-            Check(true);
-        }
-
-        private void chkAll_Unchecked(object sender, RoutedEventArgs e)
-        {
-            Check(false);
-        }
-
-        private void Check(bool isCheck)
-        {
-            try
-            {
-                var items = this.dgOrders.ItemsSource as OrderViewModel[];
-                if (items == null || items.Length < 1)
-                {
-                    MessageBox.Show("没有数据");
-                    return;
-                }
-
-                foreach (var v in items)
-                {
-                    v.IsChecked = isCheck;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
         private void btnCopyAdd_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -310,5 +278,36 @@ namespace ShopErp.App.Views.Orders
         }
 
 
+        private void dgOrders_Sorting(object sender, DataGridSortingEventArgs e)
+        {
+            try
+            {
+                string sortPath = e.Column.SortMemberPath;
+                var items = this.dgOrders.ItemsSource as OrderViewModel[];
+                if (items == null || items.Length < 1)
+                {
+                    return;
+                }
+                var sortType = e.Column.SortDirection == null ? ListSortDirection.Ascending : (e.Column.SortDirection == ListSortDirection.Ascending ? ListSortDirection.Descending : ListSortDirection.Ascending);
+                List<OrderViewModel> newVms = null;
+
+                EnumerableKeySelector selector = new EnumerableKeySelector(items[0].GetType(), sortPath);
+                if (sortType == ListSortDirection.Ascending)
+                {
+                    newVms = items.OrderBy(obj => selector.GetData(obj)).ToList();
+                }
+                else
+                {
+                    newVms = items.OrderByDescending(obj => selector.GetData(obj)).ToList();
+                }
+                this.dgOrders.ItemsSource = newVms.ToArray();
+                e.Column.SortDirection = sortType;
+                e.Handled = true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
     }
 }

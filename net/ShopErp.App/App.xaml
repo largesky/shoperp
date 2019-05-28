@@ -22,6 +22,7 @@
             <converters:FinanceAccountConverter x:Key="FinanceAccountConverter"></converters:FinanceAccountConverter>
             <converters:VideoTypeConverter x:Key="VideoTypeConverter"/>
             <converters:WuliuTemplateConverter x:Key="WuliuTemplateConverter"/>
+            
             <Style x:Key="ImageButton" TargetType="Button">
                 <Setter Property="Template">
                     <Setter.Value>
@@ -33,7 +34,6 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-
 
             <Style TargetType="{x:Type GroupBox}">
                 <Setter Property="Template">
@@ -74,7 +74,6 @@
                 <Setter Property="TextWrapping" Value="Wrap" />
             </Style>
 
-
             <Style x:Key="TextButton" TargetType="Button">
                 <Setter Property="Template">
                     <Setter.Value>
@@ -93,6 +92,45 @@
                 </Style.Triggers>
 
             </Style>
+
+            <Style x:Key="OrderDataGridStyle" TargetType="{x:Type DataGrid}">
+                <Setter Property="AutoGenerateColumns" Value="false" />
+                <Setter Property="CanUserAddRows" Value="false" />
+                <Setter Property="CanUserDeleteRows" Value="false" />
+                <Setter Property="CanUserReorderColumns" Value="false" />
+                <Setter Property="CanUserResizeRows" Value="false" />
+                <Setter Property="IsReadOnly" Value="False" />
+                <Setter Property="RowDetailsVisibilityMode" Value="VisibleWhenSelected" />
+                <Setter Property="RowHeight" Value="20" />
+                <Setter Property="SelectionMode" Value="Extended" />
+                <Setter Property="SelectionUnit" Value="CellOrRowHeader" />
+                <Setter Property="RowHeaderWidth" Value="45" />
+                <Setter Property="RowStyle">
+                    <Setter.Value>
+                        <Style TargetType="{x:Type DataGridRow}">
+                            <Setter Property="Background" Value="{Binding Background}" />
+                        </Style>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="CellStyle">
+                    <Setter.Value>
+                        <Style TargetType="DataGridCell">
+                            <Style.Triggers>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsReadOnly" Value="False" />
+                                        <Condition Property="IsMouseOver" Value="True" />
+                                    </MultiTrigger.Conditions>
+                                    <MultiTrigger.Setters>
+                                        <Setter Property="IsEditing" Value="True" />
+                                    </MultiTrigger.Setters>
+                                </MultiTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            
         </ResourceDictionary>
     </Application.Resources>
 </Application>

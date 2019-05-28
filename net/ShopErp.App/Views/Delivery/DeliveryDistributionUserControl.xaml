@@ -25,10 +25,8 @@
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate>
-                                    <StackPanel Orientation="Horizontal" Background="LightGray"
-                                                HorizontalAlignment="Right">
-                                        <TextBlock Text="{Binding Expander}" VerticalAlignment="Center"
-                                                   HorizontalAlignment="Center" Background="LightGray" />
+                                    <StackPanel Orientation="Horizontal" Background="LightGray" HorizontalAlignment="Right">
+                                        <TextBlock Text="{Binding Expander}" VerticalAlignment="Center" HorizontalAlignment="Center" Background="LightGray" />
                                         <Image
                                             Source="{Binding OrderFlag,Converter={StaticResource flagImageConverter}}"
                                             Stretch="Fill" Width="16" Height="16" VerticalAlignment="Center"
@@ -80,17 +78,25 @@
                 </ContextMenu>
             </DataGrid.ContextMenu>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="店铺" Width="Auto" Binding="{Binding Source.ShopId,Converter={StaticResource shopMarkConverter}}" />
-                <DataGridTextColumn Header="订单编号" Width="Auto" Binding="{Binding Source.Id}" />
-                <DataGridTextColumn Header="买家账号" Width="Auto" Binding="{Binding Source.PopBuyerId}" />
-                <DataGridTextColumn Header="购买信息" Width="Auto" Binding="{Binding GoodsInfo}" />
-                <DataGridTextColumn Header="付款时间" Width="Auto" Binding="{Binding Source.PopPayTime, Converter={StaticResource datetimeConverter}}" />
-                <DataGridTextColumn Header="快递公司" Width="Auto" Binding="{Binding DeliveryCompany}" />
-                <DataGridTextColumn Header="收货人" Width="Auto" Binding="{Binding Source.ReceiverName}" />
-                <DataGridTextColumn Header="联系方式" Width="Auto" Binding="{Binding Phone}" />
-                <DataGridTextColumn Header="收货地址" Width="Auto" Binding="{Binding Source.ReceiverAddress}" />
-                <DataGridTextColumn Header="买家描述" Width="Auto" Binding="{Binding Source.PopBuyerComment}" />
-                <DataGridTextColumn Header="卖家描述" Width="Auto" Binding="{Binding PopSellerComment}" />
+                <DataGridTextColumn Header="店铺" Binding="{Binding Source.ShopId,Converter={StaticResource shopMarkConverter}}" Width="Auto" IsReadOnly="True" />
+                <!--<DataGridTemplateColumn Header="旗帜" Width="Auto" CanUserSort="True" SortMemberPath="Source.PopFlag" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding Source.PopFlag,Converter={StaticResource flagImageConverter}}" Stretch="Fill" Width="14" Height="14" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>-->
+                <DataGridTextColumn Header="类型" Binding="{Binding Source.Type,Converter={StaticResource descriptionConverter}}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="订单编号" Binding="{Binding Source.Id}" Width="Auto" IsReadOnly="True"/>
+                <DataGridTextColumn Header="买家账号" Binding="{Binding Source.PopBuyerId}" Width="Auto" IsReadOnly="True"/>
+                <DataGridTextColumn Header="付款时间" Binding="{Binding Source.PopPayTime, Converter={StaticResource datetimeConverter}}" Width="Auto" IsReadOnly="True"/>
+                <DataGridTextColumn Header="商品信息" Binding="{Binding GoodsInfo}" Width="250" IsReadOnly="True"/>
+                <DataGridTextColumn Header="快递公司" Binding="{Binding DeliveryCompany}" Width="Auto" IsReadOnly="True"/>
+                <DataGridTextColumn Header="卖家备注" Binding="{Binding PopSellerComment}" Width="Auto" IsReadOnly="True"/>
+                <DataGridTextColumn Header="买家备注" Binding="{Binding Source.PopBuyerComment}" Width="Auto" IsReadOnly="True"/>
+                <DataGridTextColumn Header="收件人姓名" Binding="{Binding Source.ReceiverName}" Width="Auto" IsReadOnly="True" />
+                <DataGridTextColumn Header="收件人电话" Binding="{Binding Phone}" Width="Auto" IsReadOnly="True"/>
+                <DataGridTextColumn Header="收件人地址" Binding="{Binding Source.ReceiverAddress}" Width="Auto" IsReadOnly="True"/>
             </DataGrid.Columns>
         </DataGrid>
 

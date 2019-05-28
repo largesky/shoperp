@@ -28,6 +28,7 @@ using ShopErp.App.Utils;
 using ShopErp.App.Views.Orders;
 using ShopErp.Domain;
 using ShopErp.App.Service.Print;
+using System.Reflection;
 
 namespace ShopErp.App.Views.Print
 {
@@ -290,6 +291,12 @@ namespace ShopErp.App.Views.Print
             }
         }
 
+        private object GetData(PrintOrderViewModel source)
+        {
+            return null;
+        }
+
+
         private void SortData(PrintOrderPageViewModel p, DataGrid dg, DataGridColumn col)
         {
             if (dg == null)
@@ -298,146 +305,13 @@ namespace ShopErp.App.Views.Print
                 return;
             }
             string sortPath = col.SortMemberPath;
-            if (string.IsNullOrWhiteSpace(sortPath))
+            if (p.OrderViewModels.Count < 1)
             {
-                MessageBox.Show("排序字段为空", "排序失败");
                 return;
             }
             var sortType = col.SortDirection == null ? ListSortDirection.Ascending : (col.SortDirection == ListSortDirection.Ascending ? ListSortDirection.Descending : ListSortDirection.Ascending);
             List<PrintOrderViewModel> newVms = null;
-            if (sortPath.Contains("PopType"))
-            {
-                if (sortType == ListSortDirection.Ascending)
-                {
-                    newVms = p.OrderViewModels.OrderBy(obj => obj.Source.PopType).ToList();
-                }
-                else
-                {
-                    newVms = p.OrderViewModels.OrderByDescending(obj => obj.Source.PopType).ToList();
-                }
-            }
-            else if (sortPath.Contains("PopPayTime"))
-            {
-                if (sortType == ListSortDirection.Ascending)
-                {
-                    newVms = p.OrderViewModels.OrderBy(obj => obj.Source.PopPayTime).ToList();
-                }
-                else
-                {
-                    newVms = p.OrderViewModels.OrderByDescending(obj => obj.Source.PopPayTime).ToList();
-                }
-            }
-            else if (sortPath.Equals("Source.Id", StringComparison.OrdinalIgnoreCase))
-            {
-                if (sortType == ListSortDirection.Ascending)
-                {
-                    newVms = p.OrderViewModels.OrderBy(obj => obj.Source.Id).ToList();
-                }
-                else
-                {
-                    newVms = p.OrderViewModels.OrderByDescending(obj => obj.Source.Id).ToList();
-                }
-            }
-            else if (sortPath.Contains("PopBuyerId"))
-            {
-                if (sortType == ListSortDirection.Ascending)
-                {
-                    newVms = p.OrderViewModels.OrderBy(obj => obj.Source.PopBuyerId).ToList();
-                }
-                else
-                {
-                    newVms = p.OrderViewModels.OrderByDescending(obj => obj.Source.PopBuyerId).ToList();
-                }
-            }
-            else if (sortPath.Contains("Goods"))
-            {
-                if (sortType == ListSortDirection.Ascending)
-                {
-                    newVms = p.OrderViewModels.OrderBy(obj => obj.Goods).ToList();
-                }
-                else
-                {
-                    newVms = p.OrderViewModels.OrderByDescending(obj => obj.Goods).ToList();
-                }
-            }
-            else if (sortPath.Contains("State"))
-            {
-                if (sortType == ListSortDirection.Ascending)
-                {
-                    newVms = p.OrderViewModels.OrderBy(obj => obj.State).ToList();
-                }
-                else
-                {
-                    newVms = p.OrderViewModels.OrderByDescending(obj => obj.State).ToList();
-                }
-            }
-            else if (sortPath.Contains("DeliveryCompany"))
-            {
-                if (sortType == ListSortDirection.Ascending)
-                {
-                    newVms = p.OrderViewModels.OrderBy(obj => obj.DeliveryCompany).ToList();
-                }
-                else
-                {
-                    newVms = p.OrderViewModels.OrderByDescending(obj => obj.DeliveryCompany).ToList();
-                }
-            }
-            else if (sortPath.Contains("DeliveryNumber"))
-            {
-                if (sortType == ListSortDirection.Ascending)
-                {
-                    newVms = p.OrderViewModels.OrderBy(obj => obj.DeliveryNumber).ToList();
-                }
-                else
-                {
-                    newVms = p.OrderViewModels.OrderByDescending(obj => obj.DeliveryNumber).ToList();
-                }
-            }
-            else if (sortPath.Contains("ReceiverName"))
-            {
-                if (sortType == ListSortDirection.Ascending)
-                {
-                    newVms = p.OrderViewModels.OrderBy(obj => obj.Source.ReceiverName).ToList();
-                }
-                else
-                {
-                    newVms = p.OrderViewModels.OrderByDescending(obj => obj.Source.ReceiverName).ToList();
-                }
-            }
-            else if (sortPath.Contains("ReceiverPhone"))
-            {
-                if (sortType == ListSortDirection.Ascending)
-                {
-                    newVms = p.OrderViewModels.OrderBy(obj => obj.Source.ReceiverPhone).ToList();
-                }
-                else
-                {
-                    newVms = p.OrderViewModels.OrderByDescending(obj => obj.Source.ReceiverPhone).ToList();
-                }
-            }
-            else if (sortPath.Contains("ReceiverMobile"))
-            {
-                if (sortType == ListSortDirection.Ascending)
-                {
-                    newVms = p.OrderViewModels.OrderBy(obj => obj.Source.ReceiverMobile).ToList();
-                }
-                else
-                {
-                    newVms = p.OrderViewModels.OrderByDescending(obj => obj.Source.ReceiverMobile).ToList();
-                }
-            }
-            else if (sortPath.Contains("ReceiverAddress"))
-            {
-                if (sortType == ListSortDirection.Ascending)
-                {
-                    newVms = p.OrderViewModels.OrderBy(obj => obj.Source.ReceiverAddress).ToList();
-                }
-                else
-                {
-                    newVms = p.OrderViewModels.OrderByDescending(obj => obj.Source.ReceiverAddress).ToList();
-                }
-            }
-            else if (sortPath.Contains("DoorNumber"))
+            if (sortPath.Contains("DoorNumber"))
             {
                 //两次排序，第一次根据门牌号排，然后根据货号排序,然后根据付款时间 类型PrintOrderViewModel实际了比较接口
                 List<PrintOrderViewModel> tmpList = p.OrderViewModels.ToList();
@@ -446,54 +320,17 @@ namespace ShopErp.App.Views.Print
                 tmpList.Sort();
                 newVms = tmpList;
             }
-            else if (sortPath.Contains("ShopId"))
-            {
-                if (sortType == ListSortDirection.Ascending)
-                {
-                    newVms = p.OrderViewModels.OrderBy(obj => obj.Source.ShopId).ToList();
-                }
-                else
-                {
-                    newVms = p.OrderViewModels.OrderByDescending(obj => obj.Source.ShopId).ToList();
-                }
-            }
-            else if (sortPath.Contains("PopPayType"))
-            {
-                if (sortType == ListSortDirection.Ascending)
-                {
-                    newVms = p.OrderViewModels.OrderBy(obj => obj.Source.PopPayType).ToList();
-                }
-                else
-                {
-                    newVms = p.OrderViewModels.OrderByDescending(obj => obj.Source.PopPayType).ToList();
-                }
-            }
-            else if (sortPath.Contains("PopFlag"))
-            {
-                if (sortType == ListSortDirection.Ascending)
-                {
-                    newVms = p.OrderViewModels.OrderBy(obj => obj.Source.PopFlag).ToList();
-                }
-                else
-                {
-                    newVms = p.OrderViewModels.OrderByDescending(obj => obj.Source.PopFlag).ToList();
-                }
-            }
-            else if (sortPath.Contains("Source.Type"))
-            {
-                if (sortType == ListSortDirection.Ascending)
-                {
-                    newVms = p.OrderViewModels.OrderBy(obj => obj.Source.Type).ToList();
-                }
-                else
-                {
-                    newVms = p.OrderViewModels.OrderByDescending(obj => obj.Source.Type).ToList();
-                }
-            }
             else
             {
-                MessageBox.Show("当前排序方式不支持,请联系添加");
-                return;
+                EnumerableKeySelector selector = new EnumerableKeySelector(p.OrderViewModels[0].GetType(), sortPath);
+                if (sortType == ListSortDirection.Ascending)
+                {
+                    newVms = p.OrderViewModels.OrderBy(obj => selector.GetData(obj)).ToList();
+                }
+                else
+                {
+                    newVms = p.OrderViewModels.OrderByDescending(obj => selector.GetData(obj)).ToList();
+                }
             }
             p.OrderViewModels.Clear();
             for (int i = 0; i < newVms.Count; i++)

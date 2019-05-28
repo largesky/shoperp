@@ -251,6 +251,7 @@
     <Compile Include="Service\Sync\SyncEventArgs.cs" />
     <Compile Include="Utils\CollectionsSpilteUtil.cs" />
     <Compile Include="Utils\CSV.cs" />
+    <Compile Include="Utils\EnumerableKeySelector.cs" />
     <Compile Include="Utils\EnumUtil.cs" />
     <Compile Include="Utils\EnvironmentDirHelper.cs" />
     <Compile Include="Utils\FileUtil.cs" />
@@ -261,7 +262,6 @@
     <Compile Include="ViewModels\DeliveryCheckViewModel.cs" />
     <Compile Include="ViewModels\DeliveryInViewModel.cs" />
     <Compile Include="ViewModels\DeliveryScanViewModel.cs" />
-    <Compile Include="ViewModels\OrderCodViewModel.cs" />
     <Compile Include="ViewModels\OrderFlagViewModel.cs" />
     <Compile Include="ViewModels\OrderGoodsCloseViewModel.cs" />
     <Compile Include="ViewModels\OrderReturnViewModel.cs" />
