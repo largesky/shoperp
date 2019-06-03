@@ -20,6 +20,8 @@ namespace ShopErp.Server.Service.Restful
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Multiple, AddressFilterMode = AddressFilterMode.Exact)]
     class WuliuNumberService : ServiceBase<WuliuNumber, WuliuNumberDao>
     {
+        PopService ps = new PopService();
+
         /// <summary>
         /// 淘宝平台接口
         /// </summary>
@@ -65,7 +67,7 @@ namespace ShopErp.Server.Service.Restful
         {
             try
             {
-                var ps = new PopService();
+                System.Console.WriteLine(string.Format("{0}, 订单:{1},正在取号模版：{2}", DateTime.Now.ToString(), order.Id, wuliuTemplate.StandTemplateUrl));
                 string wuliuId = string.Join(",", wuliuIds);
                 var wuliuNumber = this.dao.GetByAll(wuliuId, wuliuTemplate.DeliveryCompany, "", packageId, DateTime.MinValue, DateTime.MinValue, 0, 0).Datas.FirstOrDefault(obj => obj.SourceType == wuliuTemplate.SourceType);
 

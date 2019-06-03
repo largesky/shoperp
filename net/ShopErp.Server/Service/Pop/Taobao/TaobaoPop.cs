@@ -854,29 +854,28 @@ namespace ShopErp.Server.Service.Pop.Taobao
                     continue;
                 }
                 var wuliuTemplate = new PrintTemplate { CpCode = "", Name = v.ResourceName, SourceType = PrintTemplateSourceType.CAINIAO, UserOrIsvTemplateAreaUrl = v.ResourceUrl, UserOrIsvTemplateAreaId = v.ResourceId.ToString(), StandTemplateId = "", StandTemplateUrl = "", IsIsv = true };
+                PrintTemplate std = null;
                 //这是中通标准二联面单
                 if (wuliuTemplate.Name.Contains("中通") && wuliuTemplate.Name.Contains("二联"))
                 {
-                    var std = stdWuliuTemplats.FirstOrDefault(obj => obj.StandTemplateId == "301");
-                    if (std != null)
-                    {
-                        wuliuTemplate.StandTemplateId = std.StandTemplateId;
-                        wuliuTemplate.StandTemplateUrl = std.StandTemplateUrl;
-                        wuliuTemplate.CpCode = std.CpCode;
-                        wuliuTemplates.Add(wuliuTemplate);
-                    }
+                    std = stdWuliuTemplats.FirstOrDefault(obj => obj.StandTemplateId == "301");
                 }
                 //圆通标准二联面单
                 if (wuliuTemplate.Name.Contains("圆通") && wuliuTemplate.Name.Contains("二联"))
                 {
-                    var std = stdWuliuTemplats.FirstOrDefault(obj => obj.StandTemplateId == "101");
-                    if (std != null)
-                    {
-                        wuliuTemplate.StandTemplateId = std.StandTemplateId;
-                        wuliuTemplate.StandTemplateUrl = std.StandTemplateUrl;
-                        wuliuTemplate.CpCode = std.CpCode;
-                        wuliuTemplates.Add(wuliuTemplate);
-                    }
+                    std = stdWuliuTemplats.FirstOrDefault(obj => obj.StandTemplateId == "101");
+                }
+                //申通标准二联面单
+                if (wuliuTemplate.Name.Contains("申通") && wuliuTemplate.Name.Contains("二联"))
+                {
+                    std = stdWuliuTemplats.FirstOrDefault(obj => obj.StandTemplateId == "201");
+                }
+                if (std != null)
+                {
+                    wuliuTemplate.StandTemplateId = std.StandTemplateId;
+                    wuliuTemplate.StandTemplateUrl = std.StandTemplateUrl;
+                    wuliuTemplate.CpCode = std.CpCode;
+                    wuliuTemplates.Add(wuliuTemplate);
                 }
             }
             return wuliuTemplates;

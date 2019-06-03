@@ -17,7 +17,7 @@ namespace ShopErp.App.Service.Restful
         private static readonly string[] KEY_WORDS = new string[]
         {
             "真皮", "女鞋", "鞋业", "有限", "公司", "鞋厂", "鞋贸", "推荐", "厂家", "生产", "GO2", "省", "-", ".", "商家", "商贸", "品质", "(",
-            ")", "工厂", "直销", "四川", "四川省", "成都", "成都市", "省", "广州", "代发", "一件", "主推"
+            ")", "工厂", "直销", "四川省", "四川", "成都市", "成都", "省", "广州", "代发", "一件", "主推"
         };
 
         private static readonly List<Vendor> vendors_catch = new List<Vendor>();

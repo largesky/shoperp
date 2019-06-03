@@ -43,7 +43,7 @@ namespace ShopErp.App.Views.Orders
                 ret.Insert(0, new Shop { Mark = "所有", Id = 0, Enabled = true });
                 this.cbbShops.ItemsSource = ret;
                 this.cbbShops.SelectedIndex = 0;
-                this.dpStart.Value = DateTime.Now.AddDays(-30);
+                this.dpStart.Value = DateTime.Now.AddDays(-10);
                 this.dpEnd.Value = DateTime.Now;
                 this.myLoaded = true;
             }

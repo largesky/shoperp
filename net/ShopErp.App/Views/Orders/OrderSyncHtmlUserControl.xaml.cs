@@ -44,7 +44,7 @@ namespace ShopErp.App.Views.Orders
                 {
                     return;
                 }
-                this.dpStart.Value = DateTime.Now.AddDays(-30);
+                this.dpStart.Value = DateTime.Now.AddDays(-10);
                 this.dpEnd.Value = DateTime.Now;
                 this.myLoaded = true;
             }

@@ -11,15 +11,19 @@ namespace ShopErp.App.Utils
 {
     class PopProgramUtil
     {
-        public static void StartPopProgram(PopType popType, string popSellerId, string popBuyerId, string arg)
+        public static void StartPopProgram(PopType popType, string popTalkId, string popBuyerId, string popOrderId)
         {
             if (popType == PopType.TAOBAO || popType == PopType.TMALL)
             {
-                StartTaobaoProgram(popSellerId, popBuyerId, arg);
+                StartTaobaoProgram(popTalkId, popBuyerId, popOrderId);
+            }
+            else if (popType == PopType.PINGDUODUO)
+            {
+                StartPddPropgram(popTalkId, popBuyerId, popOrderId);
             }
             else
             {
-                throw new Exception("暂时不支持启动该平台的聊天工具");
+                throw new Exception("暂时不支持的聊天平台");
             }
         }
 
@@ -50,5 +54,29 @@ namespace ShopErp.App.Utils
             }
             Process.Start("\"" + programPath + "\"", string.Format("aliim:sendmsg?uid=cntaobao&touid=cntaobao{0}&siteid=cntaobao", popBuyerId));
         }
+
+        private static void StartPddPropgram(string popSellerId, string popBuyerId, string orderId)
+        {
+            Microsoft.Win32.RegistryKey key = Microsoft.Win32.RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.ClassesRoot, Microsoft.Win32.RegistryView.Default);
+            RegistryKey hTen = key.OpenSubKey("pddim");
+
+            if (hTen == null)
+            {
+                throw new Exception("没有找到注册信息 HKEY_CLASSES_ROOT\\pddim");
+            }
+
+            var shellKey = hTen.OpenSubKey("Shell\\Open\\Command");
+            string programPath = shellKey.GetValue("", "").ToString();
+            if (string.IsNullOrWhiteSpace(programPath))
+            {
+                throw new Exception("未能在注册表中找到拼多多程序");
+            }
+            if (programPath.Contains("%1"))
+            {
+                programPath = programPath.Substring(0, programPath.IndexOf("%1")).Trim();
+            }
+            Process.Start("\"" + programPath + "\"", string.Format("pddim:sendmsg/?OpeId=open_order&mallcsid={0}&ordersn={1}", popSellerId, orderId));
+        }
+
     }
 }

@@ -12,6 +12,8 @@ namespace ShopErp.Domain
 
         public string PopSellerNumberId { get; set; }
 
+        public string PopTalkId { get; set; }
+
         public string AppKey { get; set; }
 
         public string AppSecret { get; set; }

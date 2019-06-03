@@ -563,7 +563,7 @@ namespace ShopErp.App.Views.Orders
             {
                 OrderViewModel vm = GetCurrentOrderViewModel(sender);
                 Shop s = ServiceContainer.GetService<ShopService>().GetById(vm.Source.ShopId);
-                PopProgramUtil.StartPopProgram(s.PopType, s.PopSellerId, vm.Source.PopBuyerId, "");
+                PopProgramUtil.StartPopProgram(s.PopType, s.PopTalkId ?? s.PopSellerId, vm.Source.PopBuyerId, vm.Source.PopOrderId);
             }
             catch (Exception ex)
             {

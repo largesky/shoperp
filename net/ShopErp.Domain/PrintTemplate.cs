@@ -106,5 +106,10 @@ namespace ShopErp.Domain
             this.Items = new List<PrintTemplateItem>();
             this.AttachFiles = new List<PrintTemplateAttachFiles>();
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

@@ -13,6 +13,9 @@
     <property name="PopSellerNumberId">
       <column name="PopSellerNumberId" sql-type="string" not-null="true" />
     </property>
+    <property name="PopTalkId">
+      <column name="PopTalkId" sql-type="string" not-null="true" />
+    </property>
     <property name="AppKey">
       <column name="AppKey" sql-type="string" not-null="true" />
     </property>
