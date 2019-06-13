@@ -79,7 +79,7 @@ namespace ShopErp.App.Views.Delivery
         {
             for (int i = 0; i < content.Length; i++)
             {
-                if (content[i].Contains(str))
+                if (content[i] != null && content[i].Contains(str))
                 {
                     return i;
                 }

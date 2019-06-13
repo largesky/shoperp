@@ -1,6 +1,7 @@
 ﻿using NPOI.SS.UserModel;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -141,10 +142,12 @@ namespace ShopErp.App.Service.Excel
                 for (int i = 0; i < book.NumberOfSheets; i++)
                 {
                     var sheet = book.GetSheetAt(i);
-                    if (sheet == null)
+                    if (sheet == null || sheet.LastRowNum <= 0)
                     {
                         continue;
                     }
+
+                    Debug.WriteLine(sheet.SheetName + " Row: " + sheet.LastRowNum + " Col: ");
 
                     //获取最大的列数
                     List<int> cols = new List<int>();
