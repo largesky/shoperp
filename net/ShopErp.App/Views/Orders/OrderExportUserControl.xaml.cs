@@ -262,14 +262,15 @@ namespace ShopErp.App.Views.Orders
                     MessageBox.Show("没有数据");
                     return;
                 }
-
-                string content = "";
+                List<string> re = new List<string>();
                 foreach (var v in items)
                 {
-                    content += v.Source.ReceiverName + "," + v.Source.ReceiverMobile + "," + v.Source.ReceiverAddress + "," + Environment.NewLine;
+                    re.Add(v.Source.ReceiverName + "," + v.Source.ReceiverMobile + "," + v.Source.ReceiverAddress.Replace(",", "").Replace("，", "") + ",");
                 }
-                Clipboard.SetText(content);
-                MessageBox.Show("复制成功");
+                var res = re.Distinct().ToArray();
+                Clipboard.SetText(string.Join(Environment.NewLine, res));
+                string msg = string.Format("订单总数：{0},合并后共复制收货人信息条数：{1}", items.Count(), res.Length);
+                MessageBox.Show(msg, "复制成功");
             }
             catch (Exception ex)
             {
