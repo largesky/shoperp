@@ -178,7 +178,7 @@ namespace ShopErp.App.Views.Goods
                         {
                             throw new Exception("商品没有URL地址");
                         }
-                        var g = this.sb.GetGoodsInfoByUrl(gu.Source.Url, ref vendorHomePage, ref goodsVideoUrl, true);
+                        var g = this.sb.GetGoodsInfoByUrl(gu.Source.Url, ref vendorHomePage, ref goodsVideoUrl, true, false);
                         if (g == null)
                         {
                             throw new Exception("获取商品方法返回NULL");

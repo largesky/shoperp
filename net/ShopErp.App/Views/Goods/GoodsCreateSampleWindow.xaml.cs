@@ -40,7 +40,7 @@ namespace ShopErp.App.Views.Goods
                 string url = this.tbUrl.Text.Trim();
 
                 url = url.Substring(0, url.IndexOf('?') < 0 ? url.Length : url.IndexOf('?'));
-                var goods = SpiderBase.CreateSpider(url, 80, 0).GetGoodsInfoByUrl(url, ref vendorHomePage, ref goodsVideoUrl, false);
+                var goods = SpiderBase.CreateSpider(url, 80, 0).GetGoodsInfoByUrl(url, ref vendorHomePage, ref goodsVideoUrl, false, true);
 
                 var vendors = ServiceContainer.GetService<VendorService>().GetByAll("", "", "", "", 0, 0).Datas;
                 var vendor = vendors.FirstOrDefault(obj => obj.Alias.IndexOf(vendorHomePage, StringComparison.OrdinalIgnoreCase) >= 0);

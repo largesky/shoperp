@@ -446,7 +446,7 @@ namespace ShopErp.App.Views.Goods
                     {
                         throw new Exception("商品网址为空");
                     }
-                    var g = SpiderBase.CreateSpider(og.Url, 80, 0).GetGoodsInfoByUrl(og.Url, ref vendorHomePage, ref goodsVideoUrl, true);
+                    var g = SpiderBase.CreateSpider(og.Url, 80, 0).GetGoodsInfoByUrl(og.Url, ref vendorHomePage, ref goodsVideoUrl, true, false);
                     if (g == null)
                     {
                         throw new Exception("商品不存在");
