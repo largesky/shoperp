@@ -12,17 +12,15 @@ namespace ShopErp.App.Views.Goods
 {
     class GoodUpdateViewModel : DependencyObject
     {
-        public static readonly DependencyProperty StateProperty =
-            DependencyProperty.Register("State", typeof(string), typeof(GoodUpdateViewModel), new PropertyMetadata(""));
+        public static readonly DependencyProperty StateProperty = DependencyProperty.Register("State", typeof(string), typeof(GoodUpdateViewModel), new PropertyMetadata(""));
 
         public ShopErp.Domain.Goods Source { get; set; }
 
         public string State
         {
-            get { return (string) this.GetValue(StateProperty); }
+            get { return (string)this.GetValue(StateProperty); }
             set { this.SetValue(StateProperty, value); }
         }
-
 
         private string GetShortString(GoodsState state)
         {
@@ -37,6 +35,10 @@ namespace ShopErp.App.Views.Goods
             if (state == GoodsState.WAITREVIEW)
             {
                 return "(图)";
+            }
+            if (state == GoodsState.WAITUPLOADED)
+            {
+                return "(审)";
             }
             if (state == GoodsState.UPLOADED)
             {

@@ -12,20 +12,15 @@ namespace ShopErp.App.Views.Goods
 {
     public class GoodsViewModel : DependencyObject
     {
-        public static readonly DependencyProperty FlagProperty =
-            DependencyProperty.Register("Flag", typeof(ColorFlag), typeof(GoodsViewModel));
+        public static readonly DependencyProperty FlagProperty = DependencyProperty.Register("Flag", typeof(ColorFlag), typeof(GoodsViewModel));
 
-        public static readonly DependencyProperty ImageDownloadStateProperty =
-            DependencyProperty.Register("ImageDownloadState", typeof(string), typeof(GoodsViewModel));
+        public static readonly DependencyProperty ImageDownloadStateProperty = DependencyProperty.Register("ImageDownloadState", typeof(string), typeof(GoodsViewModel));
 
-        public static readonly DependencyProperty CommentProperty =
-            DependencyProperty.Register("Comment", typeof(string), typeof(GoodsViewModel));
+        public static readonly DependencyProperty CommentProperty = DependencyProperty.Register("Comment", typeof(string), typeof(GoodsViewModel));
 
-        public static readonly DependencyProperty StarStringProperty =
-            DependencyProperty.Register("StarString", typeof(string), typeof(GoodsViewModel));
+        public static readonly DependencyProperty StarStringProperty = DependencyProperty.Register("StarString", typeof(string), typeof(GoodsViewModel));
 
-        public static readonly DependencyProperty StarImageProperty =
-            DependencyProperty.Register("StarImage", typeof(BitmapSource), typeof(GoodsViewModel));
+        public static readonly DependencyProperty StarImageProperty = DependencyProperty.Register("StarImage", typeof(BitmapSource), typeof(GoodsViewModel));
 
         public ShopErp.Domain.Goods Source { get; set; }
 

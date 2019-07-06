@@ -34,9 +34,9 @@
                                     Binding="{Binding Source.Type, Converter={StaticResource ResourceKey=descriptionConverter}}" />
                 <DataGridTextColumn Header="产品货号" Binding="{Binding Source.Number}" />
                 <DataGridTextColumn Header="产品价格" Binding="{Binding Source.Price,StringFormat=F2}" />
-                <DataGridTextColumn Header="产品材质" Binding="{Binding Source.Material,StringFormat=F2}" />
-                <DataGridTextColumn Header="产品颜色" Binding="{Binding Source.Colors,StringFormat=F2}" />
-                <DataGridTextColumn Header="上货店铺" Binding="{Binding TargetShops,StringFormat=F2}" />
+                <DataGridTextColumn Header="产品材质" Binding="{Binding Source.Material}" />
+                <DataGridTextColumn Header="产品颜色" Binding="{Binding Source.Colors}" />
+                <DataGridTextColumn Header="上货店铺" Binding="{Binding TargetShops}" />
                 <DataGridTextColumn Header="处理状态" Binding="{Binding State}" />
                 <DataGridTextColumn Header="创建时间"
                                     Binding="{Binding Source.CreateTime, Converter={StaticResource datetimeConverter}}" />

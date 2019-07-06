@@ -110,7 +110,6 @@ namespace ShopErp.App.Views.Vendor
             }
         }
 
-
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -180,10 +179,6 @@ namespace ShopErp.App.Views.Vendor
                 {
                     vendor.Comment = nv;
                 }
-                else if (e.Column.Header.ToString().Contains("电话"))
-                {
-                    vendor.Phone = nv;
-                }
                 else if (e.Column.Header.ToString().Contains("市场地址"))
                 {
                     vendor.MarketAddress = nv;
@@ -234,12 +229,7 @@ namespace ShopErp.App.Views.Vendor
                                 v.Name = nv.Name;
                                 v.PingyingName = "";
                             }
-                            v.Phone = nv.Phone;
                             v.MarketAddress = nv.MarketAddress;
-                            if (v.Name.Equals(nv.Name, StringComparison.OrdinalIgnoreCase) == false)
-                            {
-                                v.PingyingName = "";
-                            }
                             ServiceContainer.GetService<VendorService>().Update(v);
                         }
                     }

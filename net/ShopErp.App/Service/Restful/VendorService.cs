@@ -133,12 +133,7 @@ namespace ShopErp.App.Service.Restful
                 return false;
             }
 
-            if (v1 == v2)
-            {
-                return true;
-            }
-
-            return string.Compare(v1.Name, v2.Name) == 0 && string.Compare(v1.Phone, v2.Phone) == 0 && string.Compare(v1.MarketAddress, v2.MarketAddress) == 0;
+            return string.Compare(v1.Name, v2.Name) == 0&& string.Compare(v1.MarketAddress, v2.MarketAddress) == 0;
         }
 
         /// <summary>

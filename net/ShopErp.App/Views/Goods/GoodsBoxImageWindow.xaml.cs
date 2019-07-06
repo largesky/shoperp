@@ -69,6 +69,7 @@ namespace ShopErp.App.Views.Goods
             string saveMode = LocalConfigService.GetValue(SystemNames.CONFIG_GOODS_BOX_IMAGE_SAVE_MODE, false.ToString());
             bool sm = Boolean.Parse(saveMode);
             this.cbbImageSaveMode.SelectedIndex = sm ? 1 : 0;
+            this.tbPingpai.Text= LocalConfigService.GetValue(SystemNames.CONFIG_GOODS_BOX_IMAGE_BRAND, "花儿锦");
         }
 
         private void cbbMateria_TextChanged(object sender, TextChangedEventArgs e)
@@ -79,6 +80,11 @@ namespace ShopErp.App.Views.Goods
         private void cbbColor_TextChanged(object sender, TextChangedEventArgs e)
         {
             this.tbColor.Text = "颜色：" + this.cbbColor.Text.Trim();
+        }
+
+        private void TbPingpai_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            this.tbBrand.Text = "品牌：" + this.tbPingpai.Text.Trim();
         }
 
         private void btnCreate_Click(object sender, RoutedEventArgs e)
@@ -140,6 +146,7 @@ namespace ShopErp.App.Views.Goods
                 }
 
                 LocalConfigService.UpdateValue(SystemNames.CONFIG_GOODS_BOX_IMAGE_SAVE_MODE, createYTPT.ToString());
+                LocalConfigService.UpdateValue(SystemNames.CONFIG_GOODS_BOX_IMAGE_BRAND, this.tbPingpai.Text.Trim());
 
                 MessageBox.Show("保存成功");
 
@@ -150,6 +157,7 @@ namespace ShopErp.App.Views.Goods
                 MessageBox.Show(ex.Message);
             }
         }
+
 
     }
 }

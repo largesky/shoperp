@@ -139,7 +139,7 @@ namespace ShopErp.App.Views.Orders
                     }
                     catch (Exception ex)
                     {
-                        fails.Add(first.DeliveryNumber);
+                        fails.Add(first.DeliveryNumber + ex.Message);
                     }
                     finally
                     {
@@ -155,7 +155,7 @@ namespace ShopErp.App.Views.Orders
                 }
                 else
                 {
-                    MessageBox.Show(string.Join(",", fails), "以下快递单号标记失败", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(string.Join(Environment.NewLine, fails), "以下快递单号标记失败", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)

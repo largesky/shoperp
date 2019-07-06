@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,6 +17,7 @@ using ShopErp.App.Service.Restful;
 using ShopErp.App.Utils;
 using ShopErp.Domain;
 using ShopErp.App.Views.Extenstions;
+using ShopErp.App.Service.Spider;
 
 namespace ShopErp.App.Views.Goods
 {
@@ -26,74 +26,58 @@ namespace ShopErp.App.Views.Goods
     /// </summary>
     public partial class GoodsCreateWindow : Window
     {
+        public static readonly DependencyProperty GoodsProperty = DependencyProperty.Register("Goods", typeof(ShopErp.Domain.Goods), typeof(GoodsCreateWindow));
+
         private GoodsService goodsService = ServiceContainer.GetService<GoodsService>();
         private VendorService vendorService = ServiceContainer.GetService<VendorService>();
         private string imagePath = null;
         private bool hasImageSet = false;
 
-        public ShopErp.Domain.Goods Goods { get; set; }
+        string oldNumber;
+        long oldVendorId;
+
+        public ShopErp.Domain.Goods Goods
+        {
+            get { return (ShopErp.Domain.Goods)this.GetValue(GoodsProperty); }
+            set { this.SetValue(GoodsProperty, value); }
+        }
 
         public GoodsCreateWindow()
         {
             InitializeComponent();
         }
 
+        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+            if (e.Property != GoodsProperty)
+            {
+                return;
+            }
+            this.Title = this.Goods == null || this.Goods.Id < 1 ? "添加商品-粘贴网址后输入回车" : "编辑商品-" + this.Goods.Number;
+        }
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            this.Title = "编辑商品";
-            if (this.Goods == null)
-            {
-                this.Title = "新增商品";
-            }
-
             try
             {
                 this.cbbTypes.Bind<GoodsType>();
+                this.cbbVideoType.Bind<GoodsVideoType>();
                 this.cbbShops.ItemsSource = ServiceContainer.GetService<ShopService>().GetByAll().Datas.Where(obj => obj.Enabled).Select(obj => new ShopCheckViewModel(obj) { IsChecked = false }).ToArray();
-                var minTime = this.goodsService.GetDBMinTime();
-                if (this.Goods == null)
+                if (this.Goods != null)
                 {
-                    this.Goods = new ShopErp.Domain.Goods();
-                    this.Goods.CreateOperator = OperatorService.LoginOperator.Number;
-                    this.Goods.CreateTime = DateTime.Now;
-                    this.Goods.Image = "";
-                    this.Goods.ImageDir = "";
-                    this.Goods.Id = 0;
-                    this.Goods.LastSellTime = minTime;
-                    this.Goods.Star = 0;
-                    this.Goods.UpdateTime = minTime;
-                    this.Goods.Shops = new List<GoodsShop>();
-                    this.Goods.Flag = ColorFlag.UN_LABEL;
-                    this.Goods.VideoType = GoodsVideoType.NOT;
-                }
-                this.imagePath = this.Goods.Image;
-                this.img.Source = (new WebUrlImageConverter()).Convert(this.Goods.Image, null, null, null) as ImageSource;
-                this.cbbVendors.Text = this.Goods.VendorId < 1 ? "" : vendorService.GetById(this.Goods.VendorId).Name;
-                this.cbbTypes.SetSelectedEnum(this.Goods.Type);
-                this.tbNumber.Text = this.Goods.Number;
-                this.tbPrice.Text = this.Goods.Price.ToString("F0");
-                this.tbUrl.Text = this.Goods.Url;
-                this.tbWeight.Text = this.Goods.Weight.ToString("F2");
-                this.tbMaterial.Text = this.Goods.Material;
-                this.chkUpdateEnabled.IsChecked = this.Goods.UpdateEnabled;
-                this.tbColors.Text = this.Goods.Colors;
-                this.tbStar.Text = this.Goods.Star.ToString();
-                if (this.Goods.VideoType == GoodsVideoType.VIDEO)
-                {
-                    this.rbYes.IsChecked = true;
-                    this.rbNo.IsChecked = false;
+                    this.imagePath = this.Goods.Image;
+                    foreach (var shop in this.cbbShops.ItemsSource as ShopCheckViewModel[])
+                    {
+                        shop.IsChecked = this.Goods.Shops.FirstOrDefault(obj => obj.ShopId == shop.Source.Id) != null;
+                    }
+                    oldNumber = this.Goods.Number;
+                    oldVendorId = this.Goods.VendorId;
                 }
                 else
                 {
-                    this.rbYes.IsChecked = false;
-                    this.rbNo.IsChecked = true;
+                    this.Goods = new ShopErp.Domain.Goods { Colors = "", Comment = "", CreateOperator = OperatorService.LoginOperator.Number, CreateTime = DateTime.Now, Flag = ColorFlag.UN_LABEL, Id = 0, IgnoreEdtion = false, Image = "", ImageDir = "", LastSellTime = DateTime.Now, Material = "", Number = "", Price = 0, Shops = new List<GoodsShop>(), Star = 0, Type = GoodsType.GOODS_SHOES_NONE, UpdateEnabled = true, UpdateTime = DateTime.Now, Url = "", VendorId = 0, VideoType = GoodsVideoType.NONE, Weight = 0 };
                 }
-                foreach (var shop in this.cbbShops.ItemsSource as ShopCheckViewModel[])
-                {
-                    shop.IsChecked = this.Goods.Shops.FirstOrDefault(obj => obj.ShopId == shop.Source.Id) != null;
-                }
-                this.tbComment.Text = this.Goods.Comment;
-                this.chkIgnoreEdtion.IsChecked = this.Goods.IgnoreEdtion;
             }
             catch (Exception ex)
             {
@@ -103,16 +87,69 @@ namespace ShopErp.App.Views.Goods
 
         private void btnChooseImage_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
-            bool? ret = ofd.ShowDialog();
-            if (ret == null || ret.Value == false)
+            try
             {
-                return;
+                Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
+                bool? ret = ofd.ShowDialog();
+                if (ret == null || ret.Value == false)
+                {
+                    return;
+                }
+                BitmapImage image = new BitmapImage();
+                image.BeginInit();
+                image.StreamSource = new MemoryStream(File.ReadAllBytes(ofd.FileName));
+                image.EndInit();
+                this.img.Source = image;
+                this.imagePath = ofd.FileName;
+                this.hasImageSet = true;
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
 
-            this.img.Source = new BitmapImage(new Uri(ofd.FileName));
-            this.imagePath = ofd.FileName;
-            this.hasImageSet = true;
+        private void TbUrl_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            try
+            {
+                if (e.Key != Key.Enter)
+                {
+                    return;
+                }
+
+                if (this.Goods != null && this.Goods.Id > 0)
+                {
+                    MessageBox.Show("当前处于编辑商品模式，不能自动读取新数据");
+                    return;
+                }
+                string vendorHomePage = "", goodsVideoUrl = "";
+                string url = this.tbUrl.Text.Trim();
+
+                url = url.Substring(0, url.IndexOf('?') < 0 ? url.Length : url.IndexOf('?'));
+                var goods = SpiderBase.CreateSpider(url, 80, 0).GetGoodsInfoByUrl(url, ref vendorHomePage, ref goodsVideoUrl, false, true);
+
+                var vendors = ServiceContainer.GetService<VendorService>().GetByAll("", "", "", "", 0, 0).Datas;
+                var vendor = vendors.FirstOrDefault(obj => obj.Alias.IndexOf(vendorHomePage, StringComparison.OrdinalIgnoreCase) >= 0);
+                if (vendor == null)
+                {
+                    vendor = vendors.FirstOrDefault(obj => obj.HomePage.Equals(vendorHomePage, StringComparison.OrdinalIgnoreCase));
+                }
+                if (vendor == null)
+                {
+                    vendor = SpiderBase.CreateSpider(url, 80, 0).GetVendorInfoByUrl(url);
+                    vendor.Id = ServiceContainer.GetService<VendorService>().Save(vendor);
+                }
+                goods.VendorId = vendor.Id;
+                this.imagePath = goods.Image;
+                this.hasImageSet = true;
+                this.Goods = goods;
+                e.Handled = true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
@@ -120,14 +157,24 @@ namespace ShopErp.App.Views.Goods
             try
             {
                 var minTime = this.goodsService.GetDBMinTime();
-                var newVendor = this.cbbVendors.Text.Trim();
+                var newVendor = this.tbVendor.Text.Trim();
                 string newNumber = this.tbNumber.Text.Trim();
-                string oldNumber = this.Goods.Number;
-                long oldVendorId = this.Goods.VendorId;
 
                 if (string.IsNullOrWhiteSpace(newVendor))
                 {
                     MessageBox.Show("请输入厂家全名称");
+                    return;
+                }
+
+                if (this.Goods.VendorId == 0)
+                {
+                    MessageBox.Show("厂家名称不存在");
+                    return;
+                }
+
+                if (this.Goods.VendorId < 0)
+                {
+                    MessageBox.Show("厂家名称找到多个厂家，请输入厂家全名称");
                     return;
                 }
 
@@ -150,31 +197,18 @@ namespace ShopErp.App.Views.Goods
                 }
 
                 var vendors = ServiceContainer.GetService<VendorService>().GetByAll("", "", "", "", 0, 0).Datas;
-                var v = vendors.FirstOrDefault(obj => obj.Alias.IndexOf(newVendor, StringComparison.OrdinalIgnoreCase) >= 0);
-                if (v == null)
+                var vendor = vendors.FirstOrDefault(obj => obj.Id == this.Goods.VendorId);
+                var v = vendors.FirstOrDefault(obj => obj.Alias.IndexOf(vendor.HomePage.Trim('/'), StringComparison.OrdinalIgnoreCase) >= 0);
+                if (v != null)
                 {
-                    v = vendors.FirstOrDefault(obj => obj.Name.Equals(newVendor, StringComparison.OrdinalIgnoreCase));
+                    vendor = v;
                 }
-                if (v == null)
+                if (vendor == null)
                 {
                     throw new Exception("厂家不存在");
                 }
-
-                this.Goods.VendorId = v.Id;
-                this.Goods.Type = this.cbbTypes.GetSelectedEnum<GoodsType>();
-                this.Goods.Number = newNumber;
-                this.Goods.Price = float.Parse(this.tbPrice.Text.Trim());
-                this.Goods.Url = this.tbUrl.Text.Trim();
-                this.Goods.Weight = float.Parse(this.tbWeight.Text.Trim());
-                this.Goods.Colors = string.Join(",", this.tbColors.Text.Trim().Split(new char[] { ',', '，', ' ' }, StringSplitOptions.RemoveEmptyEntries));
-                this.Goods.Material = this.tbMaterial.Text.Trim();
-                this.Goods.Comment = this.tbComment.Text.Trim();
-                this.Goods.UpdateEnabled = this.chkUpdateEnabled == null ? false : this.chkUpdateEnabled.IsChecked.Value;
-                this.Goods.IgnoreEdtion = this.chkIgnoreEdtion.IsChecked == null ? false : this.chkIgnoreEdtion.IsChecked.Value;
-                this.Goods.Star = int.Parse(this.tbStar.Text.Trim());
+                this.Goods.VendorId = vendor.Id;
                 var selectedShops = this.cbbShops.ItemsSource.OfType<ShopCheckViewModel>().Where(obj => obj.IsChecked).ToArray();
-                this.Goods.Vendor = v;
-                this.Goods.VideoType = this.rbYes.IsChecked.Value ? GoodsVideoType.VIDEO : GoodsVideoType.NOT;
 
                 if (this.Goods.Id < 1)
                 {
@@ -192,8 +226,7 @@ namespace ShopErp.App.Views.Goods
                     }
 
                     //改变了厂家，或者货号则需要，移动图片文件夹
-                    if ((oldVendorId > 0 && oldVendorId != v.Id) ||
-                        (string.IsNullOrWhiteSpace(oldNumber) == false && oldNumber.Equals(newNumber, StringComparison.OrdinalIgnoreCase) == false))
+                    if ((oldVendorId > 0 && oldVendorId != vendor.Id) || (string.IsNullOrWhiteSpace(oldNumber) == false && oldNumber.Equals(newNumber, StringComparison.OrdinalIgnoreCase) == false))
                     {
                         //移动图片
                         string oldDir = dir + "\\" + this.Goods.ImageDir;
@@ -215,7 +248,7 @@ namespace ShopErp.App.Views.Goods
 
                 //上货店铺
                 //已有的，没有在选择中的，需要删除
-                var gus = this.Goods.Shops.ToArray();
+                var gus = this.Goods.Shops == null ? new GoodsShop[0] : this.Goods.Shops.ToArray();
                 foreach (var s in gus)
                 {
                     if (selectedShops.FirstOrDefault(obj => obj.Source.Id == s.ShopId) == null)
@@ -224,8 +257,7 @@ namespace ShopErp.App.Views.Goods
                         this.Goods.Shops.Remove(s);
                     }
                 }
-                //从数据库读取一篇，防止其它人添加了
-                gus = ServiceContainer.GetService<GoodsShopService>().GetByAll(this.Goods.Id, 0, 0).Datas.ToArray();
+
                 //没有的则需要增加
                 foreach (var ss in selectedShops)
                 {

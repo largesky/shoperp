@@ -35,14 +35,16 @@
         </Grid>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" >
-            <TextBlock Text="鞋盒图储存地方：" Margin="3" VerticalAlignment="Center" FontSize="12" />
+            <TextBlock Text="品牌：" Margin="3" VerticalAlignment="Center"/>
+            <TextBox Name="tbPingpai" Margin="3" VerticalAlignment="Center" Text="花儿锦" Width="80" TextChanged="TbPingpai_TextChanged"/>
+            <TextBlock Text="储存地主：" Margin="3" VerticalAlignment="Center" FontSize="12" />
             <ComboBox Margin="3" VerticalAlignment="Center" Name="cbbImageSaveMode" FontSize="12" Width="80">
                 <ComboBoxItem>本地</ComboBoxItem>
                 <ComboBoxItem>图片空间</ComboBoxItem>
                 <ComboBox.SelectedIndex>1</ComboBox.SelectedIndex>
             </ComboBox>
             <TextBlock Margin="3" VerticalAlignment="Center" Text="材质："/>
-            <ComboBox Margin="3" VerticalAlignment="Center" Name="cbbMateria" IsEditable="True" Width="100" TextBoxBase.TextChanged="cbbMateria_TextChanged" >
+            <ComboBox Margin="3" VerticalAlignment="Center" Name="cbbMateria" IsEditable="True" Width="80" TextBoxBase.TextChanged="cbbMateria_TextChanged" >
                 <ComboBoxItem>PU</ComboBoxItem>
                 <ComboBoxItem>磨砂</ComboBoxItem>
                 <ComboBoxItem>绒面</ComboBoxItem>
@@ -53,7 +55,7 @@
                 <ComboBoxItem>没有类型请手动输入</ComboBoxItem>
             </ComboBox>
             <TextBlock Margin="3" VerticalAlignment="Center" Text="颜色："/>
-            <ComboBox Margin="3" VerticalAlignment="Center" Name="cbbColor" IsEditable="True" Width="100" TextBoxBase.TextChanged="cbbColor_TextChanged">
+            <ComboBox Margin="3" VerticalAlignment="Center" Name="cbbColor" IsEditable="True" Width="80" TextBoxBase.TextChanged="cbbColor_TextChanged">
                 <ComboBoxItem>黑色</ComboBoxItem>
                 <ComboBoxItem>白色</ComboBoxItem>
                 <ComboBoxItem>红色</ComboBoxItem>

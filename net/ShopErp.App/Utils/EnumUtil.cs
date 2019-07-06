@@ -35,49 +35,49 @@ namespace ShopErp.App.Utils
                 var atts = matchItem.GetCustomAttributes(typeof(EnumDescriptionAttribute), true);
                 if (atts.Length > 0)
                 {
-                    return ((EnumDescriptionAttribute) atts[0]).Description;
+                    return ((EnumDescriptionAttribute)atts[0]).Description;
                 }
             }
             throw new Exception("无法解析枚举信息:" + en.GetType().FullName + "  " + en);
         }
 
 
-        public static string[] GetEnumDescriptions<T>()
+        public static string[] GetEnumDescriptions(Type t)
         {
             lock (typefieldDescriptionCaches)
             {
-                if (typefieldDescriptionCaches.ContainsKey(typeof(T)))
+                if (typefieldDescriptionCaches.ContainsKey(t))
                 {
-                    return typefieldDescriptionCaches[typeof(T)];
+                    return typefieldDescriptionCaches[t];
                 }
-                var filesInfo = GetFiledInfos(typeof(T));
+                var filesInfo = GetFiledInfos(t);
                 string[] descriptions = new string[filesInfo.Length];
                 for (int i = 0; i < descriptions.Length; i++)
                 {
                     var atts = filesInfo[i].GetCustomAttributes(typeof(EnumDescriptionAttribute), true);
                     if (atts.Length < 1)
                     {
-                        throw new Exception("类型: " + typeof(T).FullName + " 值 " + filesInfo[i].ToString() + " 解析失败");
+                        throw new Exception("类型: " + t.FullName + " 值 " + filesInfo[i].ToString() + " 解析失败");
                     }
-                    descriptions[i] = ((EnumDescriptionAttribute) atts[0]).Description;
+                    descriptions[i] = ((EnumDescriptionAttribute)atts[0]).Description;
                 }
-                typefieldDescriptionCaches[typeof(T)] = descriptions;
+                typefieldDescriptionCaches[t] = descriptions;
                 return descriptions;
             }
         }
 
-        public static T GetEnumValueByDesc<T>(string desc)
+        public static object GetEnumValueByDesc(Type t, string desc)
         {
-            var descs = GetEnumDescriptions<T>().ToList();
-            var values = Enum.GetValues(typeof(T));
+            var descs = GetEnumDescriptions(t).ToList();
+            var values = Enum.GetValues(t);
 
             int index = descs.IndexOf(desc);
 
             if (index < 0)
             {
-                throw new Exception("未能识别:" + typeof(T).FullName + "中的描述:" + desc);
+                return null;
             }
-            return (T) values.GetValue(index);
+            return values.GetValue(index);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace ShopErp.Domain
         public virtual long Id { get; set; }
         public virtual string Name { get; set; }
         public virtual string PingyingName { get; set; }
-        public virtual string Phone { get; set; }
+        //public virtual string Phone { get; set; }
         public virtual string MarketAddress { get; set; }
         public virtual string HomePage { get; set; }
         public virtual DateTime CreateTime { get; set; }

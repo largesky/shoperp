@@ -71,10 +71,7 @@ namespace ShopErp.App.Views.Print
                 var flagVms = flags.Select(obj => new OrderFlagViewModel(false, obj)).ToArray();
                 this.cbbFlags.ItemsSource = flagVms;
                 //支付类型
-                var payTypes = EnumUtil.GetEnumDescriptions<PopPayType>().ToList();
-                payTypes.RemoveAt(0);
-                this.cbbPopPayTypes.ItemsSource = payTypes;
-                this.cbbPopPayTypes.SelectedIndex = 0;
+                this.cbbPopPayTypes.Bind<PopPayType>();
                 this.tc1.ItemsSource = printOrderPages;
                 this.myLoaded = true;
             }
@@ -139,7 +136,7 @@ namespace ShopErp.App.Views.Print
             try
             {
                 var selectFlags = this.GetSelectedOrderFlags();
-                var payType = this.cbbPopPayTypes.GetSelectedEnum<PopPayType>(this.cbbPopPayTypes.SelectedIndex + 1);
+                var payType = this.cbbPopPayTypes.GetSelectedEnum<PopPayType>();
                 var downloadOrders = OrderDownloadWindow.DownloadOrder(payType);
                 if (downloadOrders == null || downloadOrders.Count < 1)
                 {
@@ -166,7 +163,7 @@ namespace ShopErp.App.Views.Print
             try
             {
                 var selectFlags = this.GetSelectedOrderFlags();
-                var payType = this.cbbPopPayTypes.GetSelectedEnum<PopPayType>(this.cbbPopPayTypes.SelectedIndex + 1);
+                var payType = this.cbbPopPayTypes.GetSelectedEnum<PopPayType>();
                 var orders = this.orderService.GetByAll("", "", "", "", "", 0, DateTime.Now.AddDays(-30), DateTime.MinValue, "", "", OrderState.RETURNING, payType, "", "", selectFlags.ToArray(), -1, "", 0, OrderCreateType.NONE, OrderType.NONE, 0, 0).Datas.ToArray();
                 List<Order> os = new List<Order>();
                 foreach (var o in orders)
@@ -431,7 +428,7 @@ namespace ShopErp.App.Views.Print
 
         private void cbbPopPayTypes_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var v = this.cbbPopPayTypes.GetSelectedEnum<PopPayType>(this.cbbPopPayTypes.SelectedIndex + 1);
+            var v = this.cbbPopPayTypes.GetSelectedEnum<PopPayType>();
             var ovms = (this.cbbFlags.ItemsSource as OrderFlagViewModel[]).ToList();
             if (v == PopPayType.COD)
             {

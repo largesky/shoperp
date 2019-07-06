@@ -213,18 +213,6 @@ namespace ShopErp.App.Views.Goods
            
         }
 
-        private void btnCreate_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                new GoodsCreateSampleWindow().Show();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
         private GoodsViewModel GetSelctedItem()
         {
             if (this.cbbDisplayType.SelectedIndex == 0)

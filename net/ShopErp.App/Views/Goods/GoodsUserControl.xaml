@@ -75,16 +75,10 @@
                 <TextBox Name="tbNumber" Margin="3" Width="60" VerticalAlignment="Center" />
                 <TextBlock Text="备注:" Margin="3" VerticalAlignment="Center" />
                 <TextBox Name="tbComment" Margin="3" Width="60" VerticalAlignment="Center" />
-                <Button Name="btnQuery" Margin="3" Content="查询" VerticalAlignment="Center" Click="btnQuery_Click"
-                        Width="60" />
-                <Button Name="btnCreate" Margin="3" Content="新建" VerticalAlignment="Center" Width="60"
-                        Click="btnCreate_Click" />
-                <Button Name="btnCreatePrivate" Margin="3" Content="新建私款" VerticalAlignment="Center" Width="60"
-                        Click="btnCreatePrivate_Click" />
-                <Button Name="btnPatchEdit" Margin="3" VerticalAlignment="Center" Content="批量更新" Width="60"
-                        Click="btnPatchEdit_Click" />
-                <Button Name="btnTest" Margin="3" VerticalAlignment="Bottom" Content="检查下架" Width="60"
-                        Click="btnUpdate_Click" Visibility="Visible" />
+                <Button Name="btnQuery" Margin="3" Content="查询" VerticalAlignment="Center" Click="btnQuery_Click" Width="60" />
+                <Button Name="btnCreatePrivate" Margin="3" Content="新建" VerticalAlignment="Center" Width="60" Click="btnCreatePrivate_Click" />
+                <Button Name="btnPatchEdit" Margin="3" VerticalAlignment="Center" Content="批量更新" Width="60" Click="btnPatchEdit_Click" />
+                <Button Name="btnTest" Margin="3" VerticalAlignment="Bottom" Content="检查下架" Width="60" Click="btnUpdate_Click" Visibility="Visible" />
             </StackPanel>
         </Grid>
         <DataGrid Grid.Row="1" AutoGenerateColumns="False" Name="dgvGoods" SelectionMode="Extended"

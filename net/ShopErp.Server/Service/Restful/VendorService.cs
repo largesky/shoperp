@@ -253,7 +253,6 @@ namespace ShopErp.Server.Service.Restful
 
             return string.Compare(v1.HomePage, v2.HomePage) == 0 &&
                 string.Compare(v1.Name, v2.Name) == 0 &&
-                string.Compare(v1.Phone, v2.Phone) == 0 &&
                 string.Compare(v1.MarketAddress, v2.MarketAddress) == 0 &&
                 string.Compare(v1.PingyingName, v2.PingyingName) == 0;
         }

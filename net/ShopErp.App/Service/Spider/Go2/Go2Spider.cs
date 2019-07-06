@@ -130,8 +130,9 @@ namespace ShopErp.App.Service.Spider.Go2
 
         public override Goods GetGoodsInfoByUrl(string url, ref string vendorHomePage, ref string videoUrl, bool raiseExceptionOnGoodsNotSale, bool getGoodsType)
         {
-            Goods g = new Goods { Comment = "", CreateTime = DateTime.Now, Image = "", LastSellTime = DateTime.Now, Number = "", Price = 0, Type = 0, UpdateEnabled = true, UpdateTime = DateTime.Now, Url = url, VendorId = 0, Weight = 0, Id = 0, Colors = "", CreateOperator = "", Flag = ColorFlag.UN_LABEL, IgnoreEdtion = false, ImageDir = "", Material = "" };
+            Goods g = new Goods { Comment = "", CreateTime = DateTime.Now, Image = "", LastSellTime = DateTime.Now, Number = "", Price = 0, Type = 0, UpdateEnabled = true, UpdateTime = DateTime.Now, Url = url, VendorId = 0, Weight = 0, Id = 0, Colors = "", CreateOperator = "", Flag = ColorFlag.UN_LABEL, IgnoreEdtion = false, ImageDir = "", Material = "", Shops = new List<GoodsShop>(), Star = 0, VideoType = GoodsVideoType.NONE };
             var htmlDoc = this.GetHtmlDocWithRetry(url, "");
+
             //商品已删除 
             if (htmlDoc.DocumentNode.InnerHtml.Contains("该商品不存在或已删除"))
             {
@@ -231,7 +232,7 @@ namespace ShopErp.App.Service.Spider.Go2
                 }
             }
 
-            if(getGoodsType)
+            if (getGoodsType)
             {
                 g.Type = GetGoodsType(g.Url, vendorHomePage);
             }
@@ -266,7 +267,7 @@ namespace ShopErp.App.Service.Spider.Go2
 
         public override Vendor GetVendorInfoByUrl(string url)
         {
-            Vendor ven = new Vendor { AveragePrice = 0, Count = 1, CreateTime = DateTime.Now, HomePage = "", Id = 0, MarketAddress = "", Name = "", Phone = "", PingyingName = "", Watch = false, Comment = "", Alias = "" };
+            Vendor ven = new Vendor { AveragePrice = 0, Count = 1, CreateTime = DateTime.Now, HomePage = "", Id = 0, MarketAddress = "", Name = "", PingyingName = "", Watch = false, Comment = "", Alias = "" };
             var doc = this.GetHtmlDocWithRetry(url, "");
             //获取厂家名称url地址
             var vendorUrlNode = doc.DocumentNode.SelectSingleNode("//a[contains(@class,'merchant-title')]");
@@ -286,14 +287,6 @@ namespace ShopErp.App.Service.Spider.Go2
                 throw new Exception("获取到的厂家网址为空");
             }
 
-            //电话
-            var phoneNode = doc.DocumentNode.SelectSingleNode("//div[@class='merchant-lite-info']/p[contains(@class, 'merchant-phone')]");
-            if (phoneNode == null)
-            {
-                throw new Exception("无法获取电话结点://div[@class='merchant-lite-info']/p[contains(@class, 'merchant-phone')]");
-            }
-            string mobile = phoneNode.InnerText.Replace("&ensp;", " ").Trim();
-
             var addNode = doc.DocumentNode.SelectSingleNode("//p[@class='merchant-address']");
             if (addNode == null)
             {
@@ -302,7 +295,6 @@ namespace ShopErp.App.Service.Spider.Go2
             string add = addNode.InnerText.Trim();
             ven.MarketAddress = add;
             ven.Name = vendorName;
-            ven.Phone = mobile;
             ven.HomePage = u;
             ven.HomePage = ven.HomePage.TrimEnd('/');
             return ven;
@@ -336,24 +328,17 @@ namespace ShopErp.App.Service.Spider.Go2
                     {
                         break;
                     }
-                    Vendor vendor = new Vendor { PingyingName = "", CreateTime = DateTime.Now, HomePage = "", Phone = "", Id = 0, MarketAddress = "", Name = "", Comment = "", Alias = "" };
+                    Vendor vendor = new Vendor { PingyingName = "", CreateTime = DateTime.Now, HomePage = "",  Id = 0, MarketAddress = "", Name = "", Comment = "", Alias = "" };
                     try
                     {
                         //名称Node
                         var nameAndHomePageNode = xe.SelectSingleNode("p[@class='clearfix']/a");
-                        //电话Node
-                        var phoneN = xe.SelectSingleNode("p/span[@class='link-iphone num ft-14']");
                         //拿货地址
                         var addN = xe.SelectNodes("p/span[@class='title']");
 
                         if (nameAndHomePageNode == null)
                         {
                             throw new Exception("HTML中未找到厂家名称连接结点");
-                        }
-
-                        if (phoneN == null)
-                        {
-                            throw new Exception("HTML中未找到电话结点");
                         }
 
                         if (addN == null)
@@ -365,8 +350,6 @@ namespace ShopErp.App.Service.Spider.Go2
                         vendor.Name = nameAndHomePageNode.InnerText.Trim();
                         //主页
                         vendor.HomePage = nameAndHomePageNode.GetAttributeValue("href", "").Trim().TrimEnd('/');
-                        //电话
-                        vendor.Phone = phoneN.InnerText.Trim();
 
                         string add = addN.Last().InnerText.Trim();
                         if (add.Contains("拿货地址") == false)
@@ -436,7 +419,6 @@ namespace ShopErp.App.Service.Spider.Go2
                     if (VendorService.Match(v, al) == false)
                     {
                         al.MarketAddress = v.MarketAddress;
-                        al.Phone = v.Phone;
                         al.Name = v.Name;
                         ServiceContainer.GetService<VendorService>().Update(v);
                         this.OnMessage(string.Format("已更新 {0}  {1} ", count, v.Name));
@@ -455,11 +437,6 @@ namespace ShopErp.App.Service.Spider.Go2
                     this.OnMessage(string.Format("已增加 {0}  {1} ", count, v.Name + " " + v.HomePage));
                 }
             }
-        }
-
-        private void ParseShoesByAllUrl(Goods g, HtmlAgilityPack.HtmlDocument htmlDoc, ref string vendorHomePage, ref string videoUrl, bool raiseExceptionOnGoodsNotSale)
-        {
-
         }
 
         private GoodsType GetGoodsType(string goodsUrl, string vendorHomePage)
@@ -513,7 +490,7 @@ namespace ShopErp.App.Service.Spider.Go2
                     lasthtml = goodsHtml;
                 }
             }
-            throw new Exception("无法自动分析商品类型，原因：网页中没有分类连接");
+            return GoodsType.GOODS_SHOES_NONE;
         }
     }
 }

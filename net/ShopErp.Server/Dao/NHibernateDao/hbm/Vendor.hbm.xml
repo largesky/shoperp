@@ -10,9 +10,6 @@
     <property name="PingyingName">
       <column name="PingyingName" sql-type="string" not-null="true" />
     </property>
-    <property name="Phone">
-      <column name="Phone" sql-type="string" not-null="true" />
-    </property>
     <property name="MarketAddress">
       <column name="MarketAddress" sql-type="string" not-null="true" />
     </property>

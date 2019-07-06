@@ -34,6 +34,10 @@ namespace ShopErp.Domain
         public const string CONFIG_ORDER_DOWNLOAD_MODE = "ORDER_DOWNLOAD_MODE";
         public const string CONFIG_GOODS_TEMPLATE = "GOODS_TEMPLATE";
         public const string CONFIG_SYSTEM_RIGHTS = "SYSTEM_RIGHTS";
+
         public const string CONFIG_GOODS_BOX_IMAGE_SAVE_MODE = "GOODS_BOX_IMAGE_SAVE_MODE";
+
+        public const string CONFIG_GOODS_BOX_IMAGE_BRAND= "GOODS_BOX_IMAGE_BRAND";
+
     }
 }

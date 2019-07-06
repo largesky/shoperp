@@ -402,9 +402,6 @@
     <Compile Include="Views\Goods\GoodsCommentEditWindow.xaml.cs">
       <DependentUpon>GoodsCommentEditWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Goods\GoodsCreateSampleWindow.xaml.cs">
-      <DependentUpon>GoodsCreateSampleWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Goods\GoodsCreateWindow.xaml.cs">
       <DependentUpon>GoodsCreateWindow.xaml</DependentUpon>
     </Compile>
@@ -776,10 +773,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Goods\GoodsCommentEditWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Goods\GoodsCreateSampleWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

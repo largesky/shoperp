@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ShopErp.App.Utils;
+using System;
 using System.Windows.Data;
 
 namespace ShopErp.App.Converters
@@ -19,7 +20,8 @@ namespace ShopErp.App.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            throw new NotImplementedException();
+            var e = EnumUtil.GetEnumValueByDesc(targetType, value.ToString());
+            return e;
         }
     }
 }

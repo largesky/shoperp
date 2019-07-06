@@ -30,7 +30,7 @@
                     Click="btnEdit_Click" />
             <Button Name="btnDelete" Content="删除" Margin="3" VerticalAlignment="Center" Width="60" FontSize="12"
                     Click="btnDelete_Click" />
-            <Button Name="btnSyncAddress" Content="更新地址" Margin="3" VerticalAlignment="Center" Width="60" FontSize="12"
+            <Button Name="btnSyncAddress" Content="更新厂家信息" Margin="3" VerticalAlignment="Center" Width="120" FontSize="12"
                     Click="BtnSyncAddress_OnClick" />
             <TextBlock Name="tbMsg" Margin="3"></TextBlock>
         </StackPanel>
@@ -44,7 +44,6 @@
                 <DataGridTextColumn Header="数量" Binding="{Binding Count}" IsReadOnly="True" />
                 <DataGridTextColumn Header="均价" Binding="{Binding AveragePrice}" IsReadOnly="True" />
                 <DataGridTextColumn Header="备注(可编辑)" Binding="{Binding Comment}" />
-                <DataGridTextColumn Header="电话(可编辑)" Binding="{Binding Phone}" />
                 <DataGridTextColumn Header="市场地址(可编辑)" Binding="{Binding MarketAddress}" />
                 <DataGridHyperlinkColumn Header="主页" Binding="{Binding HomePage}" IsReadOnly="True">
                     <DataGridHyperlinkColumn.ElementStyle>

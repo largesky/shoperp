@@ -27,6 +27,7 @@ namespace ShopErp.Domain
         public string CreateOperator { get; set; }
         public GoodsVideoType VideoType { get; set; }
         public IList<GoodsShop> Shops { get; set; }
-        public virtual Vendor Vendor { get; set; }
+        //这个字段用于HIBERNATE数据查询使用
+        protected virtual Vendor Vendor { get; set; }
     }
 }
