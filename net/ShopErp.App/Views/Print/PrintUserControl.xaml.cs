@@ -72,6 +72,7 @@ namespace ShopErp.App.Views.Print
                 this.cbbFlags.ItemsSource = flagVms;
                 //支付类型
                 this.cbbPopPayTypes.Bind<PopPayType>();
+                this.cbbPopPayTypes.SetSelectedEnum(PopPayType.ONLINE);
                 this.tc1.ItemsSource = printOrderPages;
                 this.myLoaded = true;
             }
