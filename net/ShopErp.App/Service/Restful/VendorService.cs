@@ -67,16 +67,6 @@ namespace ShopErp.App.Service.Restful
             return vendor == null ? "" : vendor.Name;
         }
 
-        public char GetVendorPingYingFirstChar(long vendorId)
-        {
-            var vendor = GetVendorInCach(obj => obj.Id == vendorId);
-            if (vendor == null || string.IsNullOrWhiteSpace(vendor.PingyingName))
-            {
-                return ' ';
-            }
-            return vendor.PingyingName[0];
-        }
-
         /// <summary>
         /// 在缓存中搜索厂家拼音名称
         /// </summary>
@@ -133,7 +123,7 @@ namespace ShopErp.App.Service.Restful
                 return false;
             }
 
-            return string.Compare(v1.Name, v2.Name) == 0&& string.Compare(v1.MarketAddress, v2.MarketAddress) == 0;
+            return string.Compare(v1.Name, v2.Name) == 0 && string.Compare(v1.MarketAddress, v2.MarketAddress) == 0;
         }
 
         /// <summary>

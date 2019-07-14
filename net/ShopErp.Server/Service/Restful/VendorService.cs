@@ -27,7 +27,7 @@ namespace ShopErp.Server.Service.Restful
         {
             try
             {
-                var item = this.GetFirstOrDefaultInCach(new Predicate<Vendor>(obj => obj.Id == id));
+                var item = this.GetFirstOrDefaultInCach(obj => obj.Id == id);
                 return new DataCollectionResponse<Vendor>(item);
             }
             catch (Exception ex)
@@ -85,7 +85,7 @@ namespace ShopErp.Server.Service.Restful
             try
             {
                 this.dao.ExcuteSqlUpdate("delete from Vendor where Id=" + id);
-                this.RemoveCach(new Predicate<Vendor>(obj => obj.Id == id));
+                this.RemoveCach(obj => obj.Id == id);
                 return ResponseBase.SUCCESS;
             }
             catch (Exception ex)
@@ -163,31 +163,6 @@ namespace ShopErp.Server.Service.Restful
             }
         }
 
-        /// <summary>
-        /// 在缓存中搜索厂家拼音名称
-        /// </summary>
-        /// <param name="vendorId"></param>
-        /// <returns></returns>
-        [OperationContract]
-        [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/getvendorpingyinfirstchar.html")]
-        public StringResponse GetVendorPingYingFirstChar(int vendorId)
-        {
-            try
-            {
-                char c = ' ';
-                var vendor = this.GetFirstOrDefaultInCach(obj => obj.Id == vendorId);
-                if (vendor != null)
-                {
-                    c = vendor.PingyingName.Length < 1 ? ' ' : vendor.PingyingName[0];
-                }
-                return new StringResponse(c + "");
-            }
-            catch (Exception ex)
-            {
-                throw new WebFaultException<ResponseBase>(new ResponseBase(ex.Message), System.Net.HttpStatusCode.OK);
-            }
-
-        }
 
         /// <summary>
         /// 在缓存中搜索厂家拼音名称

@@ -196,6 +196,7 @@ namespace ShopErp.App.Views.Goods
                     return;
                 }
 
+                //查找该厂家是其它厂家的别名
                 var vendors = ServiceContainer.GetService<VendorService>().GetByAll("", "", "", "", 0, 0).Datas;
                 var vendor = vendors.FirstOrDefault(obj => obj.Id == this.Goods.VendorId);
                 var v = vendors.FirstOrDefault(obj => obj.Alias.IndexOf(vendor.HomePage.Trim('/'), StringComparison.OrdinalIgnoreCase) >= 0);
@@ -209,7 +210,7 @@ namespace ShopErp.App.Views.Goods
                 }
                 this.Goods.VendorId = vendor.Id;
                 var selectedShops = this.cbbShops.ItemsSource.OfType<ShopCheckViewModel>().Where(obj => obj.IsChecked).ToArray();
-                var existGoods = ServiceContainer.GetService<GoodsService>().GetByAll(0, GoodsState.NONE, 0, minTime, minTime, newVendor, newNumber, GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", 0, 0).First;
+                var existGoods = ServiceContainer.GetService<GoodsService>().GetByNumberAndVendorNameLike(newNumber, vendor.Name, 0, 0).Datas.FirstOrDefault(obj => obj.VendorId == vendor.Id);
                 if (this.Goods.Id < 1)
                 {
                     if (existGoods != null)
@@ -239,13 +240,12 @@ namespace ShopErp.App.Views.Goods
                     {
                         //移动图片
                         string oldDir = dir + "\\" + this.Goods.ImageDir;
-                        string newDir = dir + "\\goods\\" + v.Id.ToString() + "\\" + this.Goods.Number;
+                        string newDir = dir + "\\goods\\" + vendor.Id.ToString() + "\\" + this.Goods.Number;
                         FileUtil.EnsureExits(new FileInfo(newDir));
                         Directory.Move(oldDir, newDir);
-                        this.Goods.ImageDir = "goods\\" + v.Id.ToString() + "\\" + this.Goods.Number;
+                        this.Goods.ImageDir = "goods\\" + vendor.Id.ToString() + "\\" + this.Goods.Number;
                         this.Goods.Image = this.Goods.ImageDir + "\\index.jpg";
                     }
-
                     //更新图片
                     if (this.hasImageSet)
                     {

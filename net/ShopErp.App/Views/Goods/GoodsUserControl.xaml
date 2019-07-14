@@ -129,7 +129,7 @@
 
                 <DataGridTextColumn Header="创建人员" Binding="{Binding Source.CreateOperator}" IsReadOnly="True" />
                 <DataGridTextColumn Header="上货店铺" Binding="{Binding TargetShops}" IsReadOnly="True" />
-                <DataGridTextColumn Header="厂家名称" Binding="{Binding Source.Vendor.Name}" IsReadOnly="True" />
+                <DataGridTextColumn Header="厂家名称" Binding="{Binding Path=Source.VendorId,Converter={StaticResource VendorNameFormatConverter}}" IsReadOnly="True" />
                 <DataGridTextColumn Header="商品货号" Binding="{Binding Source.Number}" IsReadOnly="True" />
                 <DataGridTextColumn Header="评级" Binding="{Binding StarString}" IsReadOnly="True" />
                 <DataGridTextColumn Header="价格" Binding="{Binding Source.Price,StringFormat=F0}" IsReadOnly="True" />

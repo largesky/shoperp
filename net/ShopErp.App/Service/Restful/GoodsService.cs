@@ -53,6 +53,16 @@ namespace ShopErp.App.Service.Restful
             return DoPost<DataCollectionResponse<Goods>>(para);
         }
 
+        public DataCollectionResponse<Goods> GetByNumberAndVendorNameLike(string number, string vendorNameOrPingName, int pageIndex, int pageSize)
+        {
+            Dictionary<string, object> para = new Dictionary<string, object>();
+            para["number"] = number;
+            para["vendorNameOrPingName"] = vendorNameOrPingName;
+            para["pageIndex"] = pageIndex;
+            para["pageSize"] = pageSize;
+            return DoPost<DataCollectionResponse<Goods>>(para);
+        }
+
         public DataCollectionResponse<Goods> ParseGoods(string vendorNameOrPingName, string number)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();

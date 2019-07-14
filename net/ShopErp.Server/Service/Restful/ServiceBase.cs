@@ -15,7 +15,7 @@ namespace ShopErp.Server.Service.Restful
 
         private List<E> scs = new List<E>();
 
-        protected void CheckAndLoadCach()
+        protected void LoadCachIfEmpty()
         {
             if (scs.Count < 1)
             {
@@ -30,7 +30,7 @@ namespace ShopErp.Server.Service.Restful
             }
         }
 
-        protected void RefreshCach()
+        protected void ReloadCach()
         {
             lock (scs_lock)
             {
@@ -42,7 +42,7 @@ namespace ShopErp.Server.Service.Restful
 
         protected void AndOrReplaceInCach(E e, Predicate<E> matchOld)
         {
-            this.CheckAndLoadCach();
+            this.LoadCachIfEmpty();
             lock (scs_lock)
             {
                 this.RemoveCach(matchOld);
@@ -60,13 +60,13 @@ namespace ShopErp.Server.Service.Restful
 
         protected E GetFirstOrDefaultInCach(Predicate<E> match)
         {
-            this.CheckAndLoadCach();
+            this.LoadCachIfEmpty();
             return this.scs.FirstOrDefault(obj => match(obj));
         }
 
         protected List<E> GetAllInCach()
         {
-            this.CheckAndLoadCach();
+            this.LoadCachIfEmpty();
             return this.scs;
         }
 
