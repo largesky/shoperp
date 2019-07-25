@@ -40,6 +40,35 @@ namespace ShopErp.Server.Service.Pop
             return first;
         }
 
+        private void RefreshAccessToken(Shop shop)
+        {
+            var s = this.GetPop(shop.PopType).GetRefreshTokenInfo(shop);
+            var rs = ServiceContainer.GetService<ShopService>().Update(shop);
+        }
+
+        private void RaiseExceptionIfShopInfoError(Shop shop)
+        {
+            if (string.IsNullOrWhiteSpace(shop.AppKey))
+            {
+                throw new Exception("店铺AppKey信息为空");
+            }
+
+            if (string.IsNullOrWhiteSpace(shop.AppSecret))
+            {
+                throw new Exception("店铺AppSecret信息为空");
+            }
+
+            if (string.IsNullOrWhiteSpace(shop.AppAccessToken))
+            {
+                throw new Exception("店铺AppAccessToken信息为空");
+            }
+
+            if (string.IsNullOrWhiteSpace(shop.AppRefreshToken))
+            {
+                throw new Exception("店铺AppRefreshToken信息为空");
+            }
+        }
+
         public PopOrderGetFunction GetOrderGetFunction(PopType popType)
         {
             var first = this.pops.FirstOrDefault(obj => obj.Accept(popType));
@@ -50,16 +79,11 @@ namespace ShopErp.Server.Service.Pop
             return first.OrderGetFunctionType;
         }
 
-        private void RefreshAccessToken(Shop shop)
-        {
-            var s = this.GetPop(shop.PopType).GetRefreshTokenInfo(shop);
-            var rs = ServiceContainer.GetService<ShopService>().Update(shop);
-        }
-
         private T InvokeWithRefreshAccessToken<T>(Shop shop, Func<T> func)
         {
             try
             {
+                RaiseExceptionIfShopInfoError(shop);
                 return func();
             }
             catch (PopAccesstokenTimeOutException)
@@ -73,6 +97,7 @@ namespace ShopErp.Server.Service.Pop
         {
             try
             {
+                RaiseExceptionIfShopInfoError(shop);
                 action();
             }
             catch (PopAccesstokenTimeOutException)
