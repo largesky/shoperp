@@ -740,14 +740,14 @@ namespace ShopErp.App.Views.Delivery
                 return "";
             }
             int iStart = index + mark.Length;
-            while (Char.IsDigit(ss[iStart]) == false && iStart < ss.Length) iStart++;
+            while ((Char.IsDigit(ss[iStart]) == false && Char.IsUpper(ss[iStart]) == false) && iStart < ss.Length) iStart++;
             if (iStart == ss.Length)
             {
                 MessageBox.Show("标记发货失败，返回数据中未找到运单号码：");
                 return "";
             }
             int iEnd = iStart + 1;
-            while (Char.IsDigit(ss[iEnd]) && iStart < ss.Length) iEnd++;
+            while ((Char.IsDigit(ss[iEnd]) || char.IsUpper(ss[iEnd])) && iEnd < ss.Length) iEnd++;
             string dn = ss.Substring(iStart, iEnd - iStart);
             return dn.Trim();
         }
@@ -756,19 +756,19 @@ namespace ShopErp.App.Views.Delivery
         {
             try
             {
-                string ss = this.wb1.GetMainFrame().GetTextAsync().Result;
+                string ss = this.wb1.GetMainFrame().GetTextAsync().Result.ToUpper();
                 string dn = FindNumbers(ss, "运单号码：");
                 string oid = FindNumbers(ss, "订单编号：");
 
                 //搜索订单编号与运单号是否匹配
-                var order = this.orders.FirstOrDefault(obj => obj.Source.PopOrderId == oid);
+                var order = this.orders.FirstOrDefault(obj => obj.Source.PopOrderId.Equals(oid, StringComparison.OrdinalIgnoreCase));
                 if (order == null)
                 {
                     MessageBox.Show("标记发货失败，返回数据订单编号找不到订单：" + oid, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
-                if (order.DeliveryNumber != dn)
+                if (order.DeliveryNumber.Equals(dn, StringComparison.OrdinalIgnoreCase))
                 {
                     MessageBox.Show("标记发货失败，返回的快递单号与指定的订单快递单号不一致" + oid, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
