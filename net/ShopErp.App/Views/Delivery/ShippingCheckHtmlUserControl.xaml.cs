@@ -768,7 +768,7 @@ namespace ShopErp.App.Views.Delivery
                     return;
                 }
 
-                if (order.DeliveryNumber.Equals(dn, StringComparison.OrdinalIgnoreCase))
+                if (order.DeliveryNumber.Equals(dn, StringComparison.OrdinalIgnoreCase) == false)
                 {
                     MessageBox.Show("标记发货失败，返回的快递单号与指定的订单快递单号不一致" + oid, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;

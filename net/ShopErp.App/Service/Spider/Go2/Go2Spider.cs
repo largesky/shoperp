@@ -246,7 +246,7 @@ namespace ShopErp.App.Service.Spider.Go2
             }
             else
             {
-                g.Colors = "默认颜色";
+                g.Colors = "";
             }
 
             var detailNodes = htmlDoc.DocumentNode.SelectNodes("//div[@class='details-item']/div/ul/li[@class='details-attribute-item']");
