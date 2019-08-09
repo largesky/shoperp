@@ -27,7 +27,7 @@ namespace ShopErp.App.Utils
             }
         }
 
-        private static void StartTaobaoProgram(string popSellerId, string popBuyerId, string arg)
+        private static void StartTaobaoProgram(string popTalkId, string popBuyerId, string arg)
         {
             Microsoft.Win32.RegistryKey key = Microsoft.Win32.RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.ClassesRoot, Microsoft.Win32.RegistryView.Default);
             RegistryKey hTen = key.OpenSubKey("aliim");
@@ -55,7 +55,7 @@ namespace ShopErp.App.Utils
             Process.Start("\"" + programPath + "\"", string.Format("aliim:sendmsg?uid=cntaobao&touid=cntaobao{0}&siteid=cntaobao", popBuyerId));
         }
 
-        private static void StartPddPropgram(string popSellerId, string popBuyerId, string orderId)
+        private static void StartPddPropgram(string popTalkId, string popBuyerId, string orderId)
         {
             Microsoft.Win32.RegistryKey key = Microsoft.Win32.RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.ClassesRoot, Microsoft.Win32.RegistryView.Default);
             RegistryKey hTen = key.OpenSubKey("pddim");
@@ -75,7 +75,7 @@ namespace ShopErp.App.Utils
             {
                 programPath = programPath.Substring(0, programPath.IndexOf("%1")).Trim();
             }
-            Process.Start("\"" + programPath + "\"", string.Format("pddim:sendmsg/?OpeId=open_order&mallcsid={0}&ordersn={1}", popSellerId, orderId));
+            Process.Start("\"" + programPath + "\"", string.Format("pddim:sendmsg/?OpeId=open_order&mallcsid={0}&ordersn={1}", popTalkId, orderId));
         }
 
     }

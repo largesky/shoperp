@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -58,6 +57,7 @@ namespace ShopErp.App.Views.Shops
                     LastUpdateOperator = "",
                     AppEnabled = false,
                     WuliuEnabled = false,
+                    PopTalkId = "",
                 };
             }
             this.cbbPopTypes.SetSelectedEnum(this.Shop.PopType);
