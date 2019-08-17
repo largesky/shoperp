@@ -52,7 +52,7 @@ namespace ShopErp.App
             mc.Add("商品管理", typeof(GoodsUserControl));
             mc.Add("厂家管理", typeof(VendorUserControl));
             mc.Add("店铺商品", typeof(PopGoodsUserControl));
-            mc.Add("厂家更新", typeof(VendorSyncUserControl));
+            mc.Add("GO2厂家", typeof(VendorSyncUserControl));
             mcs.Add(mc);
 
 

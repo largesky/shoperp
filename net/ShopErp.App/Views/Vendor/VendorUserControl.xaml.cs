@@ -201,52 +201,6 @@ namespace ShopErp.App.Views.Vendor
             }
         }
 
-        private void BtnSyncAddress_OnClick(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var vendors = this.dgvVendors.ItemsSource as List<ShopErp.Domain.Vendor>;
-                if (vendors == null || vendors.Count < 1)
-                {
-                    throw new Exception("没有厂家数据，请先查询");
-                }
-
-                var sb = SpiderBase.CreateSpider("go2.cn", 80, 0);
-                int count = 0;
-                foreach (var v in vendors)
-                {
-                    if (string.IsNullOrWhiteSpace(v.HomePage))
-                    {
-                        continue;
-                    }
-                    try
-                    {
-                        var nv = sb.GetVendorInfoByUrl(v.HomePage);
-                        if (VendorService.Match(v, nv) == false)
-                        {
-                            if (v.Name != nv.Name)
-                            {
-                                v.Name = nv.Name;
-                                v.PingyingName = "";
-                            }
-                            v.MarketAddress = nv.MarketAddress;
-                            ServiceContainer.GetService<VendorService>().Update(v);
-                        }
-                    }
-                    catch (Exception ee)
-                    {
-                        v.Comment += ee.Message;
-                    }
-                    this.tbMsg.Text = String.Format("已经更新：{0}/{1}", ++count, vendors.Count);
-                    WPFHelper.DoEvents();
-                }
-            }
-            catch (Exception exception)
-            {
-                MessageBox.Show(exception.Message);
-            }
-        }
-
         private void dgvVendors_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             try
@@ -262,16 +216,23 @@ namespace ShopErp.App.Views.Vendor
                     return;
                 }
                 var header = cell.Column.Header.ToString();
-                if (header.Equals("名称") == false)
+                if (header.Contains("名称") == false)
                 {
                     return;
                 }
-                var vendor = item.DataContext as ShopErp.Domain.Vendor;
-                if (vendor == null)
+                if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
                 {
-                    throw new InvalidProgramException("数据类型不是：Vendor");
+                    new Goods.GoodsCreateWindow().Show();
                 }
-                new VendorGoodsWindow() { VendorName = vendor.Name }.Show();
+                else
+                {
+                    var vendor = item.DataContext as ShopErp.Domain.Vendor;
+                    if (vendor == null)
+                    {
+                        throw new InvalidProgramException("数据类型不是：Vendor");
+                    }
+                    new VendorGoodsWindow() { VendorName = vendor.Name }.Show();
+                }
             }
             catch (Exception exception)
             {

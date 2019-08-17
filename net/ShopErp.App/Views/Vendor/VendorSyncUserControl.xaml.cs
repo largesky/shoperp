@@ -19,6 +19,8 @@ namespace ShopErp.App.Views.Vendor
     {
         private SpiderBase sb;
 
+        private System.Collections.ObjectModel.ObservableCollection<ShopErp.Domain.Vendor> vendors = new System.Collections.ObjectModel.ObservableCollection<ShopErp.Domain.Vendor>();
+
         public VendorSyncUserControl()
         {
             InitializeComponent();
@@ -26,6 +28,7 @@ namespace ShopErp.App.Views.Vendor
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            this.dgvVendors.ItemsSource = this.vendors;
         }
 
         private void wb1_LoadCompleted(object sender, NavigationEventArgs e)
@@ -61,13 +64,15 @@ namespace ShopErp.App.Views.Vendor
         {
             try
             {
+                this.vendors.Clear();
                 this.sb = GetSpider();
                 this.sb.Message += Sb_Message;
                 this.sb.WaitingRetryMessage += Sb_WaitingRetryMessage;
                 this.sb.Start += Sb_Start;
                 this.sb.Stop += Sb_Stop;
                 this.sb.Busy += Sb_Busy;
-                this.sb.StartSyncVendor();
+                this.sb.VendorGeted += Sb_VendorGeted;
+                this.sb.StartGetVendors();
             }
             catch (Exception ex)
             {
@@ -75,26 +80,35 @@ namespace ShopErp.App.Views.Vendor
             }
         }
 
-        private void Sb_Busy(object sender, EventArgs e)
+        private void Sb_VendorGeted(object sender, ShopErp.Domain.Vendor e)
         {
-
+            this.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                this.vendors.Add(e);
+            }));
         }
 
-        private void Sb_Stop(object sender, string e)
+        private void Sb_Busy(object sender, EventArgs e)
+        {
+            this.Dispatcher.Invoke(() => this.wb1.Refresh());
+        }
+
+        private void Sb_Stop(object sender, EventArgs e)
         {
             this.Dispatcher.BeginInvoke(new Action(() =>
             {
                 this.btnSpiderVendor.IsEnabled = true;
+                this.btnStopSpider.IsEnabled = false;
                 this.sb = null;
-                MessageBox.Show("更新完成");
             }));
         }
 
-        private void Sb_Start(object sender, string e)
+        private void Sb_Start(object sender, EventArgs e)
         {
             this.Dispatcher.BeginInvoke(new Action(() =>
             {
                 this.btnSpiderVendor.IsEnabled = false;
+                this.btnStopSpider.IsEnabled = true;
             }));
         }
 
@@ -112,7 +126,7 @@ namespace ShopErp.App.Views.Vendor
         {
             if (this.sb != null)
             {
-                this.sb.StopSyncVendor();
+                this.sb.StopGetVendors();
             }
         }
 
@@ -120,12 +134,7 @@ namespace ShopErp.App.Views.Vendor
         {
             this.Dispatcher.Invoke(new Action(() =>
             {
-                if (this.tbMessage.LineCount > 10000)
-                {
-                    this.tbMessage.Clear();
-                }
-                this.tbMessage.AppendText(DateTime.Now + ":" + message + Environment.NewLine);
-                this.tbMessage.ScrollToEnd();
+                this.tbMessage.Text = message;
             }));
         }
 

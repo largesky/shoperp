@@ -30,15 +30,13 @@
                     Click="btnEdit_Click" />
             <Button Name="btnDelete" Content="删除" Margin="3" VerticalAlignment="Center" Width="60" FontSize="12"
                     Click="btnDelete_Click" />
-            <Button Name="btnSyncAddress" Content="更新厂家信息" Margin="3" VerticalAlignment="Center" Width="120" FontSize="12"
-                    Click="BtnSyncAddress_OnClick" />
             <TextBlock Name="tbMsg" Margin="3"></TextBlock>
         </StackPanel>
 
         <DataGrid Grid.Row="1" AutoGenerateColumns="False" GridLinesVisibility="All" Name="dgvVendors" SelectionUnit="CellOrRowHeader" CellEditEnding="DgvVendors_OnCellEditEnding" CanUserAddRows="False" RowHeaderWidth="20"  CanUserResizeRows="False" MouseDoubleClick="dgvVendors_MouseDoubleClick">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="编号" Binding="{Binding Id}" IsReadOnly="True" />
-                <DataGridTextColumn Header="名称" Binding="{Binding Name}" IsReadOnly="True" />
+                <DataGridTextColumn Header="名称(双击显示商品)" Binding="{Binding Name}" IsReadOnly="True" />
                 <DataGridTextColumn Header="拼音名称(可编辑)" Binding="{Binding PingyingName}"/>
                 <DataGridTextColumn Header="关注" Binding="{Binding Watch, Converter={StaticResource boolConverter},ConverterParameter=|是}" IsReadOnly="True" />
                 <DataGridTextColumn Header="数量" Binding="{Binding Count}" IsReadOnly="True" />

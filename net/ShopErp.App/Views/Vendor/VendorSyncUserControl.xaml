@@ -18,7 +18,13 @@
                 <ColumnDefinition Width="5"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" x:Name="tbMessage" AcceptsReturn="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
+            <DataGrid Grid.Column="0" Name="dgvVendors" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="名称" Binding="{Binding Name}"/>
+                    <DataGridTextColumn Header="拿货地址" Binding="{Binding MarketAddress}"/>
+                    <DataGridHyperlinkColumn Header="网址" Binding="{Binding HomePage}"/>
+                </DataGrid.Columns>
+            </DataGrid>
             <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" Foreground="Red" HorizontalAlignment="Stretch"/>
             <WebBrowser Grid.Column="2" Name="wb1" Source="http://www.go2.cn/supplier" LoadCompleted="wb1_LoadCompleted"/>
         </Grid>
@@ -31,6 +37,7 @@
             <TextBox Margin="3" VerticalAlignment="Center" Name="tbPerTime" Width="50" Text="0"/>
             <Button  Margin="3" VerticalAlignment="Center" Width="80" Content="抓取商家" Name="btnSpiderVendor" Click="btnSpiderVendor_Click"/>
             <Button  Margin="3" VerticalAlignment="Center" Width="80" Content="停止抓取" Name="btnStopSpider" Click="btnStopSpider_Click"/>
+            <TextBlock Margin="3" VerticalAlignment="Center" Name="tbMessage"/>
         </StackPanel>
     </Grid>
 </UserControl>

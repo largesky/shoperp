@@ -89,7 +89,7 @@ namespace ShopErp.App.Service.Spider.Go2
         {
         }
 
-        private HtmlAgilityPack.HtmlDocument GetHtmlDocWithRetry(string url, string detectNode)
+        private HtmlAgilityPack.HtmlDocument GetHtmlDocWithRetry(string url)
         {
             for (int i = 0; i < 100 && this.IsStop == false; i++)
             {
@@ -100,14 +100,13 @@ namespace ShopErp.App.Service.Spider.Go2
                 {
                     return doc;
                 }
-                var nodes = string.IsNullOrWhiteSpace(detectNode) ? null : doc.DocumentNode.SelectNodes(detectNode);
-                if (html.Contains("服务器受不了咯") || ((string.IsNullOrWhiteSpace(detectNode) == false) && (nodes == null || nodes.Count < 1)))
+                if (html.Contains("服务器受不了咯"))
                 {
-                    if (WaitTime > 0)
+                    if (ErrorWaitTime > 0)
                     {
                         Debug.WriteLine(html);
                         this.OnBusy();
-                        this.RaiseTimeMessage(WaitTime * (i + 1));
+                        this.RaiseTimeMessage(ErrorWaitTime * (i + 1));
                     }
                     else
                     {
@@ -131,7 +130,7 @@ namespace ShopErp.App.Service.Spider.Go2
         public override Goods GetGoodsInfoByUrl(string url, ref string vendorHomePage, ref string videoUrl, bool raiseExceptionOnGoodsNotSale, bool getGoodsType)
         {
             Goods g = new Goods { Comment = "", CreateTime = DateTime.Now, Image = "", LastSellTime = DateTime.Now, Number = "", Price = 0, Type = 0, UpdateEnabled = true, UpdateTime = DateTime.Now, Url = url, VendorId = 0, Weight = 0, Id = 0, Colors = "", CreateOperator = "", Flag = ColorFlag.UN_LABEL, IgnoreEdtion = false, ImageDir = "", Material = "", Shops = new List<GoodsShop>(), Star = 0, VideoType = GoodsVideoType.NONE };
-            var htmlDoc = this.GetHtmlDocWithRetry(url, "");
+            var htmlDoc = this.GetHtmlDocWithRetry(url);
 
             //商品已删除 
             if (htmlDoc.DocumentNode.InnerHtml.Contains("该商品不存在或已删除"))
@@ -268,7 +267,7 @@ namespace ShopErp.App.Service.Spider.Go2
         public override Vendor GetVendorInfoByUrl(string url)
         {
             Vendor ven = new Vendor { AveragePrice = 0, Count = 1, CreateTime = DateTime.Now, HomePage = "", Id = 0, MarketAddress = "", Name = "", PingyingName = "", Watch = false, Comment = "", Alias = "" };
-            var doc = this.GetHtmlDocWithRetry(url, "");
+            var doc = this.GetHtmlDocWithRetry(url);
             //获取厂家名称url地址
             var vendorUrlNode = doc.DocumentNode.SelectSingleNode("//a[contains(@class,'merchant-title')]");
             if (vendorUrlNode == null)
@@ -309,7 +308,7 @@ namespace ShopErp.App.Service.Spider.Go2
             {
                 //从网络读取html
                 string pageUrl = string.Format("http://www.go2.cn/supplier/yshy-0-0-0-0-{0}-0-all/page{1}.html", c, currentPage);
-                HtmlAgilityPack.HtmlDocument doc = GetHtmlDocWithRetry(pageUrl, "//div[@class='changepage clearfix']/p");
+                HtmlAgilityPack.HtmlDocument doc = GetHtmlDocWithRetry(pageUrl);
                 if (doc.DocumentNode.InnerText.Contains("暂未找到相关的商家"))
                 {
                     return;
@@ -328,7 +327,7 @@ namespace ShopErp.App.Service.Spider.Go2
                     {
                         break;
                     }
-                    Vendor vendor = new Vendor { PingyingName = "", CreateTime = DateTime.Now, HomePage = "",  Id = 0, MarketAddress = "", Name = "", Comment = "", Alias = "" };
+                    Vendor vendor = new Vendor { PingyingName = "", CreateTime = DateTime.Now, HomePage = "", Id = 0, MarketAddress = "", Name = "", Comment = "", Alias = "" };
                     try
                     {
                         //名称Node
@@ -358,14 +357,18 @@ namespace ShopErp.App.Service.Spider.Go2
                         }
                         //拿货地址
                         vendor.MarketAddress = add.Replace(" ", "").Replace("拿货地址", "").Replace(":", "").Replace("：", "").Trim();
+                        //Debug.WriteLine(DateTime.Now + ":" + vendor.Name + "  " + vendor.HomePage + "  " + pageUrl);
                         if (vendors.Any(obj => obj.HomePage.Equals(vendor.HomePage)))
                         {
                             this.OnMessage("当前抓取队列中已包含该厂家，将跳过:" + vendor.Name + "  " + vendor.HomePage);
                             Debug.WriteLine("当前抓取队列中已包含该厂家，将跳过:" + vendor.Name + "  " + vendor.HomePage);
-                            continue;
                         }
-                        vendors.Add(vendor);
-                        this.OnMessage(string.Format("已下载:{0} {1}", vendors.Count, vendor.Name));
+                        else
+                        {
+                            vendors.Add(vendor);
+                            this.OnVendorGeted(vendor);
+                            this.OnMessage(string.Format("已下载:{0} {1}", vendors.Count, vendor.Name));
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -374,11 +377,10 @@ namespace ShopErp.App.Service.Spider.Go2
                     }
                 }
                 currentPage++;
-                //this.RaiseTimeMessage(PerTime);
             }
         }
 
-        protected override void DoSyncVendor()
+        protected override void GetVendors()
         {
             string urlChars = "9ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             List<Vendor> vendors = new List<Vendor>();
@@ -387,55 +389,6 @@ namespace ShopErp.App.Service.Spider.Go2
             {
                 if (this.IsStop == false)
                     this.GetVendors(c, vendors);
-            }
-
-            if (this.IsStop == true)
-            {
-                throw new Exception("下载已经中止");
-            }
-
-            int count = 0;
-            //合并更新
-            var dbVendors = ServiceContainer.GetService<VendorService>().GetByAll("", "", "", "", 0, 0).Datas;
-            foreach (var v in vendors)
-            {
-                if (this.IsStop == true)
-                {
-                    throw new Exception("下载已经中止");
-                }
-
-                count++;
-                var al = dbVendors.FirstOrDefault(obj => obj.HomePage.TrimEnd('/').Equals(v.HomePage, StringComparison.OrdinalIgnoreCase));
-                if (al != null)
-                {
-                    if (v.Name != al.Name)
-                    {
-                        al.PingyingName = "";//厂家改了名称，拼音名称无效
-                    }
-                    else
-                    {
-                        v.PingyingName = al.PingyingName;
-                    }
-                    if (VendorService.Match(v, al) == false)
-                    {
-                        al.MarketAddress = v.MarketAddress;
-                        al.Name = v.Name;
-                        ServiceContainer.GetService<VendorService>().Update(v);
-                        this.OnMessage(string.Format("已更新 {0}  {1} ", count, v.Name));
-                    }
-                    else
-                    {
-                        this.OnMessage(string.Format("未更新 {0}  {1} ", count, v.Name));
-                    }
-
-                    dbVendors.Remove(al);
-                }
-                else
-                {
-                    Debug.WriteLine("将增加" + v.Name + " " + v.HomePage);
-                    ServiceContainer.GetService<VendorService>().Save(v);
-                    this.OnMessage(string.Format("已增加 {0}  {1} ", count, v.Name + " " + v.HomePage));
-                }
             }
         }
 

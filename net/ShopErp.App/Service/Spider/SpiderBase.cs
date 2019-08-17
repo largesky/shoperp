@@ -11,19 +11,21 @@ namespace ShopErp.App.Service.Spider
 
         public event EventHandler<string> WaitingRetryMessage;
 
-        public event EventHandler<string> Start;
+        public event EventHandler<Vendor> VendorGeted;
 
-        public event EventHandler<string> Stop;
+        public event EventHandler Start;
+
+        public event EventHandler Stop;
 
         public event EventHandler Busy;
 
-        public int WaitTime { get; set; }
+        public int ErrorWaitTime { get; set; }
 
-        public int PerTime { get; set; }
+        public int PerWaitTime { get; set; }
 
         public bool IsStop { get; set; }
 
-        protected void OnMessage(string message)
+        protected virtual void OnMessage(string message)
         {
             if (this.Message != null)
             {
@@ -31,7 +33,7 @@ namespace ShopErp.App.Service.Spider
             }
         }
 
-        protected void OnStart()
+        protected virtual void OnStart()
         {
             if (this.Start != null)
             {
@@ -39,7 +41,7 @@ namespace ShopErp.App.Service.Spider
             }
         }
 
-        protected void OnStop()
+        protected virtual void OnStop()
         {
             if (this.Stop != null)
             {
@@ -47,7 +49,7 @@ namespace ShopErp.App.Service.Spider
             }
         }
 
-        protected void OnWaitingRetryMessage(string state)
+        protected virtual void OnWaitingRetryMessage(string state)
         {
             if (this.WaitingRetryMessage != null)
             {
@@ -55,7 +57,7 @@ namespace ShopErp.App.Service.Spider
             }
         }
 
-        public void OnBusy()
+        public virtual void OnBusy()
         {
             if (this.Busy != null)
             {
@@ -63,10 +65,18 @@ namespace ShopErp.App.Service.Spider
             }
         }
 
+        protected virtual void OnVendorGeted(Vendor vendor)
+        {
+            if (this.VendorGeted != null)
+            {
+                this.VendorGeted(this, vendor);
+            }
+        }
+
         public SpiderBase(int waitTime, int perTime)
         {
-            this.WaitTime = waitTime;
-            this.PerTime = perTime;
+            this.ErrorWaitTime = waitTime;
+            this.PerWaitTime = perTime;
         }
 
         public abstract bool AcceptUrl(Uri uri);
@@ -75,18 +85,26 @@ namespace ShopErp.App.Service.Spider
 
         public abstract Vendor GetVendorInfoByUrl(string url);
 
-        public void StartSyncVendor()
+        protected abstract void GetVendors();
+
+        public void StartGetVendors()
         {
-            Task.Factory.StartNew(SyncTask);
+            Task.Factory.StartNew(GetVendorsTask);
         }
 
-        private void SyncTask()
+        public void StopGetVendors()
+        {
+            this.IsStop = true;
+        }
+
+        private void GetVendorsTask()
         {
             try
             {
                 this.IsStop = false;
                 this.OnStart();
-                DoSyncVendor();
+                GetVendors();
+                this.OnMessage("已下载完成");
             }
             catch (Exception exception)
             {
@@ -99,13 +117,6 @@ namespace ShopErp.App.Service.Spider
             }
         }
 
-        public void StopSyncVendor()
-        {
-            this.IsStop = true;
-        }
-
-        protected abstract void DoSyncVendor();
-
         public static SpiderBase CreateSpider(string url, int waitTime, int perTime)
         {
             if (url.ToLower().Contains("go2.cn"))
@@ -114,6 +125,5 @@ namespace ShopErp.App.Service.Spider
             }
             throw new Exception("未知的爬虫类型");
         }
-
     }
 }
