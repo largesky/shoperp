@@ -394,7 +394,7 @@ namespace ShopErp.App.Views.Goods
             try
             {
                 var w = new GoodsCreateWindow();
-                w.ShowDialog();
+                w.Show();
             }
             catch (Exception ex)
             {

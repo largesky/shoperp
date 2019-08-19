@@ -288,7 +288,10 @@ namespace ShopErp.App.Views.Goods
                         this.Goods.Shops.Add(gu);
                     }
                 }
-                this.DialogResult = true;
+                if (System.Windows.Interop.ComponentDispatcher.IsThreadModal)
+                    this.DialogResult = true;
+                else
+                    this.Close();
             }
             catch (Exception ex)
             {

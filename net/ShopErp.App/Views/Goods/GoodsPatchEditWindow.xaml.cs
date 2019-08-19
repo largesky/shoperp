@@ -52,17 +52,19 @@ namespace ShopErp.App.Views.Goods
             try
             {
                 ColorFlag flag = this.cbbEditFlag.GetSelectedEnum<ColorFlag>();
-                if (MessageBox.Show("是否将旗帜更新为:" + this.cbbEditFlag.Text, "警告", MessageBoxButton.YesNo,
-                        MessageBoxImage.Question) != MessageBoxResult.Yes)
+                if (MessageBox.Show("是否将旗帜更新为:" + this.cbbEditFlag.Text, "警告", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 {
                     return;
                 }
                 var goods = this.GetGoodss();
                 foreach (var v in goods)
                 {
-                    v.Source.Flag = flag;
-                    ServiceContainer.GetService<GoodsService>().Update(v.Source);
-                    v.Flag = flag;
+                    if (v.Source.Flag != flag)
+                    {
+                        v.Source.Flag = flag;
+                        v.Flag = flag;
+                        ServiceContainer.GetService<GoodsService>().Update(v.Source);
+                    }
                 }
             }
             catch (Exception ex)
@@ -76,17 +78,19 @@ namespace ShopErp.App.Views.Goods
             try
             {
                 int star = int.Parse(this.tbStar.Text.Trim());
-                if (MessageBox.Show("是否将星级更新为:" + star, "警告", MessageBoxButton.YesNo, MessageBoxImage.Question) !=
-                    MessageBoxResult.Yes)
+                if (MessageBox.Show("是否将星级更新为:" + star, "警告", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 {
                     return;
                 }
                 var goods = this.GetGoodss();
                 foreach (var v in goods)
                 {
-                    v.Source.Star = star;
-                    ServiceContainer.GetService<GoodsService>().Update(v.Source);
-                    v.UpdateStarViewModel(star);
+                    if (v.Source.Star != star)
+                    {
+                        v.Source.Star = star;
+                        ServiceContainer.GetService<GoodsService>().Update(v.Source);
+                        v.UpdateStarViewModel(star);
+                    }
                 }
             }
             catch (Exception ex)
