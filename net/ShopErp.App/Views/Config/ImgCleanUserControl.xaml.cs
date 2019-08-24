@@ -24,14 +24,7 @@ namespace ShopErp.App.Views.Config
     /// </summary>
     public partial class ImgCleanUserControl : UserControl
     {
-        private bool isStop = false;
-        private Task task = null;
-        private IList<ShopErp.Domain.Goods> gus = null;
-        private IList<ShopErp.Domain.Vendor> vendors = null;
-        private int count;
-
-        private System.Collections.ObjectModel.ObservableCollection<ImgCleanViewModel> dirs =
-            new System.Collections.ObjectModel.ObservableCollection<ImgCleanViewModel>();
+        private System.Collections.ObjectModel.ObservableCollection<ImgCleanViewModel> dirs = new System.Collections.ObjectModel.ObservableCollection<ImgCleanViewModel>();
 
         public ImgCleanUserControl()
         {
@@ -40,19 +33,9 @@ namespace ShopErp.App.Views.Config
 
         private void btnStart_Click(object sender, RoutedEventArgs e)
         {
-            if (this.task != null)
-            {
-                MessageBox.Show("正在检查中");
-                return;
-            }
             this.dirs.Clear();
             this.dgvDirs.ItemsSource = this.dirs;
-            Task.Factory.StartNew(QueryTask);
-        }
-
-        private void btnStop_Click(object sender, RoutedEventArgs e)
-        {
-            this.isStop = true;
+            QueryTask();
         }
 
         private void btnClean_Click(object sender, RoutedEventArgs e)
@@ -90,46 +73,66 @@ namespace ShopErp.App.Views.Config
         {
             try
             {
-                this.count = 0;
-                this.isStop = false;
-                this.gus = ServiceContainer.GetService<GoodsService>().GetByAll(0, GoodsState.NONE, 0, DateTime.MinValue, DateTime.MinValue, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", 0, 0).Datas;
-                this.vendors = ServiceContainer.GetService<VendorService>().GetByAll("", "", "", "", 0, 0).Datas;
-
-                string dir = LocalConfigService.GetValue(SystemNames.CONFIG_WEB_IMAGE_DIR, "");
-                if (string.IsNullOrWhiteSpace(dir))
+                IList<ShopErp.Domain.Goods> gus = ServiceContainer.GetService<GoodsService>().GetByAll(0, GoodsState.NONE, 0, DateTime.MinValue, DateTime.MinValue, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", 0, 0).Datas.ToList();
+                IList<ShopErp.Domain.Vendor> vendors = ServiceContainer.GetService<VendorService>().GetByAll("", "", "", "", 0, 0).Datas;
+                List<string> goodsDirs = new List<string>();
+                int gusCount = gus.Count;
+                string imgRootDir = LocalConfigService.GetValue(SystemNames.CONFIG_WEB_IMAGE_DIR, "");
+                if (string.IsNullOrWhiteSpace(imgRootDir))
                 {
                     throw new Exception("系统中没有配置图片文件夹");
                 }
-                List<string> dirs = new List<string>();
-                string[] vendorDirs = System.IO.Directory.GetDirectories(dir + "\\goods").Where(obj => new System.IO.DirectoryInfo(obj).Name.All(c => Char.IsDigit(c))).ToArray();
+                //厂家以数字编号保存在下面，不可能是其它的字符
+                List<string> vendorDirs = System.IO.Directory.GetDirectories(imgRootDir + "\\goods").Where(obj => new System.IO.DirectoryInfo(obj).Name.All(c => Char.IsDigit(c))).ToList();
                 foreach (var d in vendorDirs)
                 {
-                    if (this.isStop)
-                    {
-                        return;
-                    }
-
-                    string[] numberDirs = System.IO.Directory.GetDirectories(d);
-                    foreach (var md in numberDirs)
-                    {
-                        if (this.isStop)
-                        {
-                            return;
-                        }
-                        this.Dispatcher.Invoke(new Action(() =>
-                        {
-                            this.dirs.Add(new ImgCleanViewModel { Dir = md, State = "" });
-                        }));
-                    }
+                    goodsDirs.AddRange(System.IO.Directory.GetDirectories(d));
                 }
-                var dirsArray = CollectionsSpilteUtil.Spilte(this.dirs.ToArray(), 30);
-                Task.WaitAll(dirsArray.Select(obj => Task.Factory.StartNew(() => QueryTask(obj))).ToArray());
-                this.Dispatcher.Invoke(new Action(() =>
+
+                foreach (string goodsDir in goodsDirs)
                 {
-                    var g = this.dirs.GroupBy(obj => obj.State);
-                    string s = "文件夹总数：" + this.dirs.Count + ",商品总数：" + this.gus.Count + " 解析结果:" + string.Join(",", g.Select(obj => obj.Key + ":" + obj.Count()));
-                    this.tbMsg.Text = s;
-                }));
+                    ShopErp.Domain.Goods goods = null;
+                    bool check = false;
+                    string msg = "";
+                    string[] ss = goodsDir.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (ss.Length < 2)
+                    {
+                        msg = "错误：文件夹名称路径小于2层 ";
+                    }
+                    else
+                    {
+                        var vendor = vendors.FirstOrDefault(obj => obj.Id == long.Parse(ss[ss.Length - 2]));
+                        if (vendor == null)
+                        {
+                            msg = "商品找不到对应厂家";
+                            check = true;
+                        }
+                        else
+                        {
+                            goods = gus.FirstOrDefault(obj => obj.VendorId == vendor.Id && obj.Number.Equals(ss[ss.Length - 1], StringComparison.OrdinalIgnoreCase));
+                            msg = goods == null ? "商品已不在系统中" : "商品存在";
+                            check = goods == null;
+                            if (goods != null)
+                            {
+                                gus.Remove(goods);
+                            }
+                        }
+                    }
+                    ImgCleanViewModel d = new ImgCleanViewModel { Check = check, Dir = goodsDir, Goods = goods, State = msg };
+                    dirs.Add(d);
+                    this.tbMsg.Text = string.Format("已完成解析:{0}/{1}", dirs.Count, this.dirs.Count);
+                }
+
+                foreach (var goods in gus)
+                {
+                    ImgCleanViewModel d = new ImgCleanViewModel { Check = false, Dir = "", Goods = goods, State = "不存在文件夹" };
+                    dirs.Add(d);
+                    this.tbMsg.Text = string.Format("已完成解析:{0}/{1}", dirs.Count, this.dirs.Count);
+
+                }
+                var g = this.dirs.GroupBy(obj => obj.State);
+                string s = "文件夹总数：" + goodsDirs.Count + ",商品总数：" + gusCount + " 解析结果:" + string.Join(",", g.Select(obj => obj.Key + ":" + obj.Count()));
+                this.tbMsg.Text = s;
             }
             catch (Exception ex)
             {
@@ -137,67 +140,6 @@ namespace ShopErp.App.Views.Config
             }
             finally
             {
-                this.isStop = true;
-                this.task = null;
-            }
-        }
-
-        private void QueryTask(ImgCleanViewModel[] dirs)
-        {
-            try
-            {
-                foreach (var d in dirs)
-                {
-                    if (this.isStop)
-                    {
-                        break;
-                    }
-
-                    string msg = "";
-                    bool check = false;
-                    int index = d.Dir.LastIndexOf('\\');
-                    if (index < 0)
-                    {
-                        msg = "错误：路径不包含 \\ ";
-                    }
-                    else
-                    {
-                        string[] ss = d.Dir.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
-                        if (ss.Length < 2)
-                        {
-                            msg = "错误：文件夹名称路径小于2层 ";
-                        }
-                        else
-                        {
-                            var vendor = this.vendors.FirstOrDefault(obj => obj.Id == long.Parse(ss[ss.Length - 2]));
-                            if (vendor == null)
-                            {
-                                msg = "商品找不到对应厂家";
-                                check = true;
-                            }
-                            else
-                            {
-                                var gu = this.gus.FirstOrDefault(obj => obj.VendorId == vendor.Id && obj.Number.Equals(ss[ss.Length - 1], StringComparison.OrdinalIgnoreCase));
-                                msg = gu == null ? "商品已不在系统中" : "商品存在";
-                                check = gu == null;
-                            }
-                        }
-                        this.Dispatcher.Invoke(new Action(() =>
-                        {
-                            lock (this.dirs)
-                            {
-                                count++;
-                                d.State = msg;
-                                d.Check = check;
-                                this.tbMsg.Text = string.Format("已完成解析:{0}/{1}", count, this.dirs.Count);
-                            }
-                        }));
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
             }
         }
     }
