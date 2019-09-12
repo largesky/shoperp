@@ -32,6 +32,7 @@ namespace ShopErp.App.Views.Goods
         private VendorService vendorService = ServiceContainer.GetService<VendorService>();
         private string imagePath = null;
         private bool hasImageSet = false;
+        private string goodsVideoUrl = "";
 
         string oldNumber;
         long oldVendorId;
@@ -123,7 +124,7 @@ namespace ShopErp.App.Views.Goods
                     MessageBox.Show("当前处于编辑商品模式，不能自动读取新数据");
                     return;
                 }
-                string vendorHomePage = "", goodsVideoUrl = "";
+                string vendorHomePage = "";
                 string url = this.tbUrl.Text.Trim();
 
                 url = url.Substring(0, url.IndexOf('?') < 0 ? url.Length : url.IndexOf('?'));
@@ -251,10 +252,12 @@ namespace ShopErp.App.Views.Goods
                     {
                         GoodsService.SaveImage(this.Goods, this.imagePath);
                     }
-
                     this.goodsService.Update(this.Goods);
                 }
-
+                if (string.IsNullOrWhiteSpace(this.goodsVideoUrl) == false)
+                {
+                    GoodsService.SaveVideo(this.Goods, this.goodsVideoUrl);
+                }
                 //上货店铺
                 //已有的，没有在选择中的，需要删除
                 var gus = this.Goods.Shops == null ? new GoodsShop[0] : this.Goods.Shops.ToArray();

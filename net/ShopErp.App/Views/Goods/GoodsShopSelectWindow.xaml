@@ -1,7 +1,7 @@
 ﻿<Window x:Class="ShopErp.App.Views.Goods.GoodsShopSelectWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="请选择店铺" Height="300" Width="300" SizeToContent="Height" Loaded="Window_Loaded"
+        Title="请选择店铺" Height="300" Width="300" SizeToContent="WidthAndHeight" Loaded="Window_Loaded"
         WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
     <StackPanel Orientation="Vertical">
         <ListBox Grid.Row="3" Name="cbbShops" VerticalAlignment="Center" BorderBrush="White">
