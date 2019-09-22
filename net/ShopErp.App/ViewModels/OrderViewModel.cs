@@ -62,56 +62,52 @@ namespace ShopErp.App.ViewModels
             set { this.SetValue(DeliveryNumberProperty, value); }
         }
 
-        public string GoodsInfoWithPrice
+        public string State
         {
-            get
-            {
-                if (this.Source == null)
-                {
-                    return "";
-                }
-
-                if (this.Source.OrderGoodss == null || this.Source.OrderGoodss.Count < 1)
-                {
-                    return "";
-                }
-                StringBuilder sb = new StringBuilder();
-                var vs = ServiceContainer.GetService<VendorService>();
-                if (this.Source.OrderGoodss != null && this.Source.OrderGoodss.Count > 0)
-                {
-                    foreach (var goods in this.Source.OrderGoodss)
-                    {
-                        sb.Append(VendorService.FormatVendorName(goods.Vendor) + " " + goods.Number + goods.Edtion +
-                                  " " + goods.Color + " " + goods.Size + " " + goods.Count + " ¥" +
-                                  ((int)goods.PopPrice).ToString());
-                    }
-                }
-                return sb.ToString();
-            }
+            get { return (string)this.GetValue(StateProperty); }
+            set { this.SetValue(StateProperty, value); }
         }
 
         public string GoodsInfo
         {
             get
             {
-                if (this.Source == null)
-                {
-                    return "";
-                }
-
                 if (this.Source.OrderGoodss == null || this.Source.OrderGoodss.Count < 1)
                 {
                     return "";
                 }
 
                 StringBuilder sb = new StringBuilder();
-                var vs = ServiceContainer.GetService<VendorService>();
                 if (this.Source.OrderGoodss != null && this.Source.OrderGoodss.Count > 0)
                 {
                     foreach (var goods in this.Source.OrderGoodss)
                     {
-                        sb.Append(VendorService.FormatVendorName(goods.Vendor) + " " + goods.Number + goods.Edtion +
-                                  goods.Color + goods.Size + " (" + goods.Count + ") ");
+                        sb.Append(VendorService.FormatVendorName(goods.Vendor) + " " + goods.Number + goods.Edtion + goods.Color + goods.Size + " (" + goods.Count + ") ");
+                    }
+                }
+                return sb.ToString();
+            }
+        }
+
+        /// <summary>
+        /// 可以发货的商品信息
+        /// </summary>
+        public string GoodsInfoCanbeCount
+        {
+            get
+            {
+                if (this.Source.OrderGoodss == null || this.Source.OrderGoodss.Count < 1)
+                {
+                    return "";
+                }
+
+                StringBuilder sb = new StringBuilder();
+                if (this.Source.OrderGoodss != null && this.Source.OrderGoodss.Count > 0)
+                {
+                    foreach (var goods in this.Source.OrderGoodss)
+                    {
+                        if ((int)goods.State >= (int)OrderState.PAYED && (int)goods.State < (int)OrderState.SHIPPED)
+                            sb.Append(VendorService.FormatVendorName(goods.Vendor) + " " + goods.Number + goods.Edtion + goods.Color + goods.Size + " (" + goods.Count + ") ");
                     }
                 }
                 return sb.ToString();
@@ -122,22 +118,7 @@ namespace ShopErp.App.ViewModels
         {
             get
             {
-                if (Source == null)
-                {
-                    return "";
-                }
-
-                return string.Join(" ", Source.ReceiverMobile, Source.ReceiverPhone);
-            }
-        }
-
-        public Visibility RowDetailVisibility
-        {
-            get
-            {
-                return this.Source.OrderGoodss != null && this.Source.OrderGoodss.Count > 1
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
+                return string.Join(" ", Source.ReceiverMobile, Source.ReceiverPhone).Trim();
             }
         }
 
@@ -145,24 +126,13 @@ namespace ShopErp.App.ViewModels
         {
             get
             {
-                string expander = "";
-                if (this.HistoryOrders != null && this.HistoryOrders.Count > 0)
-                {
-                    expander = "史";
-                }
-                return expander;
+                return this.HistoryOrders != null && this.HistoryOrders.Count > 0 ? "史" : "";
             }
         }
 
-        public Order Source { get; set; }
+        public Order Source { get; private set; }
 
-        public string State
-        {
-            get { return (string)this.GetValue(StateProperty); }
-            set { this.SetValue(StateProperty, value); }
-        }
-
-        public List<OrderViewModel> HistoryOrders { get; set; }
+        public List<OrderViewModel> HistoryOrders { get; private set; }
 
         public OrderViewModel(Order order)
         {

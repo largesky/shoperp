@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="1200" Loaded="UserControl_Loaded">
+             xmlns:cefwf="clr-namespace:CefSharp.WinForms;assembly=CefSharp.WinForms"
+             d:DesignHeight="300" d:DesignWidth="1400" Loaded="UserControl_Loaded">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -13,7 +14,9 @@
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="3">
             <TextBlock Text="店铺:" Margin="3" VerticalAlignment="Center" />
-            <ComboBox Name="cbbShops" Margin="3" VerticalAlignment="Center" DisplayMemberPath="Mark" Width="60" />
+            <ComboBox Name="cbbShops" Margin="3" VerticalAlignment="Center" DisplayMemberPath="Mark" Width="60" SelectionChanged="CbbShops_SelectionChanged"/>
+            <TextBlock Text="类型:" Margin="3" VerticalAlignment="Center"/>
+            <ComboBox Name="cbbTypes" Margin="3" VerticalAlignment="Center" Width="60"/>
             <TextBlock Text="名称:" Margin="3" VerticalAlignment="Center" />
             <TextBox Name="tbTitle" Margin="3" VerticalAlignment="Center" Width="100" />
             <TextBlock Text="商家编码:" Margin="3" VerticalAlignment="Center" />
@@ -22,61 +25,65 @@
             <TextBox Name="tbStockCode" Margin="3" VerticalAlignment="Center" Width="100" />
             <TextBlock Text="状态:" Margin="3" VerticalAlignment="Center" />
             <ComboBox Name="cbbStatus" Margin="3" VerticalAlignment="Center" />
-            <Button Name="btnQuery" Content="查询" Width="60" Margin="3" VerticalAlignment="Center"
-                    Click="btnQuery_Click" />
+            <Button Name="btnQuery" Content="查询" Width="60" Margin="3" VerticalAlignment="Center" Click="btnQuery_Click" />
             <TextBlock Text="重置所有备注为:" Margin="3" VerticalAlignment="Center" />
             <TextBox Name="tbComment" Margin="3" VerticalAlignment="Center" Width="100" />
-            <Button Name="btnClear" Content="重置" Width="60" Margin="3" VerticalAlignment="Center"
-                    Click="btnClear_Click" />
-            <Button Name="btnCheckNotSale" Content="检查下架" Margin="3" VerticalAlignment="Center"
-                    Click="btnCheckNotSale_Click" />
+            <Button Name="btnClear" Content="重置" Width="60" Margin="3" VerticalAlignment="Center" Click="btnClear_Click" />
+            <TextBlock Text="导入到拼多多店铺:" Margin="3" VerticalAlignment="Center"/>
+            <ComboBox Name="cbbPddShops"   DisplayMemberPath="Mark" Width="60" VerticalAlignment="Center" Margin="3"/>
+            <Button Name="btnExportToPdd" Content="导入" Width="60" VerticalAlignment="Center" Margin="3" Click="BtnExportToPdd_Click"/>
             <TextBlock Name="tbMsg" Margin="3" VerticalAlignment="Center" />
         </StackPanel>
-        <DataGrid Grid.Row="1" AutoGenerateColumns="False" SelectionMode="Extended" SelectionUnit="CellOrRowHeader"
-                  CanUserAddRows="False" CanUserDeleteRows="False" Name="dgvGoods"
-                  CellEditEnding="dgvGoods_CellEditEnding">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="序号" Binding="{Binding UserNumber}" IsReadOnly="True" />
-                <DataGridTextColumn Header="商品ID" Binding="{Binding PopGoodsInfo.Id}" IsReadOnly="True" />
-                <DataGridTemplateColumn Header="图片" Width="Auto" IsReadOnly="True">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Image Width="90" Height="90"
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <DataGrid Grid.Column="0" AutoGenerateColumns="False" SelectionMode="Extended" SelectionUnit="CellOrRowHeader"  CanUserAddRows="False" CanUserDeleteRows="False" Name="dgvGoods" CellEditEnding="dgvGoods_CellEditEnding">
+                <DataGrid.Columns>
+                    <DataGridCheckBoxColumn  Binding="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="False" >
+                        <DataGridCheckBoxColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <CheckBox Checked="CheckBox_Checked" Unchecked="CheckBox_Checked" />
+                            </DataTemplate>
+                        </DataGridCheckBoxColumn.HeaderTemplate>
+                    </DataGridCheckBoxColumn>
+                    <DataGridTextColumn Header="序号" Binding="{Binding UserNumber}" IsReadOnly="True" />
+                    <DataGridTextColumn Header="商品ID" Binding="{Binding PopGoodsInfo.Id}" IsReadOnly="True" />
+                    <DataGridTemplateColumn Header="图片" Width="Auto" IsReadOnly="True">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Width="90" Height="90"
                                    Source="{Binding PopGoodsInfo.Image,Converter={StaticResource webUrlImageConverter}}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTextColumn Header="状态"
-                                    Binding="{Binding PopGoodsInfo.State,Converter={StaticResource descriptionConverter}}"
-                                    IsReadOnly="True" />
-                <DataGridTextColumn Header="卖出总数" Binding="{Binding PopGoodsInfo.SaleNum}" IsReadOnly="True" />
-                <DataGridTextColumn Header="商家编号" Binding="{Binding Path=PopGoodsInfo.Code}" IsReadOnly="True"
-                                    MinWidth="60" />
-                <DataGridTextColumn Header="库存编码" Binding="{Binding Path=SkuCodesInfo}" IsReadOnly="True" MinWidth="60" />
-                <DataGridTextColumn Header="重复"
-                                    Binding="{Binding IsDup,Converter={StaticResource boolConverter},ConverterParameter=|重复}"
-                                    IsReadOnly="True" />
-                <DataGridTextColumn Header="备注" Binding="{Binding Path=GoodsTask.Comment}" IsReadOnly="False"
-                                    MinWidth="60" />
-                <DataGridTextColumn Header="检查状态" Binding="{Binding Path=State}" IsReadOnly="False" MinWidth="60" />
-                <DataGridHyperlinkColumn Header="查看连接(按住Ctrl打开Go2连接)" Binding="{Binding PopGoodsInfo.Title}"
-                                         IsReadOnly="True">
-                    <DataGridHyperlinkColumn.ElementStyle>
-                        <Style>
-                            <EventSetter Event="Hyperlink.Click" Handler="OpenUrl_Click" />
-                        </Style>
-                    </DataGridHyperlinkColumn.ElementStyle>
-                </DataGridHyperlinkColumn>
-                <DataGridHyperlinkColumn Header="编辑连接" Binding="{Binding EditStr}" IsReadOnly="True">
-                    <DataGridHyperlinkColumn.ElementStyle>
-                        <Style>
-                            <EventSetter Event="Hyperlink.Click" Handler="OpenUrl_Click2" />
-                        </Style>
-                    </DataGridHyperlinkColumn.ElementStyle>
-                </DataGridHyperlinkColumn>
-                <!--<DataGridTextColumn Header="SKU" Binding="{Binding Path=SkuInfo}" IsReadOnly="True" MinWidth="60"/>-->
-            </DataGrid.Columns>
-        </DataGrid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="状态" Binding="{Binding PopGoodsInfo.State,Converter={StaticResource descriptionConverter}}" IsReadOnly="True" />
+                    <DataGridTextColumn Header="卖出总数" Binding="{Binding PopGoodsInfo.SaleNum}" IsReadOnly="True" />
+                    <DataGridTextColumn Header="商家编号" Binding="{Binding Path=PopGoodsInfo.Code}" IsReadOnly="True" MinWidth="60" />
+                    <DataGridTextColumn Header="库存编码" Binding="{Binding Path=SkuCodesInfo}" IsReadOnly="True" MinWidth="60" />
+                    <DataGridTextColumn Header="备注" Binding="{Binding Path=GoodsTask.Comment}" IsReadOnly="False" MinWidth="60" />
+                    <DataGridTextColumn Header="检查状态" Binding="{Binding Path=State}" IsReadOnly="False" MinWidth="60" />
+                    <DataGridHyperlinkColumn Header="查看连接(按住Ctrl打开Go2连接)" Binding="{Binding PopGoodsInfo.Title}" IsReadOnly="True">
+                        <DataGridHyperlinkColumn.ElementStyle>
+                            <Style>
+                                <EventSetter Event="Hyperlink.Click" Handler="OpenUrl_Click" />
+                            </Style>
+                        </DataGridHyperlinkColumn.ElementStyle>
+                    </DataGridHyperlinkColumn>
+                    <DataGridHyperlinkColumn Header="编辑连接" Binding="{Binding EditStr}" IsReadOnly="True">
+                        <DataGridHyperlinkColumn.ElementStyle>
+                            <Style>
+                                <EventSetter Event="Hyperlink.Click" Handler="OpenUrl_Click2" />
+                            </Style>
+                        </DataGridHyperlinkColumn.ElementStyle>
+                    </DataGridHyperlinkColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+            <WindowsFormsHost Grid.Column="1" Name="wfh" >
+                <cefwf:ChromiumWebBrowser x:Name="wb1"/>
+            </WindowsFormsHost>
+        </Grid>
 
     </Grid>
 </UserControl>

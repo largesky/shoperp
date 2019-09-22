@@ -4,6 +4,7 @@ using ShopErp.Server.Dao.NHibernateDao;
 using System;
 using System.ServiceModel;
 using System.ServiceModel.Web;
+using System.Linq;
 
 namespace ShopErp.Server.Service.Restful
 {
@@ -34,6 +35,21 @@ namespace ShopErp.Server.Service.Restful
             {
                 this.dao.Save(value);
                 return new LongResponse(value.Id);
+            }
+            catch (Exception ex)
+            {
+                throw new WebFaultException<ResponseBase>(new ResponseBase(ex.Message), System.Net.HttpStatusCode.OK);
+            }
+        }
+
+        [OperationContract]
+        [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/savebatch.html")]
+        public DataCollectionResponse<long> SaveBatch(GoodsTask[] values)
+        {
+            try
+            {
+                this.dao.Save(values);
+                return new DataCollectionResponse<long>(values.Select(obj => obj.Id));
             }
             catch (Exception ex)
             {

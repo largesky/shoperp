@@ -44,7 +44,7 @@
                 <DataGridTextColumn Header="订单编号" Binding="{Binding Source.Id}" Width="Auto" IsReadOnly="True"/>
                 <DataGridTextColumn Header="买家账号" Binding="{Binding Source.PopBuyerId}" Width="Auto" IsReadOnly="True"/>
                 <DataGridTextColumn Header="付款时间" Binding="{Binding Source.PopPayTime, Converter={StaticResource datetimeConverter}}" Width="Auto" IsReadOnly="True"/>
-                <DataGridTextColumn Header="商品信息" Binding="{Binding GoodsInfo}" Width="250" IsReadOnly="True"/>
+                <DataGridTextColumn Header="商品信息" Binding="{Binding GoodsInfoCanbeCount}" Width="250" IsReadOnly="True"/>
                 <DataGridTextColumn Header="快递单号" Binding="{Binding Source.DeliveryNumber}" Width="Auto" IsReadOnly="True"/>
                 <DataGridTextColumn Header="卖家备注" Binding="{Binding Source.PopSellerComment}" Width="Auto" IsReadOnly="True"/>
                 <DataGridTextColumn Header="买家备注" Binding="{Binding Source.PopBuyerComment}" Width="Auto" IsReadOnly="True"/>

@@ -13,5 +13,6 @@ namespace ShopErp.Server.Service.Pop.Pingduoduo
         public int sku_quantity;
         public string outer_id;
         public string outer_goods_id;
+        public int is_sku_onsale;
     }
 }

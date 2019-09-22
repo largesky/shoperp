@@ -16,11 +16,11 @@
         GOODS_SHOES_GAOBANGXIE,
         [EnumDescription("靴子")]
         GOODS_SHOES_XUEZI,
-        [EnumDescription("男鞋")]
-        GOODS_SHOES_NANXIE,
         [EnumDescription("凡布鞋")]
         GOODS_SHOES_FANBUXIE,
         [EnumDescription("雨鞋")]
         GOODS_SHOES_YUXIE,
+        [EnumDescription("男鞋")]
+        GOODS_SHOES_NANXIE,
     }
 }

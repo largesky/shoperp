@@ -152,7 +152,6 @@
                                                         <CheckBox IsChecked="{Binding SelectedItem.Checked, ElementName=tc1}"  />
                                                     </DataTemplate>
                                                 </DataGridCheckBoxColumn.HeaderTemplate>
-
                                             </DataGridCheckBoxColumn>
                                             <!--<DataGridTemplateColumn Header="颜色" Width="Auto" CanUserSort="True" SortMemberPath="Source.PopFlag" IsReadOnly="True">
                                                 <DataGridTemplateColumn.CellTemplate>

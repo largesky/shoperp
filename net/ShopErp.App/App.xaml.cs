@@ -43,7 +43,7 @@ namespace ShopErp.App
                 {
                     throw new Exception("初始化CEF SHARP 失败");
                 }
-
+                //Cef.GetGlobalCookieManager().SetStoragePath(EnvironmentDirHelper.PROGRAM_DIR + "\\cefdata\\cookie", true, null);
                 var lw = new LoginWindow { Title = "登录网店ERP" };
                 bool? ret = lw.ShowDialog();
                 if (ret == null || ret == false)

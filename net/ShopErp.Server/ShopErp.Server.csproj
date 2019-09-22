@@ -60,7 +60,7 @@
       <HintPath>..\packages\Iesi.Collections.4.0.4\lib\net40\Iesi.Collections.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate, Version=4.1.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <HintPath>..\packages\NHibernate.4.1.1.4000\lib\net40\NHibernate.dll</HintPath>
@@ -125,7 +125,24 @@
     </Compile>
     <Compile Include="Service\AddressService.cs" />
     <Compile Include="Service\Net\MsHttpRestful.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PinduoduoGoodsPropertyMap.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PinduoduoReqGoodsProperty.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PinduoduoReqSku.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PinduoduoRspCatTemplate.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PinduoduoRspCatTemplateProperty.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PinduoduoRspCatTemplatePropertyValue.cs" />
     <Compile Include="Service\Pop\Pingduoduo\PingduoduoRspAccessToken.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PingduoduoRspAddress.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PingduoduoRspAddressNode.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PingduoduoRspGoodsAdd.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PingduoduoRspGoodsCat.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PingduoduoRspGoodsCatItem.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PingduoduoRspGoodsSpec.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PingduoduoRspGoodsSpecId.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PingduoduoRspGoodsSpecItem.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PingduoduoRspTemplate.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PingduoduoRspTemplateItem.cs" />
+    <Compile Include="Service\Pop\Pingduoduo\PingduoduoRspUploadImg.cs" />
     <Compile Include="Service\Pop\PopAccesstokenTimeOutException.cs" />
     <Compile Include="Service\Pop\PopBase.cs" />
     <Compile Include="Service\Pop\Pingduoduo\PingduoduoRspGetOrder.cs" />

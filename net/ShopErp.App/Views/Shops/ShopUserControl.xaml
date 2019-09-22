@@ -29,6 +29,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="编号" Binding="{Binding Id}" />
                 <DataGridTextColumn Header="平台类型" Binding="{Binding PopType,Converter={StaticResource descriptionConverter}}" />
+                <DataGridTextColumn Header="店铺名称" Binding="{Binding PopShopName}" />
                 <DataGridTextColumn Header="卖家账号" Binding="{Binding PopSellerId}" />
                 <DataGridTextColumn Header="店铺标记" Binding="{Binding Mark}" />
                 <DataGridTextColumn Header="扣点比例" Binding="{Binding CommissionPer,StringFormat=F3}" />

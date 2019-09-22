@@ -7,6 +7,9 @@
     <property name="PopType">
       <column name="PopType" sql-type="int" not-null="true" />
     </property>
+    <property name="PopShopName">
+      <column name="PopShopName" sql-type="string" not-null="true" />
+    </property>
     <property name="PopSellerId">
       <column name="PopSellerId" sql-type="string" not-null="true" />
     </property>

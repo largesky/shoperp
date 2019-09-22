@@ -16,6 +16,7 @@ namespace ShopErp.Server.Service.Pop.Pingduoduo
 {
     class PingduoduoPop : PopBase
     {
+        private static char[] LEFT_S = "(（".ToCharArray();
         private const string SERVER_URL = "http://gw-api.pinduoduo.com/api/router";
 
         public override PopOrderGetFunction OrderGetFunctionType { get { return PopOrderGetFunction.PAYED; } }
@@ -80,6 +81,21 @@ namespace ShopErp.Server.Service.Pop.Pingduoduo
                 throw new Exception("拼多多调用失败：" + t.error_code + "," + t.error_msg);
             }
             return t;
+        }
+
+        private string[] UploadImage(Shop shop, string[] images)
+        {
+            SortedDictionary<string, string> param = new SortedDictionary<string, string>();
+            string[] urls = new string[images.Length];
+            for (int i = 0; i < images.Length; i++)
+            {
+                byte[] bytes = MsHttpRestful.DoWithRetry(() => MsHttpRestful.GetUrlEncodeBodyReturnBytes(images[i], null));
+                string base64 = Convert.ToBase64String(bytes, Base64FormattingOptions.None);
+                param["image"] = "data:image/jpeg;base64," + base64;
+                PingduoduoRspUploadImg ret = MsHttpRestful.DoWithRetry(() => Invoke<PingduoduoRspUploadImg>(shop, "pdd.goods.image.upload", param));
+                urls[i] = ret.image_url;
+            }
+            return urls;
         }
 
         private PingduoduoRspGetOrderStateOrder GetOrderStatePingduoduo(Domain.Shop shop, string popOrderId)
@@ -367,10 +383,11 @@ namespace ShopErp.Server.Service.Pop.Pingduoduo
                     AddTime = "",
                     UpdateTime = "",
                     SaleNum = 0,
-                    Image = g.thumb_url,
+                    Images = new string[] { g.thumb_url },
                     CatId = "",
                     Code = "",
                     State = g.is_onsale == "1" ? PopGoodsState.ONSALE : PopGoodsState.NOTSALE,
+                    Type = "所有",
                 };
                 if (g.sku_list == null || g.sku_list.Length < 1)
                 {
@@ -378,16 +395,23 @@ namespace ShopErp.Server.Service.Pop.Pingduoduo
                 }
                 foreach (var sku in g.sku_list)
                 {
+                    if (sku.is_sku_onsale == 0)
+                    {
+                        continue;
+                    }
                     pg.Code = sku.outer_goods_id;
-                    pg.Skus.Add(new PopGoodsSku
+                    var psku = new PopGoodsSku
                     {
                         Id = sku.sku_id,
                         Code = sku.outer_id,
-                        Value = sku.spec,
-                        PropId = sku.outer_goods_id,
                         Stock = sku.sku_quantity.ToString(),
-                        Status = "ONSALE",
-                    });
+                        Status = PopGoodsState.ONSALE,
+                        Price = "0",
+                    };
+                    string[] ss = sku.spec.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    psku.Color = ss[0];
+                    psku.Size = ss[1];
+                    pg.Skus.Add(psku);
                 }
                 goods.Add(pg);
             }
@@ -508,6 +532,256 @@ namespace ShopErp.Server.Service.Pop.Pingduoduo
         public override XDocument GetAddress(Shop shop)
         {
             throw new NotImplementedException();
+        }
+
+        public override string[] AddGoods(Shop shop, PopGoods[] popGoodss, float[] buyInPrices)
+        {
+            string[] ids = new string[popGoodss.Length];
+            //第一步获取，准备数据
+            SortedDictionary<string, string> para = new SortedDictionary<string, string>();
+            //获取所有地址信息
+            para.Clear();
+            var addressNode = Invoke<PingduoduoRspAddress>(shop, "pdd.logistics.address.get", new SortedDictionary<string, string>());
+
+            //获取所有运费模板
+            para.Clear();
+            para["page_size"] = "20";
+            var lotemplates = Invoke<PingduoduoRspTemplate>(shop, "pdd.goods.logistics.template.get", para);
+            if (lotemplates.logistics_template_list == null || lotemplates.logistics_template_list.Length < 1)
+            {
+                throw new Exception("拼多多店铺内没有运费模板");
+            }
+            //获取商品目录
+            para.Clear();
+            para["parent_cat_id"] = "0";
+            var cats = Invoke<PingduoduoRspGoodsCat>(shop, "pdd.goods.cats.get", para);
+            var nvxieRootCat = cats.goods_cats_list != null ? cats.goods_cats_list.FirstOrDefault(obj => obj.cat_name == "女鞋") : null;
+            if (nvxieRootCat == null)
+            {
+                throw new Exception("拼多多上没有找到 女鞋 类目");
+            }
+
+            Dictionary<string, PinduoduoRspCatTemplateProperty[]> catTemplatesCaches = new Dictionary<string, PinduoduoRspCatTemplateProperty[]>();
+            Dictionary<string, string> catIdCaches = new Dictionary<string, string>();
+            Dictionary<string, PingduoduoRspGoodsSpecItem> specColorCaches = new Dictionary<string, PingduoduoRspGoodsSpecItem>();
+            Dictionary<string, PingduoduoRspGoodsSpecItem> specSizeCaches = new Dictionary<string, PingduoduoRspGoodsSpecItem>();
+            for (int i = 0; i < popGoodss.Length; i++)
+            {
+                var popGoods = popGoodss[i];
+
+                //获取对应商品的运费模板
+                var an = addressNode.logistics_address_list.FirstOrDefault(obj => obj.region_type == 2 && obj.region_name.Contains(popGoods.ShippingCity));
+                if (an == null)
+                {
+                    throw new Exception("拼多多地址区库没有找到对应的发货地区");
+                }
+                PingduoduoRspTemplateItem t = null;
+                var tt = lotemplates.logistics_template_list.Where(obj => obj.city_id == an.id.ToString()).ToArray();
+                if (tt.Length < 2)
+                {
+                    t = tt.First();
+                }
+                else
+                {
+                    t = tt.FirstOrDefault(obj => obj.template_name == "默认运费模板");
+                }
+                if (t == null)
+                {
+                    ids[i] = "拼多多店铺内没有找到对发货地区的运费模板";
+                    continue;
+                }
+
+                if (catIdCaches.ContainsKey(popGoods.Type) == false)
+                {
+                    //获取第二级目录
+                    para.Clear();
+                    para["parent_cat_id"] = nvxieRootCat.cat_id;
+                    cats = Invoke<PingduoduoRspGoodsCat>(shop, "pdd.goods.cats.get", para);
+                    var typeCat = cats.goods_cats_list != null ? cats.goods_cats_list.FirstOrDefault(obj => obj.cat_name == popGoods.Type) : null;
+                    if (typeCat == null)
+                    {
+                        throw new Exception("拼多多上没有找到 " + popGoods.Type + " 类目");
+                    }
+                    //获取第三级目录
+                    para.Clear();
+                    para["parent_cat_id"] = typeCat.cat_id;
+                    cats = Invoke<PingduoduoRspGoodsCat>(shop, "pdd.goods.cats.get", para);
+                    var leve3Cat = cats.goods_cats_list != null ? cats.goods_cats_list.FirstOrDefault() : null;
+                    if (leve3Cat == null)
+                    {
+                        throw new Exception("拼多多上没有找到第三级目录 " + popGoods.Type + " 类目");
+                    }
+                    catIdCaches[popGoods.Type] = leve3Cat.cat_id;
+                }
+
+                string level3CatId = catIdCaches[popGoods.Type];
+
+                //获取颜色，尺码规格
+                if (specColorCaches.ContainsKey(popGoods.Type) == false)
+                {
+                    para.Clear();
+                    para["cat_id"] = level3CatId;
+                    var specs = Invoke<PingduoduoRspGoodsSpec>(shop, "pdd.goods.spec.get", para);
+                    var specColor = specs.goods_spec_list != null ? specs.goods_spec_list.FirstOrDefault(obj => obj.parent_spec_name == "颜色") : null;
+                    var specSize = specs.goods_spec_list != null ? specs.goods_spec_list.FirstOrDefault(obj => obj.parent_spec_name == "尺码") : null;
+                    if (specColor == null || specSize == null)
+                    {
+                        throw new Exception("拼多多上获取颜色，尺码规格失败");
+                    }
+                    specColorCaches[popGoods.Type] = specColor;
+                    specSizeCaches[popGoods.Type] = specSize;
+                }
+
+                if (catTemplatesCaches.ContainsKey(level3CatId) == false)
+                {
+                    //获取商品属性
+                    para.Clear();
+                    para["cat_id"] = level3CatId;
+                    var ct = Invoke<PinduoduoRspCatTemplate>(shop, "pdd.goods.cat.template.get", para);
+                    catTemplatesCaches[level3CatId] = ct.properties.Where(obj => string.IsNullOrWhiteSpace(obj.name) == false).ToArray();
+                }
+
+                //第一步上传图片
+                string[] skuSourceImages = popGoods.Skus.Select(obj => obj.Image).Distinct().ToArray();
+                string[] images = UploadImage(shop, popGoods.Images);
+                string[] descImages = UploadImage(shop, popGoods.DescImages);
+                string[] skuImages = UploadImage(shop, skuSourceImages.ToArray());
+
+                //拼多多图片张数达到8张，商品分值会高些
+                if (images.Length < 8)
+                {
+                    var im = new string[8];
+                    Array.Copy(images, im, images.Length);
+                    Array.Copy(images, 0, im, images.Length, 8 - images.Length);
+                    images = im;
+                }
+
+                //第二步生成规格
+                string[] sColors = popGoods.Skus.Select(obj => obj.Color.Trim()).Distinct().ToArray();
+                string[] sSize = popGoods.Skus.Select(obj => obj.Size.Trim()).Distinct().ToArray();
+                PingduoduoRspGoodsSpecId[] colors = new PingduoduoRspGoodsSpecId[sColors.Length];
+                PingduoduoRspGoodsSpecId[] sizes = new PingduoduoRspGoodsSpecId[sSize.Length];
+
+                for (int j = 0; j < sColors.Length; j++)
+                {
+                    para.Clear();
+                    para["parent_spec_id"] = specColorCaches[popGoods.Type].parent_spec_id;
+                    para["spec_name"] = sColors[j];
+                    colors[j] = Invoke<PingduoduoRspGoodsSpecId>(shop, "pdd.goods.spec.id.get", para);
+                }
+                for (int j = 0; j < sizes.Length; j++)
+                {
+                    para.Clear();
+                    para["parent_spec_id"] = specSizeCaches[popGoods.Type].parent_spec_id;
+                    para["spec_name"] = sSize[j];
+                    sizes[j] = Invoke<PingduoduoRspGoodsSpecId>(shop, "pdd.goods.spec.id.get", para);
+                }
+
+                //拼装参数
+                para.Clear();
+                para["goods_name"] = popGoods.Title.Trim();
+                para["goods_type"] = "1";
+                para["goods_desc"] = "商品跟高，面料，尺码情况请往下滑动查看详情页面";
+                para["cat_id"] = level3CatId;
+                para["country_id"] = "0";
+                para["market_price"] = (((int)(buyInPrices[i] * 3)) * 100).ToString();
+                para["is_pre_sale"] = "false";
+                para["shipment_limit_second"] = (48 * 60 * 60).ToString();
+                para["cost_template_id"] = t.template_id.ToString();
+                para["customer_num"] = "2";
+                para["is_refundable"] = "true";
+                para["second_hand"] = "false";
+                para["is_folt"] = "true";
+                para["out_goods_id"] = popGoods.Code.Trim();
+                para["carousel_gallery"] = Newtonsoft.Json.JsonConvert.SerializeObject(images);
+                para["detail_gallery"] = Newtonsoft.Json.JsonConvert.SerializeObject(descImages);
+
+                //SKU
+                List<PinduoduoReqSku> skus = new List<PinduoduoReqSku>();
+                for (int j = 0; j < popGoods.Skus.Count; j++)
+                {
+                    var sku = new PinduoduoReqSku();
+                    //价格
+                    sku.multi_price = (long)(100 * (float.Parse(popGoods.Skus[j].Price) > (buyInPrices[i] * 2) ? (float.Parse(popGoods.Skus[j].Price) / 2) : float.Parse(popGoods.Skus[j].Price)));
+                    sku.price = sku.multi_price + 100;
+                    sku.out_sku_sn = popGoods.Skus[j].Code;
+                    sku.thumb_url = skuImages[Array.IndexOf(skuSourceImages, popGoods.Skus[j].Image)];
+                    sku.spec_id_list = string.Format("[{0},{1}]", colors[Array.FindIndex(colors, 0, o => o.spec_name == popGoods.Skus[j].Color)].spec_id, sizes[Array.FindIndex(sizes, 0, o => popGoods.Skus[j].Size.Trim() == o.spec_name)].spec_id);
+                    skus.Add(sku);
+                }
+                para["sku_list"] = Newtonsoft.Json.JsonConvert.SerializeObject(skus);
+                //商品类型
+                List<PinduoduoReqGoodsProperty> properties = new List<PinduoduoReqGoodsProperty>();
+                var catPropertyTemplate = catTemplatesCaches[level3CatId];
+                foreach (var ctp in catPropertyTemplate)
+                {
+                    //根据淘宝天猫的属性名称，找到对应拼多多名称
+                    string taobaoName = PinduoduoGoodsPropertyMap.GetMapPropertyNameByKey(popGoods.PopType, popGoods.Type, ctp.name_alias);
+                    if (string.IsNullOrWhiteSpace(taobaoName))
+                    {
+                        ids[i] += ctp.name_alias + " 未找到对应的淘宝属性，";
+                        continue;
+                    }
+
+                    if (ctp.name_alias == "品牌")
+                    {
+                        if (shop.PopShopName.Contains("旗舰店"))
+                        {
+                            properties.Add(new PinduoduoReqGoodsProperty { template_pid = ctp.id, vid = 128029, value = shop.PopShopName.Replace("旗舰店", "") });
+                        }
+                        continue;
+                    }
+
+                    var taobaoProperty = popGoods.Properties.FirstOrDefault(obj => obj.Key == taobaoName);
+                    if (taobaoProperty == null)
+                    {
+                        if (ctp.required)
+                            throw new Exception("拼多多属性：" + ctp.name_alias + " 是必须项，但没有在淘宝找到对应属性");
+                        else
+                            ids[i] += "属性值：" + ctp.name_alias + " 未匹配";
+                        continue;
+                    }
+                    string[] values = taobaoProperty.Value.Split(new string[] { "@#@" }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var vv in values)
+                    {
+                        var v = ctp.values.FirstOrDefault(obj => MatchValue(obj.value, vv));
+                        if (v != null)
+                        {
+                            properties.Add(new PinduoduoReqGoodsProperty { template_pid = ctp.id, vid = long.Parse(v.vid), value = v.value });
+                            if (ctp.choose_max_num <= 1)
+                            {
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            ids[i] += "属性值：" + ctp.name_alias + " 的值：" + vv + " 未匹配";
+                        }
+                    }
+                }
+                para["goods_properties"] = Newtonsoft.Json.JsonConvert.SerializeObject(properties);
+                //第三步上传信息
+                var ret = Invoke<PingduoduoRspGoodsAdd>(shop, "pdd.goods.add", para);
+                ids[i] = ret.goods_id + "," + ids[i];
+            }
+
+            return ids;
+        }
+
+        private bool MatchValue(string value1, string value2)
+        {
+            int i1 = value1.IndexOfAny(LEFT_S);
+            int i2 = value2.IndexOfAny(LEFT_S);
+
+            if (i1 > 0)
+            {
+                value1 = value1.Substring(0, i1);
+            }
+            if (i2 > 0)
+            {
+                value2 = value2.Substring(0, i2);
+            }
+            return value1.Equals(value2, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

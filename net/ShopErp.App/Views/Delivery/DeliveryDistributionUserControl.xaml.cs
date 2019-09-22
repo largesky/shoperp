@@ -320,7 +320,7 @@ namespace ShopErp.App.Views.Delivery
 
                     //读取本地历史订单
                     var localHistoryOrders = ServiceContainer.GetService<OrderService>().GetOrdersByInfoIdNotEqual(order.Source.PopBuyerId, order.Source.ReceiverPhone, order.Source.ReceiverMobile, order.Source.ReceiverAddress, order.Source.Id);
-                    order.HistoryOrders = localHistoryOrders.Datas.Where(obj => orders.Any(ov => ov.Source.Id == obj.Id) == false).Select(obj => new OrderViewModel(obj)).ToList();
+                    order.HistoryOrders.AddRange(localHistoryOrders.Datas.Where(obj => orders.Any(ov => ov.Source.Id == obj.Id) == false).Select(obj => new OrderViewModel(obj)).ToList());
                 }
                 this.orders.Clear();
                 this.orders.AddRange(orders);

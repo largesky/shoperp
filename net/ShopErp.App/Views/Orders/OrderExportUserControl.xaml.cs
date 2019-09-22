@@ -87,11 +87,11 @@ namespace ShopErp.App.Views.Orders
                     var key = cc.Keys.FirstOrDefault(obj => obj.Source.ShopId == o.Source.ShopId && obj.Source.ReceiverName == o.Source.ReceiverName && obj.Source.ReceiverPhone == o.Source.ReceiverPhone && obj.Source.ReceiverMobile == o.Source.ReceiverMobile && obj.Source.ReceiverAddress == o.Source.ReceiverAddress && (string.IsNullOrWhiteSpace(obj.Source.PopBuyerId) ? true : obj.Source.PopBuyerId == o.Source.PopBuyerId));
                     if (key == null)
                     {
-                        cc[o] = o.GoodsInfo;
+                        cc[o] = o.GoodsInfoCanbeCount;
                     }
                     else
                     {
-                        cc[key] = cc[key] + "," + Environment.NewLine + o.GoodsInfo;
+                        cc[key] = cc[key] + "," + Environment.NewLine + o.GoodsInfoCanbeCount;
                     }
                 }
 

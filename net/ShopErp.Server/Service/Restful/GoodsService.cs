@@ -273,6 +273,21 @@ namespace ShopErp.Server.Service.Restful
             }
         }
 
+
+        [OperationContract]
+        [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/addgoods.html")]
+        public DataCollectionResponse<string> AddGoods(Shop shop, PopGoods[] goods, float[] buyInPrices)
+        {
+            try
+            {
+                return new DataCollectionResponse<string>((new PopService().AddGoods(shop, goods, buyInPrices)));
+            }
+            catch (Exception e)
+            {
+                throw new WebFaultException<ResponseBase>(new ResponseBase(e.Message), HttpStatusCode.OK);
+            }
+        }
+
         private Vendor GetMostMatchVendor(long[] vendorIds, string vendor)
         {
             vendorIds = vendorIds.Distinct().ToArray();

@@ -58,6 +58,7 @@ namespace ShopErp.App.Views.Shops
                     AppEnabled = false,
                     WuliuEnabled = false,
                     PopTalkId = "",
+                    PopShopName = "",
                 };
             }
             this.cbbPopTypes.SetSelectedEnum(this.Shop.PopType);

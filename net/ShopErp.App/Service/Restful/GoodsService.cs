@@ -82,6 +82,15 @@ namespace ShopErp.App.Service.Restful
             return DoPost<DataCollectionResponse<PopGoods>>(para);
         }
 
+        public DataCollectionResponse<string> AddGoods(Shop shop, PopGoods[] goods, float[] buyInPrices)
+        {
+            Dictionary<string, object> para = new Dictionary<string, object>();
+            para["shop"] = shop;
+            para["goods"] = goods;
+            para["buyInPrices"] = buyInPrices;
+            return DoPost<DataCollectionResponse<string>>(para);
+        }
+
         public static void SaveImage(Goods goods, string imageUrl)
         {
             //图片路径为空，或者目标图片与当前图片相同

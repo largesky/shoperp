@@ -1,6 +1,6 @@
 
 //TAOBAO_SEARCH_ORDER
-(function() {
+(function () {
     var xhr = new XMLHttpRequest();
     var url = "https://trade.taobao.com/trade/itemlist/asyncSold.htm?event_submit_do_query=1&_input_charset=utf8";
 
@@ -22,7 +22,7 @@
 //TAOBAO_SEARCH_ORDER
 
 //TAOBAO_GET_ORDER
-(function() {
+(function () {
     var data = "false";
     var xhr = new XMLHttpRequest();
     var url = "https://trade.taobao.com/detail/orderDetail.htm?bizOrderId=###bizOrderId";
@@ -39,61 +39,38 @@
 })();
 //TAOBAO_GET_ORDER
 
-//TAOBAO_MARK_DELIVERY
+
+//查询淘宝天猫商品
+//TAOBAO_SEARCH_GOODS
 (function () {
-    var data = "false";
+    //return document.domain + "   " + document.cookie;
     var xhr = new XMLHttpRequest();
-    var url = "https://wuliu.taobao.com/user/consign.htm?trade_id=###trade_id";
-    xhr.open("GET", url, false);
-    xhr.setRequestHeader("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+    xhr.open("POST", "###url", false);
+    xhr.setRequestHeader("accept", "application/json, text/plain, */*");
     xhr.setRequestHeader("accept-encoding", "gzip, deflate, br");
-    xhr.setRequestHeader("accept-language", "zh-CN,zh;q=0.8");
-    var xhrdata = "companyCode=###companyCode&mailNo=###mailNo&taobaoTradeId=###taobaoTradeId";
+    xhr.setRequestHeader("accept-language", "zh-CN,zh;q=0.9");
+    xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded");
+    xhr.setRequestHeader("x-xsrf-token", "###xsrf-token");
+    var xhrdata = "jsonBody={\"filter\":{},\"pagination\":{\"current\":###pageIndex,\"pageSize\":20},\"table\":{\"sort\":{}},\"tab\":\"###state\"}";
     xhr.send(xhrdata)
     if (xhr.status == 200)
         return xhr.responseText;
     return "ERROR:" + xhr.status;
 })();
-//TAOBAO_MARK_DELIVERY
+//TAOBAO_SEARCH_GOODS
 
-//TAOBAO_MODIFY_COMMENT
-(function() {
+//TAOBAO_GET_GOODS
+(function () {
     var data = "false";
     var xhr = new XMLHttpRequest();
-    var url = "https://trade.tmall.com/detail/orderDetail.htm?bizOrderId={0}";
+    xhr.open("GET", "###url", false);
 
-    xhr.open("GET", url, false);
-
-    xhr.setRequestHeader("accept", "application/json, text/javascript, */*; q=0.01");
+    xhr.setRequestHeader("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
     xhr.setRequestHeader("accept-encoding", "gzip, deflate, br");
     xhr.setRequestHeader("accept-language", "zh-CN,zh;q=0.8");
-    xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded; charset=UTF-8");
-
     xhr.send()
-
     if (xhr.status == 200)
         return xhr.responseText;
     return "ERROR:" + xhr.status;
 })();
-//TAOBAO_MODIFY_COMMENT
-
-
-//TMALL_QUERY_RATE
-(function() {
-    var data = "false";
-    var xhr = new XMLHttpRequest();
-    var url ="https://rate.tmall.com/list_detail_rate.htm?itemId=###itemId&sellerId=###sellerId&order=1&currentPage=###currentPage&append=0&content=0&tagId=&posi=&picture=0";
-
-    xhr.open("GET", url, false);
-
-    //xhr.setRequestHeader("accept", "*/*");
-    //xhr.setRequestHeader("accept-encoding", "gzip, deflate, br");
-    //xhr.setRequestHeader("accept-language", "zh-CN,zh;q=0.8");
-
-    xhr.send()
-
-    if (xhr.status == 200)
-        return xhr.responseText;
-    return "ERROR:" + xhr.status;
-})();
-//TMALL_QUERY_RATE
+//TAOBAO_GET_GOODS

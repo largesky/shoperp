@@ -27,8 +27,7 @@ namespace ShopErp.App.Views.Delivery
     /// </summary>
     public partial class DeliveryCheckUserControl : UserControl
     {
-        private System.Collections.ObjectModel.ObservableCollection<DeliveryCheckViewModel> orders =
-            new ObservableCollection<DeliveryCheckViewModel>();
+        private System.Collections.ObjectModel.ObservableCollection<DeliveryCheckViewModel> orders = new ObservableCollection<DeliveryCheckViewModel>();
 
         private int current = 0;
         private bool isRunning = false;

@@ -42,7 +42,6 @@ namespace ShopErp.App.Service.Net
                     client.DefaultRequestHeaders.Add(pair.Key, pair.Value);
                 }
             }
-            client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36");
             return client;
         }
 
@@ -89,9 +88,9 @@ namespace ShopErp.App.Service.Net
             return (encoding ?? Encoding.UTF8).GetString(data);
         }
 
-        public static string PostMultipartFormDataBodyReturnString(string url, IDictionary<string, object> values, IList<string> fileNames, Encoding encoding = null, IDictionary<string, string> headers = null, string referrer = null, string accept = null)
+        public static string PostMultipartFormDataBodyReturnString(string url, IDictionary<string, object> values, Encoding encoding = null, IDictionary<string, string> headers = null, string referrer = null, string accept = null)
         {
-            var data = PostMultipartFormDataBodyReturnBytes(url, values, fileNames, encoding, headers, referrer, accept);
+            var data = PostMultipartFormDataBodyReturnBytes(url, values, encoding, headers, referrer, accept);
             return (encoding ?? Encoding.UTF8).GetString(data);
         }
 
@@ -153,10 +152,8 @@ namespace ShopErp.App.Service.Net
         public static byte[] PostUrlEncodeBodyReturnBytes(string url, IDictionary<string, string> values, Encoding encoding = null, IDictionary<string, string> headers = null, string referrer = null, string accept = null)
         {
             var client = SetupClient(headers, referrer, accept);
-            var content = new System.Net.Http.FormUrlEncodedContent(values ?? EmptyDicValues);
-            content.Headers.ContentType.CharSet = (encoding ?? Encoding.UTF8).BodyName;
-            content.Headers.ContentType.MediaType = "application/x-www-form-urlencoded";
-
+            string scontent = string.Join("&", values.Select(obj => obj.Key + "=" + UrlEncode(obj.Value, Encoding.UTF8)));
+            var content = new StringContent(scontent, Encoding.UTF8, "application/x-www-form-urlencoded");
             HttpResponseMessage ret = null;
             try
             {
@@ -174,46 +171,29 @@ namespace ShopErp.App.Service.Net
             return data;
         }
 
-        public static byte[] PostMultipartFormDataBodyReturnBytes(string url, IDictionary<string, object> values, IList<string> fileNames, Encoding encoding = null, IDictionary<string, string> headers = null, string referrer = null, string accept = null)
+        public static byte[] PostMultipartFormDataBodyReturnBytes(string url, IDictionary<string, object> values, Encoding encoding = null, IDictionary<string, string> headers = null, string referrer = null, string accept = null)
         {
             var content = new System.Net.Http.MultipartFormDataContent();
-            if (encoding == null)
-            {
-                encoding = Encoding.UTF8;
-            }
-            int i = 0;
+            encoding = encoding ?? Encoding.UTF8;
             foreach (var item in values)
             {
                 if (item.Value == null)
                 {
-                    content.Add(new System.Net.Http.StringContent(""), item.Key);
+                    throw new Exception("参数的值为NULL");
                 }
-                else if (item.Value.GetType() == typeof(byte[]))
+                else if (item.Value is byte)
                 {
                     var cc = new System.Net.Http.StreamContent(new MemoryStream((byte[])item.Value));
                     cc.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
-                    content.Add(cc, item.Key, fileNames[i]);
-                    i++;
+                    content.Add(cc, item.Key, item.Key);
                 }
-                else if (item.Value is DateTime)
+                else if (item.Value is string)
                 {
-                    content.Add(new System.Net.Http.StringContent(((DateTime)item.Value).ToString("yyyy-MM-dd HH:mm:ss")), item.Key);
-                }
-                else if (item.Value is Enum)
-                {
-                    content.Add(new System.Net.Http.StringContent((Convert.ToInt32(item.Value)).ToString()), item.Key);
-                }
-                else if (item.Value is double)
-                {
-                    content.Add(new System.Net.Http.StringContent(((double)item.Value).ToString("F2")), item.Key);
-                }
-                else if (item.Value is float)
-                {
-                    content.Add(new System.Net.Http.StringContent(((float)item.Value).ToString("F2")), item.Key);
+                    content.Add(new System.Net.Http.StringContent(item.Value as string, encoding ?? Encoding.UTF8, "application/x-www-form-urlencoded"), item.Key);
                 }
                 else
                 {
-                    content.Add(new System.Net.Http.StringContent(item.Value.ToString()), item.Key);
+                    throw new Exception("不支持的类型：" + item.Value.GetType().FullName);
                 }
             }
             var client = SetupClient(headers, referrer, accept);

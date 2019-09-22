@@ -75,7 +75,7 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NPOI, Version=2.4.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
       <HintPath>..\packages\NPOI.2.4.0\lib\net40\NPOI.dll</HintPath>
@@ -130,6 +130,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CefSharpUtils\BrowserProcessHandler.cs" />
+    <Compile Include="CefSharpUtils\CefCookieVisitor.cs" />
     <Compile Include="Converters\BoolConverter.cs" />
     <Compile Include="Converters\DateTimeConverter.cs" />
     <Compile Include="Converters\EnumConverter.cs" />
@@ -153,6 +154,35 @@
     <Compile Include="Device\Kunhong\KunhongDevice.cs" />
     <Compile Include="Domain\GoodsCountPrintDocument.cs" />
     <Compile Include="Domain\GoodsCountPrintDocument2.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponse.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModel.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelCatPath.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelFormValuesDesc.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelFormValuesDescConverter.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelFormValuesLocation.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelFormValuesSaleProp.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelFormValuesSalePropColorItem.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelGlobal.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelGlobalLocation.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelPropDataSource.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelFormValues.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelFormValuesSku.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\Image.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelFormValuesSkuProp.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelProp.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsListResponse.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsListResponseData.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsListResponseDataPagination.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsListResponseDataTable.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsListResponseDataTableDataSource.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsListResponseDataTableDataSourceItemDesc.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsListResponseDataTableDataSourceItemDescDesc.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsListResponseDataTableDataSourceManagerPrice.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsListResponseDataTableDataSourceUpdateInfo.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsListResponseDataTableDataSourceUpdateInfoStatus.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\ValueTextArray.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\ValueTextArrayConverter.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\ValueTextArrayEntry.cs" />
     <Compile Include="Service\Print\PrintDocument\OrderReturnPrintDocument.cs" />
     <Compile Include="Service\Print\PrintDocument\GoodsPrintDocument.cs" />
     <Compile Include="MenuConfig.cs" />
@@ -309,8 +339,8 @@
     <Compile Include="Views\Orders\OrderImportUserControl.xaml.cs">
       <DependentUpon>OrderImportUserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrdersResponseOrderOrderGoodsOperation.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOrderOrderGoodsStatusStatusInfo.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrdersResponseOrderOrderGoodsOperation.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseOrderOrderGoodsStatusStatusInfo.cs" />
     <Compile Include="Views\Taobao\TaobaoKeywordCountUserControl.xaml.cs">
       <DependentUpon>TaobaoKeywordCountUserControl.xaml</DependentUpon>
     </Compile>
@@ -487,43 +517,43 @@
     <Compile Include="Views\Orders\ReturnProcessWindowEx.xaml.cs">
       <DependentUpon>ReturnProcessWindowEx.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponse.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseAmount.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseAmountCount.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseAmountCountContent.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseAmountCountContentData.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseAmountCountContentDataMoney.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseAmountCountContentDataTitle.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseBasic.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseBasicList.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseBasicListContent.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseBasicListContentContent.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOrder.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOrderOrderGoods.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOrderOrderGoodsStatus.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOrderOrderGoodsStatusSubOrders.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOrderOrderGoodsStatusSubOrdersItemInfo.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOrderOrderGoodsStatusSubOrdersPriceInfo.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOverStatus.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOverStatusOperate.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOverStatusOperateContent.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOverStatusPrompt.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOverStatusPromptContent.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOverStatusStatus.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseOverStatusStatusContent.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseStepbar.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrderDetailResponseStepbarOptions.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrdersResponse.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrdersResponseOrder.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrdersResponseOrderBuyer.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrdersResponseOrderExtra.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrdersResponseOrderOrderGoods.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrdersResponseOrderOrderGoodsItemInfo.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrdersResponseOrderOrderGoodsItemInfoExtra.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrdersResponseOrderOrderInfo.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrdersResponseOrderPayInfo.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrdersResponseOrderStatusInfo.cs" />
-    <Compile Include="Views\Orders\Taobao\TaobaoQueryOrdersResponsePage.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponse.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseAmount.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseAmountCount.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseAmountCountContent.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseAmountCountContentData.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseAmountCountContentDataMoney.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseAmountCountContentDataTitle.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseBasic.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseBasicList.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseBasicListContent.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseBasicListContentContent.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseOrder.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseOrderOrderGoods.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseOrderOrderGoodsStatus.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseOrderOrderGoodsStatusSubOrders.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseOrderOrderGoodsStatusSubOrdersItemInfo.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseOrderOrderGoodsStatusSubOrdersPriceInfo.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseOverStatus.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseOverStatusOperate.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseOverStatusOperateContent.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseOverStatusPrompt.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseOverStatusPromptContent.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseOverStatusStatus.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseOverStatusStatusContent.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseStepbar.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseStepbarOptions.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrdersResponse.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrdersResponseOrder.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrdersResponseOrderBuyer.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrdersResponseOrderExtra.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrdersResponseOrderOrderGoods.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrdersResponseOrderOrderGoodsItemInfo.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrdersResponseOrderOrderGoodsItemInfoExtra.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrdersResponseOrderOrderInfo.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrdersResponseOrderPayInfo.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrdersResponseOrderStatusInfo.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrdersResponsePage.cs" />
     <Compile Include="Views\PageBar\PageBarUserControl.xaml.cs">
       <DependentUpon>PageBarUserControl.xaml</DependentUpon>
     </Compile>
@@ -1042,7 +1072,9 @@
     <Resource Include="Resources\Images\EMPTYIMAGE.jpg" />
     <Resource Include="Resources\Images\READIMAGEERROR.jpg" />
     <Resource Include="Resources\Images\DISABLEIMAGE.jpg" />
-    <None Include="Resources\TAOBAOJS.js" />
+    <None Include="Resources\TAOBAOJS.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\VideoIcon.png" />

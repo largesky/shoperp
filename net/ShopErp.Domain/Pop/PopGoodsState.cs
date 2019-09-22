@@ -8,7 +8,5 @@
         ONSALE = 1,
         [EnumDescription("下架")]
         NOTSALE = 2,
-        [EnumDescription("从未上架")]
-        NEVERSALE = 3,
     }
 }

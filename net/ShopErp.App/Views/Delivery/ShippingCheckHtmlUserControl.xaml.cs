@@ -1,4 +1,4 @@
-﻿using ShopErp.App.Views.Orders.Taobao;
+﻿using ShopErp.App.Domain.TaobaoHtml.Order;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -185,7 +185,7 @@ namespace ShopErp.App.Views.Delivery
 
             string orderInfo = content.Substring(si + "var detailData".Length, ei - si - "var detailData".Length).Trim().TrimStart('=');
 
-            var oi = Newtonsoft.Json.JsonConvert.DeserializeObject<Views.Orders.Taobao.TaobaoQueryOrderDetailResponse>(orderInfo);
+            var oi = Newtonsoft.Json.JsonConvert.DeserializeObject<TaobaoQueryOrderDetailResponse>(orderInfo);
 
             string time = oi.stepbar.options.First(obj => obj.content == "买家付款").time;
             order.PopPayTime = string.IsNullOrWhiteSpace(time) ? dbMineTime : DateTime.Parse(time);
@@ -386,19 +386,10 @@ namespace ShopErp.App.Views.Delivery
                 {
                     throw new Exception("执行操作失败：" + ret.Message);
                 }
-
-                var or = Newtonsoft.Json.JsonConvert.DeserializeObject<Views.Orders.Taobao.TaobaoQueryOrdersResponse>(ret.Result.ToString());
-
+                var or = Newtonsoft.Json.JsonConvert.DeserializeObject<TaobaoQueryOrdersResponse>(ret.Result.ToString());
                 if (or.mainOrders == null || or.mainOrders.Length < 1)
                 {
-                    if (allOrders.Count < 1)
-                    {
-                        throw new Exception("没有订单");
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    break;
                 }
                 totalCount = or.page.totalNumber;
                 totalPage = or.page.totalPage;
@@ -539,7 +530,7 @@ namespace ShopErp.App.Views.Delivery
             }
             string orderInfo = content.Substring(si + "var detailData".Length, ei - si - "var detailData".Length).Trim().TrimStart('=');
 
-            var oi = Newtonsoft.Json.JsonConvert.DeserializeObject<ShopErp.App.Views.Orders.Taobao.TaobaoQueryOrderDetailResponse>(orderInfo);
+            var oi = Newtonsoft.Json.JsonConvert.DeserializeObject<ShopErp.App.Domain.TaobaoHtml.Order.TaobaoQueryOrderDetailResponse>(orderInfo);
 
             pos.PopOrderStateValue = oi.overStatus.status.content[0].text;
             pos.PopOrderStateDesc = oi.overStatus.status.content[0].text;

@@ -968,5 +968,10 @@ namespace ShopErp.Server.Service.Pop.Taobao
             }
             return xDoc;
         }
+
+        public override string[] AddGoods(Shop shop, PopGoods[] popGoods, float[] buyInPrices)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -74,6 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddressNode.cs" />
+    <Compile Include="Common\KeyValuePairClass.cs" />
     <Compile Include="DeliveryCompany.cs" />
     <Compile Include="DeliveryCount.cs" />
     <Compile Include="DeliveryIn.cs" />
