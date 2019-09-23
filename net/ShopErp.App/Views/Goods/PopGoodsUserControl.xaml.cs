@@ -478,6 +478,9 @@ namespace ShopErp.App.Views.Goods
                 {
                     break;
                 }
+
+                Debug.WriteLine("开始抓取商品：" + g.itemId);
+
                 this.SetButtonState("正在下载第：" + pageIndex + "/" + ((resp.data.pagination.total / resp.data.pagination.pageSize) + 1) + "页，第" + (goods.Count + 1) + "条商品详情", true);
                 string url = goodsEditDetailUrl + g.itemId;
                 string goodsEditDetailScript = ScriptManager.GetBody(jspath, "TAOBAO_GET_GOODS").Replace("###url", url);
@@ -537,6 +540,11 @@ namespace ShopErp.App.Views.Goods
                     else
                     {
                         pSku.Image = goodsDetail.models.formValues.saleProp.Colors.FirstOrDefault(obj => obj.text == pSku.Color).img;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(pSku.Image))
+                    {
+                        throw new Exception("商品SKU图片为空：" + pg.Id);
                     }
                     if (pSku.Image.StartsWith("http") == false)
                     {

@@ -641,11 +641,12 @@ namespace ShopErp.Server.Service.Pop.Pingduoduo
                     catTemplatesCaches[level3CatId] = ct.properties.Where(obj => string.IsNullOrWhiteSpace(obj.name) == false).ToArray();
                 }
 
-                //第一步上传图片
+                //第一步上传图片,拼多多不传白底图
+                popGoods.Images = popGoods.Images.Where(obj => obj.EndsWith(".png", StringComparison.OrdinalIgnoreCase) == false).ToArray();
                 string[] skuSourceImages = popGoods.Skus.Select(obj => obj.Image).Distinct().ToArray();
                 string[] images = UploadImage(shop, popGoods.Images);
                 string[] descImages = UploadImage(shop, popGoods.DescImages);
-                string[] skuImages = UploadImage(shop, skuSourceImages.ToArray());
+                string[] skuImages = UploadImage(shop, skuSourceImages);
 
                 //拼多多图片张数达到8张，商品分值会高些
                 if (images.Length < 8)

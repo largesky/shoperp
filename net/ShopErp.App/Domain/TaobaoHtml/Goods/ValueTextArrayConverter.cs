@@ -27,10 +27,15 @@ namespace ShopErp.App.Domain.TaobaoHtml.Goods
                 {
                     valueTextArray.values = eleToken.First.ToObject<ValueTextArrayEntry[]>();
                 }
-                else
+                else if (eleToken.First.Type == JTokenType.Object)
                 {
                     valueTextArray.values = new ValueTextArrayEntry[1];
                     valueTextArray.values[0] = eleToken.First.ToObject<ValueTextArrayEntry>();
+                }
+                else
+                {
+                    valueTextArray.values = new ValueTextArrayEntry[1];
+                    valueTextArray.values[0] = new ValueTextArrayEntry { text = eleToken.First.ToString(), value = "" };
                 }
                 values[i] = valueTextArray;
             }
