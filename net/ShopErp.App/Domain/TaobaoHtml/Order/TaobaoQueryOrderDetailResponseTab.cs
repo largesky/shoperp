@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace ShopErp.App.Domain.TaobaoHtml.Order
 {
-    class TaobaoQueryOrderDetailResponseOrderOrderGoods
+    class TaobaoQueryOrderDetailResponseTab
     {
-        public float priceInfo;
+        public string id;
 
-        public TaobaoQueryOrderDetailResponseOrderOrderGoodsItemInfo itemInfo;
+        public TaobaoQueryOrderDetailResponseTabContent content;
     }
 }

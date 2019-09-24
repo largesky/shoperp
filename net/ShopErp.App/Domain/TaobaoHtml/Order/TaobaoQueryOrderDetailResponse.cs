@@ -6,16 +6,14 @@ using System.Threading.Tasks;
 
 namespace ShopErp.App.Domain.TaobaoHtml.Order
 {
-    public class TaobaoQueryOrderDetailResponse
+    class TaobaoQueryOrderDetailResponse
     {
-        public TaobaoQueryOrderDetailResponseBasic basic;
+        public string buyMessage;
 
-        public TaobaoQueryOrderDetailResponseStepbar stepbar;
+        public TaobaoQueryOrderDetailResponseOrder mainOrder;
 
-        public TaobaoQueryOrderDetailResponseOverStatus overStatus;
+        public TaobaoQueryOrderDetailResponseTab[] tabs;
 
-        public TaobaoQueryOrderDetailResponseAmount amount;
-
-        public TaobaoQueryOrderDetailResponseOrder orders;
+        public TaobaoQueryOrderDetailResponseOperationsGuide[] operationsGuide;
     }
 }

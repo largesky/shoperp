@@ -144,7 +144,6 @@ namespace ShopErp.Server.Service.Restful
             //}
             order.DeliveryCompany = order.DeliveryCompany ?? string.Empty;
             order.DeliveryNumber = order.DeliveryNumber ?? string.Empty;
-            order.PopCreateTime = this.IsDbMinTime(order.PopCreateTime) ? DateTime.Now : order.PopCreateTime;
             order.PopPayTime = this.IsDbMinTime(order.PopPayTime) ? DateTime.Now : order.PopPayTime;
             order.PopDeliveryTime = this.IsDbMinTime(order.PopDeliveryTime) ? this.GetDbMinTime() : order.PopDeliveryTime;
             order.CreateTime = this.IsDbMinTime(order.CreateTime) ? DateTime.Now : order.CreateTime;
@@ -877,7 +876,6 @@ namespace ShopErp.Server.Service.Restful
                     OrderGoodss = new List<OrderGoods>(),
                     PopBuyerId = or.PopBuyerId,
                     PopCodNumber = or.PopCodNumber,
-                    PopCreateTime = or.PopCreateTime,
                     PopFlag = or.PopFlag,
                     PopOrderId = "",
                     PopOrderTotalMoney = 0,

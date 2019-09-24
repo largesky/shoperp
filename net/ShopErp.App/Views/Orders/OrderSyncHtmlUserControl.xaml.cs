@@ -215,7 +215,7 @@ namespace ShopErp.App.Views.Orders
             }
             string orderInfo = content.Substring(si + "var detailData".Length, ei - si - "var detailData".Length).Trim().TrimStart('=');
 
-            var oi = Newtonsoft.Json.JsonConvert.DeserializeObject<TaobaoQueryOrderDetailResponse>(orderInfo);
+            var oi = Newtonsoft.Json.JsonConvert.DeserializeObject<TmallQueryOrderDetailResponse>(orderInfo);
 
             pos.PopOrderStateValue = oi.overStatus.status.content[0].text;
             pos.PopOrderStateDesc = oi.overStatus.status.content[0].text;

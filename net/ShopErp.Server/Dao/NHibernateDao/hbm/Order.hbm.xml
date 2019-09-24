@@ -79,9 +79,6 @@
     <property name="Weight">
       <column name="Weight" sql-type="DECIMAL(22,2)" not-null="true" />
     </property>
-    <property name="PopCreateTime">
-      <column name="PopCreateTime" sql-type="datetime" not-null="true" />
-    </property>
     <property name="PopPayTime">
       <column name="PopPayTime" sql-type="datetime" not-null="true" />
     </property>

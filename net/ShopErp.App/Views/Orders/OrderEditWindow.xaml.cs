@@ -61,7 +61,6 @@ namespace ShopErp.App.Views.Orders
                         PopBuyerComment = "",
                         PopBuyerId = "",
                         PopCodNumber = "",
-                        PopCreateTime = DateTime.Now,
                         PopFlag = ColorFlag.UN_LABEL,
                         PopOrderId = this.tbPopOrderId.Text.Trim(),
                         PopOrderTotalMoney = 0,

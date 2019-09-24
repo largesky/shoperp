@@ -22,6 +22,7 @@ using ShopErp.Domain.Pop;
 using ShopErp.App.ViewModels;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace ShopErp.App.Views.Delivery
 {
@@ -115,9 +116,175 @@ namespace ShopErp.App.Views.Delivery
             return OrderState.WAITPAY;
         }
 
-        private ShopErp.Domain.Order ParseOrder(TaobaoQueryOrdersResponseOrder v, long shopId)
+        private ShopErp.Domain.Order ParseOrder(TaobaoQueryOrderListResponseOrder orderShort, Shop shop)
         {
             var dbMineTime = ServiceContainer.GetService<OrderService>().GetDBMinTime();
+
+
+            //订单信息
+            var js = ScriptManager.GetBody(jspath, "//TAOBAO_GET_ORDER").Replace("###bizOrderId", orderShort.id);
+            var task = wb1.GetBrowser().MainFrame.EvaluateScriptAsync(js, "", 1, new TimeSpan(0, 0, 30));
+            var ret = task.Result;
+            if (ret.Success == false || (ret.Result != null && ret.Result.ToString().StartsWith("ERROR")))
+            {
+                throw new Exception("执行操作失败：" + ret.Message);
+            }
+
+            var content = ret.Result.ToString();
+            string title = shop.PopType == PopType.TMALL ? "var detailData" : "var data = JSON";
+
+            int si = content.IndexOf(title);
+            if (si <= 0)
+            {
+                throw new Exception("未找到订单详情数据开始标识" + title);
+            }
+            si = content.IndexOf('{', si);
+            if (si <= 0)
+            {
+                throw new Exception("未找到订单详情数据开始标识" + title);
+            }
+            int ei = content.IndexOf("</script>", si);
+            if (ei <= si)
+            {
+                throw new Exception("未找到详情结尾数据");
+            }
+            while (ei >= 0 && content[ei] != '}') ei--;
+            if (ei <= si)
+            {
+                throw new Exception("未找到详情结尾数据");
+            }
+
+            String orderInfo = content.Substring(si, ei - si + 1).Trim();
+            DateTime popPayTime = dbMineTime, popDeliveryTime = dbMineTime;
+            string buyerComment = "", sellerComment = "", reciverInfo = "";
+            float goodsPrice = 0, deliveryPrice = 0, sellerGetMoney = 0;
+            Dictionary<string, float> namePrice = new Dictionary<string, float>();
+
+            if (shop.PopType == PopType.TMALL)
+            {
+                var orderDetail = Newtonsoft.Json.JsonConvert.DeserializeObject<TmallQueryOrderDetailResponse>(orderInfo, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml });
+                string payTime = orderDetail.stepbar.options.First(obj => obj.content == "买家付款").time;
+                string deliveryTime = orderDetail.stepbar.options.First(obj => obj.content == "发货").time;
+
+                popPayTime = string.IsNullOrWhiteSpace(payTime) ? dbMineTime : DateTime.Parse(payTime);
+                popDeliveryTime = string.IsNullOrWhiteSpace(deliveryTime) ? dbMineTime : DateTime.Parse(deliveryTime);
+                buyerComment = orderDetail.basic.lists.First(obj => obj.key == "买家留言").content[0].text;
+                if (buyerComment == "-")
+                {
+                    buyerComment = "";
+                }
+                var addN = orderDetail.basic.lists.First(obj => obj.key == "收货地址").content[0];
+                //html 表示地址是要经过转运的地址，label是不需要经过转运的大陆地址
+                if (addN.type.Equals("html", StringComparison.OrdinalIgnoreCase))
+                {
+                    HtmlAgilityPack.HtmlDocument document = new HtmlAgilityPack.HtmlDocument();
+                    document.LoadHtml(addN.text);
+                    string hh = document.DocumentNode.InnerText;
+                    string nhh = hh.Substring(0, hh.IndexOf("]转&nbsp;") + 1);// 
+                    string read = nhh.Replace("[", "").Replace("]", "");
+                    string mark = "转运仓库";
+                    if (read.IndexOf(mark) > 0)
+                    {
+                        read = read.Remove(read.IndexOf(mark), mark.Length + 1);
+                    }
+                    reciverInfo = read;
+                }
+                else if (addN.type.Equals("label", StringComparison.OrdinalIgnoreCase))
+                {
+                    reciverInfo = addN.text;
+                }
+                else
+                {
+                    throw new Exception("无法识别的地址格式");
+                }
+
+                //订单金额
+                var contents = new List<TmallQueryOrderDetailResponseAmountCountContent>();
+                foreach (var c in orderDetail.amount.count)
+                {
+                    foreach (var cc in c)
+                    {
+                        contents.AddRange(cc.content);
+                    }
+                }
+
+                string strGoodsPrice = contents.FirstOrDefault(obj => obj.data.titleLink.text == "商品总价").data.money.text.Replace("￥", "").Trim();
+                string strDeliveryPrice = contents.FirstOrDefault(obj => obj.data.titleLink.text.Contains("运费")).data.money.text.Replace("￥", "").Trim();
+                string strBuyerPayPrice = contents.FirstOrDefault(obj => obj.data.titleLink.text.Contains("订单总价")).data.money.text.Replace("￥", "").Trim();
+                var strSellerGetMoney = contents.FirstOrDefault(obj => obj.data.titleLink != null && (obj.data.titleLink.text.Contains("应收款") || obj.data.titleLink.text.Contains("实收款")));
+
+                goodsPrice = float.Parse(strGoodsPrice);
+                deliveryPrice = float.Parse(strDeliveryPrice);
+                sellerGetMoney = float.Parse(strSellerGetMoney.data.dotPrefixMoney.text + strSellerGetMoney.data.dotSufixMoney.text);
+
+                //商家备注
+                if (orderDetail.overStatus.operate.FirstOrDefault(obj => string.IsNullOrWhiteSpace(obj.key)) != null)
+                {
+                    string comment = orderDetail.overStatus.operate.FirstOrDefault(obj => string.IsNullOrWhiteSpace(obj.key)).content[0].text;
+                    si = comment.IndexOf("备忘：</span><span>");
+                    ei = comment.IndexOf("</span>", si + "备忘：</span><span>".Length);
+                    sellerComment = comment.Substring(si + "备忘：</span><span>".Length, ei - si - "备忘：</span><span>".Length);
+                }
+
+                foreach (var vv in orderDetail.orders.list)
+                {
+                    foreach (var vvv in vv.status)
+                    {
+                        foreach (var vvvv in vvv.subOrders)
+                        {
+                            if (namePrice.ContainsKey(vvvv.itemInfo.title) == false)
+                            {
+                                namePrice.Add(vvvv.itemInfo.title, float.Parse(vvvv.priceInfo[0].text.Trim()));
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                orderInfo = Regex.Unescape(orderInfo);
+                var orderDetail = Newtonsoft.Json.JsonConvert.DeserializeObject<TaobaoQueryOrderDetailResponse>(orderInfo);
+                List<TaobaoQueryOrderDetailResponseOrderInfoLineContentNameValue> infoLines = new List<TaobaoQueryOrderDetailResponseOrderInfoLineContentNameValue>();
+                foreach (var v in orderDetail.mainOrder.orderInfo.lines)
+                {
+                    foreach (var vv in v.content)
+                    {
+                        infoLines.Add(vv.value);
+                    }
+                }
+
+                var infoLinePayTime = infoLines.FirstOrDefault(obj => obj.name.Contains("付款时间"));
+                var infoLineDeliveryTime = infoLines.FirstOrDefault(obj => obj.name.Contains("发货时间"));
+                popPayTime = infoLinePayTime != null ? DateTime.Parse(infoLinePayTime.value) : dbMineTime;
+                popDeliveryTime = infoLineDeliveryTime != null ? DateTime.Parse(infoLineDeliveryTime.value) : dbMineTime;
+
+                buyerComment = orderDetail.buyMessage;
+                foreach (var v in orderDetail.operationsGuide)
+                {
+                    foreach (var vv in v.lines)
+                    {
+                        if (vv.content.Any(obj => obj.value == "标记："))
+                        {
+                            sellerComment = vv.content[1].value;
+                            break;
+                        }
+                    }
+                }
+                goodsPrice = float.Parse(orderDetail.mainOrder.totalPrice[0].content[0].value);
+                deliveryPrice = float.Parse(orderDetail.mainOrder.totalPrice[1].content[0].value.Replace("(快递:", ""));
+                sellerGetMoney = orderDetail.mainOrder.payInfo.actualFee.value;
+                foreach (var v in orderDetail.mainOrder.subOrders)
+                {
+                    namePrice.Add(v.itemInfo.title, v.priceInfo);
+                }
+                var addN = orderDetail.tabs.FirstOrDefault(obj => obj.id == "logistics");
+                if (addN == null)
+                {
+                    throw new Exception("未找到地址结点");
+                }
+                reciverInfo = addN.content.address;
+            }
+
             var order = new Order
             {
                 CloseOperator = "",
@@ -131,183 +298,37 @@ namespace ShopErp.App.Views.Delivery
                 DeliveryTime = dbMineTime,
                 DeliveryMoney = 0,
                 Id = 0,
-                PopDeliveryTime = dbMineTime,
+                PopDeliveryTime = popDeliveryTime,
                 OrderGoodss = new List<OrderGoods>(),
                 ParseResult = true,
-                PopBuyerComment = "",
-                PopBuyerId = v.buyer.nick,
-                PopBuyerPayMoney = v.payInfo.actualFee,
+                PopBuyerComment = buyerComment,
+                PopBuyerId = orderShort.buyer.nick,
+                PopBuyerPayMoney = orderShort.payInfo.actualFee,
                 PopCodNumber = "",
                 PopCodSevFee = 0,
-                PopCreateTime = DateTime.Parse(v.orderInfo.createTime),
-                PopFlag = ConvertFlag(v.extra.sellerFlag),
-                PopOrderId = v.id,
-                PopOrderTotalMoney = v.payInfo.actualFee,
-                PopPayTime = dbMineTime,
+                PopFlag = ConvertFlag(orderShort.extra.sellerFlag),
+                PopOrderId = orderShort.id,
+                PopOrderTotalMoney = goodsPrice + deliveryPrice,
+                PopPayTime = popPayTime,
                 PopPayType = PopPayType.ONLINE,
-                PopSellerComment = "",
-                PopSellerGetMoney = v.payInfo.actualFee,
+                PopSellerComment = sellerComment,
+                PopSellerGetMoney = sellerGetMoney,
                 PopState = "",
-                PopType = PopType.TMALL,
+                PopType = shop.PopType,
                 PrintOperator = "",
                 PrintTime = dbMineTime,
                 ReceiverAddress = "",
                 ReceiverMobile = "",
                 ReceiverName = "",
                 ReceiverPhone = "",
-                ShopId = shopId,
-                State = ConveretState(v.statusInfo.text.Trim()),
+                ShopId = shop.Id,
+                State = ConveretState(orderShort.statusInfo.text.Trim()),
                 Type = OrderType.NORMAL,
                 Weight = 0,
+                DeliveryTemplateId = 0,
+                Refused = false,
             };
-
-            //订单信息
-            var js = ScriptManager.GetBody(jspath, "//TAOBAO_GET_ORDER").Replace("###bizOrderId", v.id);
-            var task = wb1.GetBrowser().MainFrame.EvaluateScriptAsync(js, "", 1, new TimeSpan(0, 0, 30));
-            var ret = task.Result;
-            if (ret.Success == false || (ret.Result != null && ret.Result.ToString().StartsWith("ERROR")))
-            {
-                throw new Exception("执行操作失败：" + ret.Message);
-            }
-
-            var content = ret.Result.ToString();
-            int si = content.IndexOf("var detailData");
-            if (si <= 0)
-            {
-                throw new Exception("未找到订单详情数据");
-            }
-
-            int ei = content.IndexOf("</script>", si);
-            if (ei <= si)
-            {
-                throw new Exception("未找到详情结尾数据");
-            }
-
-            string orderInfo = content.Substring(si + "var detailData".Length, ei - si - "var detailData".Length).Trim().TrimStart('=');
-
-            var oi = Newtonsoft.Json.JsonConvert.DeserializeObject<TaobaoQueryOrderDetailResponse>(orderInfo);
-
-            string time = oi.stepbar.options.First(obj => obj.content == "买家付款").time;
-            order.PopPayTime = string.IsNullOrWhiteSpace(time) ? dbMineTime : DateTime.Parse(time);
-
-            time = oi.stepbar.options.First(obj => obj.content == "发货").time;
-            order.PopDeliveryTime = string.IsNullOrWhiteSpace(time) ? dbMineTime : DateTime.Parse(time);
-
-            //time = oi.stepbar.options.First(obj => obj.content == "买家确认收货").time;
-            //order.pop = string.IsNullOrWhiteSpace(time) ? dbMineTime : DateTime.Parse(time);
-
-            order.PopBuyerComment = oi.basic.lists.First(obj => obj.key == "买家留言").content[0].text;
-            if (order.PopBuyerComment == "-")
-            {
-                order.PopBuyerComment = "";
-            }
-
-            var addN = oi.basic.lists.First(obj => obj.key == "收货地址").content[0];
-            string reinfo = "";
-            //html 表示地址是要经过转运的地址，label是不需要经过转运的大陆地址
-            if (addN.type.Equals("html", StringComparison.OrdinalIgnoreCase))
-            {
-                HtmlAgilityPack.HtmlDocument document = new HtmlAgilityPack.HtmlDocument();
-                document.LoadHtml(addN.text);
-                string hh = document.DocumentNode.InnerText;
-                string nhh = hh.Substring(0, hh.IndexOf("]转&nbsp;") + 1);// 
-                string read = nhh.Replace("[", "").Replace("]", "");
-                string mark = "转运仓库";
-                if (read.IndexOf(mark) > 0)
-                {
-                    read = read.Remove(read.IndexOf(mark), mark.Length + 1);
-                }
-                reinfo = read;
-            }
-            else if (addN.type.Equals("label", StringComparison.OrdinalIgnoreCase))
-            {
-                reinfo = addN.text;
-            }
-            else
-            {
-                throw new Exception("无法识别的地址格式");
-            }
-
-            string add = "";
-            string[] reinfos = reinfo.Split(',');
-            order.ReceiverName = reinfos[0].Trim();
-            order.ReceiverMobile = reinfos[1].Replace("86-", "");
-            if (reinfos[2].All(c => Char.IsDigit(c) || c == '-'))
-            {
-                order.ReceiverPhone = reinfos[2];
-                for (int i = 3; i < reinfos.Length; i++)
-                {
-                    add += reinfos[i];
-                }
-            }
-            else
-            {
-                for (int i = 2; i < reinfos.Length; i++)
-                {
-                    add += reinfos[i];
-                }
-            }
-            order.ReceiverAddress = add.Trim();
-            //删除最后的邮编
-            int digitIndex = order.ReceiverAddress.Length - 1;
-            while (digitIndex > 0)
-            {
-                if (Char.IsDigit(order.ReceiverAddress[digitIndex]) == false)
-                {
-                    break;
-                }
-                digitIndex--;
-            }
-            if (order.ReceiverAddress[digitIndex] == ' ' && order.ReceiverAddress.Length - digitIndex > 6)
-            {
-                order.ReceiverAddress = order.ReceiverAddress.Substring(0, digitIndex);
-            }
-            //订单金额
-            var contents = new List<TaobaoQueryOrderDetailResponseAmountCountContent>();
-            foreach (var c in oi.amount.count)
-            {
-                foreach (var cc in c)
-                {
-                    contents.AddRange(cc.content);
-                }
-            }
-            var goodsPrice = contents.FirstOrDefault(obj => obj.data.titleLink.text == "商品总价").data.money.text.Replace("￥", "").Trim();
-            var deliveryPrice = contents.FirstOrDefault(obj => obj.data.titleLink.text.Contains("运费")).data.money.text.Replace("￥", "").Trim();
-            var buyerPayPrice = contents.FirstOrDefault(obj => obj.data.titleLink.text.Contains("订单总价")).data.money.text.Replace("￥", "").Trim();
-            var sellerGetMoney = contents.FirstOrDefault(obj => obj.data.titleLink != null && (obj.data.titleLink.text.Contains("应收款") || obj.data.titleLink.text.Contains("实收款")));
-
-            order.PopOrderTotalMoney = float.Parse(goodsPrice) + float.Parse(deliveryPrice);
-            order.PopBuyerPayMoney = float.Parse(buyerPayPrice);
-            order.PopSellerGetMoney = float.Parse(sellerGetMoney.data.dotPrefixMoney.text + sellerGetMoney.data.dotSufixMoney.text);
-
-            if (oi.overStatus.prompt != null && oi.overStatus.prompt.FirstOrDefault(obj => obj.key == "物流") != null)
-            {
-                order.DeliveryCompany = oi.overStatus.prompt.FirstOrDefault(obj => obj.key == "物流").content[0].companyName;
-                order.DeliveryNumber = oi.overStatus.prompt.FirstOrDefault(obj => obj.key == "物流").content[0].mailNo;
-            }
-            if (oi.overStatus.operate.FirstOrDefault(obj => string.IsNullOrWhiteSpace(obj.key)) != null)
-            {
-                string comment = oi.overStatus.operate.FirstOrDefault(obj => string.IsNullOrWhiteSpace(obj.key)).content[0].text;
-                si = comment.IndexOf("备忘：</span><span>");
-                ei = comment.IndexOf("</span>", si + "备忘：</span><span>".Length);
-                string sellerComment = comment.Substring(si + "备忘：</span><span>".Length, ei - si - "备忘：</span><span>".Length);
-                order.PopSellerComment = sellerComment.TrimStart('#');
-            }
-            Dictionary<string, float> namePrice = new Dictionary<string, float>();
-            foreach (var vv in oi.orders.list)
-            {
-                foreach (var vvv in vv.status)
-                {
-                    foreach (var vvvv in vvv.subOrders)
-                    {
-                        if (namePrice.ContainsKey(vvvv.itemInfo.title) == false)
-                        {
-                            namePrice.Add(vvvv.itemInfo.title.Trim(), float.Parse(vvvv.priceInfo[0].text.Trim()));
-                        }
-                    }
-                }
-            }
-            foreach (var so in v.subOrders)
+            foreach (var so in orderShort.subOrders)
             {
                 var og = new OrderGoods
                 {
@@ -325,7 +346,7 @@ namespace ShopErp.App.Views.Delivery
                     OrderId = 0,
                     PopNumber = "",
                     PopOrderSubId = "",
-                    PopPrice = 0,
+                    PopPrice = namePrice[so.itemInfo.title],
                     PopUrl = "",
                     Price = 0,
                     Size = so.itemInfo.skuText.FirstOrDefault(obj => obj.name.Contains("尺码")).value,
@@ -337,6 +358,7 @@ namespace ShopErp.App.Views.Delivery
                     Vendor = "",
                     IsPeijian = false,
                 };
+                og.PopInfo = og.Number + "||颜色:" + og.Color + "|尺码:" + og.Size;
 
                 if (so.operations != null && so.operations.FirstOrDefault(obj => obj.text.Trim() == "退款成功") != null)
                 {
@@ -350,14 +372,33 @@ namespace ShopErp.App.Views.Delivery
                 {
                     og.State = OrderState.PAYED;
                 }
-                og.PopPrice = namePrice[so.itemInfo.title];
-                og.PopInfo = og.Number + "||颜色:" + og.Color + "|尺码:" + og.Size;
                 order.OrderGoodss.Add(og);
             }
+
             if (order.OrderGoodss.Select(obj => obj.State).Distinct().Count() == 1)
             {
                 order.State = order.OrderGoodss[0].State;
             }
+
+            string add = "";
+            string[] reinfos = reciverInfo.Split(new char[] { '，', ',' }, StringSplitOptions.RemoveEmptyEntries);
+            order.ReceiverName = reinfos[0].Trim();
+            order.ReceiverMobile = reinfos[1].Replace("86-", "");
+            int start = 2;
+            if (reinfos[2].All(c => Char.IsDigit(c) || c == '-'))
+            {
+                order.ReceiverPhone = reinfos[2];
+                start = 3;
+            }
+            for (; start < reinfos.Length; start++)
+            {
+                if (start == reinfos.Length - 1 && reinfos[start].All(c => Char.IsDigit(c)))
+                {
+                    break;
+                }
+                add += reinfos[start] + ",";
+            }
+            order.ReceiverAddress = add.Trim(',');
             return order;
         }
 
@@ -386,7 +427,7 @@ namespace ShopErp.App.Views.Delivery
                 {
                     throw new Exception("执行操作失败：" + ret.Message);
                 }
-                var or = Newtonsoft.Json.JsonConvert.DeserializeObject<TaobaoQueryOrdersResponse>(ret.Result.ToString());
+                var or = Newtonsoft.Json.JsonConvert.DeserializeObject<TaobaoQueryOrderListResponse>(ret.Result.ToString());
                 if (or.mainOrders == null || or.mainOrders.Length < 1)
                 {
                     break;
@@ -402,13 +443,14 @@ namespace ShopErp.App.Views.Delivery
                     orders.Add(od);
                     try
                     {
-                        var order = ParseOrder(v, shop.Id);
+                        this.tbMsg.Text = string.Format("正在下载：{0}/{1} {2} ", currentCount, totalCount, v.id);
+                        WPFHelper.DoEvents();
+
+                        var order = ParseOrder(v, shop);
                         od.Order = order;
                         var resp = ServiceContainer.GetService<OrderService>().SaveOrUpdateOrdersByPopOrderId(shop, orders);
                         od = resp.First;
                         currentCount++;
-                        this.tbMsg.Text = string.Format("已经下载：{0}/{1} {2} {3} ", currentCount, totalCount, v.id, v.orderInfo.createTime);
-                        WPFHelper.DoEvents();
                         if (this.isRunning == false)
                         {
                             break;
@@ -454,11 +496,6 @@ namespace ShopErp.App.Views.Delivery
                 }
                 var os = ServiceContainer.GetService<OrderService>();
                 var orders = downloadOrders.Where(obj => obj.Order != null).Select(obj => obj.Order).Where(obj => string.IsNullOrWhiteSpace(obj.PopOrderId) == false && os.IsDBMinTime(obj.PopDeliveryTime)).Select(obj => new OrderViewModel(obj)).OrderBy(obj => obj.Source.PopPayTime).ToArray();
-                if (orders.Length < 1)
-                {
-                    MessageBox.Show("没有找到待发货的订单");
-                    return;
-                }
                 //分析
                 foreach (var order in orders)
                 {
@@ -530,7 +567,7 @@ namespace ShopErp.App.Views.Delivery
             }
             string orderInfo = content.Substring(si + "var detailData".Length, ei - si - "var detailData".Length).Trim().TrimStart('=');
 
-            var oi = Newtonsoft.Json.JsonConvert.DeserializeObject<ShopErp.App.Domain.TaobaoHtml.Order.TaobaoQueryOrderDetailResponse>(orderInfo);
+            var oi = Newtonsoft.Json.JsonConvert.DeserializeObject<ShopErp.App.Domain.TaobaoHtml.Order.TmallQueryOrderDetailResponse>(orderInfo);
 
             pos.PopOrderStateValue = oi.overStatus.status.content[0].text;
             pos.PopOrderStateDesc = oi.overStatus.status.content[0].text;

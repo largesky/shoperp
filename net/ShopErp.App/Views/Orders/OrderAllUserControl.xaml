@@ -114,14 +114,13 @@
             <TextBox Grid.Row="2" Grid.Column="9" Name="tbNumber" Margin="3" VerticalAlignment="Center" />
             <TextBlock Grid.Row="1" Grid.Column="0" Text="时间类型:" Margin="3" VerticalAlignment="Center" />
             <ComboBox Grid.Row="1" Grid.Column="1" Name="cbbTimeType" Margin="3" VerticalAlignment="Center">
-                <ComboBoxItem>平台下单时间</ComboBoxItem>
                 <ComboBoxItem>平台付款时间</ComboBoxItem>
                 <ComboBoxItem>平台发货时间</ComboBoxItem>
                 <ComboBoxItem>系统下单时间</ComboBoxItem>
                 <ComboBoxItem>系统打印时间</ComboBoxItem>
                 <ComboBoxItem>系统发货时间</ComboBoxItem>
                 <ComboBoxItem>系统关闭时间</ComboBoxItem>
-                <ComboBox.SelectedIndex>1</ComboBox.SelectedIndex>
+                <ComboBox.SelectedIndex>0</ComboBox.SelectedIndex>
             </ComboBox>
             <TextBlock Grid.Row="1" Grid.Column="2" Text="开始时间:" Margin="3" VerticalAlignment="Center" />
             <xctk:DateTimePicker xctk:Format="Custom" xctk:TimeFormatString="yyyy-MM-dd HH:mm:ss" Grid.Row="1"

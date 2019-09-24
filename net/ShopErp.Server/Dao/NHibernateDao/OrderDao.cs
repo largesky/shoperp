@@ -8,7 +8,7 @@ namespace ShopErp.Server.Dao.NHibernateDao
 {
     public class OrderDao : NHibernateDaoBase<Order>
     {
-        static readonly string[] TIME_TYPES = { "PopCreateTime", "PopPayTime", "PopDeliveryTime", "CreateTime", "PrintTime", "DeliveryTime", "CloseTime" };
+        static readonly string[] TIME_TYPES = {"PopPayTime", "PopDeliveryTime", "CreateTime", "PrintTime", "DeliveryTime", "CloseTime" };
 
         private string GetTimeType(int timeType)
         {

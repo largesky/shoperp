@@ -210,7 +210,6 @@ namespace ShopErp.Server.Service.Pop.Pingduoduo
                     PopBuyerPayMoney = float.Parse(o.pay_amount),
                     PopCodNumber = "",
                     PopCodSevFee = 0,
-                    PopCreateTime = DateTime.Parse(o.created_time),
                     PopFlag = Domain.ColorFlag.UN_LABEL,
                     PopOrderId = o.order_sn,
                     PopOrderTotalMoney = float.Parse(o.goods_amount) + float.Parse(o.postage ?? "0"),
