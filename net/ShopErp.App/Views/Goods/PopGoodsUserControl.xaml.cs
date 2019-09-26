@@ -643,5 +643,68 @@ namespace ShopErp.App.Views.Goods
                 MessageBox.Show(ex.Message);
             }
         }
+
+        private void BtnCheck_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var allGoods = ServiceContainer.GetService<GoodsService>().GetByAll(this.lastShop.Id, GoodsState.NONE, 0, DateTime.MinValue, DateTime.MinValue, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", 0, 0).Datas.OrderBy(obj => obj.VendorId).ToList();
+                var popGoods = this.popGoodsInfoViewModels.ToList();
+                var vendors = ServiceContainer.GetService<VendorService>().GetByAll("", "", "", "", 0, 0).Datas.ToList();
+
+                List<ShopErp.Domain.Goods> unMatchGoods = new List<ShopErp.Domain.Goods>();
+                List<PopGoodsInfoViewModel> unMatchPopGoods = new List<PopGoodsInfoViewModel>();
+
+                foreach (var g in allGoods)
+                {
+                    var vendor = vendors.FirstOrDefault(obj => obj.Id == g.VendorId);
+                    if (vendor == null)
+                    {
+                        throw new Exception("商品未找到对应厂家：" + g.Number + " 商品ID：" + g.Id);
+                    }
+                    if (string.IsNullOrWhiteSpace(vendor.PingyingName))
+                    {
+                        throw new Exception("厂家没有配置拼音：" + vendor.Name);
+                    }
+                    string nn = vendor.PingyingName.Trim() + "&" + g.Number.Trim();
+                    var pg = popGoods.FirstOrDefault(obj => obj.SkuCodesInfo.IndexOf(nn, StringComparison.OrdinalIgnoreCase) >= 0);
+                    if (pg == null)
+                    {
+                        unMatchGoods.Add(g);
+                    }
+                }
+
+                foreach (var pg in popGoods)
+                {
+                    string[] skus = pg.SkuCodesInfo.Split(',');
+                    foreach (var code in skus)
+                    {
+                        string[] nn = code.Split('&');
+                        var g = allGoods.FirstOrDefault(obj => obj.Number.Equals(nn[1], StringComparison.OrdinalIgnoreCase) && vendors.FirstOrDefault(o => o.Id == obj.VendorId).PingyingName.Equals(nn[0], StringComparison.OrdinalIgnoreCase));
+                        if (g == null)
+                        {
+                            unMatchPopGoods.Add(pg);
+                        }
+                    }
+                }
+                if (unMatchGoods.Count > 0 || unMatchPopGoods.Count > 0)
+                {
+                    string msg1 = string.Join(",", unMatchGoods.Select(obj => vendors.FirstOrDefault(o => o.Id == obj.VendorId).Name + "&" + obj.Number));
+                    string msg2 = string.Join(",", unMatchPopGoods.Select(obj => obj.SkuCodesInfo));
+                    string msg = string.Format("系统中未在网站上匹配的：{0}\r\n,网站上未在系统中匹配的：{1}", msg1, msg2);
+                    MessageBox.Show(msg);
+                    Debug.WriteLine(msg);
+                }
+                else
+                {
+                    MessageBox.Show("完全匹配");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
     }
 }
