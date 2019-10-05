@@ -238,7 +238,7 @@ namespace ShopErp.Server.Service.Net
             }
             if (ret.IsSuccessStatusCode == false)
             {
-                throw new Exception("HTTP请求错误:" + ret.StatusCode);
+                throw new Exception("HTTP请求错误:" + ret.StatusCode + " Url:" + url);
             }
             var data = ret.Content.ReadAsByteArrayAsync().Result;
             return data;

@@ -24,6 +24,8 @@ namespace ShopErp.App.Views.Goods
     {
         public GoodsViewModel[] Goods { get; set; }
 
+        public Shop Shop { get; set; }
+
         public GoodsPatchEditWindow()
         {
             InitializeComponent();
@@ -39,6 +41,7 @@ namespace ShopErp.App.Views.Goods
             {
                 this.cbbShop.SelectedIndex = 0;
             }
+            this.cbbState.Bind<GoodsState>();
             if (OperatorService.LoginOperator.Rights.Contains("批量管理商品") == false)
             {
                 this.IsEnabled = false;
@@ -168,14 +171,12 @@ namespace ShopErp.App.Views.Goods
                     throw new Exception("你没有权限");
                 }
 
-                if (MessageBox.Show("是否为店铺:" + shop.Mark + " 添加所有商品?", "警告", MessageBoxButton.YesNo,
-                        MessageBoxImage.Question) != MessageBoxResult.Yes)
+                if (MessageBox.Show("是否为店铺:" + shop.Mark + " 添加所有商品?", "警告", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 {
                     return;
                 }
 
-                if (MessageBox.Show("是否为店铺:" + shop.Mark + " 添加所有商品?", "警告", MessageBoxButton.YesNo,
-                        MessageBoxImage.Question) != MessageBoxResult.Yes)
+                if (MessageBox.Show("是否为店铺:" + shop.Mark + " 添加所有商品?", "警告", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 {
                     return;
                 }
@@ -204,6 +205,53 @@ namespace ShopErp.App.Views.Goods
                     }
                 }
                 MessageBox.Show("添加完成");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void BtnSetState_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (this.Shop == null)
+                {
+                    throw new Exception("批量设置状态必须设置店铺");
+                }
+                if (this.tbMode.Text.Contains("所有"))
+                {
+                    throw new Exception("批量设置状态不能是所有");
+                }
+
+                var state = this.cbbState.GetSelectedEnum<GoodsState>();
+                if (state == GoodsState.NONE)
+                {
+                    throw new Exception("批量设置状态不能为 NONE");
+                }
+
+                if (MessageBox.Show("是否为店铺:" + Shop.Mark + " 批量设置状态?", "警告", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                {
+                    return;
+                }
+
+                if (MessageBox.Show("是否为店铺:" + Shop.Mark + " 批量设置状态?", "警告", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                {
+                    return;
+                }
+
+                foreach (var g in this.Goods)
+                {
+                    var gs = g.Source.Shops.FirstOrDefault(obj => obj.ShopId == this.Shop.Id);
+                    if (gs == null)
+                    {
+                        continue;
+                    }
+                    gs.State = state;
+                    ServiceContainer.GetService<GoodsShopService>().Update(gs);
+                }
+                MessageBox.Show("更新完成");
             }
             catch (Exception ex)
             {

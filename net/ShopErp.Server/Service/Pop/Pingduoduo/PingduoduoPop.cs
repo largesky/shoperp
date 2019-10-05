@@ -78,7 +78,7 @@ namespace ShopErp.Server.Service.Pop.Pingduoduo
                     throw new Exception("拼多多调用失败：授权已到期，请到店铺里面进行授权");
                 }
                 Debug.WriteLine("请求参数：" + string.Join(Environment.NewLine, param.Select(obj => obj.Key + " " + obj.Value)));
-                throw new Exception("拼多多调用失败：" + t.error_code + "," + t.error_msg);
+                throw new Exception("拼多多调用失败：接口：" + apiName + " 错误信息" + t.error_code + "," + t.error_msg);
             }
             return t;
         }
@@ -564,6 +564,7 @@ namespace ShopErp.Server.Service.Pop.Pingduoduo
             Dictionary<string, string> catIdCaches = new Dictionary<string, string>();
             Dictionary<string, PingduoduoRspGoodsSpecItem> specColorCaches = new Dictionary<string, PingduoduoRspGoodsSpecItem>();
             Dictionary<string, PingduoduoRspGoodsSpecItem> specSizeCaches = new Dictionary<string, PingduoduoRspGoodsSpecItem>();
+
             for (int i = 0; i < popGoodss.Length; i++)
             {
                 var popGoods = popGoodss[i];
@@ -738,7 +739,7 @@ namespace ShopErp.Server.Service.Pop.Pingduoduo
                         if (ctp.required)
                             throw new Exception("拼多多属性：" + ctp.name_alias + " 是必须项，但没有在淘宝找到对应属性");
                         else
-                            ids[i] += "属性值：" + ctp.name_alias + " 未匹配";
+                            ids[i] += "属性：" + ctp.name_alias + " 未匹配";
                         continue;
                     }
                     string[] values = taobaoProperty.Value.Split(new string[] { "@#@" }, StringSplitOptions.RemoveEmptyEntries);

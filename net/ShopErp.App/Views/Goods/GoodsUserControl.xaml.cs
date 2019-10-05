@@ -406,7 +406,7 @@ namespace ShopErp.App.Views.Goods
         {
             try
             {
-                GoodsPatchEditWindow win = new GoodsPatchEditWindow { Goods = this.models.ToArray() };
+                GoodsPatchEditWindow win = new GoodsPatchEditWindow { Goods = this.models.ToArray(), Shop = this.cbbShops.SelectedItem as Shop };
                 win.ShowDialog();
             }
             catch (Exception ex)

@@ -15,5 +15,7 @@ namespace ShopErp.App.Service.Restful
             para["pageSize"] = pageSize;
             return DoPost<DataCollectionResponse<GoodsShop>>(para);
         }
+
+
     }
 }

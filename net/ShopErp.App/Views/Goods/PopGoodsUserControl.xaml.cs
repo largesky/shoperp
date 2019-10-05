@@ -62,20 +62,12 @@ namespace ShopErp.App.Views.Goods
             }
         }
 
-        private void SetButtonState(string msg, bool running)
+        private void SetUiMsg(Button btn, string msg, bool running, string runningmsg, string stopmsg)
         {
             this.Dispatcher.BeginInvoke(new Action(() =>
             {
-                if (running)
-                {
-                    this.cbbShops.IsEnabled = false;
-                    this.btnQuery.Content = "停止";
-                }
-                else
-                {
-                    this.cbbShops.IsEnabled = true;
-                    this.btnQuery.Content = "查询";
-                }
+                btn.Content = running ? runningmsg : stopmsg;
+                this.cbbShops.IsEnabled = !running;
                 this.tbMsg.Text = msg;
             }));
         }
@@ -385,12 +377,12 @@ namespace ShopErp.App.Views.Goods
 
             try
             {
-                this.SetButtonState("下载线程已开始执行", true);
+                this.SetUiMsg(this.btnQuery, "下载线程已开始执行", true, "停止", "查询");
                 this.isStop = false;
                 int pageIndex = 0;
                 while (this.isStop == false)
                 {
-                    SetButtonState("正在下载第:" + (pageIndex + 1) + "页", true);
+                    SetUiMsg(this.btnQuery, "正在下载第:" + (pageIndex + 1) + "页", true, "停止", "查询");
                     List<PopGoods> ggs = null;
                     if (shop.AppEnabled)
                     {
@@ -406,7 +398,7 @@ namespace ShopErp.App.Views.Goods
                     }
                     goods.AddRange(ggs);
                     pageIndex++;
-                    SetButtonState("已经下载:" + goods.Count, true);
+                    SetUiMsg(this.btnQuery, "已经下载:" + goods.Count, true, "停止", "查询");
                     this.Dispatcher.Invoke(new Action(() => AppendDataToUi(ggs, shop, title, code, stockCode, state, type)));
                 }
             }
@@ -419,7 +411,7 @@ namespace ShopErp.App.Views.Goods
             {
                 this.isStop = true;
                 this.task = null;
-                this.SetButtonState("下载完成", false);
+                this.SetUiMsg(this.btnQuery, "下载完成", false, "停止", "查询");
                 this.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     foreach (var v in this.popGoodsInfoViewModels)
@@ -481,7 +473,7 @@ namespace ShopErp.App.Views.Goods
 
                 Debug.WriteLine("开始抓取商品：" + g.itemId);
 
-                this.SetButtonState("正在下载第：" + pageIndex + "/" + ((resp.data.pagination.total / resp.data.pagination.pageSize) + 1) + "页，第" + (goods.Count + 1) + "条商品详情", true);
+                this.SetUiMsg(this.btnQuery, "正在下载第：" + pageIndex + "/" + ((resp.data.pagination.total / resp.data.pagination.pageSize) + 1) + "页，第" + (goods.Count + 1) + "条商品详情", true, "停止", "查询");
                 string url = goodsEditDetailUrl + g.itemId;
                 string goodsEditDetailScript = ScriptManager.GetBody(jspath, "TAOBAO_GET_GOODS").Replace("###url", url);
                 ret = wb1.GetBrowser().MainFrame.EvaluateScriptAsync(goodsEditDetailScript, "", 1, new TimeSpan(0, 0, 30)).Result;
@@ -605,6 +597,13 @@ namespace ShopErp.App.Views.Goods
         {
             try
             {
+                if (this.task != null)
+                {
+                    this.isStop = true;
+                    this.task.Wait();
+                    return;
+                }
+                this.isStop = false;
                 var pgs = this.popGoodsInfoViewModels.Where(obj => obj.IsChecked).ToArray();
                 if (pgs.Length < 1)
                 {
@@ -614,7 +613,6 @@ namespace ShopErp.App.Views.Goods
                 float[] buyInPrice = new float[pgs.Length];
                 for (int i = 0; i < buyInPrice.Length; i++)
                 {
-
                     if (pgs[i].PopGoodsInfo.Skus == null || pgs[i].PopGoodsInfo.Skus.Count < 1)
                     {
                         throw new Exception("商品没有SKU无法解析厂家价格");
@@ -631,12 +629,8 @@ namespace ShopErp.App.Views.Goods
                     }
                     buyInPrice[i] = og.Price;
                 }
-                var ret = ServiceContainer.GetService<GoodsService>().AddGoods(this.cbbPddShops.SelectedItem as Shop, pgs.Select(obj => obj.PopGoodsInfo).ToArray(), buyInPrice);
-                for (int i = 0; i < pgs.Length; i++)
-                {
-                    pgs[i].State = ret.Datas[i];
-                }
-                MessageBox.Show("导入成功");
+                var targetShop = this.cbbPddShops.SelectedItem as Shop;
+                this.task = Task.Factory.StartNew(() => ExportToPddTask(targetShop, pgs, buyInPrice));
             }
             catch (Exception ex)
             {
@@ -705,6 +699,45 @@ namespace ShopErp.App.Views.Goods
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void ExportToPddTask(Shop shop, PopGoodsInfoViewModel[] pgs, float[] buyInPrice)
+        {
+            var popGoods = new PopGoods[1];
+            var price = new float[1];
+            string exportMsg = "";
+            for (int i = 0; i < pgs.Length && this.isStop == false; i++)
+            {
+                int index = i;
+                this.SetUiMsg(this.btnExportToPdd, "正在导入： " + (index + 1) + "/" + pgs.Length + " " + pgs[index].PopGoodsInfo.Id + " " + pgs[index].SkuCodesInfo, true, "停止", "导入");
+                try
+                {
+                    popGoods[0] = pgs[i].PopGoodsInfo;
+                    price[0] = buyInPrice[i];
+                    var ret = ServiceContainer.GetService<GoodsService>().AddGoods(shop, popGoods, price);
+                    exportMsg = ret.Datas[0];
+                    if (index < pgs.Length - 1)
+                    {
+                        this.SetUiMsg(this.btnExportToPdd, "等待2秒后继续导入", true, "停止", "导入");
+                        Thread.Sleep(2000);
+                    }
+                }
+                catch (Exception ee)
+                {
+                    exportMsg = ee.Message;
+                }
+                finally
+                {
+                    this.Dispatcher.BeginInvoke(new Action(() => pgs[index].State = exportMsg));
+                }
+            }
+            this.task = null;
+            this.isStop = true;
+            this.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                this.SetUiMsg(this.btnExportToPdd, "导入完成", false, "停止", "导入");
+                MessageBox.Show("导入完成");
+            }));
         }
     }
 }
