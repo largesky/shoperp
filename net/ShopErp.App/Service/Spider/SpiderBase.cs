@@ -9,19 +9,11 @@ namespace ShopErp.App.Service.Spider
     {
         public event EventHandler<string> Message;
 
-        public event EventHandler<string> WaitingRetryMessage;
-
         public event EventHandler<Vendor> VendorGeted;
 
         public event EventHandler Start;
 
         public event EventHandler Stop;
-
-        public event EventHandler Busy;
-
-        public int ErrorWaitTime { get; set; }
-
-        public int PerWaitTime { get; set; }
 
         public bool IsStop { get; set; }
 
@@ -49,34 +41,12 @@ namespace ShopErp.App.Service.Spider
             }
         }
 
-        protected virtual void OnWaitingRetryMessage(string state)
-        {
-            if (this.WaitingRetryMessage != null)
-            {
-                this.WaitingRetryMessage(this, state);
-            }
-        }
-
-        public virtual void OnBusy()
-        {
-            if (this.Busy != null)
-            {
-                this.Busy(this, null);
-            }
-        }
-
         protected virtual void OnVendorGeted(Vendor vendor)
         {
             if (this.VendorGeted != null)
             {
                 this.VendorGeted(this, vendor);
             }
-        }
-
-        public SpiderBase(int waitTime, int perTime)
-        {
-            this.ErrorWaitTime = waitTime;
-            this.PerWaitTime = perTime;
         }
 
         public abstract bool AcceptUrl(Uri uri);
@@ -117,11 +87,11 @@ namespace ShopErp.App.Service.Spider
             }
         }
 
-        public static SpiderBase CreateSpider(string url, int waitTime, int perTime)
+        public static SpiderBase CreateSpider(string url)
         {
             if (url.ToLower().Contains("go2.cn"))
             {
-                return new Go2Spider(waitTime, perTime);
+                return new Go2Spider();
             }
             throw new Exception("未知的爬虫类型");
         }

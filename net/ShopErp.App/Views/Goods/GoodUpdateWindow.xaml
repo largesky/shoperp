@@ -11,7 +11,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal">
@@ -23,6 +22,7 @@
             <Button Name="btnTest" Content="更新商品" Margin="3" VerticalAlignment="Center" Click="btnTest_Click" Visibility="Collapsed" />
             <TextBlock Name="tbProgress" Margin="3" VerticalAlignment="Center" MinWidth="200" />
         </StackPanel>
+        
         <DataGrid Grid.Row="1" IsReadOnly="True" Name="dgvShoes" AutoGenerateColumns="False" GridLinesVisibility="All"
                   SelectionMode="Extended" SelectionUnit="CellOrRowHeader" HorizontalScrollBarVisibility="Auto"
                   VerticalScrollBarVisibility="Auto">
@@ -51,6 +51,5 @@
                 </DataGridHyperlinkColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <WebBrowser Grid.Row="2" Name="wb1" LoadCompleted="wb1_LoadCompleted" Source="http://www.go2.cn/supplier" />
     </Grid>
 </Window>

@@ -643,9 +643,6 @@
     <Compile Include="Views\Vendor\VendorGoodsWindow.xaml.cs">
       <DependentUpon>VendorGoodsWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Vendor\VendorSyncUserControl.xaml.cs">
-      <DependentUpon>VendorSyncUserControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Vendor\VendorEditWindow.xaml.cs">
       <DependentUpon>VendorEditWindow.xaml</DependentUpon>
     </Compile>
@@ -1016,10 +1013,6 @@
     <Page Include="Views\Vendor\VendorGoodsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Vendor\VendorSyncUserControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Vendor\VendorEditWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

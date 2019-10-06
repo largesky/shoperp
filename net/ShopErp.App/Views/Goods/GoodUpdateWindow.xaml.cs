@@ -34,7 +34,7 @@ namespace ShopErp.App.Views.Goods
         private int current = 0;
         private bool isStop = false;
         private bool isRunning = false;
-        private SpiderBase sb = SpiderBase.CreateSpider("go2.cn", 80, 0);
+        private SpiderBase sb = SpiderBase.CreateSpider("go2.cn");
 
 
         public GoodUpdateWindow()
@@ -45,18 +45,6 @@ namespace ShopErp.App.Views.Goods
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             this.dgvShoes.ItemsSource = this.shoes;
-            this.sb.Busy += Sb_Busy;
-            this.sb.WaitingRetryMessage += SbWaitingRetryMessage;
-        }
-
-        private void SbWaitingRetryMessage(object sender, string e)
-        {
-            this.Dispatcher.Invoke(() => this.tbProgress.Text = e);
-        }
-
-        private void Sb_Busy(object sender, EventArgs e)
-        {
-            this.Dispatcher.Invoke(() => this.wb1.Refresh());
         }
 
         private void Open_Click(object sender, EventArgs e)
@@ -224,30 +212,6 @@ namespace ShopErp.App.Views.Goods
                 this.isRunning = false;
                 this.isStop = true;
                 this.Dispatcher.BeginInvoke(new Action(() => this.btnUpdate.Content = "更新商品"));
-            }
-        }
-
-        private void wb1_LoadCompleted(object sender, System.Windows.Navigation.NavigationEventArgs e)
-        {
-            try
-            {
-                string content = "window.onerror=noError; function fixahref(){$(\"a\").each(function(index){$(this).attr(\"target\", \"_self\"); }); } function noError(){ return true; }";
-                HTMLDocument doc2 = this.wb1.Document as HTMLDocument;
-                IHTMLElementCollection nodes = doc2.getElementsByTagName("head");
-                IHTMLScriptElement injectNode = (IHTMLScriptElement)doc2.createElement("SCRIPT");
-                injectNode.type = "text/javascript";
-                injectNode.text = content;
-
-                foreach (IHTMLElement elem in nodes)
-                {
-                    HTMLHeadElement head = (HTMLHeadElement)elem;
-                    head.appendChild((IHTMLDOMNode)injectNode);
-                    head.appendChild((IHTMLDOMNode)injectNode);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "页面加载完成，无法注入JS代码");
             }
         }
 

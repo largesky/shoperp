@@ -414,16 +414,21 @@ namespace ShopErp.App.Views.Goods
                 this.SetUiMsg(this.btnQuery, "下载完成", false, "停止", "查询");
                 this.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    foreach (var v in this.popGoodsInfoViewModels)
+                    for (int i = 0; i < this.popGoodsInfoViewModels.Count; i++)
                     {
+                        var v = this.popGoodsInfoViewModels[i];
                         if (v.PopGoodsInfo.Skus.Any(o => string.IsNullOrWhiteSpace(o.Code)))
                         {
                             v.State = "有SKU库存编码为空";
                         }
+                        if (this.popGoodsInfoViewModels.Any(obj => obj != v && obj.SkuCodesInfo.Equals(v.SkuCodesInfo, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            v.State += "商品重复";
+                        }
                     }
-                    if (this.popGoodsInfoViewModels.Any(obj => obj.State == "有SKU库存编码为空"))
+                    if (this.popGoodsInfoViewModels.Any(obj => string.IsNullOrWhiteSpace(obj.State) == false))
                     {
-                        MessageBox.Show("下载完成，有商品库存编码为空");
+                        MessageBox.Show("下载完成，有商品库存编码为空或者商品重复");
                     }
                     else
                     {

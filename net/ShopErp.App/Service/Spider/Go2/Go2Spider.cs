@@ -76,55 +76,12 @@ namespace ShopErp.App.Service.Spider.Go2
             return uri.Host.ToLower().Equals("www.go2.cn") || uri.Host.ToLower().Equals("z.go2.cn");
         }
 
-        private void RaiseTimeMessage(int time)
-        {
-            for (int j = time; j >= 0 && this.IsStop == false; j--)
-            {
-                this.OnWaitingRetryMessage(string.Format("等待指定时间后重试:{0}/{1}", j, time));
-                System.Threading.Thread.Sleep(1000);
-            }
-        }
-
-        public Go2Spider(int waitTime, int perTime) : base(waitTime, perTime)
-        {
-        }
-
         private HtmlAgilityPack.HtmlDocument GetHtmlDocWithRetry(string url)
         {
-            for (int i = 0; i < 100 && this.IsStop == false; i++)
-            {
-                string html = MsHttpRestful.GetUrlEncodeBodyReturnString(url, null);
-                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-                doc.LoadHtml(html);
-                if (html.Contains("暂未找到相关的商家") || html.Contains("该商家暂无此类商品"))
-                {
-                    return doc;
-                }
-                if (html.Contains("服务器受不了咯"))
-                {
-                    if (ErrorWaitTime > 0)
-                    {
-                        Debug.WriteLine(html);
-                        this.OnBusy();
-                        this.RaiseTimeMessage(ErrorWaitTime * (i + 1));
-                    }
-                    else
-                    {
-                        throw new Exception("获取GO2页面失败用户请求次数过多，请等待1分钟后重试");
-                    }
-                }
-                else
-                {
-                    return doc;
-                }
-            }
-
-            if (this.IsStop == true)
-            {
-                throw new Exception("用户已操作停止");
-            }
-
-            throw new Exception("获取GO2厂家查询页面失败");
+            string html = MsHttpRestful.GetUrlEncodeBodyReturnString(url, null);
+            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(html);
+            return doc;
         }
 
         public override Goods GetGoodsInfoByUrl(string url, ref string vendorHomePage, ref string videoUrl, bool raiseExceptionOnGoodsNotSale, bool getGoodsType)
