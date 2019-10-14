@@ -469,13 +469,19 @@ namespace ShopErp.App.Views.Goods
             {
                 return goods;
             }
+            var last = DateTime.Now;
             foreach (var g in resp.data.table.dataSource)
             {
                 if (this.isStop)
                 {
                     break;
                 }
-
+                long mis = (long)DateTime.Now.Subtract(last).TotalMilliseconds;
+                if (mis < 2000)
+                {
+                    Thread.Sleep(2000 - (int)mis);
+                }
+                last = DateTime.Now;
                 Debug.WriteLine("开始抓取商品：" + g.itemId);
 
                 this.SetUiMsg(this.btnQuery, "正在下载第：" + pageIndex + "/" + ((resp.data.pagination.total / resp.data.pagination.pageSize) + 1) + "页，第" + (goods.Count + 1) + "条商品详情", true, "停止", "查询");
