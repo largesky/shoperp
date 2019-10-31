@@ -636,7 +636,7 @@ namespace ShopErp.App.Views.Goods
                     var og = ServiceContainer.GetService<GoodsService>().ParseGoods(stocks[0], stocks[1]).First;
                     if (og == null)
                     {
-                        throw new Exception("解析失败:" + pgs[i].PopGoodsInfo.Skus[0]);
+                        throw new Exception("解析失败:" + pgs[i].PopGoodsInfo.Skus[0].Code);
                     }
                     buyInPrice[i] = og.Price;
                 }

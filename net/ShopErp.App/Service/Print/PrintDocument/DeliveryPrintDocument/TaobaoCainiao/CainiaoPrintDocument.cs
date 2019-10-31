@@ -22,7 +22,7 @@ namespace ShopErp.App.Service.Print.PrintDocument.DeliveryPrintDocument.TaobaoCa
 
         private string error = "";
 
-        public CainiaoPrintDocument(Order[] orders, WuliuNumber[] wuliuNumbers, Dictionary<string, string>[] userDatas, PrintTemplate wuliuTemplate) : base(orders, wuliuNumbers, userDatas, wuliuTemplate)
+        public CainiaoPrintDocument(Order[] orders, WuliuNumber[] wuliuNumbers, Dictionary<string, string>[] userDatas, WuliuPrintTemplate wuliuTemplate) : base(orders, wuliuNumbers, userDatas, wuliuTemplate)
         {
         }
 
@@ -47,11 +47,11 @@ namespace ShopErp.App.Service.Print.PrintDocument.DeliveryPrintDocument.TaobaoCa
                 //模板中的标准数据
                 req.task.documents[i].contents[0] = Newtonsoft.Json.JsonConvert.DeserializeObject<CainiaoPrintDocumentRequestPrintTaskDocumentCotent>(WuliuNumbers[i].PrintData);
                 //标准模板不能增加数据，只有商家或者ISV模板才能增加数据
-                if (string.IsNullOrWhiteSpace(WuliuTemplate.UserOrIsvTemplateAreaUrl) == false)
+                if (string.IsNullOrWhiteSpace(CloudPrintTemplate.UserOrIsvTemplateAreaUrl) == false)
                 {
                     req.task.documents[i].contents[1] = new CainiaoPrintDocumentRequestPrintTaskDocumentSelfCotent
                     {
-                        templateURL = this.WuliuTemplate.UserOrIsvTemplateAreaUrl,
+                        templateURL = this.CloudPrintTemplate.UserOrIsvTemplateAreaUrl,
                         data = UserDatas[i],
                     };
                 }
@@ -72,28 +72,28 @@ namespace ShopErp.App.Service.Print.PrintDocument.DeliveryPrintDocument.TaobaoCa
                 this.data = "";
                 this.error = "";
                 this.autoResetEvent.Reset();
+
                 //连接
                 webSocket.Connect();
-                if (autoResetEvent.WaitOne(20 * 1000) == false)
+                if (autoResetEvent.WaitOne(5 * 1000) == false)
                 {
-                    throw new Exception("等待回收数据超时:20秒");
+                    throw new Exception("等待回收数据超时:5秒");
                 }
                 if (string.IsNullOrWhiteSpace(this.error) == false || webSocket.ReadyState != WebSocketSharp.WsState.OPEN)
                 {
-                    throw new Exception("连接菜鸟打印组件错误，请菜鸟打印是否开启:" + this.error);
+                    throw new Exception("连接打印组件错误，请检查菜鸟或者拼多多打印组件是否开启:" + this.error);
                 }
 
                 //发送数据
                 webSocket.Send(Newtonsoft.Json.JsonConvert.SerializeObject(request));
-                if (autoResetEvent.WaitOne(20 * 1000) == false)
+                if (autoResetEvent.WaitOne(60 * 1000) == false)
                 {
-                    throw new Exception("等待回收数据超时:20秒");
+                    throw new Exception("等待回收数据超时:60秒");
                 }
                 if (string.IsNullOrWhiteSpace(this.data))
                 {
-                    throw new Exception("菜鸟组件发送数据失败，没有返回数据：" + this.error);
+                    throw new Exception("打印组件发送数据失败，没有返回数据：" + this.error);
                 }
-
                 var response = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(this.data);
                 if (request.requestID != response.requestID)
                 {
@@ -103,7 +103,7 @@ namespace ShopErp.App.Service.Print.PrintDocument.DeliveryPrintDocument.TaobaoCa
             }
             catch (AggregateException ae)
             {
-                throw new Exception("连接菜鸟打印组件错误，请菜鸟打印是否开启", ae.InnerException);
+                throw new Exception("连接打印组件错误，请打印是否开启", ae.InnerException);
             }
             finally
             {

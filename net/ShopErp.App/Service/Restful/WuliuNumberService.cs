@@ -24,24 +24,11 @@ namespace ShopErp.App.Service.Restful
             return DoPost<DataCollectionResponse<WuliuNumber>>(para);
         }
 
-        public DataCollectionResponse<WuliuNumber> GenWuliuNumber(Shop shop, PrintTemplate wuliuTemplate, Order order, string[] wuliuIds, string packageId, string senderName, string senderPhone, string senderAddress)
+        public DataCollectionResponse<WuliuNumber> GenWuliuNumber(Shop shop, WuliuPrintTemplate wuliuTemplate, Order order, string[] wuliuIds, string packageId, string senderName, string senderPhone, string senderAddress)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
             para["shop"] = shop;
             para["wuliuTemplate"] = wuliuTemplate;
-            para["order"] = order;
-            para["wuliuIds"] = wuliuIds;
-            para["packageId"] = packageId;
-            para["senderName"] = senderName;
-            para["senderPhone"] = senderPhone;
-            para["senderAddress"] = senderAddress;
-            return DoPost<DataCollectionResponse<WuliuNumber>>(para);
-        }
-
-        public DataCollectionResponse<WuliuNumber> GenCainiaoWuliuNumber(string deliveryCompany, Order order, string[] wuliuIds, string packageId, string senderName, string senderPhone, string senderAddress)
-        {
-            Dictionary<string, object> para = new Dictionary<string, object>();
-            para["deliveryCompany"] = deliveryCompany;
             para["order"] = order;
             para["wuliuIds"] = wuliuIds;
             para["packageId"] = packageId;
@@ -58,11 +45,10 @@ namespace ShopErp.App.Service.Restful
             return DoPost<ResponseBase>(para);
         }
 
-        public DataCollectionResponse<WuliuBranch> GetWuliuBrachs(Shop shop, PrintTemplate wuliuTemplate)
+        public DataCollectionResponse<WuliuBranch> GetWuliuBrachs(Shop shop)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
             para["shop"] = shop;
-            para["wuliuTemplate"] = wuliuTemplate;
             return DoPost<DataCollectionResponse<WuliuBranch>>(para);
         }
 

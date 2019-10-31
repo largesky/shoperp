@@ -162,7 +162,6 @@ namespace ShopErp.Server.Service.Restful
                 {
                     return dt.EmptyHotPaperMoney;
                 }
-                var p = AddressService.ParseProvince(address);
                 DeliveryTemplateArea da = dt.Areas.FirstOrDefault(obj => string.IsNullOrWhiteSpace(obj.Areas));
                 foreach (var v in dt.Areas)
                 {

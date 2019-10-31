@@ -15,12 +15,12 @@ namespace ShopErp.App.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var wt = value as PrintTemplate;
+            var wt = value as WuliuPrintTemplate;
             if (wt == null)
             {
                 return "";
             }
-            return string.Format("{0}-{1}", wt.SourceType == PrintTemplateSourceType.SELF ? "自研" : (wt.IsIsv ? "ISV" : "卖家"), wt.Name);
+            return wt.Name;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

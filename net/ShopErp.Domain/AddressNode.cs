@@ -4,6 +4,7 @@ namespace ShopErp.Domain
 {
     public class AddressNode
     {
+        public string Type { get; set; }
 
         public string Name { get; set; }
 
@@ -18,7 +19,7 @@ namespace ShopErp.Domain
 
         public override string ToString()
         {
-            return string.Format("{0} {1} {2}", this.GetType().Name, Name, ShortName);
+            return string.Format("{0} {1} {2}", this.Type, Name, ShortName);
         }
     }
 }

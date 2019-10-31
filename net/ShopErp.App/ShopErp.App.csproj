@@ -201,6 +201,15 @@
     <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseOrderPriceContent.cs" />
     <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseTab.cs" />
     <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseTabContent.cs" />
+    <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\Pdd\PddPrintDocument.cs" />
+    <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\Pdd\PddPrintDocumentRequest.cs" />
+    <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\Pdd\PddPrintDocumentRequestPrint.cs" />
+    <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\Pdd\PddPrintDocumentRequestPrintTask.cs" />
+    <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\Pdd\PddPrintDocumentRequestPrintTaskDocument.cs" />
+    <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\Pdd\PddPrintDocumentRequestPrintTaskDocumentCotent.cs" />
+    <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\Pdd\PddPrintDocumentRequestPrintTaskDocumentSelfCotent.cs" />
+    <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\Pdd\PddPrintDocumentResponse.cs" />
+    <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\Pdd\PddPrintDocumentResponsePrint.cs" />
     <Compile Include="Service\Print\PrintDocument\OrderReturnPrintDocument.cs" />
     <Compile Include="Service\Print\PrintDocument\GoodsPrintDocument.cs" />
     <Compile Include="MenuConfig.cs" />
@@ -260,6 +269,7 @@
     <Compile Include="Service\Print\PrintFormatters\ShopFormatters\ShopFormatterManager.cs" />
     <Compile Include="Service\Print\PrintFormatters\ShopFormatters\ShopImage.cs" />
     <Compile Include="Service\Print\PrintFormatters\ShopFormatters\ShopMark.cs" />
+    <Compile Include="Service\Print\PrintTemplateService.cs" />
     <Compile Include="Service\Restful\DeliveryCompanyService.cs" />
     <Compile Include="Service\Restful\DeliveryInService.cs" />
     <Compile Include="Service\Restful\DeliveryOutService.cs" />
@@ -290,7 +300,7 @@
     <Compile Include="Service\Restful\TaobaoKeywordService.cs" />
     <Compile Include="Service\Restful\VendorService.cs" />
     <Compile Include="Service\Restful\WuliuNumberService.cs" />
-    <Compile Include="Service\Restful\PrintTemplateService.cs" />
+    <Compile Include="Service\Restful\WuliuPrintTemplateService.cs" />
     <Compile Include="Service\ScriptManager.cs" />
     <Compile Include="Service\Speaker.cs" />
     <Compile Include="Service\Spider\Go2\Go2Spider.cs" />

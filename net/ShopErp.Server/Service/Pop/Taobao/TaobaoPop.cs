@@ -123,66 +123,32 @@ namespace ShopErp.Server.Service.Pop.Taobao
             throw new Exception("未能识别的淘宝旗帜:" + flag);
         }
 
-        private static CainiaoWaybillIiGetRequest.AddressDtoDomain TaobaoConvertToAddressDtoDomain(string address)
+        private static CainiaoWaybillIiGetRequest.AddressDtoDomain TaobaoConvertToAddressDtoDomain(string address, PopType sourceType)
         {
-            var p = AddressService.ParseProvince(address);
-            var c = AddressService.ParseCity(address);
-            var a = AddressService.ParseRegion(address);
-            if (p == null)
-            {
-                throw new Exception("地址解析失败未找出省");
-            }
-            if (c == null)
-            {
-                throw new Exception("地址解析失败未找出市");
-            }
-
-            string ad = AddressService.TrimStart(address, p.Name, 2);
-            ad = AddressService.TrimStart(ad, c.Name, 2);
-            if (a != null)
-            {
-                ad = AddressService.TrimStart(ad, a.Name, 2);
-            }
+            string[] adds = AddressService.Parse5Address(address, sourceType, PopType.TAOBAO);
             var wd = new CainiaoWaybillIiGetRequest.AddressDtoDomain
             {
-                Province = p.Name,
-                City = c.Name,
-                District = a == null ? "" : a.Name,
-                Detail = ad,
-                Town = "",
+                Province = adds[0],
+                City = adds[1],
+                District = adds[2],
+                Town = adds[3],
+                Detail = adds[4],
             };
             return wd;
         }
 
-        private static CainiaoWaybillIiUpdateRequest.UserInfoDtoDomain TaobaoConvertToUserInfoDtoDomain(string address, string name, string phone, string mobile)
+        private static CainiaoWaybillIiUpdateRequest.UserInfoDtoDomain TaobaoConvertToUserInfoDtoDomain(string address, string name, string phone, string mobile, PopType sourceType)
         {
-            var p = AddressService.ParseProvince(address);
-            var c = AddressService.ParseCity(address);
-            var a = AddressService.ParseRegion(address);
-            if (p == null)
-            {
-                throw new Exception("地址解析失败未找出省");
-            }
-            if (c == null)
-            {
-                throw new Exception("地址解析失败未找出市");
-            }
-
-            string ad = AddressService.TrimStart(address, p.Name, 2);
-            ad = AddressService.TrimStart(ad, c.Name, 2);
-            if (a != null)
-            {
-                ad = AddressService.TrimStart(ad, a.Name, 2);
-            }
+            string[] adds = AddressService.Parse5Address(address, sourceType, PopType.TAOBAO);
             var wd = new CainiaoWaybillIiUpdateRequest.UserInfoDtoDomain
             {
                 Address = new CainiaoWaybillIiUpdateRequest.AddressDtoDomain
                 {
-                    Province = p.Name,
-                    City = c.Name,
-                    District = a == null ? "" : a.Name,
-                    Detail = ad,
-                    Town = "",
+                    Province = adds[0],
+                    City = adds[1],
+                    District = adds[2],
+                    Town = adds[3],
+                    Detail = adds[4],
                 },
                 Name = name,
                 Phone = phone,
@@ -195,23 +161,23 @@ namespace ShopErp.Server.Service.Pop.Taobao
         {
             if (type == 1)
             {
-                return "Country";
+                return AddressService.COUNTRY;
             }
             if (type == 2)
             {
-                return "Province";
+                return AddressService.PROVINCE;
             }
             if (type == 3)
             {
-                return "City";
+                return AddressService.CITY;
             }
             if (type == 4)
             {
-                return "District";
+                return AddressService.DISTRICT;
             }
             if (type == 5)
             {
-                return "Town";
+                return AddressService.TOWN;
             }
             throw new Exception("未知的行政级别");
         }
@@ -230,8 +196,7 @@ namespace ShopErp.Server.Service.Pop.Taobao
                 var xe = new XElement(GetNodeName(a.Type), new XAttribute("Name", a.Name.Trim()), new XAttribute("ShortName", sn));
                 areas.Remove(a);
                 parent.Add(xe);
-                if (a.Type <= 3)
-                    FindSub(xe, a.Id, areas);
+                FindSub(xe, a.Id, areas);
             }
         }
 
@@ -784,9 +749,9 @@ namespace ShopErp.Server.Service.Pop.Taobao
             throw new NotImplementedException();
         }
 
-        public override List<WuliuBranch> GetWuliuBranchs(Shop shop, string cpCode)
+        public override List<WuliuBranch> GetWuliuBranchs(Shop shop)
         {
-            var req = new CainiaoWaybillIiSearchRequest() { CpCode = cpCode };
+            var req = new CainiaoWaybillIiSearchRequest();
             var rep = InvokeOpenApi<CainiaoWaybillIiSearchResponse>(shop, req);
             var datas = new List<WuliuBranch>();
 
@@ -811,30 +776,38 @@ namespace ShopErp.Server.Service.Pop.Taobao
             return datas;
         }
 
-        public override List<PrintTemplate> GetAllWuliuTemplates(Shop shop)
+        public override List<WuliuPrintTemplate> GetWuliuPrintTemplates(Shop shop, string cpCode)
         {
             //系统需要使用到标准模板，所以需要先下载
-            var stdWuliuTemplats = new List<PrintTemplate>();
-            CainiaoCloudprintStdtemplatesGetRequest reqStd = new CainiaoCloudprintStdtemplatesGetRequest();
+            var stdWuliuTemplats = new List<WuliuPrintTemplate>();
+            CainiaoCloudprintStdtemplatesGetRequest reqStd = new CainiaoCloudprintStdtemplatesGetRequest() { };
             CainiaoCloudprintStdtemplatesGetResponse rspStd = InvokeOpenApi<CainiaoCloudprintStdtemplatesGetResponse>(shop, reqStd);
             foreach (var v in rspStd.Result.Datas)
             {
+                if (string.IsNullOrWhiteSpace(cpCode) == false && cpCode.Equals(v.CpCode, StringComparison.OrdinalIgnoreCase) == false)
+                {
+                    continue;
+                }
                 foreach (var vv in v.StandardTemplates)
                 {
-                    var wuliuTemplate = new PrintTemplate { CpCode = v.CpCode, Name = vv.StandardTemplateName, SourceType = PrintTemplateSourceType.CAINIAO, StandTemplateUrl = vv.StandardTemplateUrl, StandTemplateId = vv.StandardTemplateId.ToString(), UserOrIsvTemplateAreaId = "", UserOrIsvTemplateAreaUrl = "" };
+                    var wuliuTemplate = new WuliuPrintTemplate { CpCode = v.CpCode, Name = vv.StandardTemplateName, SourceType = WuliuPrintTemplateSourceType.CAINIAO, StandTemplateUrl = vv.StandardTemplateUrl, StandTemplateId = vv.StandardTemplateId.ToString(), UserOrIsvTemplateAreaId = "", UserOrIsvTemplateAreaUrl = "" };
                     stdWuliuTemplats.Add(wuliuTemplate);
                 }
             }
 
-            var wuliuTemplates = new List<PrintTemplate>();
+            var wuliuTemplates = new List<WuliuPrintTemplate>();
             //用户自定义模板
             CainiaoCloudprintMystdtemplatesGetRequest req = new CainiaoCloudprintMystdtemplatesGetRequest();
             CainiaoCloudprintMystdtemplatesGetResponse rsp = InvokeOpenApi<CainiaoCloudprintMystdtemplatesGetResponse>(shop, req);
             foreach (var v in rsp.Result.Datas)
             {
+                if (string.IsNullOrWhiteSpace(cpCode) == false && cpCode.Equals(v.CpCode, StringComparison.OrdinalIgnoreCase) == false)
+                {
+                    continue;
+                }
                 foreach (var vv in v.UserStdTemplates)
                 {
-                    var wuliuTemplate = new PrintTemplate { CpCode = v.CpCode, Name = vv.UserStdTemplateName, SourceType = PrintTemplateSourceType.CAINIAO, StandTemplateUrl = vv.UserStdTemplateUrl, StandTemplateId = vv.UserStdTemplateId.ToString() };
+                    var wuliuTemplate = new WuliuPrintTemplate { CpCode = v.CpCode, Name = vv.UserStdTemplateName, SourceType = WuliuPrintTemplateSourceType.CAINIAO, StandTemplateUrl = vv.UserStdTemplateUrl, StandTemplateId = vv.UserStdTemplateId.ToString() };
                     CainiaoCloudprintCustomaresGetRequest r = new CainiaoCloudprintCustomaresGetRequest() { TemplateId = vv.UserStdTemplateId };
                     var rs = InvokeOpenApi<CainiaoCloudprintCustomaresGetResponse>(shop, r);
                     wuliuTemplate.UserOrIsvTemplateAreaUrl = rs.Result.Datas.FirstOrDefault().CustomAreaUrl;
@@ -842,46 +815,10 @@ namespace ShopErp.Server.Service.Pop.Taobao
                     wuliuTemplates.Add(wuliuTemplate);
                 }
             }
-
-            //ISV 模板
-            CainiaoCloudprintIsvResourcesGetRequest req1 = new CainiaoCloudprintIsvResourcesGetRequest();
-            req1.IsvResourceType = "CUSTOM_AREA";
-            var rsp1 = InvokeOpenApi<CainiaoCloudprintIsvResourcesGetResponse>(shop, req1);
-            foreach (var v in rsp1.Result.ResourceList)
-            {
-                if (v.ResourceType != "CUSTOM_AREA")
-                {
-                    continue;
-                }
-                var wuliuTemplate = new PrintTemplate { CpCode = "", Name = v.ResourceName, SourceType = PrintTemplateSourceType.CAINIAO, UserOrIsvTemplateAreaUrl = v.ResourceUrl, UserOrIsvTemplateAreaId = v.ResourceId.ToString(), StandTemplateId = "", StandTemplateUrl = "", IsIsv = true };
-                PrintTemplate std = null;
-                //这是中通标准二联面单
-                if (wuliuTemplate.Name.Contains("中通") && wuliuTemplate.Name.Contains("二联"))
-                {
-                    std = stdWuliuTemplats.FirstOrDefault(obj => obj.StandTemplateId == "301");
-                }
-                //圆通标准二联面单
-                if (wuliuTemplate.Name.Contains("圆通") && wuliuTemplate.Name.Contains("二联"))
-                {
-                    std = stdWuliuTemplats.FirstOrDefault(obj => obj.StandTemplateId == "101");
-                }
-                //申通标准二联面单
-                if (wuliuTemplate.Name.Contains("申通") && wuliuTemplate.Name.Contains("二联"))
-                {
-                    std = stdWuliuTemplats.FirstOrDefault(obj => obj.StandTemplateId == "201");
-                }
-                if (std != null)
-                {
-                    wuliuTemplate.StandTemplateId = std.StandTemplateId;
-                    wuliuTemplate.StandTemplateUrl = std.StandTemplateUrl;
-                    wuliuTemplate.CpCode = std.CpCode;
-                    wuliuTemplates.Add(wuliuTemplate);
-                }
-            }
             return wuliuTemplates;
         }
 
-        public override WuliuNumber GetWuliuNumber(Shop shop, string popSellerNumberId, PrintTemplate wuliuTemplate, Order order, string[] wuliuIds, string packageId, string senderName, string senderPhone, string senderAddress)
+        public override WuliuNumber GetWuliuNumber(Shop shop, string popSellerNumberId, WuliuPrintTemplate wuliuTemplate, Order order, string[] wuliuIds, string packageId, string senderName, string senderPhone, string senderAddress)
         {
             if (string.IsNullOrWhiteSpace(senderName) || string.IsNullOrWhiteSpace(senderPhone))
             {
@@ -897,13 +834,13 @@ namespace ShopErp.Server.Service.Pop.Taobao
             CainiaoWaybillIiGetRequest req = new CainiaoWaybillIiGetRequest();
             var reqBody = new CainiaoWaybillIiGetRequest.WaybillCloudPrintApplyNewRequestDomain();
             reqBody.CpCode = wuliuTemplate.CpCode;
-            reqBody.Sender = new CainiaoWaybillIiGetRequest.UserInfoDtoDomain { Phone = "", Name = senderName, Mobile = senderPhone, Address = TaobaoConvertToAddressDtoDomain(senderAddress) };
+            reqBody.Sender = new CainiaoWaybillIiGetRequest.UserInfoDtoDomain { Phone = "", Name = senderName, Mobile = senderPhone, Address = TaobaoConvertToAddressDtoDomain(senderAddress, PopType.TAOBAO) };
             reqBody.NeedEncrypt = true;
             reqBody.TradeOrderInfoDtos = new List<CainiaoWaybillIiGetRequest.TradeOrderInfoDtoDomain>();//订单信息，一个请求里面可以包含多个订单，我们系统里面，默认一个
             var or = new CainiaoWaybillIiGetRequest.TradeOrderInfoDtoDomain { ObjectId = Guid.NewGuid().ToString() };
             or.UserId = long.Parse(popSellerNumberId);
             or.TemplateUrl = wuliuTemplate.StandTemplateUrl;
-            or.Recipient = new CainiaoWaybillIiGetRequest.UserInfoDtoDomain { Phone = order.ReceiverPhone, Mobile = order.ReceiverMobile, Name = order.ReceiverName, Address = TaobaoConvertToAddressDtoDomain(order.ReceiverAddress), };
+            or.Recipient = new CainiaoWaybillIiGetRequest.UserInfoDtoDomain { Phone = order.ReceiverPhone, Mobile = order.ReceiverMobile, Name = order.ReceiverName, Address = TaobaoConvertToAddressDtoDomain(order.ReceiverAddress, order.PopType), };
             or.OrderInfo = new CainiaoWaybillIiGetRequest.OrderInfoDtoDomain { OrderChannelsType = "OTHERS", TradeOrderList = new List<string>(wuliuIds) };
             or.PackageInfo = new CainiaoWaybillIiGetRequest.PackageInfoDtoDomain { Id = packageId == "" ? null : packageId, Items = new List<CainiaoWaybillIiGetRequest.ItemDomain>() };
             or.PackageInfo.Items.AddRange(order.OrderGoodss.Where(obj => (int)obj.State >= (int)OrderState.PAYED && (int)obj.State <= (int)OrderState.SUCCESS).Select(obj => new CainiaoWaybillIiGetRequest.ItemDomain { Name = obj.Number + "," + obj.Edtion + "," + obj.Color + "," + obj.Size, Count = obj.Count }));
@@ -928,11 +865,11 @@ namespace ShopErp.Server.Service.Pop.Taobao
             wuliuNumber.WuliuIds = string.Join(",", wuliuIds);
             wuliuNumber.PackageId = packageId;
             wuliuNumber.PrintData = rsp.Modules[0].PrintData;
-            wuliuNumber.SourceType = PrintTemplateSourceType.CAINIAO;
+            wuliuNumber.SourceType = WuliuPrintTemplateSourceType.CAINIAO;
             return wuliuNumber;
         }
 
-        public override void UpdateWuliuNumber(Shop shop, PrintTemplate wuliuTemplate, Order order, WuliuNumber wuliuNumber)
+        public override void UpdateWuliuNumber(Shop shop, WuliuPrintTemplate wuliuTemplate, Order order, WuliuNumber wuliuNumber)
         {
             //需要更新菜鸟面单以打印正确的信息
             var updateReq = new CainiaoWaybillIiUpdateRequest { };
@@ -941,18 +878,11 @@ namespace ShopErp.Server.Service.Pop.Taobao
                 CpCode = wuliuTemplate.CpCode,
                 WaybillCode = wuliuNumber.DeliveryNumber,
                 TemplateUrl = wuliuTemplate.StandTemplateUrl,
-                Recipient = TaobaoConvertToUserInfoDtoDomain(order.ReceiverAddress, order.ReceiverName, order.ReceiverPhone, order.ReceiverMobile),
+                Recipient = TaobaoConvertToUserInfoDtoDomain(order.ReceiverAddress, order.ReceiverName, order.ReceiverPhone, order.ReceiverMobile, order.PopType),
             };
             updateReq.ParamWaybillCloudPrintUpdateRequest_ = updateReqBody;
-
             var rsp = InvokeOpenApi<CainiaoWaybillIiUpdateResponse>(shop, updateReq);
-
-            wuliuNumber.ReceiverAddress = order.ReceiverAddress;
-            wuliuNumber.ReceiverMobile = order.ReceiverMobile;
-            wuliuNumber.ReceiverName = order.ReceiverName;
-            wuliuNumber.ReceiverPhone = order.ReceiverPhone;
             wuliuNumber.PrintData = rsp.PrintData;
-
         }
 
         public override XDocument GetAddress(Shop shop)

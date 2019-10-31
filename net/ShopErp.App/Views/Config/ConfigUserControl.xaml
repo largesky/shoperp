@@ -153,6 +153,5 @@
             </Grid>
         </GroupBox>
         <Button x:Name="btnSave" Grid.Row="3" Content="保存" Width="60" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnSave_Click" Margin="3" />
-        <Button x:Name="btnUpdateAddressArea" Grid.Row="3" Grid.Column="1" Content="更新淘宝系统地址模板" VerticalAlignment="Center" Click="btnUpdateAddressArea_Click" Margin="3"/>
     </Grid>
 </UserControl>

@@ -220,7 +220,7 @@ namespace ShopErp.App.Views.Print
 
                 var orders = printOrderPage.OrderViewModels.ToArray();
                 var selectedOrders = orders.Where(obj => obj.IsChecked).Select(obj => obj.Source).ToArray();
-                var printTemplate = printOrderPage.PrintTemplate;
+                var printTemplate = printOrderPage.WuliuPrintTemplate;
                 Grid grid = ((sender as Button).Parent as StackPanel).Parent as Grid;
                 DataGrid dg = grid.FindName("dgOrders") as DataGrid;
                 DataGridColumn goodsCol = dg.Columns.FirstOrDefault(col => col.Header != null && col.Header.ToString() == "门牌编号");
@@ -455,5 +455,18 @@ namespace ShopErp.App.Views.Print
         }
 
         #endregion
+
+        private void btnUpdateAddressArea_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var resp = ServiceContainer.GetService<WuliuNumberService>().UpdateAddressArea();
+                MessageBox.Show("更新成功");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
     }
 }

@@ -15,7 +15,7 @@ namespace ShopErp.App.Service.Print.PrintDocument.DeliveryPrintDocument
 
         public Dictionary<string, string>[] UserDatas { get; set; }
 
-        public PrintTemplate WuliuTemplate { get; protected set; }
+        public WuliuPrintTemplate CloudPrintTemplate { get; protected set; }
 
         /// <summary>
         /// 整个文档开始打印
@@ -90,12 +90,12 @@ namespace ShopErp.App.Service.Print.PrintDocument.DeliveryPrintDocument
             }
         }
 
-        public DeliveryPrintDocument(Order[] orders, WuliuNumber[] wuliuNumbers, Dictionary<string, string>[] userDatas, PrintTemplate wuliuTemplate)
+        public DeliveryPrintDocument(Order[] orders, WuliuNumber[] wuliuNumbers, Dictionary<string, string>[] userDatas, WuliuPrintTemplate wuliuTemplate)
         {
             this.WuliuNumbers = wuliuNumbers;
             this.Orders = orders;
             this.UserDatas = userDatas;
-            this.WuliuTemplate = wuliuTemplate;
+            this.CloudPrintTemplate = wuliuTemplate;
         }
     }
 }

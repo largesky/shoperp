@@ -6,7 +6,7 @@ namespace ShopErp.Domain
     {
         public long Id { get; set; }
 
-        public PrintTemplateSourceType SourceType { get; set; }
+        public WuliuPrintTemplateSourceType SourceType { get; set; }
 
         public string WuliuIds { get; set; }
 

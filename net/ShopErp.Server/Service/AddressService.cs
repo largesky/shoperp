@@ -9,93 +9,17 @@ namespace ShopErp.Server.Service
 {
     public class AddressService
     {
+        public const string COUNTRY = "Country";
+        public const string PROVINCE = "Province";
+        public const string CITY = "City";
+        public const string DISTRICT = "District";
+        public const string TOWN = "Town";
+
+        private static readonly string[] PDD_DIS_MARK = new string[] { "省直辖县级行政区划", "自治区直辖县级行政区划", "县" };
         private static readonly string[] D_CITY = new string[] { "北京", "上海", "天津", "重庆" };
-        private static String[] D_PROVINCE = new string[] { "宁夏", "广西", "内蒙古", "西藏", "新疆", "香港", "澳门", "台湾" };
         private static string[] RemoveWords = new string[] { "阿昌族", "白族", "保安族", "布朗族", "布依族", "藏族", "朝鲜族", "达斡尔族", "傣族", "德昂族", "东乡族", "侗族", "独龙族", "俄罗斯族", "鄂伦春族", "鄂温克族", "高山族", "哈尼族", "哈萨克族", "赫哲族", "回族", "基诺族", "京族", "景颇族", "柯尔克孜族", "拉祜族", "黎族", "傈僳族", "珞巴族", "满族", "毛南族", "门巴族", "蒙古族", "苗族", "仫佬族", "纳西族", "怒族", "普米族", "羌族", "撒拉族", "畲族", "水族", "塔吉克族", "塔塔尔族", "土家族", "土族", "佤族", "维吾尔族", "乌孜别克族", "锡伯族", "瑶族", "彝族", "仡佬族", "裕固族", "壮族", "自治州", "自治县", "自治旗", "自治" };
 
-        const string FILENAME = "Address.xml";
-
-        private static readonly AddressNode instance = new AddressNode();
-
-        public static AddressNode Address { get { return instance; } }
-
-        static AddressService()
-        {
-            String path = System.IO.Path.Combine(EnvironmentDirHelper.DIR_DATA, FILENAME);
-
-            if (File.Exists(path) == false)
-            {
-                return;
-            }
-
-            try
-            {
-                XDocument xDoc = XDocument.Load(path);
-                FillNodes(xDoc);
-            }
-            catch
-            {
-            }
-        }
-
-        public static void UpdateAndSaveAreas(XDocument xDoc)
-        {
-            String path = System.IO.Path.Combine(EnvironmentDirHelper.DIR_DATA, FILENAME);
-            FillNodes(xDoc);
-            using (FileStream fs = new FileStream(path, FileMode.Create))
-            {
-                xDoc.Save(fs);
-            }
-        }
-
-        private static void FillNodes(XDocument xDoc)
-        {
-            Address.SubNodes.Clear();
-
-            foreach (var state in xDoc.Root.Elements())
-            {
-                AddressNode s = new AddressNode { Name = state.Attribute("Name").Value, ShortName = state.Attribute("ShortName").Value };
-                Address.SubNodes.Add(s);
-                foreach (var city in state.Elements())
-                {
-                    AddressNode cc = new AddressNode { Name = city.Attribute("Name").Value, ShortName = city.Attribute("ShortName").Value };
-                    s.SubNodes.Add(cc);
-                    foreach (var region in city.Elements())
-                    {
-                        AddressNode r = new AddressNode { Name = region.Attribute("Name").Value, ShortName = region.Attribute("ShortName").Value };
-                        cc.SubNodes.Add(r);
-                    }
-                }
-            }
-        }
-
-
-        /// <summary>
-        /// 删除前面的字符如四川省成都市，四川，则返回 省成都市
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="trimValue"></param>
-        /// <returns></returns>
-        public static string TrimStart(String value, string trimValue, int minCount = 2)
-        {
-            if (value == null || trimValue == null)
-            {
-                return value;
-            }
-            value = value.Trim();
-            trimValue = trimValue.Trim();
-            for (int i = trimValue.Length; i >= 1 && i >= minCount; i--)
-            {
-                string subTrimValue = trimValue.Substring(0, i);
-                if (value.StartsWith(subTrimValue))
-                {
-                    value = value.Substring(subTrimValue.Length).Trim();
-                    return value.Trim();
-                }
-            }
-
-            return value.Trim();
-        }
+        private static System.Collections.Generic.Dictionary<PopType, AddressNode> Address = new System.Collections.Generic.Dictionary<PopType, AddressNode>();
 
         public static string GetProvinceShortName(string province)
         {
@@ -111,7 +35,7 @@ namespace ShopErp.Server.Service
 
             if (province.Length < 2)
             {
-                throw new Exception("中国的省名称至少2个字符");
+                return province;
             }
             return province.Substring(0, 2);
         }
@@ -134,95 +58,146 @@ namespace ShopErp.Server.Service
         }
 
         /// <summary>
-        /// 解析省
+        /// 更新缓存并保存到文件
         /// </summary>
-        /// <param name="address"></param>
-        /// <returns></returns>
-        public static AddressNode ParseProvince(string address)
+        /// <param name="xDoc"></param>
+        public static void UpdateAndSaveAreas(XDocument xDoc, PopType popType)
         {
-            //地址库中的省进行匹配
-            var state = AddressService.Address.SubNodes.FirstOrDefault(s => address.StartsWith(s.ShortName));
-            return state;
+            if (popType == PopType.TMALL)
+            {
+                popType = PopType.TAOBAO;
+            }
+            using (FileStream fs = new FileStream(System.IO.Path.Combine(EnvironmentDirHelper.DIR_DATA, popType + "_Address.xml"), FileMode.Create))
+            {
+                xDoc.Save(fs);
+            }
+            LoadFile(popType);
         }
 
         /// <summary>
-        /// 解析市
+        /// 读取文件到缓存
         /// </summary>
-        /// <param name="address"></param>
-        /// <returns></returns>
-        public static AddressNode ParseCity(string address)
+        private static void LoadFile(PopType popType)
         {
-            //检查直辖市
-            var dcity = D_CITY.FirstOrDefault(obj => address.StartsWith(obj));
-            if (string.IsNullOrWhiteSpace(dcity) == false)
+            if (popType == PopType.TMALL)
             {
-                var n = AddressService.Address.SubNodes.FirstOrDefault(s => s.Name.StartsWith(dcity));
-                return AddressService.Address.SubNodes.FirstOrDefault(s => s.Name.StartsWith(dcity)).SubNodes[0];
+                popType = PopType.TAOBAO;
             }
+            lock (Address)
+            {
+                var root = new AddressNode { Type = "Country", Name = "中国", ShortName = "中国" };
+                XDocument xDoc = XDocument.Load(System.IO.Path.Combine(EnvironmentDirHelper.DIR_DATA, popType + "_Address.xml"));
+                foreach (var province in xDoc.Root.Elements())
+                {
+                    //省
+                    AddressNode p = new AddressNode { Name = province.Attribute("Name").Value, ShortName = province.Attribute("ShortName").Value, Type = province.Name.LocalName };
+                    root.SubNodes.Add(p);
 
-            //先解析省
-            AddressNode state = ParseProvince(address);
-            string ad = null;
-            if (state == null)
-            {
-                return null;
+                    //市或者省直辖行政区
+                    foreach (var city in province.Elements())
+                    {
+                        AddressNode c = new AddressNode { Name = city.Attribute("Name").Value, ShortName = city.Attribute("ShortName").Value, Type = city.Name.LocalName };
+                        p.SubNodes.Add(c);
+
+                        //区县，二级市
+                        foreach (var district in city.Elements())
+                        {
+                            c.SubNodes.Add(new AddressNode { Name = district.Attribute("Name").Value, ShortName = district.Attribute("ShortName").Value, Type = district.Name.LocalName });
+                        }
+                    }
+                }
+                Address[popType] = root;
             }
-            ad = TrimStart(address, state.Name, 2).TrimStart('省').Trim();
-            //处理市,全字匹配
-            var city = state.SubNodes.FirstOrDefault(c => ad.StartsWith(c.ShortName));
-            return city;
         }
 
         /// <summary>
-        /// 解析区或者县或者地级市
+        /// 返回省，市，区，镇，详细地址 格式
         /// </summary>
         /// <param name="address"></param>
         /// <returns></returns>
-        public static AddressNode ParseRegion(string address)
+        public static string[] Parse5Address(string address, PopType sourceType, PopType targetType)
         {
-            address = address.Replace(",", "").Replace("。", "").Trim();
-            AddressNode s = ParseProvince(address);
-            if (s == null)
+            if (sourceType == PopType.TMALL)
             {
-                return null;
+                sourceType = PopType.TAOBAO;
+            }
+            if (targetType == PopType.TMALL)
+            {
+                targetType = PopType.TAOBAO;
+            }
+            if (Address.ContainsKey(sourceType) == false)
+            {
+                LoadFile(sourceType);
+            }
+            if (Address.ContainsKey(targetType) == false)
+            {
+                LoadFile(targetType);
             }
 
-            AddressNode c = ParseCity(address);
-            if (c == null)
+            AddressNode sourceRoot = Address[sourceType];
+            AddressNode targetRoot = Address[targetType];
+            string add = address.Trim();
+            string[] adds = new string[] { string.Empty, string.Empty, string.Empty, string.Empty, string.Empty };
+
+            //第一步省
+            AddressNode p = sourceRoot.SubNodes.FirstOrDefault(obj => add.StartsWith(obj.Name));
+            if (p == null)
             {
-                return null;
+                throw new Exception("地址格式错误，无法解析出省：" + add);
             }
-
-            //删除前面的省市
-            string ad = TrimStart(address, s.Name, 2).TrimStart('省').TrimStart('市').Trim();
-            ad = TrimStart(ad, c.Name, 2).TrimStart('市', '州', '县').Trim();
-
-            //查找区
-            var region = c.SubNodes.FirstOrDefault(r => ad.StartsWith(r.ShortName));
-            if (region != null)
+            adds[0] = p.Name;
+            add = add.Substring(p.Name.Length).Trim();
+            var city = p.SubNodes.FirstOrDefault(obj => add.StartsWith(obj.Name));
+            if (city == null)
             {
-                return region;
+                throw new Exception("地址格式错误，无法解析出市：" + add);
             }
-
-            int townIndex = ad.IndexOf("镇", StringComparison.Ordinal);
-            if (townIndex > 0)
+            if (city.Type == DISTRICT)
             {
-                return new AddressNode { ShortName = "", Name = ad.Substring(0, townIndex + 1) };
+                //省级直属区，县
+                adds[2] = city.Name;
+                add = add.Substring(city.Name.Length).Trim();
             }
-
-            int streetIndex = ad.IndexOf("街道", StringComparison.Ordinal);
-            if (streetIndex > 0 && streetIndex < 10)
+            else
             {
-                return new AddressNode { ShortName = "", Name = ad.Substring(0, streetIndex + 2) };
+                adds[1] = city.Name;
+                add = add.Substring(city.Name.Length).Trim();
+                var district = city.SubNodes.FirstOrDefault(obj => add.StartsWith(obj.Name));
+                if (district != null)
+                {
+                    adds[2] = district.Name;
+                    add = add.Substring(district.Name.Length).Trim();
+                }
             }
-
-            int areaIndex = ad.IndexOf("区", StringComparison.Ordinal);
-            if (areaIndex > 0 && areaIndex < 10)
+            //从详细地址删除存在省市区等信息
+            for (int i = 0; i <= 2; i++)
             {
-                return new AddressNode { ShortName = "", Name = ad.Substring(0, areaIndex + 1) };
+                if (string.IsNullOrWhiteSpace(adds[i]))
+                {
+                    continue;
+                }
+                if (add.StartsWith(adds[i]))
+                {
+                    add = add.Substring(adds[i].Length);
+                }
             }
+            if (sourceType == PopType.PINGDUODUO && targetType == PopType.TAOBAO)
+            {
+                //这种是直辖市
+                if (adds[0].Contains("市"))
+                {
+                    adds[1] = adds[0];
+                    adds[0] = adds[0].Replace("市", "");
+                }
 
-            return null;
+                //这种是省下面的直辖区，县
+                if (PDD_DIS_MARK.Any(obj => obj == adds[1]))
+                {
+                    adds[1] = string.Empty;
+                }
+            }
+            adds[4] = add;
+            return adds;
         }
     }
 

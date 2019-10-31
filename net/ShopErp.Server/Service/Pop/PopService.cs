@@ -6,7 +6,7 @@ using Microsoft.Win32;
 using ShopErp.Domain;
 using ShopErp.Domain.Pop;
 using ShopErp.Domain.RestfulResponse;
-using ShopErp.Server.Service.Pop.Pingduoduo;
+using ShopErp.Server.Service.Pop.Pdd;
 using ShopErp.Server.Service.Pop.Taobao;
 using ShopErp.Server.Service.Restful;
 using ShopErp.Domain.RestfulResponse.DomainResponse;
@@ -181,25 +181,25 @@ namespace ShopErp.Server.Service.Pop
             return this.GetPop(shop.PopType).GetAcessTokenInfo(shop, code);
         }
 
-        public List<WuliuBranch> GetWuliuBranchs(Shop shop, string cpCode)
+        public List<WuliuBranch> GetWuliuBranchs(Shop shop)
         {
             if (shop.WuliuEnabled == false)
             {
                 throw new Exception("店铺电子面单接口已禁用，无法调用相应接口操作");
             }
-            return this.InvokeWithRefreshAccessToken<List<WuliuBranch>>(shop, () => GetPop(shop.PopType).GetWuliuBranchs(shop, cpCode));
+            return this.InvokeWithRefreshAccessToken<List<WuliuBranch>>(shop, () => GetPop(shop.PopType).GetWuliuBranchs(shop));
         }
 
-        public List<PrintTemplate> GetAllWuliuTemplates(Shop shop)
+        public List<WuliuPrintTemplate> GetWuliuPrintTemplates(Shop shop, string cpCode)
         {
             if (shop.WuliuEnabled == false)
             {
                 throw new Exception("店铺电子面单接口已禁用，无法调用相应接口操作");
             }
-            return this.InvokeWithRefreshAccessToken<List<PrintTemplate>>(shop, () => GetPop(shop.PopType).GetAllWuliuTemplates(shop));
+            return this.InvokeWithRefreshAccessToken<List<WuliuPrintTemplate>>(shop, () => GetPop(shop.PopType).GetWuliuPrintTemplates(shop, cpCode));
         }
 
-        public WuliuNumber GetWuliuNumber(Shop shop, string popSellerNumberId, PrintTemplate wuliuTemplate, Order order, string[] wuliuIds, string packageId, string senderName, string senderPhone, string senderAddress)
+        public WuliuNumber GetWuliuNumber(Shop shop, string popSellerNumberId, WuliuPrintTemplate wuliuTemplate, Order order, string[] wuliuIds, string packageId, string senderName, string senderPhone, string senderAddress)
         {
             if (shop.WuliuEnabled == false)
             {
@@ -208,7 +208,7 @@ namespace ShopErp.Server.Service.Pop
             return this.InvokeWithRefreshAccessToken<WuliuNumber>(shop, () => GetPop(shop.PopType).GetWuliuNumber(shop, popSellerNumberId, wuliuTemplate, order, wuliuIds, packageId, senderName, senderPhone, senderAddress));
         }
 
-        public void UpdateWuliuNumber(Shop shop, PrintTemplate wuliuTemplate, Order order, WuliuNumber wuliuNumber)
+        public void UpdateWuliuNumber(Shop shop, WuliuPrintTemplate wuliuTemplate, Order order, WuliuNumber wuliuNumber)
         {
             if (shop.WuliuEnabled == false)
             {
@@ -223,7 +223,7 @@ namespace ShopErp.Server.Service.Pop
             {
                 throw new Exception("店铺订单发货接口已禁用，无法调用相应接口操作");
             }
-            return GetPop(shop.PopType).AddGoods(shop, popGoods,buyInPrices);
+            return GetPop(shop.PopType).AddGoods(shop, popGoods, buyInPrices);
         }
 
         public XDocument GetAddress(Shop shop)

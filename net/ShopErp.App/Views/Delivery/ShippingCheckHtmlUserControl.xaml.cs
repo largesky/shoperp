@@ -181,11 +181,11 @@ namespace ShopErp.App.Views.Delivery
                     document.LoadHtml(addN.text);
                     string hh = document.DocumentNode.InnerText;
                     string nhh = hh.Substring(0, hh.IndexOf("]转&nbsp;") + 1);// 
-                    string read = nhh.Replace("[", "").Replace("]", "");
-                    string mark = "转运仓库";
+                    string read = nhh.Trim().TrimEnd(']');
+                    string mark = "[转运仓转运仓库：";
                     if (read.IndexOf(mark) > 0)
                     {
-                        read = read.Remove(read.IndexOf(mark), mark.Length + 1);
+                        read = read.Replace(mark, "");
                     }
                     reciverInfo = read;
                 }
@@ -445,7 +445,6 @@ namespace ShopErp.App.Views.Delivery
                     {
                         this.tbMsg.Text = string.Format("正在下载：{0}/{1} {2} ", currentCount, totalCount, v.id);
                         WPFHelper.DoEvents();
-
                         var order = ParseOrder(v, shop);
                         od.Order = order;
                         var resp = ServiceContainer.GetService<OrderService>().SaveOrUpdateOrdersByPopOrderId(shop, orders);

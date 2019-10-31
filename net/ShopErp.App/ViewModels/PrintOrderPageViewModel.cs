@@ -41,7 +41,7 @@ namespace ShopErp.App.ViewModels
 
         public static readonly DependencyProperty TitleProperty = DependencyProperty.Register("Title", typeof(string), typeof(PrintOrderPageViewModel));
 
-        public static readonly DependencyProperty PrintTemplateProperty = DependencyProperty.Register("PrintTemplate", typeof(PrintTemplate), typeof(PrintOrderPageViewModel));
+        public static readonly DependencyProperty WuliuPrintTemplateProperty = DependencyProperty.Register("WuliuPrintTemplate", typeof(WuliuPrintTemplate), typeof(PrintOrderPageViewModel));
 
         public static readonly DependencyProperty PackageIdProperty = DependencyProperty.Register("PackageId", typeof(int), typeof(PrintOrderPageViewModel), new PropertyMetadata(0));
 
@@ -61,7 +61,7 @@ namespace ShopErp.App.ViewModels
 
         public ObservableCollection<WuliuBranch> WuliuBranches { get; set; }
 
-        public ObservableCollection<PrintTemplate> PrintTemplates { get; set; }
+        public ObservableCollection<WuliuPrintTemplate> WuliuPrintTemplates { get; set; }
 
         public ObservableCollection<string> Printers { get; set; }
 
@@ -111,10 +111,10 @@ namespace ShopErp.App.ViewModels
             set { this.SetValue(PackageIdProperty, value); }
         }
 
-        public PrintTemplate PrintTemplate
+        public WuliuPrintTemplate WuliuPrintTemplate
         {
-            get { return (PrintTemplate)this.GetValue(PrintTemplateProperty); }
-            set { this.SetValue(PrintTemplateProperty, value); }
+            get { return (WuliuPrintTemplate)this.GetValue(WuliuPrintTemplateProperty); }
+            set { this.SetValue(WuliuPrintTemplateProperty, value); }
         }
 
 
@@ -147,7 +147,7 @@ namespace ShopErp.App.ViewModels
             this.OrderViewModels = new ObservableCollection<PrintOrderViewModel>();
             this.WuliuBranches = new ObservableCollection<WuliuBranch>();
             this.Shops = new ObservableCollection<Shop>();
-            this.PrintTemplates = new ObservableCollection<PrintTemplate>();
+            this.WuliuPrintTemplates = new ObservableCollection<WuliuPrintTemplate>();
             this.Printers = new ObservableCollection<string>();
             DependencyPropertyDescriptor notiy = DependencyPropertyDescriptor.FromProperty(PrintOrderViewModel.IsCheckedProperty, typeof(PrintOrderViewModel));
             foreach (var v in orders)
@@ -216,57 +216,50 @@ namespace ShopErp.App.ViewModels
                 //店铺变了
                 if (e.Property == PrintOrderPageViewModel.ShopProperty)
                 {
-                    this.PrintTemplates.Clear();
-                    if (e.NewValue == null)
-                    {
-                        this.PrintTemplate = null;
-                        this.PrintServerAdd = "";
-                        return;
-                    }
-                    var pts = ServiceContainer.GetService<PrintTemplateService>().GetPrintTemplate(e.NewValue as Shop).Datas;
-                    foreach (var pt in pts)
-                    {
-                        this.PrintTemplates.Add(pt);
-                    }
-                    this.PrintTemplate = pts.FirstOrDefault();
-                }
-                //模板变了
-                if (e.Property == PrintOrderPageViewModel.PrintTemplateProperty)
-                {
+                    this.WuliuBranch = null;
                     this.WuliuBranches.Clear();
+                    this.PrintServerAdd = "";
                     if (e.NewValue == null)
                     {
-                        this.PrintServerAdd = "";
-                        this.WuliuBranch = null;
                         return;
                     }
-                    var wt = e.NewValue as PrintTemplate;
-                    //如果是自研的，则需要根据模板，取对应平台的CPCODE
-                    if (wt.SourceType == PrintTemplateSourceType.SELF)
-                    {
-                        var dc = ServiceContainer.GetService<DeliveryCompanyService>().GetDeliveryCompany(wt.DeliveryCompany);
-                        if (dc != null)
-                        {
-                            wt.CpCode = this.Shop.PopType == PopType.PINGDUODUO ? dc.PopMapPinduoduoWuliu : dc.PopMapTaobaoWuliu;
-                        }
-                    }
-                    else
-                    {
-                        if (wt.SourceType == PrintTemplateSourceType.CAINIAO)
-                        {
-                            this.PrintServerAdd = LocalConfigService.GetValue(SystemNames.CONFIG_PRINTSERVERADD_CAINIAO, "ws://localhost:13528");
-                        }
-                        else
-                        {
-                            throw new Exception("暂时不支持的平台");
-                        }
-                    }
-                    var wbs = ServiceContainer.GetService<WuliuNumberService>().GetWuliuBrachs(this.Shop, wt);
+                    var wbs = ServiceContainer.GetService<WuliuNumberService>().GetWuliuBrachs(this.Shop);
                     foreach (var v in wbs.Datas)
                     {
                         this.WuliuBranches.Add(v);
                     }
-                    this.WuliuBranch = this.WuliuBranches.FirstOrDefault(obj => obj.Quantity > 0);
+                }
+                //物流网点变了
+                if (e.Property == PrintOrderPageViewModel.WuliuBrachProperty)
+                {
+                    this.WuliuPrintTemplate = null;
+                    this.WuliuPrintTemplates.Clear();
+                    if (e.NewValue == null)
+                    {
+                        return;
+                    }
+                    var pts = ServiceContainer.GetService<WuliuPrintTemplateService>().GetWuliuPrintTemplates(this.Shop, this.WuliuBranch.Type).Datas;
+                    if (pts.Count < 1)
+                    {
+                        return ;
+                    }
+                    foreach (var pt in pts)
+                    {
+                        this.WuliuPrintTemplates.Add(pt);
+                    }
+                    this.WuliuPrintTemplate = pts.FirstOrDefault();
+                    if (WuliuPrintTemplate.SourceType == WuliuPrintTemplateSourceType.CAINIAO)
+                    {
+                        this.PrintServerAdd = LocalConfigService.GetValue(SystemNames.CONFIG_PRINTSERVERADD_CAINIAO, "ws://localhost:13528");
+                    }
+                    else if (WuliuPrintTemplate.SourceType == WuliuPrintTemplateSourceType.PINDUODUO)
+                    {
+                        this.PrintServerAdd = LocalConfigService.GetValue(SystemNames.CONFIG_PRINTSERVERADD_PDD, "wss://127.0.0.1:18653");
+                    }
+                    else
+                    {
+                        throw new Exception("暂时不支持的平台");
+                    }
                 }
             }
             catch (Exception ex)
@@ -281,7 +274,7 @@ namespace ShopErp.App.ViewModels
         public void LoadBarValue()
         {
             this.WuliuBranches.Clear();
-            this.PrintTemplates.Clear();
+            this.WuliuPrintTemplates.Clear();
             this.Shops.Clear();
             this.Printers.Clear();
 
@@ -408,7 +401,7 @@ namespace ShopErp.App.ViewModels
                     {
                         this.WorkStateMessage = string.Format("第四步：正在获取快递单号{0}/{1}...", i + 1, wuliuNumbers.Length);
                         WPFHelper.DoEvents();
-                        wuliuNumbers[i] = ServiceContainer.GetService<WuliuNumberService>().GenWuliuNumber(this.Shop, this.PrintTemplate, mergedOrders[i], GetMatchOrderViewModelsWuliuId(mergedOrders[i]), this.PackageId > 0 ? this.PackageId.ToString() : "", senderName, senderPhone, this.WuliuBranch.SenderAddress).First;
+                        wuliuNumbers[i] = ServiceContainer.GetService<WuliuNumberService>().GenWuliuNumber(this.Shop, this.WuliuPrintTemplate, mergedOrders[i], GetMatchOrderViewModelsWuliuId(mergedOrders[i]), this.PackageId > 0 ? this.PackageId.ToString() : "", senderName, senderPhone, this.WuliuBranch.SenderAddress).First;
                         foreach (var ov in this.orderVmToOrder[mergedOrders[i]])
                         {
                             ov.WuliuNumber = wuliuNumbers[i];
@@ -466,17 +459,17 @@ namespace ShopErp.App.ViewModels
 
                 this.WorkStateMessage = string.Format("第六步：输出打印数据...");
                 WPFHelper.DoEvents();
-                this.printDoc = new CainiaoPrintDocument(mergedOrders.ToArray(), wuliuNumbers, userDatas, this.PrintTemplate);
+                this.printDoc =  new CainiaoPrintDocument(mergedOrders.ToArray(), wuliuNumbers, userDatas, this.WuliuPrintTemplate);
                 string file = printDoc.StartPrint(this.Printer, this.PrintServerAdd);
                 this.WorkStateMessage = string.Format("第七步：保存打印记录...");
                 WPFHelper.DoEvents();
                 UploadPrintHistory(selectedOrderVMs);
                 HandelPrintEnded();
-                if (this.PrintTemplate.SourceType == PrintTemplateSourceType.CAINIAO)
+                if (this.WuliuPrintTemplate.SourceType == WuliuPrintTemplateSourceType.CAINIAO)
                 {
                     LocalConfigService.UpdateValue(SystemNames.CONFIG_PRINTSERVERADD_CAINIAO, this.PrintServerAdd);
                 }
-                else if (this.PrintTemplate.SourceType == PrintTemplateSourceType.PINDUODUO)
+                else if (this.WuliuPrintTemplate.SourceType == WuliuPrintTemplateSourceType.PINDUODUO)
                 {
                     LocalConfigService.UpdateValue(SystemNames.CONFIG_PRINTSERVERADD_PDD, this.PrintServerAdd);
                 }
@@ -488,7 +481,7 @@ namespace ShopErp.App.ViewModels
                     sfd.AddExtension = true;
                     sfd.DefaultExt = "pdf";
                     sfd.Filter = "*.pdf|PDF 文件";
-                    sfd.FileName = "快递单 " + this.PrintTemplate.DeliveryCompany + " " + DateTime.Now.ToString("MM-dd") + ".pdf";
+                    sfd.FileName = "快递单 " + this.WuliuPrintTemplate.DeliveryCompany + " " + DateTime.Now.ToString("MM-dd") + ".pdf";
                     if (sfd.ShowDialog().Value == false)
                     {
                         return;
@@ -533,7 +526,7 @@ namespace ShopErp.App.ViewModels
                         UploadTime = this.orderService.GetDBMinTime(),
                         DeliveryCompany = vm.DeliveryCompany,
                         DeliveryNumber = vm.DeliveryNumber,
-                        DeliveryTemplate = this.PrintTemplate.Name,
+                        DeliveryTemplate = this.WuliuPrintTemplate.Name,
                         Operator = OperatorService.LoginOperator.Number,
                         OrderId = vm.Source.Id,
                         ReceiverAddress = vm.Source.ReceiverAddress,

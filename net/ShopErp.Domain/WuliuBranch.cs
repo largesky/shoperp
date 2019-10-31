@@ -9,7 +9,7 @@ namespace ShopErp.Domain
     public class WuliuBranch
     {
         /// <summary>
-        /// 公司类型
+        /// 快递公司类型，如果YTO,ZTO
         /// </summary>
         public string Type { get; set; }
 

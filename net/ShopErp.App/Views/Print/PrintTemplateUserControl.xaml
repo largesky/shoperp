@@ -53,8 +53,6 @@
             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="3">
                 <TextBlock Text="模板类型：" Margin="3" VerticalAlignment="Center" />
                 <ComboBox Name="cbbTemplateTypes" SelectedItem="{Binding  ElementName=lstDeliveryPrintTemplates,Path=SelectedItem.Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"   Margin="3" VerticalAlignment="Center" Width="50"/>
-                <TextBlock Text="物流公司：" Margin="3" VerticalAlignment="Center" />
-                <ComboBox Name="cbbDeliverCompanies" SelectedItem="{Binding ElementName=lstDeliveryPrintTemplates, Path=SelectedItem.DeliveryCompany,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="3" VerticalAlignment="Center" Width="100"/>
                 <TextBlock Text="模板名称：" Margin="3" VerticalAlignment="Center" />
                 <TextBox Name="tbDeliveryTemplateName" Text="{Binding ElementName=lstDeliveryPrintTemplates,Path=SelectedItem.Name,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Width="120" Margin="3" VerticalAlignment="Center"/>
                 <TextBlock Text="宽度：" Margin="3" VerticalAlignment="Center" />

@@ -53,8 +53,7 @@ namespace ShopErp.App.Views.Print
                 {
                     return;
                 }
-                this.cbbTemplateTypes.ItemsSource = new string[] { "快递", "退货", "商品" };
-                this.cbbDeliverCompanies.ItemsSource = ServiceContainer.GetService<DeliveryCompanyService>().GetByAll().Datas.Select(obj => obj.Name).ToArray();
+                this.cbbTemplateTypes.ItemsSource = new string[] {"退货", "商品" };
                 this.lstDeliveryPrintTemplateTypes.ItemsSource = ViewModels.PrintTemplateItemTypeViewModel.GetAllTypes();
                 this.cbbDeliveryPrintTemplateItemFontName.ItemsSource = new InstalledFontCollection().Families.Select(obj => obj.Name).ToArray();
                 this.cbbDeliveryPrintTemplateItemFontName.SelectedIndex = 0;
@@ -187,11 +186,6 @@ namespace ShopErp.App.Views.Print
                 }
 
                 string delivertyTemplateName = this.tbDeliveryTemplateName.Text.Trim();
-                deliveryTemplate.SourceType = PrintTemplateSourceType.SELF;
-                if (deliveryTemplate.DeliveryCompany == null)
-                {
-                    throw new Exception("必须选择快递公司");
-                }
                 if (deliveryTemplate.Width <= 0 || deliveryTemplate.Height <= 0)
                 {
                     throw new Exception("长与宽必须大于0");
@@ -352,12 +346,6 @@ namespace ShopErp.App.Views.Print
                 {
                     MessageBox.Show("请输入要打印测试的数量");
                     return;
-                }
-
-
-                if (printTemplate.Type == PrintTemplate.TYPE_DELIVER)
-                {
-                    throw new Exception("电子面单已不支持测试打印");
                 }
                 var ret = pd.ShowDialog();
                 if (ret.Value == false)

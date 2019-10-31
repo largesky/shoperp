@@ -22,11 +22,6 @@ namespace ShopErp.Server.Service.Restful
     {
         PopService ps = new PopService();
 
-        /// <summary>
-        /// 淘宝平台接口
-        /// </summary>
-        private const string API_SERVER_URL = "https://eco.taobao.com/router/rest";
-
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/delete.html")]
         public ResponseBase Delete(long id)
@@ -63,7 +58,7 @@ namespace ShopErp.Server.Service.Restful
         /// <returns></returns>
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/genwuliunumber.html")]
-        public DataCollectionResponse<WuliuNumber> GenWuliuNumber(Shop shop, PrintTemplate wuliuTemplate, Order order, string[] wuliuIds, string packageId, string senderName, string senderPhone, string senderAddress)
+        public DataCollectionResponse<WuliuNumber> GenWuliuNumber(Shop shop, WuliuPrintTemplate wuliuTemplate, Order order, string[] wuliuIds, string packageId, string senderName, string senderPhone, string senderAddress)
         {
             try
             {
@@ -74,6 +69,10 @@ namespace ShopErp.Server.Service.Restful
                 //如果已拉取过快递单号，且订单没有变，只是收货人信息变了，则需要更新物流信息
                 if (wuliuNumber != null && wuliuId == wuliuNumber.WuliuIds && (wuliuNumber.ReceiverAddress != order.ReceiverAddress || wuliuNumber.ReceiverName != order.ReceiverName || wuliuNumber.ReceiverPhone != wuliuNumber.ReceiverPhone || wuliuNumber.ReceiverMobile != wuliuNumber.ReceiverMobile))
                 {
+                    wuliuNumber.ReceiverAddress = order.ReceiverAddress;
+                    wuliuNumber.ReceiverMobile = order.ReceiverMobile;
+                    wuliuNumber.ReceiverName = order.ReceiverName;
+                    wuliuNumber.ReceiverPhone = order.ReceiverPhone;
                     ps.UpdateWuliuNumber(shop, wuliuTemplate, order, wuliuNumber);
                     this.dao.Update(wuliuNumber);
                 }
@@ -109,12 +108,11 @@ namespace ShopErp.Server.Service.Restful
 
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/getwuliubrachs.html")]
-        public DataCollectionResponse<WuliuBranch> GetWuliuBrachs(Shop shop, PrintTemplate wuliuTemplate)
+        public DataCollectionResponse<WuliuBranch> GetWuliuBrachs(Shop shop)
         {
             try
             {
-                var ps = new PopService();
-                var wbs = ps.GetWuliuBranchs(shop, wuliuTemplate.CpCode);
+                var wbs = ps.GetWuliuBranchs(shop);
                 return new DataCollectionResponse<WuliuBranch>(wbs);
             }
             catch (Exception ex)
@@ -134,13 +132,11 @@ namespace ShopErp.Server.Service.Restful
         {
             try
             {
-                var shop = ServiceContainer.GetService<ShopService>().GetByAll().Datas.FirstOrDefault(obj => (obj.PopType == PopType.TAOBAO || obj.PopType == PopType.TMALL) && obj.WuliuEnabled);
-                if (shop == null)
+                foreach (var shop in ServiceContainer.GetService<ShopService>().GetByAll().Datas.Where(obj => obj.WuliuEnabled).ToArray())
                 {
-                    throw new Exception("没有可以用于更新地址库的淘宝天猫，启用了物流的店铺接口");
+                    var xDoc = new PopService().GetAddress(shop);
+                    AddressService.UpdateAndSaveAreas(xDoc, shop.PopType);
                 }
-                var xDoc = new PopService().GetAddress(shop);
-                AddressService.UpdateAndSaveAreas(xDoc);
                 return ResponseBase.SUCCESS;
             }
             catch (Exception ex)
@@ -191,17 +187,6 @@ namespace ShopErp.Server.Service.Restful
                 if (a.Type <= 3)
                     FindSub(xe, a.Id, areas);
             }
-        }
-
-        public static T InvokeOpenApi<T>(string appKey, string appSecret, string session, ITopRequest<T> request) where T : TopResponse
-        {
-            var topClient = new DefaultTopClient(API_SERVER_URL, appKey, appSecret);
-            var ret = topClient.Execute<T>(request, session, DateTime.Now);
-            if (ret.IsError)
-            {
-                throw new Exception("执行淘宝请求出错:" + ret.ErrCode + "," + ret.ErrMsg + ret.SubErrMsg);
-            }
-            return ret;
         }
     }
 }

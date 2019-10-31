@@ -38,13 +38,13 @@ namespace ShopErp.Server.Service.Pop
 
         public abstract Shop GetRefreshTokenInfo(Shop shop);
 
-        public abstract List<WuliuBranch> GetWuliuBranchs(Shop shop, string cpCode);
+        public abstract List<WuliuBranch> GetWuliuBranchs(Shop shop);
 
-        public abstract List<PrintTemplate> GetAllWuliuTemplates(Shop shop);
+        public abstract List<WuliuPrintTemplate> GetWuliuPrintTemplates(Shop shop, string cpCode);
 
-        public abstract WuliuNumber GetWuliuNumber(Shop shop, string popSellerNumberId, PrintTemplate wuliuTemplate, Order order, string[] wuliuIds, string packageId, string senderName, string senderPhone, string senderAddress);
+        public abstract WuliuNumber GetWuliuNumber(Shop shop, string popSellerNumberId, WuliuPrintTemplate wuliuTemplate, Order order, string[] wuliuIds, string packageId, string senderName, string senderPhone, string senderAddress);
 
-        public abstract void UpdateWuliuNumber(Shop shop, PrintTemplate wuliuTemplate, Order order, WuliuNumber wuliuNumber);
+        public abstract void UpdateWuliuNumber(Shop shop, WuliuPrintTemplate wuliuTemplate, Order order, WuliuNumber wuliuNumber);
 
         public abstract string[] AddGoods(Shop shop, PopGoods[] popGoods, float[] buyInPrices);
 
