@@ -156,16 +156,18 @@ namespace ShopErp.App.Views.Delivery
 
             String orderInfo = content.Substring(si, ei - si + 1).Trim();
             DateTime popPayTime = dbMineTime, popDeliveryTime = dbMineTime;
-            string buyerComment = "", sellerComment = "", reciverInfo = "";
+            string buyerComment = "", sellerComment = "", reciverInfo = "", popOrderState = "";
             float goodsPrice = 0, deliveryPrice = 0, sellerGetMoney = 0;
             Dictionary<string, float> namePrice = new Dictionary<string, float>();
 
             if (shop.PopType == PopType.TMALL)
             {
                 var orderDetail = Newtonsoft.Json.JsonConvert.DeserializeObject<TmallQueryOrderDetailResponse>(orderInfo, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml });
+
                 string payTime = orderDetail.stepbar.options.First(obj => obj.content == "买家付款").time;
                 string deliveryTime = orderDetail.stepbar.options.First(obj => obj.content == "发货").time;
 
+                popOrderState = orderDetail.overStatus.status.content[0].text;
                 popPayTime = string.IsNullOrWhiteSpace(payTime) ? dbMineTime : DateTime.Parse(payTime);
                 popDeliveryTime = string.IsNullOrWhiteSpace(deliveryTime) ? dbMineTime : DateTime.Parse(deliveryTime);
                 buyerComment = orderDetail.basic.lists.First(obj => obj.key == "买家留言").content[0].text;
@@ -257,7 +259,7 @@ namespace ShopErp.App.Views.Delivery
                 var infoLineDeliveryTime = infoLines.FirstOrDefault(obj => obj.name.Contains("发货时间"));
                 popPayTime = infoLinePayTime != null ? DateTime.Parse(infoLinePayTime.value) : dbMineTime;
                 popDeliveryTime = infoLineDeliveryTime != null ? DateTime.Parse(infoLineDeliveryTime.value) : dbMineTime;
-
+                popOrderState = orderDetail.mainOrder.statusInfo.text;
                 buyerComment = orderDetail.buyMessage;
                 foreach (var v in orderDetail.operationsGuide)
                 {
@@ -313,7 +315,7 @@ namespace ShopErp.App.Views.Delivery
                 PopPayType = PopPayType.ONLINE,
                 PopSellerComment = sellerComment,
                 PopSellerGetMoney = sellerGetMoney,
-                PopState = "",
+                PopState = popOrderState,
                 PopType = shop.PopType,
                 PrintOperator = "",
                 PrintTime = dbMineTime,
@@ -538,7 +540,6 @@ namespace ShopErp.App.Views.Delivery
             var pos = new PopOrderState()
             {
                 PopOrderId = popOrderId,
-                PopOrderStateDesc = "",
                 PopOrderStateValue = "",
                 State = OrderState.NONE
             };
@@ -569,7 +570,6 @@ namespace ShopErp.App.Views.Delivery
             var oi = Newtonsoft.Json.JsonConvert.DeserializeObject<ShopErp.App.Domain.TaobaoHtml.Order.TmallQueryOrderDetailResponse>(orderInfo);
 
             pos.PopOrderStateValue = oi.overStatus.status.content[0].text;
-            pos.PopOrderStateDesc = oi.overStatus.status.content[0].text;
             pos.State = ConveretState(pos.PopOrderStateValue);
             return pos;
         }

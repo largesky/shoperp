@@ -43,7 +43,6 @@
 //查询淘宝天猫商品
 //TAOBAO_SEARCH_GOODS
 (function () {
-    //return document.domain + "   " + document.cookie;
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "###url", false);
     xhr.setRequestHeader("accept", "application/json, text/plain, */*");

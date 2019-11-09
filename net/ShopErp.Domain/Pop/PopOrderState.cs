@@ -6,8 +6,6 @@
 
         public string PopOrderStateValue;
 
-        public string PopOrderStateDesc;
-
         public OrderState State;
     }
 }

@@ -19,6 +19,7 @@ using ShopErp.App.Service.Restful;
 using ShopErp.App.Utils;
 using ShopErp.Domain;
 using ShopErp.Domain.Pop;
+using System.Text.RegularExpressions;
 
 namespace ShopErp.App.Views.Orders
 {
@@ -98,7 +99,7 @@ namespace ShopErp.App.Views.Orders
                         this.tbMessage.AppendText(DateTime.Now + ":正在下载订单:" + (++i) + "/" + orders.Count() + "  " + o.PopOrderId + Environment.NewLine);
                         this.tbMessage.ScrollToEnd();
                     }));
-                    var pos = this.ParseOrder(o.PopOrderId);
+                    var pos = this.ParseOrderState(shop, o.PopOrderId);
                     string ret = ServiceContainer.GetService<OrderService>().UpdateOrderState(pos, o, shop).data;
                     this.Dispatcher.BeginInvoke(new Action(() =>
                     {
@@ -124,34 +125,6 @@ namespace ShopErp.App.Views.Orders
             }
         }
 
-        private ColorFlag ConvertFlag(int flag)
-        {
-            if (flag == 0)
-            {
-                return ColorFlag.UN_LABEL;
-            }
-            if (flag == 1)
-            {
-                return ColorFlag.RED;
-            }
-            if (flag == 2)
-            {
-                return ColorFlag.YELLOW;
-            }
-            if (flag == 3)
-            {
-                return ColorFlag.GREEN;
-            }
-            if (flag == 4)
-            {
-                return ColorFlag.BLUE;
-            }
-            if (flag == 5)
-            {
-                return ColorFlag.PINK;
-            }
-            return ColorFlag.UN_LABEL;
-        }
 
         private OrderState ConveretState(string state)
         {
@@ -182,12 +155,11 @@ namespace ShopErp.App.Views.Orders
             return OrderState.WAITPAY;
         }
 
-        private PopOrderState ParseOrder(string popOrderId)
+        private PopOrderState ParseOrderState(Shop shop, string popOrderId)
         {
             var pos = new PopOrderState()
             {
                 PopOrderId = popOrderId,
-                PopOrderStateDesc = "",
                 PopOrderStateValue = "",
                 State = OrderState.NONE
             };
@@ -200,26 +172,44 @@ namespace ShopErp.App.Views.Orders
             {
                 throw new Exception("执行操作失败：" + ret.Message);
             }
-
             var content = ret.Result.ToString();
-            int si = content.IndexOf("var detailData");
+            string title = shop.PopType == PopType.TMALL ? "var detailData" : "var data = JSON";
+
+            int si = content.IndexOf(title);
             if (si <= 0)
             {
-                throw new Exception("未找到订单详情数据");
+                throw new Exception("未找到订单详情数据开始标识" + title);
             }
-
+            si = content.IndexOf('{', si);
+            if (si <= 0)
+            {
+                throw new Exception("未找到订单详情数据开始标识" + title);
+            }
             int ei = content.IndexOf("</script>", si);
             if (ei <= si)
             {
                 throw new Exception("未找到详情结尾数据");
             }
-            string orderInfo = content.Substring(si + "var detailData".Length, ei - si - "var detailData".Length).Trim().TrimStart('=');
+            while (ei >= 0 && content[ei] != '}') ei--;
+            if (ei <= si)
+            {
+                throw new Exception("未找到详情结尾数据");
+            }
+            String orderInfo = content.Substring(si, ei - si + 1).Trim();
 
-            var oi = Newtonsoft.Json.JsonConvert.DeserializeObject<TmallQueryOrderDetailResponse>(orderInfo);
-
-            pos.PopOrderStateValue = oi.overStatus.status.content[0].text;
-            pos.PopOrderStateDesc = oi.overStatus.status.content[0].text;
+            if (shop.PopType == PopType.TMALL)
+            {
+                var oi = Newtonsoft.Json.JsonConvert.DeserializeObject<TmallQueryOrderDetailResponse>(orderInfo);
+                pos.PopOrderStateValue = oi.overStatus.status.content[0].text;
+            }
+            else
+            {
+                orderInfo = Regex.Unescape(orderInfo);
+                var oi = Newtonsoft.Json.JsonConvert.DeserializeObject<TaobaoQueryOrderDetailResponse>(orderInfo);
+                pos.PopOrderStateValue = oi.mainOrder.statusInfo.text;
+            }
             pos.State = ConveretState(pos.PopOrderStateValue);
+
             return pos;
         }
 

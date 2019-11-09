@@ -15,5 +15,7 @@ namespace ShopErp.App.Domain.TaobaoHtml.Order
         public TaobaoQueryOrderDetailResponseOrderInfo orderInfo;
 
         public TaobaoQueryOrderDetailResponseOrderPayInfo payInfo;
+
+        public TaobaoQueryOrderDetailResponseOrderStatusInfo statusInfo;
     }
 }

@@ -326,7 +326,6 @@ namespace ShopErp.Server.Service.Pop.Pdd
             var popOrderState = new PopOrderState
             {
                 PopOrderId = popOrderId,
-                PopOrderStateDesc = orderState.order_status,
                 PopOrderStateValue = orderState.order_status,
                 State = os,
             };

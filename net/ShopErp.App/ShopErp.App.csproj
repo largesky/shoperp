@@ -199,8 +199,10 @@
     <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseOrderPayInfoActualFee.cs" />
     <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseOrderPrice.cs" />
     <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseOrderPriceContent.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseOrderStatusInfo.cs" />
     <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseTab.cs" />
     <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseTabContent.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderListResponseOrderStatusInfo.cs" />
     <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\Pdd\PddPrintDocument.cs" />
     <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\Pdd\PddPrintDocumentRequest.cs" />
     <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\Pdd\PddPrintDocumentRequestPrint.cs" />
@@ -577,7 +579,6 @@
     <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderListResponseOrderOrderGoodsItemInfo.cs" />
     <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderListResponseOrderOrderGoodsItemInfoExtra.cs" />
     <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderListResponseOrderPayInfo.cs" />
-    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderListResponseOrderStatusInfo.cs" />
     <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderListResponsePage.cs" />
     <Compile Include="Views\PageBar\PageBarUserControl.xaml.cs">
       <DependentUpon>PageBarUserControl.xaml</DependentUpon>
