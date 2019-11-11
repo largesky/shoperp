@@ -104,7 +104,7 @@ namespace ShopErp.App.Views.Delivery
             {
                 return OrderState.RETURNING;
             }
-            if (state.Contains("交易关闭"))
+            if (state.Contains("交易关闭") || state.Contains("退款成功"))
             {
                 return OrderState.CANCLED;
             }
@@ -456,7 +456,11 @@ namespace ShopErp.App.Views.Delivery
                         {
                             od.Order = odInDb.First;
                             var state = ConvertState(v.statusInfo.text);
-                            if (state != od.Order.State)
+                            if (od.Order.State == state || od.Order.State == OrderState.CLOSED || od.Order.State == OrderState.CANCLED)
+                            {
+                                continue;
+                            }
+                            if (state == OrderState.RETURNING || state == OrderState.CLOSED || state == OrderState.CANCLED)
                             {
                                 od.Order.State = state;
                                 od.Order.PopState = v.statusInfo.text;
@@ -470,7 +474,7 @@ namespace ShopErp.App.Views.Delivery
                             var resp = ServiceContainer.GetService<OrderService>().SaveOrUpdateOrdersByPopOrderId(shop, orders);
                             od = resp.First;
                         }
-                        currentCount++;
+
                         if (this.isRunning == false)
                         {
                             break;
@@ -482,6 +486,7 @@ namespace ShopErp.App.Views.Delivery
                     }
                     finally
                     {
+                        currentCount++;
                         allOrders.Add(od);
                     }
 
