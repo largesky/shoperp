@@ -86,7 +86,7 @@ namespace ShopErp.App.Views.Delivery
             return ColorFlag.UN_LABEL;
         }
 
-        private OrderState ConveretState(string state)
+        private OrderState ConvertState(string state)
         {
             if (state == "等待买家付款" || state.Contains("商品已拍下，等待买家付款"))
             {
@@ -100,15 +100,15 @@ namespace ShopErp.App.Views.Delivery
             {
                 return OrderState.SHIPPED;
             }
-            if (state.Contains("订单部分退款中"))
+            if (state.Contains("订单部分退款中") || state.Contains("待退货") || state.Contains("请退款"))
             {
                 return OrderState.RETURNING;
             }
-            if (state == "交易关闭")
+            if (state.Contains("交易关闭"))
             {
                 return OrderState.CANCLED;
             }
-            if (state == "交易成功")
+            if (state.Contains("交易成功"))
             {
                 return OrderState.SUCCESS;
             }
@@ -273,7 +273,7 @@ namespace ShopErp.App.Views.Delivery
                     }
                 }
                 goodsPrice = float.Parse(orderDetail.mainOrder.totalPrice[0].content[0].value);
-                deliveryPrice = float.Parse(orderDetail.mainOrder.totalPrice[1].content[0].value.Replace("(快递:", ""));
+                deliveryPrice = float.Parse(orderDetail.mainOrder.totalPrice.FirstOrDefault(obj => obj.content[0].value.Contains("快递")).content[0].value.Replace("(快递:", ""));
                 sellerGetMoney = orderDetail.mainOrder.payInfo.actualFee.value;
                 foreach (var v in orderDetail.mainOrder.subOrders)
                 {
@@ -324,7 +324,7 @@ namespace ShopErp.App.Views.Delivery
                 ReceiverName = "",
                 ReceiverPhone = "",
                 ShopId = shop.Id,
-                State = ConveretState(orderShort.statusInfo.text.Trim()),
+                State = ConvertState(orderShort.statusInfo.text.Trim()),
                 Type = OrderType.NORMAL,
                 Weight = 0,
                 DeliveryTemplateId = 0,
@@ -430,6 +430,10 @@ namespace ShopErp.App.Views.Delivery
                     throw new Exception("执行操作失败：" + ret.Message);
                 }
                 var or = Newtonsoft.Json.JsonConvert.DeserializeObject<TaobaoQueryOrderListResponse>(ret.Result.ToString());
+                if (or.page == null)
+                {
+                    throw new Exception("执行操作失败：返回数据格式无法识别");
+                }
                 if (or.mainOrders == null || or.mainOrders.Length < 1)
                 {
                     break;
@@ -447,10 +451,25 @@ namespace ShopErp.App.Views.Delivery
                     {
                         this.tbMsg.Text = string.Format("正在下载：{0}/{1} {2} ", currentCount, totalCount, v.id);
                         WPFHelper.DoEvents();
-                        var order = ParseOrder(v, shop);
-                        od.Order = order;
-                        var resp = ServiceContainer.GetService<OrderService>().SaveOrUpdateOrdersByPopOrderId(shop, orders);
-                        od = resp.First;
+                        var odInDb = ServiceContainer.GetService<OrderService>().GetByPopOrderId(v.id);
+                        if (odInDb.Total >= 1)
+                        {
+                            od.Order = odInDb.First;
+                            var state = ConvertState(v.statusInfo.text);
+                            if (state != od.Order.State)
+                            {
+                                od.Order.State = state;
+                                od.Order.PopState = v.statusInfo.text;
+                                var resp = ServiceContainer.GetService<OrderService>().Update(od.Order);
+                            }
+                        }
+                        else
+                        {
+                            var order = ParseOrder(v, shop);
+                            od.Order = order;
+                            var resp = ServiceContainer.GetService<OrderService>().SaveOrUpdateOrdersByPopOrderId(shop, orders);
+                            od = resp.First;
+                        }
                         currentCount++;
                         if (this.isRunning == false)
                         {
@@ -570,7 +589,7 @@ namespace ShopErp.App.Views.Delivery
             var oi = Newtonsoft.Json.JsonConvert.DeserializeObject<ShopErp.App.Domain.TaobaoHtml.Order.TmallQueryOrderDetailResponse>(orderInfo);
 
             pos.PopOrderStateValue = oi.overStatus.status.content[0].text;
-            pos.State = ConveretState(pos.PopOrderStateValue);
+            pos.State = ConvertState(pos.PopOrderStateValue);
             return pos;
         }
 

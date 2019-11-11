@@ -143,7 +143,10 @@
                                             <ContextMenu>
                                                 <MenuItem Header="向前选择" Name="miSelectPre" Click="miSelectPre_Click" />
                                                 <MenuItem Header="向后选择" Name="miSelectForward" Click="miSelectForward_Click" />
-                                                <MenuItem Header="编辑订单" Name="miEditOrder" Click="miEditOrder_Click" />
+                                                <MenuItem Header="选择相同厂家名称" Name="miSelectSameVendor" Click="MiSelectSameVendor_Click"/>
+                                                <MenuItem Header="选择相同商品货号" Name="miSelectSameGoods" Click="MiSelectSameGoods_Click"/>
+                                                <MenuItem Header="选择相同商品编号" Name="miSelectSameGoodsById" Click="MiSelectSameGoodsById_Click"/>
+                                                <MenuItem Header="编辑订单收货信息" Name="miEditOrder" Click="miEditOrder_Click" />
                                             </ContextMenu>
                                         </DataGrid.ContextMenu>
                                         <DataGrid.Columns>

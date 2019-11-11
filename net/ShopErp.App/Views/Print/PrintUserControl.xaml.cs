@@ -413,6 +413,49 @@ namespace ShopErp.App.Views.Print
             }
         }
 
+
+        private void SelectGoods(object sender, Func<OrderGoods, OrderGoods, bool> predicate)
+        {
+            try
+            {
+                var item = this.GetMIOrder(sender);
+                MenuItem mi = sender as MenuItem;
+                var orders = (((ContextMenu)mi.Parent).PlacementTarget as DataGrid).ItemsSource as ObservableCollection<PrintOrderViewModel>;
+                if (item.Source.OrderGoodss == null || item.Source.OrderGoodss.Count > 1)
+                {
+                    MessageBox.Show("空订单不能选择");
+                }
+                foreach (var or in orders)
+                {
+                    if (or.Source.OrderGoodss == null || or.Source.OrderGoodss.Count < 1)
+                    {
+                        continue;
+                    }
+                    or.IsChecked = or.Source.OrderGoodss.Any(o => item.Source.OrderGoodss.Any(obj => predicate(o, obj)));
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void MiSelectSameVendor_Click(object sender, RoutedEventArgs e)
+        {
+            SelectGoods(sender, (o1, o2) => o1.Vendor == o2.Vendor);
+        }
+
+        private void MiSelectSameGoods_Click(object sender, RoutedEventArgs e)
+        {
+            SelectGoods(sender, (o1, o2) => o1.Number == o2.Number);
+        }
+
+        private void MiSelectSameGoodsById_Click(object sender, RoutedEventArgs e)
+        {
+            SelectGoods(sender, (o1, o2) => o1.NumberId == o2.NumberId);
+        }
+
         private void miEditOrder_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -434,6 +477,7 @@ namespace ShopErp.App.Views.Print
                 MessageBox.Show(ex.Message);
             }
         }
+
 
         #endregion
 
@@ -468,5 +512,7 @@ namespace ShopErp.App.Views.Print
                 MessageBox.Show(ex.Message);
             }
         }
+
+
     }
 }
