@@ -148,6 +148,55 @@ namespace ShopErp.Server.Service.Restful
             }
         }
 
+
+        public float ComputeDeliveryMoneyImplByCount(string deliveryCompany, string address, bool empty, PopPayType popPayType, int goodsCount)
+        {
+            try
+            {
+                var dt = this.GetAllInCach().FirstOrDefault(obj => obj.DeliveryCompany == deliveryCompany && ((obj.OnlinePayTypeUse && popPayType == PopPayType.ONLINE) || (obj.CodPayTypeUse && popPayType == PopPayType.COD)));
+                if (dt == null)
+                {
+                    throw new Exception("未找到匹配的模板");
+                }
+
+                if (empty)
+                {
+                    return dt.EmptyHotPaperMoney;
+                }
+                DeliveryTemplateArea da = dt.Areas.FirstOrDefault(obj => string.IsNullOrWhiteSpace(obj.Areas));
+                foreach (var v in dt.Areas)
+                {
+                    if (string.IsNullOrWhiteSpace(v.Areas) || string.IsNullOrWhiteSpace(address))
+                    {
+                        continue;
+                    }
+                    string[] ss = v.Areas.Split(SP_Char, StringSplitOptions.RemoveEmptyEntries);
+                    //特殊地址
+                    if (SPEICAL_ADDRESS.Any(obj => address.Contains(obj)) && ss.Any(obj => address.Contains(obj)))
+                    {
+                        da = v;
+                        break;
+                    }
+
+                    if (ss.Any(obj => address.StartsWith(obj)))
+                    {
+                        da = v;
+                        break;
+                    }
+                }
+
+                if (da == null)
+                {
+                    throw new Exception("地址与运费模板:" + dt.Name + " 无法匹配且没有配置默认地区运费");
+                }
+                return da.StartPrice;
+            }
+            catch (Exception ex)
+            {
+                throw new WebFaultException<ResponseBase>(new ResponseBase { error = ex.Message }, System.Net.HttpStatusCode.OK);
+            }
+        }
+
         public float ComputeDeliveryMoneyImpl(string deliveryCompany, string address, bool empty, PopPayType popPayType, float weight)
         {
             try

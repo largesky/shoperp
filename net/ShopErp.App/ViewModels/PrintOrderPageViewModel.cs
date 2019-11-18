@@ -241,7 +241,7 @@ namespace ShopErp.App.ViewModels
                     var pts = ServiceContainer.GetService<WuliuPrintTemplateService>().GetWuliuPrintTemplates(this.Shop, this.WuliuBranch.Type).Datas;
                     if (pts.Count < 1)
                     {
-                        return ;
+                        return;
                     }
                     foreach (var pt in pts)
                     {
@@ -437,9 +437,6 @@ namespace ShopErp.App.ViewModels
                     this.WorkStateMessage = string.Format("第五步：正在生成自定义数据{0}/{1}...", i + 1, wuliuNumbers.Length);
                     WPFHelper.DoEvents();
                     userDatas[i] = new Dictionary<string, string>();
-                    userDatas[i].Add("payTime", "付款：" + mergedOrders[i].PopPayTime.ToString("yyyy-MM-dd HH:mm:ss"));
-                    userDatas[i].Add("shopMark", allShops.FirstOrDefault(obj => obj.Id == mergedOrders[i].ShopId).Mark);
-                    userDatas[i].Add("goodsCount", mergedOrders[i].OrderGoodss.Select(obj => obj.Count).Sum().ToString());
                     StringBuilder goods_commment = new StringBuilder();
                     if (mergedOrders[i].Type == OrderType.NORMAL)
                     {
@@ -447,19 +444,19 @@ namespace ShopErp.App.ViewModels
                         {
                             foreach (var goods in mergedOrders[i].OrderGoodss.Where(obj => (int)obj.State <= (int)OrderState.SUCCESS))
                             {
-                                string areaAndDoor = VendorService.FindAreaOrStreet(vs.GetVendorAddress_InCach(goods.Vendor), "区") + "-" + VendorService.FindDoor(vs.GetVendorAddress_InCach(goods.Vendor));
-                                goods_commment.AppendLine(areaAndDoor + " " + vs.GetVendorPingyingName(goods.Vendor).ToUpper() + " " + goods.Number + " " + goods.Edtion + " " + goods.Color + " " + goods.Size + " (" + goods.Count + ")");
+                                goods_commment.AppendLine(vs.GetVendorPingyingName(goods.Vendor).ToUpper() + " " + goods.Number + " " + goods.Edtion + " " + goods.Color + " " + goods.Size + " (" + goods.Count + ")");
                             }
                         }
                         if (mergedOrders[i].PopPayType != PopPayType.COD)
                             goods_commment.AppendLine(mergedOrders[i].PopSellerComment);
                     }
                     userDatas[i].Add("goodsInfoSellerComment", goods_commment.ToString());
+                    userDatas[i].Add("suminfo", string.Format("店:{0},数:{1},付:{2}", allShops.FirstOrDefault(obj => obj.Id == mergedOrders[i].ShopId).Mark, mergedOrders[i].OrderGoodss.Select(obj => obj.Count).Sum().ToString(), mergedOrders[i].PopPayTime.ToString("yyyy-MM-dd HH:mm:ss")));
                 }
 
                 this.WorkStateMessage = string.Format("第六步：输出打印数据...");
                 WPFHelper.DoEvents();
-                this.printDoc =  new CainiaoPrintDocument(mergedOrders.ToArray(), wuliuNumbers, userDatas, this.WuliuPrintTemplate);
+                this.printDoc = new CainiaoPrintDocument(mergedOrders.ToArray(), wuliuNumbers, userDatas, this.WuliuPrintTemplate);
                 string file = printDoc.StartPrint(this.Printer, this.PrintServerAdd);
                 this.WorkStateMessage = string.Format("第七步：保存打印记录...");
                 WPFHelper.DoEvents();
@@ -488,6 +485,7 @@ namespace ShopErp.App.ViewModels
                     }
                     File.WriteAllBytes(sfd.FileName, content);
                 }
+                LocalConfigService.UpdateValue(SystemNames.CONFIG_PRINTER_DELIVERY_HOT, this.Printer);
             }
             finally
             {

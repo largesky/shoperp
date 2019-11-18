@@ -441,19 +441,56 @@ namespace ShopErp.App.Views.Print
             }
         }
 
+        private void SelectOrder(object sender, Func<Order, Order, bool> predicate)
+        {
+            try
+            {
+                var item = this.GetMIOrder(sender);
+                MenuItem mi = sender as MenuItem;
+                var orders = (((ContextMenu)mi.Parent).PlacementTarget as DataGrid).ItemsSource as ObservableCollection<PrintOrderViewModel>;
+                if (item.Source.OrderGoodss == null || item.Source.OrderGoodss.Count > 1)
+                {
+                    MessageBox.Show("空订单不能选择");
+                }
+                foreach (var or in orders)
+                {
+                    if (or.Source.OrderGoodss == null || or.Source.OrderGoodss.Count < 1)
+                    {
+                        continue;
+                    }
+                    or.IsChecked = predicate(item.Source, or.Source);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
         private void MiSelectSameVendor_Click(object sender, RoutedEventArgs e)
         {
             SelectGoods(sender, (o1, o2) => o1.Vendor == o2.Vendor);
         }
 
-        private void MiSelectSameGoods_Click(object sender, RoutedEventArgs e)
-        {
-            SelectGoods(sender, (o1, o2) => o1.Number == o2.Number);
-        }
-
         private void MiSelectSameGoodsById_Click(object sender, RoutedEventArgs e)
         {
             SelectGoods(sender, (o1, o2) => o1.NumberId == o2.NumberId);
+        }
+
+        private void MiSelectSameShop_Click(object sender, RoutedEventArgs e)
+        {
+            SelectOrder(sender, (o1, o2) => o1.ShopId == o2.ShopId);
+        }
+
+        private void MiSelectSamePop_Click(object sender, RoutedEventArgs e)
+        {
+            SelectOrder(sender, (o1, o2) => o1.PopType == o2.PopType);
+        }
+
+        private void MiSelectSameGoodsByIdAndColorSize_Click(object sender, RoutedEventArgs e)
+        {
+            SelectGoods(sender, (o1, o2) => o1.NumberId == o2.NumberId && o1.Edtion == o1.Edtion && o1.Color == o2.Color && o1.Size == o2.Size);
         }
 
         private void miEditOrder_Click(object sender, RoutedEventArgs e)

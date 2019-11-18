@@ -6,7 +6,7 @@
     xmlns:App="clr-namespace:ShopErp.App" x:Class="ShopErp.App.Views.Config.ConfigUserControl"
     mc:Ignorable="d"
     d:DesignHeight="900" d:DesignWidth="1200" Loaded="UserControl_Loaded">
-    <Grid>
+    <Grid Margin="3">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -22,26 +22,8 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <GroupBox Header="称重设备" Grid.Row="0" Grid.Column="0">
-            <Grid HorizontalAlignment="Left" MinHeight="60">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="200" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="设备类型:" Margin="3" VerticalAlignment="Center" />
-                <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cbbDeviceTypes" DisplayMemberPath="Name"
-                          SelectionChanged="cbbDeviceTypes_SelectionChanged" Margin="3" />
-                <DockPanel Grid.Row="1" Grid.ColumnSpan="2" x:Name="dpHostDeviceConfigs" />
-            </Grid>
-        </GroupBox>
-
-        <GroupBox Header="系统设置" Grid.Row="0" Grid.Column="1">
+        <GroupBox Header="系统设置" Grid.Row="0" Grid.Column="0">
             <Grid HorizontalAlignment="Left" MinHeight="60">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -60,6 +42,25 @@
                     <ComboBoxItem>不显示</ComboBoxItem>
                     <ComboBox.SelectedIndex>0</ComboBox.SelectedIndex>
                 </ComboBox>
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="图片路径:" Margin="3" VerticalAlignment="Center" />
+                <TextBox Grid.Row="1" Grid.Column="1" x:Name="tbImageDir" Margin="3" VerticalAlignment="Center" />
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Header="电子面单发货人信息" Grid.Row="0" Grid.Column="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="200" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="发货人姓名:" Margin="3" VerticalAlignment="Center" />
+                <TextBox Grid.Row="0" Grid.Column="1" x:Name="tbSenderName" Margin="3" VerticalAlignment="Center" />
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="发货人电话:" Margin="3" VerticalAlignment="Center" />
+                <TextBox Grid.Row="1" Grid.Column="1" x:Name="tbSenderPhone" Margin="3" VerticalAlignment="Center" />
             </Grid>
         </GroupBox>
 
@@ -121,8 +122,6 @@
                     <ComboBox.SelectedIndex>0</ComboBox.SelectedIndex>
                 </ComboBox>
 
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="图片路径:" Margin="3" VerticalAlignment="Center" />
-                <TextBox Grid.Row="1" Grid.Column="1" x:Name="tbImageDir" Margin="3" VerticalAlignment="Center" />
 
                 <TextBlock Grid.Row="3" Grid.Column="0" Text="拿货人姓名:" Margin="3" VerticalAlignment="Center" />
                 <TextBox Grid.Row="3" Grid.Column="1" x:Name="tbName" Margin="3" VerticalAlignment="Center" />
@@ -136,22 +135,6 @@
             </Grid>
         </GroupBox>
 
-        <GroupBox Header="菜鸟接口发货人信息" Grid.Row="1" Grid.Column="3">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="200" />
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="发货人姓名:" Margin="3" VerticalAlignment="Center" />
-                <TextBox Grid.Row="0" Grid.Column="1" x:Name="tbSenderName" Margin="3" VerticalAlignment="Center" />
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="发货人电话:" Margin="3" VerticalAlignment="Center" />
-                <TextBox Grid.Row="1" Grid.Column="1" x:Name="tbSenderPhone" Margin="3" VerticalAlignment="Center" />
-            </Grid>
-        </GroupBox>
         <Button x:Name="btnSave" Grid.Row="3" Content="保存" Width="60" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnSave_Click" Margin="3" />
     </Grid>
 </UserControl>

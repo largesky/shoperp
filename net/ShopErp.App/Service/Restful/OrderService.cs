@@ -42,12 +42,11 @@ namespace ShopErp.App.Service.Restful
             return DoPost<ResponseBase>(para);
         }
 
-        public Order[] MarkDelivery(string deliveryNumber, float weight, bool chkWeight, bool chkPopState, bool chkLocalState)
+        public Order[] MarkDelivery(string deliveryNumber, int goodsCount, bool chkPopState, bool chkLocalState)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
             para["deliveryNumber"] = deliveryNumber;
-            para["weight"] = weight;
-            para["chkWeight"] = chkWeight;
+            para["goodsCount"] = goodsCount;
             para["chkPopState"] = chkPopState;
             para["chkLocalState"] = chkLocalState;
             return DoPost<DataCollectionResponse<Order>>(para).Datas.ToArray();

@@ -15,7 +15,7 @@ namespace ShopErp.App.ViewModels
 
         public string DeliveryNumber { get; set; }
 
-        public double Weight { get; set; }
+        public int GoodsCount { get; set; }
 
         public DateTime Time { get; set; }
 

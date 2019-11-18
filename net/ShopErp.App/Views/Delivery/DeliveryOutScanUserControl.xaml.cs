@@ -28,7 +28,6 @@ namespace ShopErp.App.Views.Delivery
     public partial class DeliveryOutScanUserControl : UserControl
     {
         private bool myLoaded = false;
-        private IDevice device = null;
         private OrderService os = ServiceContainer.GetService<OrderService>();
 
         private System.Collections.ObjectModel.ObservableCollection<DeliveryScanViewModel> scanedViewModels =
@@ -51,25 +50,6 @@ namespace ShopErp.App.Views.Delivery
                 return;
             }
             this.dgvScanedItems.ItemsSource = this.scanedViewModels;
-            try
-            {
-                string deviceType = LocalConfigService.GetValue(SystemNames.CONFIG_WEIGHT_DEVICE, "");
-
-                if (string.IsNullOrWhiteSpace(deviceType) == false)
-                {
-                    Type t = Type.GetType(deviceType, true);
-                    this.device = Activator.CreateInstance(t) as IDevice;
-                    if (this.device == null)
-                    {
-                        throw new Exception("无法创建指定的称重设备:" + "");
-                    }
-                }
-                myLoaded = true;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "打开设备失败");
-            }
         }
 
         private void tbDeliveryNumber_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -81,7 +61,6 @@ namespace ShopErp.App.Views.Delivery
             e.Handled = true;
 
             this.tbResult.Text = "请扫描条码";
-            this.tbResultWeight.Text = "0 KG";
             this.tbResult.Background = null;
             try
             {
@@ -90,36 +69,8 @@ namespace ShopErp.App.Views.Delivery
                 {
                     return;
                 }
-                float weight = 0;
-                if (this.chkEnableInput.IsChecked.Value)
-                {
-                    try
-                    {
-                        weight = float.Parse(this.tbWeight.Text.Trim());
-                    }
-                    catch
-                    {
-                        throw new Exception("你开启的手动输入重量，但输入值不正确");
-                    }
-                }
-                else
-                {
-                    this.tbWeight.Text = "";
-                    if (this.device == null)
-                    {
-                        throw new Exception("请配置称重设备");
-                    }
-                    weight = (float)this.device.ReadWeight();
-                }
-
-                weight = (float)Math.Round(weight, 2);
-                if (weight <= 0)
-                {
-                    throw new Exception("重量必须大于0");
-                }
-                this.tbResultWeight.Text = weight.ToString("F2") + "KG";
-                this.tbWeight.Text = weight.ToString("F2");
-                var orders = this.os.MarkDelivery(number, weight, this.chkWeight.IsChecked.Value, this.chkPopState.IsChecked.Value, this.chkLocalState.IsChecked.Value);
+                int goodsCount = int.Parse(this.chkEnableInput.Text.Trim());
+                var orders = this.os.MarkDelivery(number, goodsCount, this.chkPopState.IsChecked.Value, this.chkLocalState.IsChecked.Value);
                 //更新后台发货
                 foreach (var order in orders)
                 {
@@ -130,7 +81,7 @@ namespace ShopErp.App.Views.Delivery
                         DeliveryNumber = number,
                         OrderId = order.Id.ToString(),
                         Time = DateTime.Now,
-                        Weight = weight,
+                        GoodsCount = goodsCount,
                         ReceiverInfo = order.ReceiverName + "," + order.ReceiverPhone + "," + order.ReceiverMobile + "," + order.ReceiverAddress,
                     };
 
@@ -156,8 +107,6 @@ namespace ShopErp.App.Views.Delivery
                     }
                     or.OrderGoodss = ogs;
                 }
-                this.lstItems.ItemsSource = or.OrderGoodss;
-                this.spReceiver.DataContext = or;
                 var count = this.scanedViewModels.GroupBy(obj => obj.DeliveryCompany).ToArray();
                 string message = string.Join(",", count.Select(obj => obj.Key + ": " + obj.Select(o => o.DeliveryNumber).Distinct().Count()));
                 this.tbTotal.Text = string.Format("订单总数：{0},快递总数:{1},{2}", this.scanedViewModels.Count, this.scanedViewModels.Select(obj => obj.DeliveryNumber).Distinct().Count(), message);
@@ -169,12 +118,10 @@ namespace ShopErp.App.Views.Delivery
                 Speaker.Speak("出现错误");
                 this.tbResult.Background = Brushes.Red;
                 this.tbResult.Text = ex.Message;
-                this.lstItems.ItemsSource = null;
             }
             finally
             {
                 this.tbDeliveryNumber.Text = "";
-                this.chkWeight.IsChecked = true;
                 this.chkLocalState.IsChecked = true;
             }
         }

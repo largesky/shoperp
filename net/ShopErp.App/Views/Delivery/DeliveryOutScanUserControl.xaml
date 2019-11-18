@@ -8,107 +8,35 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="60" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="300" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" MinHeight="100" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-
         <StackPanel Grid.Row="0" Orientation="Horizontal">
             <TextBlock Text="发货检查：" Margin="3" VerticalAlignment="Center"/>
-            <CheckBox Name="chkWeight" Margin="3" VerticalAlignment="Center" Content="重量匹配" IsChecked="True" />
             <CheckBox Name="chkPopState" Margin="3" VerticalAlignment="Center" Content="平台状态" IsChecked="True" />
             <CheckBox Name="chkLocalState" Margin="3" VerticalAlignment="Center" Content="本地状态" IsChecked="True" />
-            <CheckBox Name="chkEnableInput" Margin="100,3,3,3" Content="手动输入重量" VerticalAlignment="Center" />
-            <TextBox Name="tbWeight" Margin="3" VerticalAlignment="Center" Width="60" IsEnabled="{Binding IsChecked, ElementName=chkEnableInput}" />
+            <TextBlock Name="chkEnableInput" Margin="30,3,3,3" Text="商品数量：" VerticalAlignment="Center" />
+            <TextBox Name="tbWeight" Margin="3" VerticalAlignment="Center" Width="40" Text="1"/>
             <TextBlock Text="物流单号:" Margin="3" VerticalAlignment="Center" />
             <TextBox Name="tbDeliveryNumber" Margin="3" Width="150" PreviewKeyDown="tbDeliveryNumber_PreviewKeyDown" />
             <TextBlock Text="(使用条码枪扫描，或者手动输入后按回车键)" Margin="3" VerticalAlignment="Center" />
         </StackPanel>
-
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Height="50" Text="扫描发货" Name="tbResult" Margin="5" FontFamily="黑体"
-                       FontWeight="ExtraBold" FontSize="42" VerticalAlignment="Center" HorizontalAlignment="Center" />
-            <TextBlock Grid.Column="1" Text="0 KG" Name="tbResultWeight" Margin="131,5,182,5" FontFamily="黑体"
-                       FontWeight="ExtraBold" FontSize="42" VerticalAlignment="Center" HorizontalAlignment="Center" />
-        </Grid>
-
-        <StackPanel Grid.Row="3" Orientation="Horizontal" Name="spReceiver">
-            <TextBlock Text="订单编号:" Margin="3" VerticalAlignment="Center" FontSize="14" />
-            <TextBlock Text="{Binding Id}" Margin="3" VerticalAlignment="Center" FontSize="14" />
-            <TextBlock Text="创建时间:" Margin="3" VerticalAlignment="Center" FontSize="14" />
-            <TextBlock Text="{Binding CreateTime,Converter={StaticResource datetimeConverter}}" Margin="3"
-                       VerticalAlignment="Center" FontSize="14" />
-            <TextBlock Margin="3" VerticalAlignment="Center" FontSize="14" Text="收货人信息:" />
-            <TextBlock Text="{Binding ReceiverName}" Margin="3" VerticalAlignment="Center" FontSize="14" />
-            <TextBlock Text="{Binding Mobile}" Margin="3" VerticalAlignment="Center" FontSize="14" />
-            <TextBlock Text="{Binding Phone}" Margin="3" VerticalAlignment="Center" FontSize="14" />
-            <TextBlock Text="{Binding ReceiverAddress}" VerticalAlignment="Center" FontSize="14" />
-        </StackPanel>
-        <ListBox Grid.Row="4" Name="lstItems" ScrollViewer.CanContentScroll="False">
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel></WrapPanel>
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="ListBoxItem">
-                    <Setter Property="Margin" Value="3"/>
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate>
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-
-                                    <Image Source="{Binding Image,Converter={StaticResource webUrlImageConverter}}" Width="200" Height="200"/>
-                                    <StackPanel Grid.Row="1" Orientation="Horizontal">
-                                        <TextBlock Text="{Binding Vendor}" Margin="3" VerticalAlignment="Center"/>
-                                        <TextBlock Text="{Binding Number}" Margin="3" VerticalAlignment="Center"/>
-                                        <TextBlock Text="{Binding Edtion}" Margin="3" VerticalAlignment="Center"/>
-
-                                    </StackPanel>
-                                    <StackPanel Grid.Row="2" Orientation="Horizontal">
-                                        <TextBlock Text="{Binding Color}" Margin="3" VerticalAlignment="Center"/>
-                                        <TextBlock Text="{Binding Size}" Margin="3" VerticalAlignment="Center"/>
-                                        <TextBlock Text="{Binding Count}" Margin="3" VerticalAlignment="Center"/>
-                                    </StackPanel>
-                                </Grid>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </ListBox.ItemContainerStyle>
-        </ListBox>
-
-        <GridSplitter Grid.Row="5" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-
-        <StackPanel Grid.Row="6" Orientation="Horizontal">
-            <TextBlock Text="已扫描快递单号:" FontSize="16" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="1" Text="扫描发货" Name="tbResult" Margin="5" FontFamily="黑体" FontWeight="ExtraBold" FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        <StackPanel Grid.Row="4" Orientation="Horizontal">
+            <TextBlock Text="已扫描快递单号:"  Margin="3" VerticalAlignment="Center" HorizontalAlignment="Left" />
             <TextBlock Name="tbTotal" Margin="3" VerticalAlignment="Center" FontSize="16" />
-            <Button Name="btnClearHistory" Content="清空记录" Click="btnClearHistory_Click" Margin="3"
-                    VerticalAlignment="Center" Width="100" FontSize="16" />
+            <Button Name="btnClearHistory" Content="清空记录" Click="btnClearHistory_Click" Margin="3" VerticalAlignment="Center" Width="100" />
         </StackPanel>
-
-        <DataGrid Grid.Row="7" GridLinesVisibility="All" AutoGenerateColumns="False" IsReadOnly="True"
-                  Name="dgvScanedItems" SelectionMode="Extended" SelectionUnit="CellOrRowHeader">
+        <DataGrid Grid.Row="5" GridLinesVisibility="All" AutoGenerateColumns="False" IsReadOnly="True" Name="dgvScanedItems" SelectionMode="Extended" SelectionUnit="CellOrRowHeader">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="订单编号" Binding="{Binding OrderId}" Width="Auto" />
                 <DataGridTextColumn Header="快递公司" Binding="{Binding DeliveryCompany}" Width="Auto" />
                 <DataGridTextColumn Header="快递单号" Binding="{Binding DeliveryNumber}" Width="Auto" />
                 <DataGridTextColumn Header="包裹重量" Binding="{Binding Weight,StringFormat=F2}" Width="Auto" />
-                <DataGridTextColumn Header="扫描时间" Binding="{Binding Time,Converter={StaticResource datetimeConverter}}"
-                                    Width="Auto" />
+                <DataGridTextColumn Header="扫描时间" Binding="{Binding Time,Converter={StaticResource datetimeConverter}}" Width="Auto" />
                 <DataGridTextColumn Header="商品信息" Binding="{Binding OrderGoodsInfo}" Width="Auto" />
                 <DataGridTextColumn Header="收货人信息" Binding="{Binding ReceiverInfo}" Width="*" />
             </DataGrid.Columns>

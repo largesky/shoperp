@@ -45,17 +45,6 @@ namespace ShopErp.App.Views.Config
 
             try
             {
-                //称重设备
-                this.cbbDeviceTypes.ItemsSource = new IDevice[] { new KunhongDevice() };
-                foreach (var item in this.cbbDeviceTypes.ItemsSource)
-                {
-                    if (item.GetType().AssemblyQualifiedName == LocalConfigService.GetValue(SystemNames.CONFIG_WEIGHT_DEVICE, ""))
-                    {
-                        this.cbbDeviceTypes.SelectedItem = item;
-                        break;
-                    }
-                }
-
                 //系统设置
                 string imageMode = LocalConfigService.GetValue(SystemNames.CONFIG_WEB_IMAGE_MODE, "内网");
                 this.cbbImageMode.SelectedIndex = imageMode == "内网" ? 0 : (imageMode == "外网" ? 1 : 2);
@@ -75,8 +64,8 @@ namespace ShopErp.App.Views.Config
                 string odm = LocalConfigService.GetValue(SystemNames.CONFIG_ORDER_DOWNLOAD_MODE, "");
                 this.cbbOrderDownloadMode.SelectedIndex = "本地读取" == odm ? 1 : 0;
                 this.tbImageDir.Text = LocalConfigService.GetValue(SystemNames.CONFIG_WEB_IMAGE_DIR, "");
-                this.tbName.Text = LocalConfigService.GetValue("GOODS_NAME", "贾勇");
-                this.tbPhone.Text = LocalConfigService.GetValue("GOODS_PHONE", "15590065809");
+                this.tbName.Text = ServiceContainer.GetService<SystemConfigService>().Get(-1, "GOODS_NAME", "贾勇");
+                this.tbPhone.Text = ServiceContainer.GetService<SystemConfigService>().Get(-1, "GOODS_PHONE", "15590065809");
                 this.cbbGoodsTemplateType.ItemsSource = PrintTemplateService.GetAllLocal().Where(obj => obj.Type == PrintTemplate.TYPE_GOODS).Select(obj => obj.Name).ToArray();
                 this.cbbGoodsTemplateType.SelectedItem = LocalConfigService.GetValue(SystemNames.CONFIG_GOODS_TEMPLATE, "");
                 this.tbSenderName.Text = ServiceContainer.GetService<SystemConfigService>().Get(-1, SystemNames.CONFIG_CAINIAO_SENDER_NAME, "贾兴红");
@@ -88,32 +77,10 @@ namespace ShopErp.App.Views.Config
             }
         }
 
-        private void cbbDeviceTypes_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            IDevice device = this.cbbDeviceTypes.SelectedItem as IDevice;
-            this.dpHostDeviceConfigs.Children.Clear();
-            if (device != null)
-            {
-                IDeviceConfigUI ui = device.CreateNew();
-                this.dpHostDeviceConfigs.Children.Add(ui.GetControl());
-                this.dpHostDeviceConfigs.DataContext = ui;
-            }
-        }
-
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                //称重设备
-                if (this.cbbDeviceTypes.SelectedItem != null)
-                {
-                    LocalConfigService.UpdateValue(SystemNames.CONFIG_WEIGHT_DEVICE, this.cbbDeviceTypes.SelectedItem.GetType().AssemblyQualifiedName);
-                    IDeviceConfigUI ui = this.dpHostDeviceConfigs.DataContext as IDeviceConfigUI;
-                    if (ui != null)
-                    {
-                        ui.Save();
-                    }
-                }
                 //系统设置
                 LocalConfigService.UpdateValue(SystemNames.CONFIG_WEB_IMAGE_MODE, this.cbbImageMode.Text.Trim());
 
@@ -126,8 +93,8 @@ namespace ShopErp.App.Views.Config
                 //业务设置
                 LocalConfigService.UpdateValue(SystemNames.CONFIG_WEB_IMAGE_DIR, this.tbImageDir.Text.Trim());
                 LocalConfigService.UpdateValue(SystemNames.CONFIG_ORDER_DOWNLOAD_MODE, this.cbbOrderDownloadMode.Text.Trim());
-                LocalConfigService.UpdateValue("GOODS_PHONE", this.tbPhone.Text.Trim());
-                LocalConfigService.UpdateValue("GOODS_NAME", this.tbName.Text.Trim());
+                ServiceContainer.GetService<SystemConfigService>().SaveOrUpdate(-1,"GOODS_PHONE", this.tbPhone.Text.Trim());
+                ServiceContainer.GetService<SystemConfigService>().SaveOrUpdate(-1, "GOODS_NAME", this.tbName.Text.Trim());
                 LocalConfigService.UpdateValue(SystemNames.CONFIG_GOODS_TEMPLATE, this.cbbGoodsTemplateType.Text.Trim());
 
                 ServiceContainer.GetService<SystemConfigService>().SaveOrUpdate(-1, SystemNames.CONFIG_CAINIAO_SENDER_NAME, this.tbSenderName.Text.Trim());

@@ -59,10 +59,11 @@
             <TextBlock Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="输入类型："  />
             <ComboBox Grid.Column="1" Name="cbbDataType" Margin="3" VerticalAlignment="Center" Width="100">
                 <ComboBox.Items>
-                    <ComboBoxItem>快递单号</ComboBoxItem>
                     <ComboBoxItem>订单编号</ComboBoxItem>
+                    <ComboBoxItem>快递单号</ComboBoxItem>
+                    <ComboBoxItem>买家账号</ComboBoxItem>
                 </ComboBox.Items>
-                <ComboBox.SelectedIndex>1</ComboBox.SelectedIndex>
+                <ComboBox.SelectedIndex>0</ComboBox.SelectedIndex>
             </ComboBox>
             <TextBlock Grid.Column="2" Margin="3" VerticalAlignment="Center" Text="输入订单列表："  />
             <TextBox Grid.Column="3" Name="tbPopOrderId" Margin="3" VerticalAlignment="Center" AcceptsReturn="True" AcceptsTab="True" Height="18" TextChanged="tbPopOrderId_TextChanged" />

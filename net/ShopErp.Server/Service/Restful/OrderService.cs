@@ -403,7 +403,7 @@ namespace ShopErp.Server.Service.Restful
 
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/markdelivery.html")]
-        public DataCollectionResponse<Order> MarkDelivery(string deliveryNumber, float weight, bool chkWeight, bool chkPopState, bool chkLocalState)
+        public DataCollectionResponse<Order> MarkDelivery(string deliveryNumber, int goodsCount, bool chkPopState, bool chkLocalState)
         {
             try
             {
@@ -474,65 +474,33 @@ namespace ShopErp.Server.Service.Restful
                         totalOgs.AddRange(or.OrderGoodss.Where(obj => obj.State != OrderState.SPILTED));
                     }
                 }
-
-                //检查重量
-                if (chkWeight && totalOgs.Count > 0)
+                if (goodsCount != totalOgs.Where(obj => obj.IsPeijian == false).Select(obj => obj.Count).Sum())
                 {
-                    //除去配件的订单商品
-                    var ordergoods = totalOgs.Where(obj => obj.IsPeijian == false).ToArray();
-                    float totalOrderWeight = ordergoods.Select(obj => obj.Weight * obj.Count).Sum();
-                    int unWeightCount = ordergoods.Where(obj => obj.Weight <= 0).Select(obj => obj.Count).Sum();
-                    if (unWeightCount == 0)
-                    {
-                        // 所有商品都有重量
-                        if (Math.Abs(totalOrderWeight - weight) > 0.3)
-                        {
-                            throw new Exception(string.Format("重量相差过大当前:{0:F2},系统:{1:F2}", weight, totalOrderWeight));
-                        }
-                    }
-                    else
-                    {
-                        if (weight < totalOrderWeight + unWeightCount * 0.3)
-                        {
-                            throw new Exception(string.Format("所有商品重量应该大于当前:{0:F2},预期值:{1:F2}", weight, totalOrderWeight + unWeightCount * 0.2));
-                        }
-                    }
-                    //只有一个订单商品，则可以更新重量，其它情况不管
-                    if (ordergoods.Length == 1)
-                    {
-                        float w = (float)Math.Round(weight / ordergoods[0].Count, 2);
-                        ordergoods[0].Weight = (float)Math.Round(weight / ordergoods[0].Count, 2);
-                        var gu = ServiceContainer.GetService<GoodsService>().GetById(ordergoods[0].NumberId).First;
-                        if (gu != null)
-                        {
-                            float nw = gu.Weight > 0.001 ? (float)Math.Round((w + gu.Weight) / 2, 2) : w;
-                            ServiceContainer.GetService<GoodsService>().UpdateWeight(ordergoods[0].NumberId, nw);
-                        }
-                    }
+                    throw new Exception("商品数量不匹配");
                 }
+
 
                 //第一个正常的订单，如果都不是，则默认为第一个订单
                 var mainOrder = normalOrders.Length > 0 ? normalOrders[0] : allOrders[0];
 
                 //计算快递费用
-                double deliveryMoney = ServiceContainer.GetService<DeliveryTemplateService>().ComputeDeliveryMoneyImpl(mainOrder.DeliveryCompany, mainOrder.ReceiverAddress, mainOrder.Type != OrderType.NORMAL, mainOrder.PopPayType, weight);
+                double deliveryMoney = ServiceContainer.GetService<DeliveryTemplateService>().ComputeDeliveryMoneyImplByCount(mainOrder.DeliveryCompany, mainOrder.ReceiverAddress, mainOrder.Type != OrderType.NORMAL, mainOrder.PopPayType, goodsCount);
 
                 //更新订单状态，运费金额信息
                 List<object> objsToUpdate = new List<object>(totalOgs);
                 foreach (OrderGoods og in totalOgs)
                 {
                     og.State = OrderState.SHIPPED;
-                    og.Comment = "";
                 }
 
                 string comment = string.Format("【发货{0}】", DateTime.Now.ToString("MM-dd HH:mm"));
                 foreach (var order in allOrders)
                 {
                     order.DeliveryMoney = (float)Math.Round(deliveryMoney / (normalOrders.Length > 0 ? normalOrders.Length : allOrders.Count), 2);
-                    order.Weight = (float)Math.Round(weight / (normalOrders.Length > 0 ? normalOrders.Length : allOrders.Count), 2);
+                    order.Weight = 0;
                     order.DeliveryTime = DateTime.Now;
                     order.DeliveryOperator = op;
-                    order.State = order.State != OrderState.SUCCESS ? OrderState.SHIPPED : order.State;
+                    order.State = (order.State == OrderState.SUCCESS) ? OrderState.SUCCESS : OrderState.SHIPPED;
                     //检查当前是否有标记发货信息
                     int startIndex = order.PopSellerComment.IndexOf("【发货");
                     int endIndex = order.PopSellerComment.IndexOf('】', startIndex < 0 ? 0 : startIndex);
@@ -599,7 +567,7 @@ namespace ShopErp.Server.Service.Restful
                     PopPayType = mainOrder.PopPayType,
                     ReceiverAddress = mainOrder.ReceiverAddress,
                     ShopId = mainOrder.ShopId,
-                    Weight = (float)weight,
+                    Weight = goodsCount,
                     PopCodSevFee = normalOrders.Select(obj => obj.PopCodSevFee).Sum(),
                     GoodsInfo = string.Join(",", totalOgs.Select(obj => VendorService.FormatVendorName(obj.Vendor) + " " + obj.Number + " " + obj.Edtion + " " + obj.Color + " " + obj.Size + " " + obj.Count)),
                 };

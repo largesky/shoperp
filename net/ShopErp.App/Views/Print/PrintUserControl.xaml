@@ -138,14 +138,15 @@
                                                 <Setter Property="Background" Value="{Binding Background}" />
                                             </Style>
                                         </DataGrid.RowStyle>
-
                                         <DataGrid.ContextMenu>
                                             <ContextMenu>
                                                 <MenuItem Header="向前选择" Name="miSelectPre" Click="miSelectPre_Click" />
                                                 <MenuItem Header="向后选择" Name="miSelectForward" Click="miSelectForward_Click" />
-                                                <MenuItem Header="选择相同厂家名称" Name="miSelectSameVendor" Click="MiSelectSameVendor_Click"/>
-                                                <MenuItem Header="选择相同商品货号" Name="miSelectSameGoods" Click="MiSelectSameGoods_Click"/>
-                                                <MenuItem Header="选择相同商品编号" Name="miSelectSameGoodsById" Click="MiSelectSameGoodsById_Click"/>
+                                                <MenuItem Header="选择相同店铺" Name="miSelectSameShop" Click="MiSelectSameShop_Click"/>
+                                                <MenuItem Header="选择相同平台" Name="miSelectSamePop" Click="MiSelectSamePop_Click"/>
+                                                <MenuItem Header="选择相同厂家" Name="miSelectSameVendor" Click="MiSelectSameVendor_Click"/>
+                                                <MenuItem Header="选择相同商品" Name="miSelectSameGoodsById" Click="MiSelectSameGoodsById_Click"/>
+                                                <MenuItem Header="选择相同商品颜色尺码" Name="miSelectSameGoodsByIdAndColorSize" Click="MiSelectSameGoodsByIdAndColorSize_Click"/>
                                                 <MenuItem Header="编辑订单收货信息" Name="miEditOrder" Click="miEditOrder_Click" />
                                             </ContextMenu>
                                         </DataGrid.ContextMenu>
@@ -157,15 +158,6 @@
                                                     </DataTemplate>
                                                 </DataGridCheckBoxColumn.HeaderTemplate>
                                             </DataGridCheckBoxColumn>
-                                            <!--<DataGridTemplateColumn Header="颜色" Width="Auto" CanUserSort="True" SortMemberPath="Source.PopFlag" IsReadOnly="True">
-                                                <DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <Image
-                                                            Source="{Binding Source.PopFlag,Converter={StaticResource flagImageConverter}}"
-                                                            Stretch="Fill" Width="14" Height="14" />
-                                                    </DataTemplate>
-                                                </DataGridTemplateColumn.CellTemplate>
-                                            </DataGridTemplateColumn>-->
                                             <DataGridTextColumn Header="类型" Binding="{Binding Source.Type,Converter={StaticResource descriptionConverter}}" IsReadOnly="True"/>
                                             <DataGridTextColumn Header="编号" Binding="{Binding Source.Id}" Width="Auto" IsReadOnly="True"/>
                                             <DataGridTextColumn Header="店铺" Binding="{Binding Source.ShopId,Converter={StaticResource shopMarkConverter}}" Width="Auto" IsReadOnly="True" />
@@ -176,7 +168,7 @@
                                             <DataGridTextColumn Header="处理状态" Binding="{Binding State}" Width="Auto" IsReadOnly="True"/>
                                             <DataGridTextColumn Header="快递单号" Binding="{Binding DeliveryNumber}" Width="Auto" IsReadOnly="True"/>
                                             <DataGridTextColumn Header="卖家备注" Binding="{Binding Source.PopSellerComment}" Width="Auto" IsReadOnly="True"/>
-                                            <DataGridTextColumn Header="买家备注" Binding="{Binding Source.PopBuyerComment}" Width="Auto" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="买家备注" Binding="{Binding Source.PopBuyerComment}" Width="250" IsReadOnly="True"/>
                                             <DataGridTextColumn Header="收件人姓名" Binding="{Binding ReceiverName}" Width="Auto" IsReadOnly="True" />
                                             <DataGridTextColumn Header="收件人电话" Binding="{Binding ReceiverPhone}" Width="Auto" IsReadOnly="True"/>
                                             <DataGridTextColumn Header="收件人手机" Binding="{Binding ReceiverMobile}" Width="Auto" IsReadOnly="True"/>

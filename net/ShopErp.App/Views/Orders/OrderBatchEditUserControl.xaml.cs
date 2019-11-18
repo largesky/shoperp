@@ -50,11 +50,15 @@ namespace ShopErp.App.Views.Orders
                     List<Order> orders = null;
                     if (type == 0)
                     {
-                        orders = ServiceContainer.GetService<OrderService>().GetByDeliveryNumber(popOrderId).Datas;
+                        orders = ServiceContainer.GetService<OrderService>().GetById(popOrderId).Datas;
                     }
                     else if (type == 1)
                     {
-                        orders = ServiceContainer.GetService<OrderService>().GetById(popOrderId).Datas;
+                        orders = ServiceContainer.GetService<OrderService>().GetByDeliveryNumber(popOrderId).Datas;
+                    }
+                    else if (type == 2)
+                    {
+                        orders = ServiceContainer.GetService<OrderService>().GetByAll(popOrderId, "", "", "", "", 0, DateTime.MinValue, DateTime.MinValue, "", "", OrderState.NONE, PopPayType.None, "", "", null, -1, "", 0, OrderCreateType.NONE, OrderType.NONE, 0, 0).Datas;
                     }
                     if (orders == null || orders.Count < 1)
                     {
@@ -118,24 +122,24 @@ namespace ShopErp.App.Views.Orders
                         continue;
                     }
                     var oo = orders.Where(obj => obj.DeliveryNumber == first.DeliveryNumber).ToArray();
-                    float weight = 0;
+                    int goodsCount = 0;
                     foreach (var v in oo)
                     {
                         if (v.OrderGoodss != null && v.OrderGoodss.Count > 0)
                         {
                             foreach (var og in v.OrderGoodss)
                             {
-                                if (og.State == OrderState.CANCLED || og.State == OrderState.CLOSED || og.State == OrderState.RETURNING || og.State == OrderState.SPILTED)
+                                if (og.State == OrderState.CANCLED || og.State == OrderState.CLOSED || og.State == OrderState.RETURNING || og.State == OrderState.SPILTED || og.IsPeijian)
                                 {
                                     continue;
                                 }
-                                weight += (og.Weight == 0 ? 0.5F : og.Weight) * og.Count;
+                                goodsCount += og.Count;
                             }
                         }
                     }
                     try
                     {
-                        os.MarkDelivery(first.DeliveryNumber, weight, true, true, true);
+                        os.MarkDelivery(first.DeliveryNumber, goodsCount, true, true);
                     }
                     catch (Exception ex)
                     {
