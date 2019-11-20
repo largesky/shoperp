@@ -450,6 +450,9 @@ namespace ShopErp.App.ViewModels
                         if (mergedOrders[i].PopPayType != PopPayType.COD)
                             goods_commment.AppendLine(mergedOrders[i].PopSellerComment);
                     }
+                    userDatas[i].Add("payTime", "付款：" + mergedOrders[i].PopPayTime.ToString("yyyy-MM-dd HH:mm:ss"));
+                    userDatas[i].Add("shopMark", allShops.FirstOrDefault(obj => obj.Id == mergedOrders[i].ShopId).Mark);
+                    userDatas[i].Add("goodsCount", mergedOrders[i].OrderGoodss.Select(obj => obj.Count).Sum().ToString());
                     userDatas[i].Add("goodsInfoSellerComment", goods_commment.ToString());
                     userDatas[i].Add("suminfo", string.Format("店:{0},数:{1},付:{2}", allShops.FirstOrDefault(obj => obj.Id == mergedOrders[i].ShopId).Mark, mergedOrders[i].OrderGoodss.Select(obj => obj.Count).Sum().ToString(), mergedOrders[i].PopPayTime.ToString("yyyy-MM-dd HH:mm:ss")));
                 }

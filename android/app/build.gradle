@@ -6,8 +6,8 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "bjc.shoperp"
-        minSdkVersion 14
-        targetSdkVersion 14
+        minSdkVersion 27
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

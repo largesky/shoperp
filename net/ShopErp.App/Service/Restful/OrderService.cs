@@ -73,7 +73,7 @@ namespace ShopErp.App.Service.Restful
         /// <param name="receiverMobile">买家手机，模糊匹配，为空或者NULL表示不查询</param>
         /// <param name="receiverName">买家姓名，模糊匹配，为空或者NULL表示不查询</param>
         /// <param name="receiverAddress">买家地址，模糊匹配，为空或者NULL表示不查询</param>
-        /// <param name="timeType">时间类型：0 PopCreateTime 平台创建时间，1 PopPayTime 平台付款时间，2 PopDeliveryTime 平台发货时间，3 CreateTime 本地创建时间，4 PrintTime 本地打印时间，5 DeliveryTime 本地发货时间，6 CloseTime 本地关闭时间</param>
+        /// <param name="timeType">时间类型：0 PopPayTime 平台付款时间，1 PopDeliveryTime 平台发货时间，2 CreateTime 本地创建时间，3 PrintTime 本地打印时间，4 DeliveryTime 本地发货时间，5 CloseTime 本地关闭时间</param>
         /// <param name="startTime">开始时间，如果为1970-01-01 表示不使用</param>
         /// <param name="endTime">结束时间，如果为1970-01-01 表示不使用</param>
         /// <param name="deliveryCompany">快递公司，精确匹配</param>

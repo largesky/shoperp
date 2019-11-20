@@ -202,6 +202,7 @@
     <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseOrderStatusInfo.cs" />
     <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseTab.cs" />
     <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseTabContent.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseTabContentConvert.cs" />
     <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderListResponseOrderStatusInfo.cs" />
     <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\Pdd\PddPrintDocument.cs" />
     <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\Pdd\PddPrintDocumentRequest.cs" />

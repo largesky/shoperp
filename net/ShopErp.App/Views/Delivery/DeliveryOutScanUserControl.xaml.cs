@@ -59,9 +59,7 @@ namespace ShopErp.App.Views.Delivery
                 return;
             }
             e.Handled = true;
-
             this.tbResult.Text = "请扫描条码";
-            this.tbResult.Background = null;
             try
             {
                 string number = this.tbDeliveryNumber.Text.Trim().ToUpper();
@@ -69,54 +67,42 @@ namespace ShopErp.App.Views.Delivery
                 {
                     return;
                 }
-                int goodsCount = int.Parse(this.chkEnableInput.Text.Trim());
+                int goodsCount = int.Parse(this.tbGoodsCount.Text.Trim());
                 var orders = this.os.MarkDelivery(number, goodsCount, this.chkPopState.IsChecked.Value, this.chkLocalState.IsChecked.Value);
-                //更新后台发货
-                foreach (var order in orders)
+                var normalOrder = orders.Count(obj => obj.Type == OrderType.NORMAL) > 0 ? orders.First(obj => obj.Type == OrderType.NORMAL) : orders.First();
+                string goodsInfo = "";
+                foreach (var o in orders.Where(obj => obj.Type == OrderType.NORMAL))
                 {
-                    //生成发货记录
-                    DeliveryScanViewModel svm = new DeliveryScanViewModel
+                    if (o.OrderGoodss != null && o.OrderGoodss.Count > 0)
                     {
-                        DeliveryCompany = order.DeliveryCompany,
-                        DeliveryNumber = number,
-                        OrderId = order.Id.ToString(),
-                        Time = DateTime.Now,
-                        GoodsCount = goodsCount,
-                        ReceiverInfo = order.ReceiverName + "," + order.ReceiverPhone + "," + order.ReceiverMobile + "," + order.ReceiverAddress,
-                    };
-
-                    if (order.OrderGoodss != null)
-                    {
-                        svm.OrderGoodsInfo = String.Join(",", order.OrderGoodss.Select(obj => obj.Vendor + " " + obj.Number + " " + obj.Edtion + " " + obj.Color + " " + obj.Size + " " + obj.Count + ("件")).ToArray());
+                        goodsInfo += string.Join(" ", o.OrderGoodss.Select(og => og.Vendor + " " + og.Edtion + " " + og.Color + " " + og.Size + "(" + og.Count + ")")) + ",";
                     }
-                    var first = this.scanedViewModels.FirstOrDefault(obj => obj.OrderId == order.Id.ToString());
-                    if (first != null)
-                    {
-                        this.scanedViewModels.Remove(first);
-                    }
-                    this.scanedViewModels.Add(svm);
                 }
-
-                var or = orders[0];
-                if (orders.Length > 1)
+                DeliveryScanViewModel svm = new DeliveryScanViewModel
                 {
-                    var ogs = new List<OrderGoods>();
-                    foreach (var o in orders)
-                    {
-                        ogs.AddRange(o.OrderGoodss);
-                    }
-                    or.OrderGoodss = ogs;
+                    DeliveryCompany = normalOrder.DeliveryCompany,
+                    DeliveryNumber = number,
+                    OrderId = normalOrder.Id.ToString(),
+                    Time = DateTime.Now,
+                    GoodsCount = goodsCount,
+                    OrderGoodsInfo = goodsInfo,
+                    ReceiverInfo = normalOrder.ReceiverName + "," + normalOrder.ReceiverPhone + "," + normalOrder.ReceiverMobile + "," + normalOrder.ReceiverAddress,
+                };
+                var first = this.scanedViewModels.FirstOrDefault(obj => obj.DeliveryNumber == number);
+                if (first != null)
+                {
+                    this.scanedViewModels.Remove(first);
                 }
+                this.scanedViewModels.Add(svm);
                 var count = this.scanedViewModels.GroupBy(obj => obj.DeliveryCompany).ToArray();
                 string message = string.Join(",", count.Select(obj => obj.Key + ": " + obj.Select(o => o.DeliveryNumber).Distinct().Count()));
                 this.tbTotal.Text = string.Format("订单总数：{0},快递总数:{1},{2}", this.scanedViewModels.Count, this.scanedViewModels.Select(obj => obj.DeliveryNumber).Distinct().Count(), message);
-                this.tbResult.Text = "允许发货";
-                Speaker.Speak(or.DeliveryCompany);
+                this.tbResult.Text = svm.OrderGoodsInfo + "  " + svm.ReceiverInfo;
+                Speaker.Speak(normalOrder.DeliveryCompany);
             }
             catch (Exception ex)
             {
-                Speaker.Speak("出现错误");
-                this.tbResult.Background = Brushes.Red;
+                Speaker.Speak("出现错误 " + ex.Message);
                 this.tbResult.Text = ex.Message;
             }
             finally
@@ -130,8 +116,7 @@ namespace ShopErp.App.Views.Delivery
         {
             try
             {
-                if (MessageBox.Show("是否清空当前记录?", "确定", MessageBoxButton.YesNo, MessageBoxImage.Question) !=
-                    MessageBoxResult.Yes)
+                if (MessageBox.Show("是否清空当前记录?", "确定", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 {
                     return;
                 }

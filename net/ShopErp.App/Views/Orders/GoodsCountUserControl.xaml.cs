@@ -19,6 +19,7 @@ using ShopErp.App.Service;
 using ShopErp.App.Service.Restful;
 using ShopErp.Domain;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace ShopErp.App.Views.Orders
 {
@@ -271,7 +272,7 @@ namespace ShopErp.App.Views.Orders
                     return;
                 }
 
-                var items = this.dgvGoodsCount.SelectedCells.Select(obj => obj.Item as GoodsCount).Distinct();
+                var items = this.dgvGoodsCount.SelectedCells.Select(obj => obj.Item as GoodsCount).Distinct().ToArray();
                 foreach (var i in items)
                 {
                     if (this.gcs.Contains(i))

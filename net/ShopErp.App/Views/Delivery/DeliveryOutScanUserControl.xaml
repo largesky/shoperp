@@ -18,8 +18,8 @@
             <TextBlock Text="发货检查：" Margin="3" VerticalAlignment="Center"/>
             <CheckBox Name="chkPopState" Margin="3" VerticalAlignment="Center" Content="平台状态" IsChecked="True" />
             <CheckBox Name="chkLocalState" Margin="3" VerticalAlignment="Center" Content="本地状态" IsChecked="True" />
-            <TextBlock Name="chkEnableInput" Margin="30,3,3,3" Text="商品数量：" VerticalAlignment="Center" />
-            <TextBox Name="tbWeight" Margin="3" VerticalAlignment="Center" Width="40" Text="1"/>
+            <TextBlock  Margin="30,3,3,3" Text="商品数量：" VerticalAlignment="Center" />
+            <TextBox Name="tbGoodsCount"  Margin="3" VerticalAlignment="Center" Width="40" Text="1"/>
             <TextBlock Text="物流单号:" Margin="3" VerticalAlignment="Center" />
             <TextBox Name="tbDeliveryNumber" Margin="3" Width="150" PreviewKeyDown="tbDeliveryNumber_PreviewKeyDown" />
             <TextBlock Text="(使用条码枪扫描，或者手动输入后按回车键)" Margin="3" VerticalAlignment="Center" />
@@ -35,7 +35,7 @@
                 <DataGridTextColumn Header="订单编号" Binding="{Binding OrderId}" Width="Auto" />
                 <DataGridTextColumn Header="快递公司" Binding="{Binding DeliveryCompany}" Width="Auto" />
                 <DataGridTextColumn Header="快递单号" Binding="{Binding DeliveryNumber}" Width="Auto" />
-                <DataGridTextColumn Header="包裹重量" Binding="{Binding Weight,StringFormat=F2}" Width="Auto" />
+                <DataGridTextColumn Header="商品数量" Binding="{Binding GoodsCount}" Width="Auto" />
                 <DataGridTextColumn Header="扫描时间" Binding="{Binding Time,Converter={StaticResource datetimeConverter}}" Width="Auto" />
                 <DataGridTextColumn Header="商品信息" Binding="{Binding OrderGoodsInfo}" Width="Auto" />
                 <DataGridTextColumn Header="收货人信息" Binding="{Binding ReceiverInfo}" Width="*" />

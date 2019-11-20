@@ -48,13 +48,10 @@ import bjc.shoperp.service.restful.ServiceContainer;
 
  */
 public final class DeliveryOutScanActivity extends AppCompatActivity implements SurfaceHolder.Callback, Camera.PreviewCallback {
-
     private static final String TAG = DeliveryOutScanActivity.class.getSimpleName();
-
     private ViewfinderView viewfinderView;
     private TextView statusView;
     private boolean hasSurface;
-
     private CameraManager cameraManager;
     private BeepManager beepManager;
     private AmbientLightManager ambientLightManager;
@@ -116,15 +113,11 @@ public final class DeliveryOutScanActivity extends AppCompatActivity implements 
         SurfaceView surfaceView = (SurfaceView) findViewById(R.id.preview_view);
         SurfaceHolder surfaceHolder = surfaceView.getHolder();
         if (hasSurface) {
-            // The activity was paused but not stopped, so the surface still exists. Therefore
-            // surfaceCreated() won't be called, so init the camera here.
             initCamera(surfaceHolder);
         } else {
-            // Install the callback and wait for surfaceCreated() to init the camera.
             surfaceHolder.addCallback(this);
         }
     }
-
 
     @Override
     protected void onPause() {
@@ -169,9 +162,6 @@ public final class DeliveryOutScanActivity extends AppCompatActivity implements 
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        if (holder == null) {
-            Log.e(TAG, "*** WARNING *** surfaceCreated() gave us a null surface!");
-        }
         if (!hasSurface) {
             hasSurface = true;
             initCamera(holder);
@@ -185,9 +175,6 @@ public final class DeliveryOutScanActivity extends AppCompatActivity implements 
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        if (holder == null) {
-            Log.e(TAG, "*** WARNING *** surfaceChanged() gave us a null surface!");
-        }
         if (!hasSurface) {
             hasSurface = true;
             initCamera(holder);
@@ -205,26 +192,21 @@ public final class DeliveryOutScanActivity extends AppCompatActivity implements 
             throw new IllegalStateException("No SurfaceHolder provided");
         }
         if (cameraManager.isOpen()) {
-            Log.w(TAG, "initCamera() while already open -- late SurfaceView callback?");
             return;
         }
         try {
             cameraManager.openDriver(surfaceHolder);
-            // Creating the handler starts the preview, which can also throw a RuntimeException.
             cameraManager.startPreview();
             this.startPreviewAndDecode();
         } catch (IOException ioe) {
-            Log.w(TAG, ioe);
             displayFrameworkBugMessageAndExit();
         } catch (RuntimeException e) {
-            // Barcode Scanner has seen crashes in the wild of this variety:
-            // java.?lang.?RuntimeException: Fail to connect to camera service
-            Log.w(TAG, "Unexpected error initializing camera", e);
             displayFrameworkBugMessageAndExit();
         }
     }
 
     private void startPreviewAndDecode() {
+        Log.d("startPreviewAndDecode", "");
         viewfinderView.setVisibility(View.VISIBLE);
         viewfinderView.setFrameAndPreviewFramRect(cameraManager.getFramingRect(), cameraManager.getFramingRectInPreview());
         viewfinderView.drawViewfinder();
@@ -242,83 +224,73 @@ public final class DeliveryOutScanActivity extends AppCompatActivity implements 
 
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
-        String s = PreferenceManager.getDefaultSharedPreferences(this).getString(PreferencesActivity.KEY_SCAN_WAIT, "1");
-        String strWeight = ((EditText) findViewById(R.id.et_weight)).getText().toString().trim();
-        Boolean chkWeight = ((CheckBox) findViewById(R.id.chk_weight)).isChecked();
-        Boolean chkPopState = ((CheckBox) findViewById(R.id.chk_pop_error)).isChecked();
-        Boolean chkLocalState = ((CheckBox) findViewById(R.id.chk_local_state)).isChecked();
-        float weight = Float.parseFloat(strWeight);
-        DecodeAndProcessTask task = new DecodeAndProcessTask(data, this, this.multiFormatReader, chkWeight, chkPopState, chkLocalState, weight, Integer.parseInt(s));
-        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
+        try {
+            String s = PreferenceManager.getDefaultSharedPreferences(this).getString(PreferencesActivity.KEY_SCAN_WAIT, "1");
+            String strWeight = ((EditText) findViewById(R.id.et_weight)).getText().toString().trim();
+            Boolean chkPopState = ((CheckBox) findViewById(R.id.chk_pop_error)).isChecked();
+            Boolean chkLocalState = ((CheckBox) findViewById(R.id.chk_local_state)).isChecked();
+            int goodsCount = Integer.parseInt(strWeight);
+            DecodeAndProcessTask task = new DecodeAndProcessTask(data, this, this.multiFormatReader, goodsCount, chkPopState, chkLocalState, Integer.parseInt(s));
+            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
+        } catch (Exception e) {
+            Log.d("onPreviewFrame", e.getMessage());
+        }
     }
 
     class DecodeAndProcessTask extends AsyncTask<Void, Void, Boolean> {
-
         private final byte[] rawBytes;
         private final DeliveryOutScanActivity activity;
         private final MultiFormatReader multiFormatReader;
-        private final boolean checkWeight;
         private final boolean checkPopError;
         private final boolean checkLocalState;
-        private final float weight;
+        private final int goodsCount;
         private String barcode = "";
         private String result = "";
-        private int waitTime = 0;
-        private boolean isSuccess;
+        private int waitTime = 1;
+        private boolean isSuccess = false;
 
-        public DecodeAndProcessTask(byte[] rawBytes, DeliveryOutScanActivity activity, MultiFormatReader multiFormatReader, boolean checkWeight, boolean checkPopError, boolean checkLocalState, float weight, int waitTime) {
+        public DecodeAndProcessTask(byte[] rawBytes, DeliveryOutScanActivity activity, MultiFormatReader multiFormatReader, int goodsCount, boolean checkPopError, boolean checkLocalState, int waitTime) {
             this.rawBytes = rawBytes;
             this.activity = activity;
             this.multiFormatReader = multiFormatReader;
-            this.checkWeight = checkWeight;
             this.checkPopError = checkPopError;
             this.checkLocalState = checkLocalState;
-            this.weight = weight;
+            this.goodsCount = goodsCount;
             this.waitTime = waitTime;
         }
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            Result rawResult = null;
-            PlanarYUVLuminanceSource source = activity.getCameraManager().buildLuminanceSource(this.rawBytes);
-            if (source != null) {
+            try {
+                PlanarYUVLuminanceSource source = activity.getCameraManager().buildLuminanceSource(this.rawBytes);
                 BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
-                try {
-                    rawResult = multiFormatReader.decodeWithState(bitmap);
-                } catch (ReaderException re) {
-                    // continue
-                } finally {
-                    multiFormatReader.reset();
-                }
-            }
-
-            if (rawResult != null) {
-                //标记发货
-                try {
-                    this.barcode = rawResult.getText().trim();
-                    OrderCollectionResponse orderCollectionResponse = ServiceContainer.GetService(OrderService.class).markDelivery(rawResult.getText().trim(), this.weight, this.checkWeight, this.checkPopError, this.checkLocalState);
-                    for (Order o : orderCollectionResponse.Datas) {
-                        if (o.OrderGoodss != null) {
-                            for (OrderGoods og : o.OrderGoodss) {
-                                result += og.Vendor + " " + og.Number + " " + og.Edition + " " + og.Color + " " + og.Size + " " + og.Count + "\r";
-                            }
+                Result rawResult = multiFormatReader.decodeWithState(bitmap);
+                this.barcode = rawResult.getText().trim();
+                OrderCollectionResponse orderCollectionResponse = ServiceContainer.GetService(OrderService.class).markDelivery(rawResult.getText().trim(), this.goodsCount, this.checkPopError, this.checkLocalState);
+                for (Order o : orderCollectionResponse.Datas) {
+                    if (o.OrderGoodss != null) {
+                        for (OrderGoods og : o.OrderGoodss) {
+                            result += og.Vendor + " " + og.Number + " " + og.Edition + " " + og.Color + " " + og.Size + " " + og.Count + "\r";
                         }
                     }
-                    result += orderCollectionResponse.Datas.get(0).ReceiverName + "," + orderCollectionResponse.Datas.get(0).ReceiverMobile + "," + orderCollectionResponse.Datas.get(0).ReceiverAddress;
-                    this.isSuccess = true;
-                } catch (Exception ex) {
-                    result = ex.getMessage();
                 }
-            } else {
-                result = "请将条码置于取景框内扫描";
-            }
-
-            this.publishProgress();
-            try {
-                if (rawResult != null)
+                result += orderCollectionResponse.Datas.get(0).ReceiverName + "," + orderCollectionResponse.Datas.get(0).ReceiverMobile + "," + orderCollectionResponse.Datas.get(0).ReceiverAddress;
+                this.isSuccess = true;
+            } catch (ReaderException re) {
+                result = "未检测到条码,请对准条码";
+            } catch (Exception e) {
+                result = e.getMessage();
+                if (TextUtils.isEmpty(result)) {
+                    result = e.getClass().getName();
+                }
+            } finally {
+                multiFormatReader.reset();
+                this.publishProgress();
+                try {
                     Thread.sleep(this.waitTime * 1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
             return true;
         }

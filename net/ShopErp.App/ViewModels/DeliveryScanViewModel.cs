@@ -9,8 +9,6 @@ namespace ShopErp.App.ViewModels
     {
         public string OrderId { get; set; }
 
-        public string SellerId { get; set; }
-
         public string DeliveryCompany { get; set; }
 
         public string DeliveryNumber { get; set; }
