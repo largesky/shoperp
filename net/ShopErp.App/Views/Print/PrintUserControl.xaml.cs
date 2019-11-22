@@ -230,6 +230,11 @@ namespace ShopErp.App.Views.Print
                     throw new Exception("未选择发货网点");
                 }
 
+                if (printTemplate == null)
+                {
+                    throw new Exception("请选择相应的快递模板");
+                }
+
                 if (selectedOrders.Count() < 1)
                 {
                     throw new Exception("没有选择需要打印的订单");
@@ -240,15 +245,16 @@ namespace ShopErp.App.Views.Print
                     throw new Exception("不同支付类型的订单不能一起打印");
                 }
 
-                if (printTemplate == null)
-                {
-                    throw new Exception("请选择相应的快递模板");
-                }
-
                 if (goodsCol == null)
                 {
                     throw new Exception("无法找到列标题为: 门牌编号 的列");
                 }
+
+                if (printTemplate.SourceType == WuliuPrintTemplateSourceType.PINDUODUO && selectedOrders.Any(obj => obj.PopType != PopType.PINGDUODUO))
+                {
+                    throw new Exception("拼多多电子面单只能打印拼多多的订单");
+                }
+
                 //检查货到付款
                 if (selectedOrders[0].PopPayType == PopPayType.COD && printTemplate.Name.Contains("货到") == false)
                 {

@@ -30,6 +30,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="编号" Binding="{Binding Id}"/>
                 <DataGridTextColumn Header="创建时间" Binding="{Binding CreateTime,Converter={StaticResource datetimeConverter}}"/>
+                <DataGridTextColumn Header="面单平台" Binding="{Binding SourceType,Converter={StaticResource descriptionConverter}}"/>
                 <DataGridTextColumn Header="订单编号" Binding="{Binding WuliuIds}"/>
                 <DataGridTextColumn Header="包裹号" Binding="{Binding PackageId}"/>
                 <DataGridTextColumn Header="快递公司" Binding="{Binding DeliveryCompany}"/>
