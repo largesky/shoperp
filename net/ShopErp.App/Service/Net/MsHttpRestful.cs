@@ -18,6 +18,8 @@ namespace ShopErp.App.Service.Net
         private static readonly Regex RegUrlEncoding = new Regex(@"%[a-f0-9]{2}");
         private static readonly Dictionary<string, string> EmptyDicValues = new Dictionary<string, string>();
 
+        public static int NETWORK_MAX_TIME_OUT = 10;
+
         public static string UrlEncode(string str, Encoding e)
         {
             if (str == null)
@@ -30,7 +32,7 @@ namespace ShopErp.App.Service.Net
 
         private static System.Net.Http.HttpClient SetupClient(IDictionary<string, string> headers = null, string referrer = null, string accept = null)
         {
-            int timeout = Debugger.IsAttached ? 60 : 1;
+            int timeout = Debugger.IsAttached ? 250 : NETWORK_MAX_TIME_OUT;
             var client = new System.Net.Http.HttpClient { Timeout = new TimeSpan(0, timeout, 0) };
             client.DefaultRequestHeaders.Clear();
             client.DefaultRequestHeaders.Accept.ParseAdd(accept ?? "");

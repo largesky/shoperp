@@ -1,8 +1,10 @@
 ﻿using CefSharp;
 using CefSharp.WinForms;
 using ShopErp.App.CefSharpUtils;
+using ShopErp.App.Service;
 using ShopErp.App.Utils;
 using ShopErp.App.Views;
+using ShopErp.Domain;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -34,24 +36,21 @@ namespace ShopErp.App
         {
             try
             {
-                var settings = new CefSettings();
-                settings.LogSeverity = LogSeverity.Warning;
-                settings.LogFile = EnvironmentDirHelper.DIR_LOG + "\\CEF.txt";
-                settings.MultiThreadedMessageLoop = true;
+                var settings = new CefSettings() { LogSeverity = LogSeverity.Warning, LogFile = EnvironmentDirHelper.DIR_LOG + "\\CEF.txt", MultiThreadedMessageLoop = true };
                 settings.ExternalMessagePump = !settings.MultiThreadedMessageLoop;
                 if (Cef.Initialize(settings, true, new BrowserProcessHandler()) == false)
                 {
                     throw new Exception("初始化CEF SHARP 失败");
                 }
-                //Cef.GetGlobalCookieManager().SetStoragePath(EnvironmentDirHelper.PROGRAM_DIR + "\\cefdata\\cookie", true, null);
+                Service.Net.MsHttpRestful.NETWORK_MAX_TIME_OUT = int.Parse(LocalConfigService.GetValue(SystemNames.CONFIG_NETWORK_MAX_TIMEOUT, "10"));
                 var lw = new LoginWindow { Title = "登录网店ERP" };
                 bool? ret = lw.ShowDialog();
                 if (ret == null || ret == false)
                 {
+                    Cef.Shutdown();
                     Process.GetCurrentProcess().Kill();
                 }
                 base.OnStartup(e);
-                //new MainWindow().ShowDialog();
             }
             catch (TypeInitializationException te)
             {
@@ -62,7 +61,6 @@ namespace ShopErp.App
                 MessageBox.Show(ex.Message);
                 Process.GetCurrentProcess().Kill();
             }
-
         }
 
         private void Application_DispatcherUnhandledException(object sender,

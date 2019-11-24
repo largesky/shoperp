@@ -23,7 +23,7 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <GroupBox Header="系统设置" Grid.Row="0" Grid.Column="0">
+        <GroupBox Header="图片" Grid.Row="0" Grid.Column="0">
             <Grid HorizontalAlignment="Left" MinHeight="60">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -61,6 +61,22 @@
                 <TextBox Grid.Row="0" Grid.Column="1" x:Name="tbSenderName" Margin="3" VerticalAlignment="Center" />
                 <TextBlock Grid.Row="1" Grid.Column="0" Text="发货人电话:" Margin="3" VerticalAlignment="Center" />
                 <TextBox Grid.Row="1" Grid.Column="1" x:Name="tbSenderPhone" Margin="3" VerticalAlignment="Center" />
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Header="天猫设置" Grid.Row="0" Grid.Column="2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="200" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="商品模板:" Margin="3" VerticalAlignment="Center" />
+                <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cbbGoodsTemplateType" Margin="3" VerticalAlignment="Center" />
+               
             </Grid>
         </GroupBox>
 
@@ -121,17 +137,12 @@
                     <ComboBoxItem>本地读取</ComboBoxItem>
                     <ComboBox.SelectedIndex>0</ComboBox.SelectedIndex>
                 </ComboBox>
-
-
-                <TextBlock Grid.Row="3" Grid.Column="0" Text="拿货人姓名:" Margin="3" VerticalAlignment="Center" />
-                <TextBox Grid.Row="3" Grid.Column="1" x:Name="tbName" Margin="3" VerticalAlignment="Center" />
-
-                <TextBlock Grid.Row="4" Grid.Column="0" Text="拿货人电话:" Margin="3" VerticalAlignment="Center" />
-                <TextBox Grid.Row="4" Grid.Column="1" x:Name="tbPhone" Margin="3" VerticalAlignment="Center" />
-
-                <TextBlock Grid.Row="5" Grid.Column="0" Text="商品模板:" Margin="3" VerticalAlignment="Center" />
-                <ComboBox Grid.Row="5" Grid.Column="1" x:Name="cbbGoodsTemplateType" Margin="3"
-                          VerticalAlignment="Center" />
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="通信超时(分):" Margin="3" VerticalAlignment="Center" />
+                <TextBox Grid.Row="1" Grid.Column="1" x:Name="tbNetworkMaxTimeOut" Margin="3" VerticalAlignment="Center" />
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="拿货人姓名:" Margin="3" VerticalAlignment="Center" />
+                <TextBox Grid.Row="2" Grid.Column="1" x:Name="tbGoodsCountName" Margin="3" VerticalAlignment="Center" />
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="拿货人电话:" Margin="3" VerticalAlignment="Center" />
+                <TextBox Grid.Row="3" Grid.Column="1" x:Name="tbGoodsCountPhone" Margin="3" VerticalAlignment="Center" />
             </Grid>
         </GroupBox>
 

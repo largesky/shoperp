@@ -26,10 +26,6 @@ namespace ShopErp.Domain
         public const string CONFIG_PRINTER_DELIVERY_HOT = "PRINTER_DELIVERY_HOT";
         public const string CONFIG_PRINTER_A4 = "PRINTER_A4";
 
-        public const string CONFIG_WEIGHT_DEVICE = "WEIGHT_DEVICE";
-
-        public const string CONFIG_YT_CONFIRMED_FLAG = "YT_CONFIRMED_FLAG";
-        public const string CONFIG_ZJS_CONFIRMED_FLAG = "ZJS_CONFIRMED_FLAG";
 
         public const string CONFIG_ORDER_DOWNLOAD_MODE = "ORDER_DOWNLOAD_MODE";
         public const string CONFIG_GOODS_TEMPLATE = "GOODS_TEMPLATE";
@@ -38,6 +34,8 @@ namespace ShopErp.Domain
         public const string CONFIG_GOODS_BOX_IMAGE_SAVE_MODE = "GOODS_BOX_IMAGE_SAVE_MODE";
 
         public const string CONFIG_GOODS_BOX_IMAGE_BRAND= "GOODS_BOX_IMAGE_BRAND";
+
+        public const string CONFIG_NETWORK_MAX_TIMEOUT = "NETWORK_MAX_TIMEOUT";
 
     }
 }

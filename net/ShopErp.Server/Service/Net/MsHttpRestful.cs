@@ -35,7 +35,7 @@ namespace ShopErp.Server.Service.Net
 
         private static System.Net.Http.HttpClient SetupClient(IDictionary<string, string> headers = null, string referrer = null, string accept = null)
         {
-            var client = new System.Net.Http.HttpClient { Timeout = new TimeSpan(0, 0, 10) };
+            var client = new System.Net.Http.HttpClient { Timeout = new TimeSpan(0, 10, 0) };
             client.DefaultRequestHeaders.Clear();
             client.DefaultRequestHeaders.Accept.ParseAdd(accept ?? "*/*");
             client.DefaultRequestHeaders.Referrer = referrer == null ? null : new Uri(referrer);

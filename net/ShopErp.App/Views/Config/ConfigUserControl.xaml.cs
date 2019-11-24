@@ -45,9 +45,18 @@ namespace ShopErp.App.Views.Config
 
             try
             {
-                //系统设置
+                //图片
                 string imageMode = LocalConfigService.GetValue(SystemNames.CONFIG_WEB_IMAGE_MODE, "内网");
                 this.cbbImageMode.SelectedIndex = imageMode == "内网" ? 0 : (imageMode == "外网" ? 1 : 2);
+                this.tbImageDir.Text = LocalConfigService.GetValue(SystemNames.CONFIG_WEB_IMAGE_DIR, "");
+
+                //电子面单发货人信息
+                this.tbSenderName.Text = ServiceContainer.GetService<SystemConfigService>().Get(-1, SystemNames.CONFIG_CAINIAO_SENDER_NAME, "贾勇");
+                this.tbSenderPhone.Text = ServiceContainer.GetService<SystemConfigService>().Get(-1, SystemNames.CONFIG_CAINIAO_SENDER_PHONE, "19950350106");
+
+                //天猫设置
+                this.cbbGoodsTemplateType.ItemsSource = PrintTemplateService.GetAllLocal().Where(obj => obj.Type == PrintTemplate.TYPE_GOODS).Select(obj => obj.Name).ToArray();
+                this.cbbGoodsTemplateType.SelectedItem = LocalConfigService.GetValue(SystemNames.CONFIG_GOODS_TEMPLATE, "");
 
                 //打印机配置
                 string[] names = System.Drawing.Printing.PrinterSettings.InstalledPrinters.OfType<string>().ToArray();
@@ -63,13 +72,9 @@ namespace ShopErp.App.Views.Config
                 //业务设置
                 string odm = LocalConfigService.GetValue(SystemNames.CONFIG_ORDER_DOWNLOAD_MODE, "");
                 this.cbbOrderDownloadMode.SelectedIndex = "本地读取" == odm ? 1 : 0;
-                this.tbImageDir.Text = LocalConfigService.GetValue(SystemNames.CONFIG_WEB_IMAGE_DIR, "");
-                this.tbName.Text = ServiceContainer.GetService<SystemConfigService>().Get(-1, "GOODS_NAME", "贾勇");
-                this.tbPhone.Text = ServiceContainer.GetService<SystemConfigService>().Get(-1, "GOODS_PHONE", "15590065809");
-                this.cbbGoodsTemplateType.ItemsSource = PrintTemplateService.GetAllLocal().Where(obj => obj.Type == PrintTemplate.TYPE_GOODS).Select(obj => obj.Name).ToArray();
-                this.cbbGoodsTemplateType.SelectedItem = LocalConfigService.GetValue(SystemNames.CONFIG_GOODS_TEMPLATE, "");
-                this.tbSenderName.Text = ServiceContainer.GetService<SystemConfigService>().Get(-1, SystemNames.CONFIG_CAINIAO_SENDER_NAME, "贾兴红");
-                this.tbSenderPhone.Text = ServiceContainer.GetService<SystemConfigService>().Get(-1, SystemNames.CONFIG_CAINIAO_SENDER_PHONE, "15590065809");
+                this.tbNetworkMaxTimeOut.Text = LocalConfigService.GetValue(SystemNames.CONFIG_NETWORK_MAX_TIMEOUT, "10");
+                this.tbGoodsCountName.Text = ServiceContainer.GetService<SystemConfigService>().Get(-1, "GOODS_NAME", "贾勇");
+                this.tbGoodsCountPhone.Text = ServiceContainer.GetService<SystemConfigService>().Get(-1, "GOODS_PHONE", "19950350106");
             }
             catch (Exception ex)
             {
@@ -81,8 +86,16 @@ namespace ShopErp.App.Views.Config
         {
             try
             {
-                //系统设置
+                //图片设置
                 LocalConfigService.UpdateValue(SystemNames.CONFIG_WEB_IMAGE_MODE, this.cbbImageMode.Text.Trim());
+                LocalConfigService.UpdateValue(SystemNames.CONFIG_WEB_IMAGE_DIR, this.tbImageDir.Text.Trim());
+
+                //电子面单发货人信息
+                ServiceContainer.GetService<SystemConfigService>().SaveOrUpdate(-1, SystemNames.CONFIG_CAINIAO_SENDER_NAME, this.tbSenderName.Text.Trim());
+                ServiceContainer.GetService<SystemConfigService>().SaveOrUpdate(-1, SystemNames.CONFIG_CAINIAO_SENDER_PHONE, this.tbSenderPhone.Text.Trim());
+
+                //天猫设置
+                LocalConfigService.UpdateValue(SystemNames.CONFIG_GOODS_TEMPLATE, this.cbbGoodsTemplateType.Text.Trim());
 
                 //打印机设置
                 LocalConfigService.UpdateValue(SystemNames.CONFIG_PRINTER_DELIVERY_HOT, this.cbbPrinterDeliveryHot.Text.Trim());
@@ -91,15 +104,10 @@ namespace ShopErp.App.Views.Config
                 LocalConfigService.UpdateValue(SystemNames.CONFIG_PRINTER_A4, this.cbbPrinterA4.Text.Trim());
 
                 //业务设置
-                LocalConfigService.UpdateValue(SystemNames.CONFIG_WEB_IMAGE_DIR, this.tbImageDir.Text.Trim());
                 LocalConfigService.UpdateValue(SystemNames.CONFIG_ORDER_DOWNLOAD_MODE, this.cbbOrderDownloadMode.Text.Trim());
-                ServiceContainer.GetService<SystemConfigService>().SaveOrUpdate(-1,"GOODS_PHONE", this.tbPhone.Text.Trim());
-                ServiceContainer.GetService<SystemConfigService>().SaveOrUpdate(-1, "GOODS_NAME", this.tbName.Text.Trim());
-                LocalConfigService.UpdateValue(SystemNames.CONFIG_GOODS_TEMPLATE, this.cbbGoodsTemplateType.Text.Trim());
-
-                ServiceContainer.GetService<SystemConfigService>().SaveOrUpdate(-1, SystemNames.CONFIG_CAINIAO_SENDER_NAME, this.tbSenderName.Text.Trim());
-                ServiceContainer.GetService<SystemConfigService>().SaveOrUpdate(-1, SystemNames.CONFIG_CAINIAO_SENDER_PHONE, this.tbSenderPhone.Text.Trim());
-
+                LocalConfigService.UpdateValue(SystemNames.CONFIG_NETWORK_MAX_TIMEOUT, int.Parse(this.tbNetworkMaxTimeOut.Text.Trim()).ToString());
+                ServiceContainer.GetService<SystemConfigService>().SaveOrUpdate(-1, "GOODS_PHONE", this.tbGoodsCountPhone.Text.Trim());
+                ServiceContainer.GetService<SystemConfigService>().SaveOrUpdate(-1, "GOODS_NAME", this.tbGoodsCountName.Text.Trim());
                 MessageBox.Show("保存成功");
             }
             catch (Exception ex)

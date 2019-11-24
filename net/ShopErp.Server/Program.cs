@@ -17,12 +17,6 @@ namespace ShopErp.Server
         /// </summary>
         static void Main()
         {
-            string add = "重庆市县武隆县御源大湖区";
-
-            //string[] adds = AddressService.Parse5Address(add, Domain.PopType.PINGDUODUO, Domain.PopType.PINGDUODUO);
-
-           // Console.WriteLine(add + "  :" + string.Join(" ", adds));
-
 
             if (Environment.UserInteractive)
             {
