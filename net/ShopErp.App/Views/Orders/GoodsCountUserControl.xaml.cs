@@ -249,7 +249,7 @@ namespace ShopErp.App.Views.Orders
                 var pd = PrintUtil.GetPrinter(printer);
                 GoodsCountPrintDocument2 goodsCountDoc = new GoodsCountPrintDocument2();
                 goodsCountDoc.PageSize = new Size(pd.PrintableAreaWidth, pd.PrintableAreaHeight);
-                goodsCountDoc.SetGoodsCount(gcs, LocalConfigService.GetValue("GOODS_NAME", ""), LocalConfigService.GetValue("GOODS_PHONE", ""));
+                goodsCountDoc.SetGoodsCount(gcs, ServiceContainer.GetService<SystemConfigService>().Get(-1, "GOODS_NAME", ""), ServiceContainer.GetService<SystemConfigService>().Get(-1, "GOODS_PHONE", ""));
                 pd.PrintDocument(goodsCountDoc, "拿货统计");
                 MessageBox.Show("打印完成");
             }
