@@ -125,6 +125,10 @@ namespace ShopErp.App.Views.Orders
                     int goodsCount = 0;
                     foreach (var v in oo)
                     {
+                        if (v.Type != OrderType.NORMAL)
+                        {
+                            continue;
+                        }
                         if (v.OrderGoodss != null && v.OrderGoodss.Count > 0)
                         {
                             foreach (var og in v.OrderGoodss)

@@ -704,7 +704,6 @@ namespace ShopErp.App.Views.Goods
                 {
                     MessageBox.Show("完全匹配");
                 }
-
             }
             catch (Exception ex)
             {
@@ -750,5 +749,95 @@ namespace ShopErp.App.Views.Goods
                 MessageBox.Show("导入完成");
             }));
         }
+
+        private void BtnCheckImage_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string text = Clipboard.GetText();
+                if (string.IsNullOrWhiteSpace(text))
+                {
+                    throw new Exception("粘贴板里面没有数据");
+                }
+                var rsp = Newtonsoft.Json.JsonConvert.DeserializeObject<ImageRsp>(text);
+                var imageDirs = rsp.module.dirs.children.FirstOrDefault(obj => obj.name == "商品图片").children.Select(obj => obj.name).ToArray();
+                var allGoods = ServiceContainer.GetService<GoodsService>().GetByAll((this.cbbShops.SelectedItem as Shop).Id, GoodsState.NONE, 0, DateTime.MinValue, DateTime.MinValue, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", 0, 0).Datas.OrderBy(obj => obj.VendorId).ToList();
+                var vendors = ServiceContainer.GetService<VendorService>().GetByAll("", "", "", "", 0, 0).Datas.ToList();
+
+                List<ShopErp.Domain.Goods> unMatchGoods = new List<ShopErp.Domain.Goods>();
+                List<string> unMatchDirs = new List<string>();
+
+                foreach (var g in allGoods)
+                {
+                    var vendor = vendors.FirstOrDefault(obj => obj.Id == g.VendorId);
+                    if (vendor == null)
+                    {
+                        throw new Exception("商品未找到对应厂家：" + g.Number + " 商品ID：" + g.Id);
+                    }
+                    if (string.IsNullOrWhiteSpace(vendor.PingyingName))
+                    {
+                        throw new Exception("厂家没有配置拼音：" + vendor.Name);
+                    }
+                    string nn = vendor.PingyingName.Trim() + "&" + g.Number.Trim();
+                    var pg = imageDirs.FirstOrDefault(obj => obj.IndexOf(nn, StringComparison.OrdinalIgnoreCase) >= 0);
+                    if (pg == null)
+                    {
+                        unMatchGoods.Add(g);
+                    }
+                }
+
+                foreach (var pg in imageDirs)
+                {
+                    string[] skus = pg.Split(',');
+                    foreach (var code in skus)
+                    {
+                        string[] nn = code.Split('&');
+                        var g = allGoods.FirstOrDefault(obj => obj.Number.Equals(nn[1], StringComparison.OrdinalIgnoreCase) && vendors.FirstOrDefault(o => o.Id == obj.VendorId).PingyingName.Equals(nn[0], StringComparison.OrdinalIgnoreCase));
+                        if (g == null)
+                        {
+                            unMatchDirs.Add(pg);
+                        }
+                    }
+                }
+                if (unMatchGoods.Count > 0 || unMatchDirs.Count > 0)
+                {
+                    string msg1 = string.Join(",", unMatchGoods.Select(obj => vendors.FirstOrDefault(o => o.Id == obj.VendorId).Name + "&" + obj.Number));
+                    string msg2 = string.Join(",", unMatchDirs);
+                    string msg = string.Format("系统中未在网站上匹配的：{0}\r\n,网站上未在系统中匹配的：{1}", msg1, msg2);
+                    MessageBox.Show(msg);
+                    Debug.WriteLine(msg);
+                }
+                else
+                {
+                    MessageBox.Show("完全匹配");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+    }
+
+    public class ImageRsp
+    {
+        public ImageRspModule module;
+    }
+
+    public class ImageRspModule
+    {
+        public ImageRspModuleDir dirs;
+    }
+
+    public class ImageRspModuleDir
+    {
+        public ImageRspModuleDirChildren[] children;
+    }
+
+    public class ImageRspModuleDirChildren
+    {
+        public string name;
+
+        public ImageRspModuleDirChildren[] children;
     }
 }
