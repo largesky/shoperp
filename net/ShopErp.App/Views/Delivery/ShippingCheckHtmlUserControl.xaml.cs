@@ -234,10 +234,7 @@ namespace ShopErp.App.Views.Delivery
                     {
                         foreach (var vvvv in vvv.subOrders)
                         {
-                            if (namePrice.ContainsKey(vvvv.itemInfo.title) == false)
-                            {
-                                namePrice.Add(vvvv.itemInfo.title, float.Parse(vvvv.priceInfo[0].text.Trim()));
-                            }
+                            namePrice[vvvv.itemInfo.title] = float.Parse(vvvv.priceInfo[0].text.Trim());
                         }
                     }
                 }
@@ -277,7 +274,7 @@ namespace ShopErp.App.Views.Delivery
                 sellerGetMoney = orderDetail.mainOrder.payInfo.actualFee.value;
                 foreach (var v in orderDetail.mainOrder.subOrders)
                 {
-                    namePrice.Add(v.itemInfo.title, v.priceInfo);
+                    namePrice[v.itemInfo.title] = v.priceInfo;
                 }
                 var addN = orderDetail.tabs.FirstOrDefault(obj => obj.id == "logistics");
                 if (addN == null)
