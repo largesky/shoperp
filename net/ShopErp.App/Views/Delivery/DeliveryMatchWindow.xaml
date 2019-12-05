@@ -11,15 +11,10 @@
         <Grid Grid.Row="0" Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <GroupBox Header="系统中详情:" Width="250" Margin="3" Grid.Row="0">
-                <TextBox Name="tbSystemDetail" TextWrapping="Wrap" />
-            </GroupBox>
-
-            <GroupBox Header="文件中详情:" Grid.Column="1" Width="250" Margin="3" Grid.Row="1">
-                <TextBox Name="tbFileDetail" TextWrapping="Wrap" />
+            <GroupBox Header="比较详情:" Width="250" Margin="3" Grid.Row="0">
+                <TextBox Name="tbSuminfo" TextWrapping="Wrap" />
             </GroupBox>
         </Grid>
 
@@ -28,13 +23,8 @@
                   CanUserDeleteRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="行号" Binding="{Binding RowId}" />
-                <DataGridTextColumn Header="订单编号" Binding="{Binding OrderId}" />
-                <DataGridTextColumn Header="重量系统" Binding="{Binding WeightSystem}" />
                 <DataGridTextColumn Header="快递单号系统" Binding="{Binding DeliveryNumberSystem}" />
                 <DataGridTextColumn Header="快递单号文件" Binding="{Binding DeliveryNumberFile}" />
-                <DataGridTextColumn Header="重量文件" Binding="{Binding WeightFile}" />
-                <DataGridTextColumn Header="重量差别" Binding="{Binding WeightDiff,StringFormat=F2}" />
-                <DataGridTextColumn Header="快递计费" Binding="{Binding Money}" />
             </DataGrid.Columns>
         </DataGrid>
 
