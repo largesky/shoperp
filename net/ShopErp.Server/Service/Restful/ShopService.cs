@@ -73,7 +73,7 @@ namespace ShopErp.Server.Service.Restful
         {
             try
             {
-                this.dao.ExcuteSqlUpdate("delete from Shop where Id=" + id);
+                this.dao.DeleteByLongId(id);
                 this.RemoveCach(o => o.Id == id);
                 return ResponseBase.SUCCESS;
             }

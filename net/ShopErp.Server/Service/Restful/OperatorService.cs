@@ -97,7 +97,7 @@ namespace ShopErp.Server.Service.Restful
                 {
                     throw new Exception("当前用户没有 用户管理 权限");
                 }
-                this.dao.ExcuteSqlUpdate("delete from `Operator` where Id=" + id);
+                this.dao.DeleteByLongId(id);
                 return ResponseBase.SUCCESS;
             }
             catch (Exception ex)

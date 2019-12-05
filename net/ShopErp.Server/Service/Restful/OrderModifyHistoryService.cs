@@ -68,7 +68,7 @@ namespace ShopErp.Server.Service.Restful
         {
             try
             {
-                this.dao.ExcuteSqlUpdate("delete from OrderModifyHistory  where Id=" + id);
+                this.dao.DeleteByLongId(id);
                 return ResponseBase.SUCCESS;
             }
             catch (Exception ex)

@@ -27,6 +27,8 @@ namespace ShopErp.Server.Dao
 
         void Delete(params object[] objs);
 
+        int DeleteByLongId(long id);
+
         void SaveOrUpdateById(params object[] objs);
 
         int ExcuteSqlUpdate(string sql);

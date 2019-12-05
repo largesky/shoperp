@@ -7,10 +7,11 @@ using ShopErp.Domain.RestfulResponse;
 
 namespace ShopErp.Server.Dao.NHibernateDao
 {
-    public class NHibernateDaoBase<E> : IDao<E>
-        where E : class
+    public class NHibernateDaoBase<E> : IDao<E> where E : class
     {
         private DateTime dbMinDateTime = new DateTime(1970, 01, 01);
+        private readonly char LEFT_TABLE_CHAR = '`';
+        private readonly char RIGHT_TABLE_CHAR = '`';
 
         public NHibernate.ISession OpenSession()
         {
@@ -19,7 +20,7 @@ namespace ShopErp.Server.Dao.NHibernateDao
 
         public string GetEntiyName()
         {
-            return typeof(E).Name;
+            return LEFT_TABLE_CHAR + typeof(E).Name + RIGHT_TABLE_CHAR;
         }
 
         public E GetById(object id)
@@ -275,6 +276,24 @@ namespace ShopErp.Server.Dao.NHibernateDao
             }
         }
 
+        public int DeleteByLongId(long id)
+        {
+            ISession session = this.OpenSession();
+            try
+            {
+                string hsql = "delete from " + this.GetEntiyName() + " where Id=" + id;
+                var query = session.CreateSQLQuery(hsql);
+                return query.ExecuteUpdate();
+            }
+            finally
+            {
+                if (session != null)
+                {
+                    session.Close();
+                }
+            }
+        }
+
         public void SaveOrUpdateById(params object[] objs)
         {
             ISession s = OpenSession();
@@ -317,7 +336,7 @@ namespace ShopErp.Server.Dao.NHibernateDao
                 }
                 transaction.Commit();
             }
-            catch 
+            catch
             {
                 if (transaction != null)
                     transaction.Rollback();
@@ -479,5 +498,7 @@ namespace ShopErp.Server.Dao.NHibernateDao
                 }
             }
         }
+
+
     }
 }

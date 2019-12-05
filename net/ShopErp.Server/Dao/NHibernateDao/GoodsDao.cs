@@ -89,16 +89,6 @@ namespace ShopErp.Server.Dao.NHibernateDao
             return this.GetPageEx(this.TrimHSql("select G0 " + hsql) + " order by G0.Id desc", this.TrimHSql("select count(G0.Id) " + hsql), pageIndex, pageSize, para.ToArray());
 
         }
-
-        public void UpdateWeight(long id, float weight)
-        {
-            this.ExcuteSqlUpdate(string.Format("update `Goods`  set Weight={0} where Id={1}", weight.ToString("F2"), id));
-        }
-
-        public void UpdateLastSellTime(long id, DateTime time)
-        {
-            this.ExcuteSqlUpdate(string.Format("update `Goods` set LastSellTime='{0}' where Id={1}", this.FormatDateTime(time), id));
-        }
-
+ 
     }
 }

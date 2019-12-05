@@ -80,7 +80,7 @@ namespace ShopErp.Server.Service.Restful
         {
             try
             {
-                this.dao.ExcuteSqlUpdate("delete from Goods where Id=" + id);
+                this.dao.DeleteByLongId(id);
                 ServiceContainer.GetService<VendorService>().UpdateCountAndAvgPriceAll();
                 return ResponseBase.SUCCESS;
             }
@@ -118,36 +118,6 @@ namespace ShopErp.Server.Service.Restful
             try
             {
                 return this.dao.GetByNumberAndVendorNameLike(number, vendorNameOrPingName, pageIndex, pageSize);
-            }
-            catch (Exception ex)
-            {
-                throw new WebFaultException<ResponseBase>(new ResponseBase(ex.Message), System.Net.HttpStatusCode.OK);
-            }
-        }
-
-        [OperationContract]
-        [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/updateweight.html")]
-        public ResponseBase UpdateWeight(long id, float weight)
-        {
-            try
-            {
-                this.dao.UpdateWeight(id, weight);
-                return ResponseBase.SUCCESS;
-            }
-            catch (Exception ex)
-            {
-                throw new WebFaultException<ResponseBase>(new ResponseBase(ex.Message), System.Net.HttpStatusCode.OK);
-            }
-        }
-
-        [OperationContract]
-        [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/updatelastselltime.html")]
-        public ResponseBase UpdateLastSellTime(int id, DateTime time)
-        {
-            try
-            {
-                this.dao.UpdateLastSellTime(id, time);
-                return ResponseBase.SUCCESS;
             }
             catch (Exception ex)
             {

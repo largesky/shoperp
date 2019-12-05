@@ -105,11 +105,7 @@ namespace ShopErp.Server.Service.Restful
         {
             try
             {
-                var ret = dao.ExcuteSqlUpdate("delete from DeliveryTemplate where Id=" + id);
-                if (ret < 1)
-                {
-                    return new ResponseBase("删除失败");
-                }
+                this.dao.DeleteByLongId(id);
                 dao.ExcuteSqlUpdate("delete from DeliveryTemplateArea where DeliveryTemplateId=" + id);
                 this.RemoveCach(obj => obj.Id == id);
                 return ResponseBase.SUCCESS;

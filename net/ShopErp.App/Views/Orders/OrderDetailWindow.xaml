@@ -48,28 +48,20 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="下载时间:" VerticalAlignment="Center" />
-                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="0" Grid.Column="1"
-                         Text="{Binding CreateTime,Converter={StaticResource datetimeConverter}}"
-                         VerticalAlignment="Center" />
-                <TextBlock Grid.Row="0" Grid.Column="2" Text="返款时间:" Margin="3" VerticalAlignment="Center" />
-                <TextBox Grid.Row="0" Grid.Column="3" Style="{StaticResource SelectableTextBox}"
-                         Text="{Binding PopRecvfeeTime,Converter={StaticResource datetimeConverter}}"
-                         VerticalAlignment="Center" />
-                <TextBlock Grid.Row="0" Grid.Column="4" Text="解析结果:" />
-                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="0" Grid.Column="5"
-                         Text="{Binding ParseResult,Converter={StaticResource boolConverter},ConverterParameter=失败|成功}"
-                         VerticalAlignment="Center" />
-                <TextBlock Grid.Row="0" Grid.Column="6" Text="创建类型:" Margin="3" VerticalAlignment="Center" />
-                <TextBlock Grid.Row="0" Grid.Column="7"
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="创建类型:" Margin="3" VerticalAlignment="Center" />
+                <TextBlock Grid.Row="0" Grid.Column="1"
                            Text="{Binding CreateType,Converter={StaticResource descriptionConverter}}" Margin="3"
                            VerticalAlignment="Center" />
-                <TextBlock Grid.Row="0" Grid.Column="8" Text="订单类型:" Margin="3" VerticalAlignment="Center" />
-                <TextBlock Grid.Row="0" Grid.Column="9"
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="解析结果:" />
+                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="0" Grid.Column="3"
+                         Text="{Binding ParseResult,Converter={StaticResource boolConverter},ConverterParameter=失败|成功}"
+                         VerticalAlignment="Center" />
+              
+                <TextBlock Grid.Row="0" Grid.Column="4" Text="订单类型:" Margin="3" VerticalAlignment="Center" />
+                <TextBlock Grid.Row="0" Grid.Column="5"
                            Text="{Binding Type,Converter={StaticResource descriptionConverter}}" Margin="3"
                            Name="tbOrderType" VerticalAlignment="Center" />
-                <Button Grid.Row="0" Grid.Column="10" Name="btnShuaSet" Content="设置/取消 刷单" Margin="3"
+                <Button Grid.Row="0" Grid.Column="6" Name="btnShuaSet" Content="设置/取消 刷单" Margin="3"
                         VerticalAlignment="Center" Click="Button_Click" />
             </Grid>
         </GroupBox>
@@ -95,10 +87,10 @@
                     <ColumnDefinition Width="80" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="创建时间:" />
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="创建时间:" VerticalAlignment="Center" />
                 <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="0" Grid.Column="1"
-                         Text="{Binding PopCreateTime,Converter={StaticResource datetimeConverter}}" />
+                         Text="{Binding CreateTime,Converter={StaticResource datetimeConverter}}"
+                         VerticalAlignment="Center" />
                 <TextBlock Grid.Row="0" Grid.Column="2" Text="创建人员:" />
                 <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="0" Grid.Column="3"
                          Text="{Binding CreateOperator}" />
@@ -166,9 +158,6 @@
                 <TextBlock Grid.Row="1" Grid.Column="4" Text="物流重量:" />
                 <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="1" Grid.Column="5"
                          Text="{Binding Weight}" />
-                <TextBlock Grid.Row="1" Grid.Column="6" Text="面单类型:" />
-                <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="1" Grid.Column="7"
-                         Text="{Binding PrintPaperType,Converter={StaticResource descriptionConverter}}" />
             </Grid>
         </GroupBox>
 
@@ -235,7 +224,7 @@
                 <TextBlock Grid.Row="0" Grid.Column="6" Text="订单编号:" />
                 <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="0" Grid.Column="7"
                          Text="{Binding PopOrderId}" />
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="订单类型:" />
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="付款类型:" />
                 <TextBox Style="{StaticResource SelectableTextBox}" Grid.Row="1" Grid.Column="1"
                          Text="{Binding PopPayType,Converter={StaticResource descriptionConverter}}" />
                 <TextBlock Grid.Row="1" Grid.Column="2" Text="订单总额:" />
@@ -351,18 +340,5 @@
                 </Style>
             </ListBox.ItemContainerStyle>
         </ListBox>
-
-        <StackPanel Grid.Row="7" Background="LightGray" Margin="0,3">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="300" />
-                    <ColumnDefinition Width="80" />
-                    <ColumnDefinition Width="80" />
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="礼品名称" HorizontalAlignment="Center" />
-                <TextBlock Grid.Column="1" Text="批发价" HorizontalAlignment="Center" />
-                <TextBlock Grid.Column="2" Text="数量" HorizontalAlignment="Center" />
-            </Grid>
-        </StackPanel>
     </Grid>
 </Window>
