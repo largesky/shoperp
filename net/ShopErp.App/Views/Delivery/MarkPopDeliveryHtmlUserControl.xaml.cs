@@ -29,14 +29,14 @@ namespace ShopErp.App.Views.Delivery
     /// <summary>
     /// Interaction logic for OrderSyncUserControl.xaml
     /// </summary>
-    public partial class ShippingCheckHtmlUserControl : UserControl
+    public partial class MarkPopDeliveryHtmlUserControl : UserControl
     {
         private bool myLoaded = false;
         string jspath = System.IO.Path.Combine(EnvironmentDirHelper.DIR_DATA + "\\TAOBAOJS.js");
         private bool isRunning = false;
         private ObservableCollection<OrderViewModel> orders = new ObservableCollection<OrderViewModel>();
 
-        public ShippingCheckHtmlUserControl()
+        public MarkPopDeliveryHtmlUserControl()
         {
             InitializeComponent();
         }
@@ -453,6 +453,13 @@ namespace ShopErp.App.Views.Delivery
                         {
                             od.Order = odInDb.First;
                             var state = ConvertState(v.statusInfo.text);
+
+                            //未发货订单，即使有退款商品，整个订单状态也是待发货不是退款中
+                            if (state == OrderState.PAYED && v.subOrders.All(obj => obj.operations != null && (obj.operations.FirstOrDefault(op => op.text.Trim() == "退款成功" || op.text.Trim() == "请卖家处理" || op.text.Trim() == "请退款") != null)))
+                            {
+                                state = OrderState.RETURNING;
+                            }
+
                             if (od.Order.State == state || od.Order.State == OrderState.CLOSED || od.Order.State == OrderState.CANCLED)
                             {
                                 continue;

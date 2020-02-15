@@ -22,11 +22,11 @@ namespace ShopErp.App.Views.Delivery
     /// <summary>
     /// Interaction logic for DeliveryCheckUserControl.xaml
     /// </summary>
-    public partial class ShippingCheckUserControl : UserControl
+    public partial class MarkPopDeliveryUserControl : UserControl
     {
         private System.Collections.ObjectModel.ObservableCollection<OrderViewModel> orders = new ObservableCollection<OrderViewModel>();
 
-        public ShippingCheckUserControl()
+        public MarkPopDeliveryUserControl()
         {
             InitializeComponent();
         }

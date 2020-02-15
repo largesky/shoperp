@@ -91,20 +91,17 @@ namespace ShopErp.App.Service.Restful
         /// <param name="pageIndex">页下标，从0开始</param>
         /// <param name="pageSize">每页数据大小，0表示不分页</param>
         /// <returns></returns>
-        public DataCollectionResponse<Order> GetByAll(string popBuyerId, string receiverPhone, string receiverMobile,
-            string receiverName, string receiverAddress,
-            int timeType, DateTime startTime, DateTime endTime, string deliveryCompany, string deliveryNumber,
-            OrderState state, PopPayType payType, string vendorName, string number,
+        public DataCollectionResponse<Order> GetByAll(string popBuyerId, string receiverMobile,
+            string receiverName, string receiverAddress, DateTime startTime, DateTime endTime, string deliveryCompany, string deliveryNumber,
+            OrderState state, PopPayType payType, string vendorName, string number, string size,
             ColorFlag[] ofs, int parseResult, string comment, long shopId, OrderCreateType createType, OrderType type,
             int pageIndex, int pageSize)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
             para["popBuyerId"] = popBuyerId;
-            para["receiverPhone"] = receiverPhone;
             para["receiverMobile"] = receiverMobile;
             para["ReceiverName"] = receiverName;
             para["receiverAddress"] = receiverAddress;
-            para["timeType"] = timeType;
 
             para["startTime"] = startTime;
             para["endTime"] = endTime;
@@ -115,6 +112,7 @@ namespace ShopErp.App.Service.Restful
 
             para["vendorName"] = vendorName;
             para["number"] = number;
+            para["size"] = size;
             para["ofs"] = ofs;
             para["parseResult"] = parseResult;
             para["comment"] = comment;

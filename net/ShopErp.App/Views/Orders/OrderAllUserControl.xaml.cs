@@ -110,12 +110,10 @@ namespace ShopErp.App.Views.Orders
                 this.currentQueryType = QUERY_TYPE_OTHER;
 
                 this.pbBar.Parameters.Add("PopBuyerId", this.tbPopBuyerId.Text.Trim());
-                this.pbBar.Parameters.Add("ReceiverPhone", this.tbReceiverPhone.Text.Trim());
                 this.pbBar.Parameters.Add("ReceiverMobile", this.tbReceiverMobile.Text.Trim());
                 this.pbBar.Parameters.Add("ReceiverName", this.tbReceiverName.Text.Trim());
                 this.pbBar.Parameters.Add("ReceiverAddress", this.tbReceiverAddress.Text.Trim());
 
-                this.pbBar.Parameters.Add("TimeType", this.cbbTimeType.SelectedIndex);
                 this.pbBar.Parameters.Add("StartTime", this.dpStart.Value == null ? DateTime.Now.AddDays(-45) : this.dpStart.Value.Value);
                 this.pbBar.Parameters.Add("EndTime", this.dpEnd.Value == null ? DateTime.MinValue : this.dpEnd.Value.Value);
                 this.pbBar.Parameters.Add("DeliveryCompany", this.cbbDeliveryCompany.Text.Trim());
@@ -125,6 +123,7 @@ namespace ShopErp.App.Views.Orders
                 this.pbBar.Parameters.Add("Type", this.cbbOrderType.GetSelectedEnum<OrderType>());
                 this.pbBar.Parameters.Add("Vendor", this.tbVendor.Text.Trim());
                 this.pbBar.Parameters.Add("Number", this.tbNumber.Text.Trim());
+                this.pbBar.Parameters.Add("Size", this.tbSize.Text.Trim());
 
                 this.pbBar.Parameters.Add("Flags", this.cbbFlags.Items.OfType<OrderFlagViewModel>().Where(obj => obj.IsChecked).Select(obj => obj.Flag).ToArray());
                 this.pbBar.Parameters.Add("ParseResult", this.cbbParseResult.SelectedIndex - 1);
@@ -153,16 +152,11 @@ namespace ShopErp.App.Views.Orders
                 else if (this.currentQueryType == QUERY_TYPE_OTHER)
                 {
                     data = ServiceContainer.GetService<OrderService>().GetByAll(e.GetParameter<string>("PopBuyerId"),
-                        e.GetParameter<string>("ReceiverPhone"), e.GetParameter<string>("ReceiverMobile"),
-                        e.GetParameter<string>("ReceiverName"), e.GetParameter<string>("ReceiverAddress"),
-                        e.GetParameter<int>("TimeType"), e.GetParameter<DateTime>("StartTime"),
-                        e.GetParameter<DateTime>("EndTime"), e.GetParameter<string>("DeliveryCompany"),
-                        e.GetParameter<string>("DeliveryNumber"),
-                        e.GetParameter<OrderState>("OrderState"), PopPayType.None, e.GetParameter<string>("Vendor"),
-                        e.GetParameter<string>("Number"),
-                        e.GetParameter<ColorFlag[]>("Flags"), e.GetParameter<int>("ParseResult"),
-                        e.GetParameter<string>("SellerComment"), e.GetParameter<long>("ShopId"),
-                        e.GetParameter<OrderCreateType>("CreateType"), e.GetParameter<OrderType>("Type"),
+                        e.GetParameter<string>("ReceiverMobile"), e.GetParameter<string>("ReceiverName"), e.GetParameter<string>("ReceiverAddress"),
+                        e.GetParameter<DateTime>("StartTime"), e.GetParameter<DateTime>("EndTime"), e.GetParameter<string>("DeliveryCompany"),
+                        e.GetParameter<string>("DeliveryNumber"), e.GetParameter<OrderState>("OrderState"), PopPayType.None, e.GetParameter<string>("Vendor"),
+                        e.GetParameter<string>("Number"), e.GetParameter<string>("Size"), e.GetParameter<ColorFlag[]>("Flags"), e.GetParameter<int>("ParseResult"),
+                        e.GetParameter<string>("SellerComment"), e.GetParameter<long>("ShopId"), e.GetParameter<OrderCreateType>("CreateType"), e.GetParameter<OrderType>("Type"),
                         e.CurrentPage - 1, e.PageSize);
                 }
 

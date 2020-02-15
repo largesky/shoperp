@@ -17,11 +17,11 @@ namespace ShopErp.App.Views.Delivery
     /// <summary>
     /// ProvincesSeletorWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class ProvincesSeletorWindow : Window
+    public partial class DeliveryTemplateProvincesSeletorWindow : Window
     {
         public string Province { get; set; }
 
-        public ProvincesSeletorWindow()
+        public DeliveryTemplateProvincesSeletorWindow()
         {
             InitializeComponent();
         }

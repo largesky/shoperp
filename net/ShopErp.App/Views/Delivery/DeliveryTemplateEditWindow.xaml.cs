@@ -132,7 +132,7 @@ namespace ShopErp.App.Views.Delivery
             }
             DataGridCell dd = tb.Parent as DataGridCell;
             DeliveryTemplateArea vm = dd.DataContext as DeliveryTemplateArea;
-            var window = new ProvincesSeletorWindow { Province = vm.Areas };
+            var window = new DeliveryTemplateProvincesSeletorWindow { Province = vm.Areas };
             bool? ret = window.ShowDialog();
             if (ret != null && ret.Value)
             {

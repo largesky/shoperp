@@ -50,6 +50,8 @@
     xhr.setRequestHeader("accept-language", "zh-CN,zh;q=0.9");
     xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded");
     xhr.setRequestHeader("x-xsrf-token", "###xsrf-token");
+    xhr.setRequestHeader("sec-fetch-mode", "cors");
+    xhr.setRequestHeader("sec-fetch-site", "same-origin");
     var xhrdata = "jsonBody={\"filter\":{},\"pagination\":{\"current\":###pageIndex,\"pageSize\":20},\"table\":{\"sort\":{}},\"tab\":\"###state\"}";
     xhr.send(xhrdata)
     if (xhr.status == 200)

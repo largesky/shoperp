@@ -61,9 +61,8 @@ namespace ShopErp.App
             mc.Add("发货记录", typeof(DeliveryOutQueryUserControl));
             mc.Add("收件扫描", typeof(DeliveryInScanUserControl));
             mc.Add("收件记录", typeof(DeliveryInQueryUserControl));
-            mc.Add("标记发货", typeof(ShippingCheckUserControl));
-            mc.Add("标记发货-网页", typeof(ShippingCheckHtmlUserControl));
-            mc.Add("物流时限", typeof(DeliveryCheckUserControl));
+            mc.Add("标记发货", typeof(MarkPopDeliveryUserControl));
+            mc.Add("标记发货-网页", typeof(MarkPopDeliveryHtmlUserControl));
             mc.Add("快递配置", typeof(DeliveryCompanyUserControl));
             mc.Add("运费模板", typeof(DeliveryTemplateUserControl));
             mcs.Add(mc);

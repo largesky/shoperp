@@ -26,18 +26,19 @@ namespace ShopErp.Server.Service.Restful
             return defaultValue;
         }
 
-        public long SaveOrUpdateEx(long ownerId, string name, string value)
+        public long SaveOrUpdateEx(long ownerId, string name, string value, string op)
         {
             var sc = Find(ownerId, name);
             if (sc != null)
             {
                 sc.Value = value;
+                sc.UpdateTime = DateTime.Now;
                 this.dao.Update(sc);
                 return sc.Id;
             }
             else
             {
-                sc = new SystemConfig { Id = 0, Name = name, Value = value, OwnerId = ownerId, UpdateTime = DateTime.Now, CreateTime = DateTime.Now, UpdateOperator = ServiceContainer.GetCurrentLoginInfo().op.Number };
+                sc = new SystemConfig { Id = 0, Name = name, Value = value, OwnerId = ownerId, UpdateTime = DateTime.Now, CreateTime = DateTime.Now, UpdateOperator = op };
                 this.dao.Save(sc);
                 this.AndOrReplaceInCach(sc, obj => obj.Id == sc.Id);
                 return sc.Id;
@@ -74,7 +75,7 @@ namespace ShopErp.Server.Service.Restful
             {
                 //卖家只能配置自身的配置项
                 ownerId = ServiceContainer.GetSellerId(ownerId);
-                return new LongResponse(this.SaveOrUpdateEx(ownerId, name, value));
+                return new LongResponse(this.SaveOrUpdateEx(ownerId, name, value, ServiceContainer.GetCurrentLoginInfo().op.Number));
             }
             catch (Exception ex)
             {

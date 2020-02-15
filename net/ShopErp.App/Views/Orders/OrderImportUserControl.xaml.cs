@@ -53,7 +53,7 @@ namespace ShopErp.App.Views.Orders
                 for (int i = 1; i < datas.Length; i++)
                 {
                     string[] rrs = datas[i][recivierIndex].Split(new char[] { ',', '，' }, StringSplitOptions.RemoveEmptyEntries);
-                    var os = ServiceContainer.GetService<OrderService>().GetByAll("", "", rrs[1], rrs[0], "", 0, DateTime.Now.AddDays(-10), DateTime.Now.AddDays(1), "", "", ShopErp.Domain.OrderState.PAYED, ShopErp.Domain.PopPayType.None, "", "", null, -1, "", 0, ShopErp.Domain.OrderCreateType.NONE, ShopErp.Domain.OrderType.NONE, 0, 0).Datas;
+                    var os = ServiceContainer.GetService<OrderService>().GetByAll("", rrs[1], rrs[0], "", DateTime.Now.AddDays(-10), DateTime.Now.AddDays(1), "", "", ShopErp.Domain.OrderState.PAYED, ShopErp.Domain.PopPayType.None, "", "", "", null, -1, "", 0, ShopErp.Domain.OrderCreateType.NONE, ShopErp.Domain.OrderType.NONE, 0, 0).Datas;
                     foreach (var o in os)
                     {
                         o.DeliveryNumber = datas[i][numberIndex].Trim();

@@ -384,9 +384,6 @@
     <Compile Include="Views\Taobao\TaobaoKeywordUserControl.xaml.cs">
       <DependentUpon>TaobaoKeywordUserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Delivery\DeliveryCheckUserControl.xaml.cs">
-      <DependentUpon>DeliveryCheckUserControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Delivery\DeliveryCompanyUserControl.xaml.cs">
       <DependentUpon>DeliveryCompanyUserControl.xaml</DependentUpon>
     </Compile>
@@ -417,14 +414,14 @@
     <Compile Include="Views\Delivery\DeliveryTemplateUserControl.xaml.cs">
       <DependentUpon>DeliveryTemplateUserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Delivery\ShippingCheckHtmlUserControl.xaml.cs">
-      <DependentUpon>ShippingCheckHtmlUserControl.xaml</DependentUpon>
+    <Compile Include="Views\Delivery\MarkPopDeliveryHtmlUserControl.xaml.cs">
+      <DependentUpon>MarkPopDeliveryHtmlUserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Delivery\ProvincesSeletorWindow.xaml.cs">
-      <DependentUpon>ProvincesSeletorWindow.xaml</DependentUpon>
+    <Compile Include="Views\Delivery\DeliveryTemplateProvincesSeletorWindow.xaml.cs">
+      <DependentUpon>DeliveryTemplateProvincesSeletorWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Delivery\ShippingCheckUserControl.xaml.cs">
-      <DependentUpon>ShippingCheckUserControl.xaml</DependentUpon>
+    <Compile Include="Views\Delivery\MarkPopDeliveryUserControl.xaml.cs">
+      <DependentUpon>MarkPopDeliveryUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Extenstions\ComboBoxExtension.cs" />
     <Compile Include="Views\Finance\CreateReturnCashWindow.xaml.cs">
@@ -726,10 +723,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Delivery\DeliveryCheckUserControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\Delivery\DeliveryCompanyUserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -770,15 +763,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Delivery\ShippingCheckHtmlUserControl.xaml">
+    <Page Include="Views\Delivery\MarkPopDeliveryHtmlUserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Delivery\ProvincesSeletorWindow.xaml">
+    <Page Include="Views\Delivery\DeliveryTemplateProvincesSeletorWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Delivery\ShippingCheckUserControl.xaml">
+    <Page Include="Views\Delivery\MarkPopDeliveryUserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

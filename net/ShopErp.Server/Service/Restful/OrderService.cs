@@ -408,7 +408,7 @@ namespace ShopErp.Server.Service.Restful
             try
             {
                 string op = ServiceContainer.GetCurrentLoginInfo().op.Number;
-                var allOrders = this.GetByAll("", "", "", "", "", 0, DateTime.Now.AddDays(-90), DateTime.MinValue, "", deliveryNumber, OrderState.NONE, PopPayType.None, "", "", null, -1, "", 0, OrderCreateType.NONE, OrderType.NONE, 0, 0).Datas;
+                var allOrders = this.GetByAll("", "", "", "", DateTime.Now.AddDays(-90), DateTime.MinValue, "", deliveryNumber, OrderState.NONE, PopPayType.None, "", "", "", null, -1, "", 0, OrderCreateType.NONE, OrderType.NONE, 0, 0).Datas;
 
                 if (allOrders == null || allOrders.Count < 1)
                 {
@@ -656,14 +656,15 @@ namespace ShopErp.Server.Service.Restful
 
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/getbyall.html")]
-        public DataCollectionResponse<Order> GetByAll(string popBuyerId, string receiverPhone, string receiverMobile, string ReceiverName, string receiverAddress,
-                    int timeType, DateTime startTime, DateTime endTime, string deliveryCompany, string deliveryNumber,
-                    OrderState state, PopPayType payType, string vendorName, string number,
-                    ColorFlag[] ofs, int parseResult, string comment, long shopId, OrderCreateType createType, OrderType type, int pageIndex, int pageSize)
+        public DataCollectionResponse<Order> GetByAll(string popBuyerId, string receiverMobile,
+            string receiverName, string receiverAddress, DateTime startTime, DateTime endTime, string deliveryCompany, string deliveryNumber,
+            OrderState state, PopPayType payType, string vendorName, string number, string size,
+            ColorFlag[] ofs, int parseResult, string comment, long shopId, OrderCreateType createType, OrderType type,
+            int pageIndex, int pageSize)
         {
             try
             {
-                return this.dao.GetByAll(popBuyerId, receiverPhone, receiverMobile, ReceiverName, receiverAddress, timeType, startTime, endTime, deliveryCompany, deliveryNumber, state, payType, vendorName, number, ofs, parseResult, comment, shopId, createType, type, pageIndex, pageSize);
+                return this.dao.GetByAll(popBuyerId, receiverMobile, receiverName, receiverAddress, startTime, endTime, deliveryCompany, deliveryNumber, state, payType, vendorName, number, size, ofs, parseResult, comment, shopId, createType, type, pageIndex, pageSize);
             }
             catch (Exception ex)
             {

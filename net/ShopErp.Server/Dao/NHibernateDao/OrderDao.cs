@@ -8,43 +8,35 @@ namespace ShopErp.Server.Dao.NHibernateDao
 {
     public class OrderDao : NHibernateDaoBase<Order>
     {
-        static readonly string[] TIME_TYPES = {"PopPayTime", "PopDeliveryTime", "CreateTime", "PrintTime", "DeliveryTime", "CloseTime" };
 
-        private string GetTimeType(int timeType)
-        {
-            if (timeType > TIME_TYPES.Length)
-            {
-                throw new Exception("未知的时间类型");
-            }
-            return TIME_TYPES[timeType];
-        }
-
-        public DataCollectionResponse<Order> GetByAll(string popBuyerId, string receiverPhone, string receiverMobile, string receiverName, string receiverAddress,
-            int timeType, DateTime startTime, DateTime endTime, string deliveryCompany, string deliveryNumber,
-            OrderState state, PopPayType payType, string vendorName, string number,
-            ColorFlag[] ofs, int parseResult, string comment, long shopId, OrderCreateType createType, OrderType type, int pageIndex, int pageSize)
+        public DataCollectionResponse<Order> GetByAll(string popBuyerId, string receiverMobile,
+            string receiverName, string receiverAddress, DateTime startTime, DateTime endTime, string deliveryCompany, string deliveryNumber,
+            OrderState state, PopPayType payType, string vendorName, string number, string size,
+            ColorFlag[] ofs, int parseResult, string comment, long shopId, OrderCreateType createType, OrderType type,
+            int pageIndex, int pageSize)
         {
             string hsql = "from " + this.GetEntiyName() + " as O0 left join O0.OrderGoodss as OG0 where ";
             List<object> objs = new List<object>();
 
             if (this.IsLessDBMinDate(startTime))
             {
-                startTime = DateTime.Now.AddDays(-45);
+                startTime = DateTime.Now.AddDays(-30);
             }
 
             hsql += this.MakeQueryLike("O0.PopBuyerId", popBuyerId, objs);
-            hsql += this.MakeQueryLike("O0.ReceiverPhone", receiverPhone, objs);
             hsql += this.MakeQueryLike("O0.ReceiverMobile", receiverMobile, objs);
             hsql += this.MakeQuery("O0.ReceiverName", receiverName, objs);
             hsql += this.MakeQueryLike("O0.ReceiverAddress", receiverAddress, objs);
-            hsql += this.MakeQuery("O0." + this.GetTimeType(timeType), startTime, true);
-            hsql += this.MakeQuery("O0." + this.GetTimeType(timeType), endTime, false);
+            hsql += this.MakeQuery("O0.PopPayTime", startTime, true);
+            hsql += this.MakeQuery("O0.PopPayTime", endTime, false);
             hsql += this.MakeQuery("O0.DeliveryCompany", deliveryCompany, objs);
             hsql += this.MakeQuery("O0.DeliveryNumber", deliveryNumber, objs);
             hsql += this.MakeQuery("O0.State", (int)state);
             hsql += this.MakeQuery("O0.PopPayType", (int)payType);
             hsql += this.MakeQueryLike("OG0.Vendor", vendorName, objs);
             hsql += this.MakeQueryLike("OG0.Number", number, objs);
+            hsql += this.MakeQueryLike("OG0.Size", size, objs);
+
             if (ofs != null && ofs.Length > 0)
             {
                 hsql += "(";
