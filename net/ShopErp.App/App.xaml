@@ -22,7 +22,8 @@
             <converters:FinanceAccountConverter x:Key="FinanceAccountConverter"></converters:FinanceAccountConverter>
             <converters:VideoTypeConverter x:Key="VideoTypeConverter"/>
             <converters:WuliuTemplateConverter x:Key="WuliuTemplateConverter"/>
-            
+            <converters:PopImageConverter x:Key="PopImageConverter"/>
+
             <Style x:Key="ImageButton" TargetType="Button">
                 <Setter Property="Template">
                     <Setter.Value>

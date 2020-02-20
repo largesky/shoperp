@@ -8,17 +8,17 @@ namespace ShopErp.App.Converters
 {
     public class ColorFlagImageConverter : IValueConverter
     {
-        public static readonly BitmapSource IMAGE_RED = new BitmapImage(new Uri("/ShopErp.App;component/Resources/Images/Red.png", UriKind.Relative));
+        public static readonly BitmapSource IMAGE_RED = new BitmapImage(new Uri("/ShopErp.App;component/Resources/Images/Flag_Red.png", UriKind.Relative));
 
-        public static readonly BitmapSource IMAGE_GREEN = new BitmapImage(new Uri("/ShopErp.App;component/Resources/Images/Green.png", UriKind.Relative));
+        public static readonly BitmapSource IMAGE_GREEN = new BitmapImage(new Uri("/ShopErp.App;component/Resources/Images/Flag_Green.png", UriKind.Relative));
 
-        public static readonly BitmapSource IMAGE_YELLOW = new BitmapImage(new Uri("/ShopErp.App;component/Resources/Images/Yellow.png", UriKind.Relative));
+        public static readonly BitmapSource IMAGE_YELLOW = new BitmapImage(new Uri("/ShopErp.App;component/Resources/Images/Flag_Yellow.png", UriKind.Relative));
 
-        public static readonly BitmapSource IMAGE_BLUE = new BitmapImage(new Uri("/ShopErp.App;component/Resources/Images/Blue.png", UriKind.Relative));
+        public static readonly BitmapSource IMAGE_BLUE = new BitmapImage(new Uri("/ShopErp.App;component/Resources/Images/Flag_Blue.png", UriKind.Relative));
 
-        public static readonly BitmapSource IMAGE_PINK = new BitmapImage(new Uri("/ShopErp.App;component/Resources/Images/Pink.png", UriKind.Relative));
+        public static readonly BitmapSource IMAGE_PINK = new BitmapImage(new Uri("/ShopErp.App;component/Resources/Images/Flag_Pink.png", UriKind.Relative));
 
-        public static readonly BitmapSource IMAGE_UN_LABLE = new BitmapImage(new Uri("/ShopErp.App;component/Resources/Images/UnLable.png", UriKind.Relative));
+        public static readonly BitmapSource IMAGE_UN_LABLE = new BitmapImage(new Uri("/ShopErp.App;component/Resources/Images/Flag_UnLable.png", UriKind.Relative));
 
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {

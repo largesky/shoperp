@@ -140,6 +140,7 @@
     <Compile Include="Converters\OrderGoodsStateConverter.cs" />
     <Compile Include="Converters\OrderPayTypeVisibilityConverter.cs" />
     <Compile Include="Converters\OrderReciverInfoConverter.cs" />
+    <Compile Include="Converters\PopImageConverter.cs" />
     <Compile Include="Converters\ShopMarkConverter.cs" />
     <Compile Include="Converters\VendorConverter.cs" />
     <Compile Include="Converters\VendorNameFormatConverter.cs" />
@@ -1063,22 +1064,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Images\pay_h.png" />
-    <Resource Include="Resources\Images\qq.png" />
-    <Resource Include="Resources\Images\Star0.png" />
-    <Resource Include="Resources\Images\Star1.png" />
-    <Resource Include="Resources\Images\Star2.png" />
-    <Resource Include="Resources\Images\Star3.png" />
-    <Resource Include="Resources\Images\Star4.png" />
-    <Resource Include="Resources\Images\Star5.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Images\Blue.png" />
-    <Resource Include="Resources\Images\Green.png" />
-    <Resource Include="Resources\Images\Pink.png" />
-    <Resource Include="Resources\Images\Red.png" />
-    <Resource Include="Resources\Images\UnLable.png" />
-    <Resource Include="Resources\Images\Yellow.png" />
+    <Resource Include="Resources\Images\Flag_Blue.png" />
+    <Resource Include="Resources\Images\Flag_Green.png" />
+    <Resource Include="Resources\Images\Flag_Pink.png" />
+    <Resource Include="Resources\Images\Flag_Red.png" />
+    <Resource Include="Resources\Images\Flag_UnLable.png" />
+    <Resource Include="Resources\Images\Flag_Yellow.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="网店ERP.ico" />
@@ -1091,6 +1082,13 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\VideoIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Pop_Pdd.png" />
+    <Resource Include="Resources\Images\Pop_Tb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\pay_h.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -9,14 +9,16 @@ namespace ShopErp.App.Utils
     {
         public static System.Drawing.Bitmap CreateImage(string content, string format, int width, int height, bool pureBarcode, string fontName, float fontSize)
         {
-            var writer = new ZXing.BarcodeWriter();
-            writer.Format = (BarcodeFormat)(Enum.Parse(typeof(BarcodeFormat), format));
-            writer.Options = new ZXing.Common.EncodingOptions
+            var writer = new ZXing.BarcodeWriter
             {
-                Height = height,
-                Width = width,
-                Margin = 0,
-                PureBarcode = pureBarcode,
+                Format = (BarcodeFormat)(Enum.Parse(typeof(BarcodeFormat), format)),
+                Options = new ZXing.Common.EncodingOptions
+                {
+                    Height = height,
+                    Width = width,
+                    Margin = 0,
+                    PureBarcode = pureBarcode,
+                }
             };
             if (writer.Renderer is ZXing.Rendering.BitmapRenderer)
             {
