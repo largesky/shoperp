@@ -500,7 +500,10 @@ namespace ShopErp.Server.Service.Pop.Pdd
             {
                 throw new Exception("拼多多调用失败：" + t.error_code + "," + t.error_msg);
             }
-
+            if (string.IsNullOrWhiteSpace(t.access_token) || string.IsNullOrWhiteSpace(t.refresh_token))
+            {
+                throw new Exception("拼多多调用失败：刷新AcessToken返回空数据，需要重新授权");
+            }
             shop.AppAccessToken = t.access_token;
             shop.AppRefreshToken = t.refresh_token;
             shop.PopSellerNumberId = t.owner_id;
