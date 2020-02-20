@@ -100,7 +100,7 @@ namespace ShopErp.App.Service.Restful
             Dictionary<string, object> para = new Dictionary<string, object>();
             para["popBuyerId"] = popBuyerId;
             para["receiverMobile"] = receiverMobile;
-            para["ReceiverName"] = receiverName;
+            para["receiverName"] = receiverName;
             para["receiverAddress"] = receiverAddress;
 
             para["startTime"] = startTime;
