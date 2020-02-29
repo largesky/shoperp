@@ -155,12 +155,13 @@
     <Compile Include="Device\Kunhong\KunhongDevice.cs" />
     <Compile Include="Domain\GoodsCountPrintDocument.cs" />
     <Compile Include="Domain\GoodsCountPrintDocument2.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailErrorResponse.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailErrorResponseData.cs" />
     <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponse.cs" />
     <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModel.cs" />
     <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelCatPath.cs" />
-    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelFormValuesDesc.cs" />
-    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelFormValuesDescConverter.cs" />
     <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelFormValuesLocation.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelFormValuesModularDesc.cs" />
     <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelFormValuesSaleProp.cs" />
     <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelFormValuesSalePropColorItem.cs" />
     <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelGlobal.cs" />
@@ -1089,6 +1090,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\pay_h.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="jsx1.jsx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

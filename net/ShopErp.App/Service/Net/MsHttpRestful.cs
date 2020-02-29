@@ -35,7 +35,7 @@ namespace ShopErp.App.Service.Net
             int timeout = Debugger.IsAttached ? 250 : NETWORK_MAX_TIME_OUT;
             var client = new System.Net.Http.HttpClient { Timeout = new TimeSpan(0, timeout, 0) };
             client.DefaultRequestHeaders.Clear();
-            client.DefaultRequestHeaders.Accept.ParseAdd(accept ?? "");
+            client.DefaultRequestHeaders.Accept.ParseAdd(accept ?? "*/*");
             client.DefaultRequestHeaders.Referrer = referrer == null ? null : new Uri(referrer);
             if (headers != null)
             {
@@ -47,7 +47,7 @@ namespace ShopErp.App.Service.Net
             return client;
         }
 
-        private static Exception RaiseSourceException(Exception ex)
+        private static Exception GetOrignalException(Exception ex)
         {
             Exception e = ex;
             while (e.InnerException != null)
@@ -55,6 +55,27 @@ namespace ShopErp.App.Service.Net
                 e = e.InnerException;
             }
             return e;
+        }
+
+        public static T DoWithRetry<T>(Func<T> func, int retryCount = 3)
+        {
+            for (int i = 0; i < retryCount; i++)
+            {
+                try
+                {
+                    return func();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message + Environment.NewLine + ex.StackTrace);
+                    if (i == retryCount - 1)
+                    {
+                        throw;
+                    }
+                    System.Threading.Thread.Sleep((i + 1) * 1500);
+                }
+            }
+            throw new Exception("代码应该永远执行不到这里");
         }
 
 
@@ -120,7 +141,7 @@ namespace ShopErp.App.Service.Net
             }
             catch (Exception ex)
             {
-                throw RaiseSourceException(ex);
+                throw GetOrignalException(ex);
             }
             if (ret.IsSuccessStatusCode == false)
             {
@@ -141,7 +162,7 @@ namespace ShopErp.App.Service.Net
             }
             catch (Exception ex)
             {
-                throw RaiseSourceException(ex);
+                throw GetOrignalException(ex);
             }
             if (ret.IsSuccessStatusCode == false)
             {
@@ -163,7 +184,7 @@ namespace ShopErp.App.Service.Net
             }
             catch (Exception ex)
             {
-                throw RaiseSourceException(ex);
+                throw GetOrignalException(ex);
             }
             if (ret.IsSuccessStatusCode == false)
             {
@@ -206,7 +227,7 @@ namespace ShopErp.App.Service.Net
             }
             catch (Exception ex)
             {
-                throw RaiseSourceException(ex);
+                throw GetOrignalException(ex);
             }
             if (ret.IsSuccessStatusCode == false)
             {
@@ -231,7 +252,7 @@ namespace ShopErp.App.Service.Net
             }
             catch (Exception ex)
             {
-                throw RaiseSourceException(ex);
+                throw GetOrignalException(ex);
             }
             if (ret.IsSuccessStatusCode == false)
             {
@@ -243,25 +264,56 @@ namespace ShopErp.App.Service.Net
 
         #endregion
 
-        public static T DoWithRetry<T>(Func<T> func, int retryCount = 3)
+        #region 淘宝专用收发数据
+
+        public static string SendTbData(HttpMethod method, Uri url, Dictionary<string, string> header, string cookie, string urlEncodeData)
         {
-            for (int i = 0; i < retryCount; i++)
+            var client = new System.Net.Http.HttpClient(new HttpClientHandler { UseCookies = false, AutomaticDecompression = System.Net.DecompressionMethods.GZip | System.Net.DecompressionMethods.Deflate }) { Timeout = new TimeSpan(0, Debugger.IsAttached ? 250 : NETWORK_MAX_TIME_OUT, 0) };
+            HttpRequestMessage httpRequestMessage = new HttpRequestMessage(method, url);
+            httpRequestMessage.Headers.Add("Accept", "application/json, text/plain, */*");
+            httpRequestMessage.Headers.Add("Accept-Encoding", "gzip, deflate, br");
+            httpRequestMessage.Headers.Add("Accept-Language", "zh-CN,zh;q=0.9");
+            httpRequestMessage.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36");
+            if (method == HttpMethod.Post)
             {
-                try
+                //httpRequestMessage.Headers.Add("X-Requested-With", "XMLHttpRequest");
+            }
+
+            if (string.IsNullOrWhiteSpace(cookie) == false)
+            {
+                httpRequestMessage.Headers.Add("Cookie", cookie);
+            }
+
+            if (header != null && header.Count > 0)
+            {
+                foreach (var paire in header)
                 {
-                    return func();
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex.Message + Environment.NewLine + ex.StackTrace);
-                    if (i == retryCount - 1)
-                    {
-                        throw;
-                    }
-                    System.Threading.Thread.Sleep((i + 1) * 1500);
+                    httpRequestMessage.Headers.Add(paire.Key, paire.Value);
                 }
             }
-            throw new Exception("代码应该永远执行不到这里");
+
+            if (string.IsNullOrWhiteSpace(urlEncodeData) == false && method != HttpMethod.Post)
+            {
+                throw new Exception("urlEncodeData 不为空，但METHOD 不为 POST");
+            }
+
+            if (string.IsNullOrWhiteSpace(urlEncodeData) == false)
+            {
+                StringContent sc = new StringContent(urlEncodeData);
+                sc.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/x-www-form-urlencoded");
+                httpRequestMessage.Content = sc;
+            }
+
+            HttpResponseMessage ret = client.SendAsync(httpRequestMessage).Result;
+            if (ret.IsSuccessStatusCode == false)
+            {
+                throw new Exception("HTTP请求错误:" + ret.StatusCode);
+            }
+            var retString = ret.Content.ReadAsStringAsync().Result;
+            return retString;
         }
+
+        #endregion
+
     }
 }

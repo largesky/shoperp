@@ -50,7 +50,7 @@ namespace ShopErp.Server.Service.Net
             return client;
         }
 
-        private static Exception RaiseSourceException(Exception ex)
+        private static Exception GetOrignalException(Exception ex)
         {
             Exception e = ex;
             while (e.InnerException != null)
@@ -60,6 +60,26 @@ namespace ShopErp.Server.Service.Net
             return e;
         }
 
+        public static T DoWithRetry<T>(Func<T> func, int retryCount = 3)
+        {
+            for (int i = 0; i < retryCount; i++)
+            {
+                try
+                {
+                    return func();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message + Environment.NewLine + ex.StackTrace);
+                    if (i == retryCount - 1)
+                    {
+                        throw;
+                    }
+                    System.Threading.Thread.Sleep((i + 1) * 1500);
+                }
+            }
+            throw new Exception("代码应该永远执行不到这里");
+        }
 
         #region 返回字符的方法
 
@@ -123,7 +143,7 @@ namespace ShopErp.Server.Service.Net
             }
             catch (Exception ex)
             {
-                throw RaiseSourceException(ex);
+                throw GetOrignalException(ex);
             }
             if (ret.IsSuccessStatusCode == false)
             {
@@ -144,7 +164,7 @@ namespace ShopErp.Server.Service.Net
             }
             catch (Exception ex)
             {
-                throw RaiseSourceException(ex);
+                throw GetOrignalException(ex);
             }
             if (ret.IsSuccessStatusCode == false)
             {
@@ -166,7 +186,7 @@ namespace ShopErp.Server.Service.Net
             }
             catch (Exception ex)
             {
-                throw RaiseSourceException(ex);
+                throw GetOrignalException(ex);
             }
             if (ret.IsSuccessStatusCode == false)
             {
@@ -209,7 +229,7 @@ namespace ShopErp.Server.Service.Net
             }
             catch (Exception ex)
             {
-                throw RaiseSourceException(ex);
+                throw GetOrignalException(ex);
             }
             if (ret.IsSuccessStatusCode == false)
             {
@@ -234,7 +254,7 @@ namespace ShopErp.Server.Service.Net
             }
             catch (Exception ex)
             {
-                throw RaiseSourceException(ex);
+                throw GetOrignalException(ex);
             }
             if (ret.IsSuccessStatusCode == false)
             {
@@ -246,25 +266,6 @@ namespace ShopErp.Server.Service.Net
 
         #endregion
 
-        public static T DoWithRetry<T>(Func<T> func, int retryCount = 3)
-        {
-            for (int i = 0; i < retryCount; i++)
-            {
-                try
-                {
-                    return func();
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex.Message + Environment.NewLine + ex.StackTrace);
-                    if (i == retryCount - 1)
-                    {
-                        throw;
-                    }
-                    System.Threading.Thread.Sleep((i + 1) * 1500);
-                }
-            }
-            throw new Exception("代码应该永远执行不到这里");
-        }
+       
     }
 }

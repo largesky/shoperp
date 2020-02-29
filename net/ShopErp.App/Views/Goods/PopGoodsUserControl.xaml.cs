@@ -30,10 +30,11 @@ namespace ShopErp.App.Views.Goods
     public partial class PopGoodsUserControl : UserControl
     {
         string jspath = System.IO.Path.Combine(EnvironmentDirHelper.DIR_DATA + "\\TAOBAOJS.js");
-        private Task task = null;
-        private bool isStop = false;
+        private GoodsDownloadWorker goodsDownloadWorker = null;
         private bool myLoaded = false;
         private Shop lastShop = null;
+        private bool isStop;
+        private Task task;
         private System.Collections.ObjectModel.ObservableCollection<PopGoodsInfoViewModel> popGoodsInfoViewModels = new System.Collections.ObjectModel.ObservableCollection<PopGoodsInfoViewModel>();
 
         public PopGoodsUserControl()
@@ -51,7 +52,6 @@ namespace ShopErp.App.Views.Goods
                 }
                 this.cbbShops.ItemsSource = ServiceContainer.GetService<ShopService>().GetByAll().Datas;
                 this.cbbStatus.Bind<PopGoodsState>();
-                this.cbbTypes.Bind<GoodsType>();
                 this.dgvGoods.ItemsSource = this.popGoodsInfoViewModels;
                 this.cbbPddShops.ItemsSource = ServiceContainer.GetService<ShopService>().GetByAll().Datas.Where(obj => obj.Enabled && obj.PopType == PopType.PINGDUODUO).ToArray();
                 this.myLoaded = true;
@@ -72,7 +72,7 @@ namespace ShopErp.App.Views.Goods
             }));
         }
 
-        private void AppendDataToUi(List<PopGoods> goods, Shop shop, string title, string code, string stockCode, PopGoodsState state, GoodsType type)
+        private void AppendDataToUi(List<PopGoods> goods, Shop shop, string title, string code, string stockCode, PopGoodsState state)
         {
             List<PopGoods> toAdd = new List<PopGoods>();
             string[] titles = title.Split(' ');
@@ -81,11 +81,6 @@ namespace ShopErp.App.Views.Goods
             foreach (var v in goods)
             {
                 if (this.popGoodsInfoViewModels.Any(obj => obj.PopGoodsInfo.Id == v.Id))
-                {
-                    continue;
-                }
-                GoodsType gt = (GoodsType)EnumUtil.GetEnumValueByDesc(typeof(GoodsType), v.Type);
-                if (type != GoodsType.GOODS_SHOES_NONE && gt != GoodsType.GOODS_SHOES_NONE && gt != type)
                 {
                     continue;
                 }
@@ -136,29 +131,168 @@ namespace ShopErp.App.Views.Goods
                 this.popGoodsInfoViewModels.Add(v);
             }
             this.dgvGoods.ItemsSource = popGoodsInfoViewModels;
+            for (int i = 0; i < this.popGoodsInfoViewModels.Count; i++)
+            {
+                var v = this.popGoodsInfoViewModels[i];
+                if (v.PopGoodsInfo.Skus.Any(o => string.IsNullOrWhiteSpace(o.Code)))
+                {
+                    v.State = "有SKU库存编码为空";
+                }
+                if (this.popGoodsInfoViewModels.Any(obj => obj != v && obj.SkuCodesInfo.Equals(v.SkuCodesInfo, StringComparison.OrdinalIgnoreCase)))
+                {
+                    v.State += "商品重复";
+                }
+            }
+        }
+
+        private void OverlayTask(GoodsDownloadPauseEventArgs e)
+        {
+            try
+            {
+                int time = e.WaitSeconds;
+                this.Dispatcher.BeginInvoke(new Action(() => this.overlay.Visibility = Visibility.Visible));
+                while (time >= 0)
+                {
+                    string msg = "检测到：淘宝返回操作过于频繁，将于：" + time + "秒后自动重试";
+                    this.Dispatcher.BeginInvoke(new Action(() => this.tbCount.Text = msg));
+                    Thread.Sleep(1000);
+                    time--;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                this.Dispatcher.BeginInvoke(new Action(() => this.overlay.Visibility = Visibility.Collapsed));
+                if (this.goodsDownloadWorker != null)
+                {
+                    this.goodsDownloadWorker.GoOn();
+                }
+            }
         }
 
         private void btnQuery_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                if (this.task != null)
+                //运行中或者暂停中
+                if (this.goodsDownloadWorker != null)
                 {
-                    this.isStop = true;
-                    return;
+                    if (goodsDownloadWorker.WorkerState == WorkerState.PAUSE)
+                    {
+                        goodsDownloadWorker.GoOn();
+                    }
+                    if (goodsDownloadWorker.WorkerState == WorkerState.WORKING)
+                    {
+                        goodsDownloadWorker.Pause(false, "用户暂停", 0);
+                    }
                 }
-                string title = this.tbTitle.Text.Trim();
-                string code = this.tbCode.Text.Trim();
-                string stockCode = this.tbStockCode.Text.Trim();
-                PopGoodsState state = this.cbbStatus.GetSelectedEnum<PopGoodsState>();
-                this.lastShop = this.cbbShops.SelectedItem as Shop;
-                GoodsType type = this.cbbTypes.GetSelectedEnum<GoodsType>();
-                if (this.lastShop == null)
+                else
                 {
-                    throw new Exception("未选择店铺");
+                    //创建新线程开始
+                    string title = this.tbTitle.Text.Trim();
+                    string code = this.tbCode.Text.Trim();
+                    string stockCode = this.tbStockCode.Text.Trim();
+                    PopGoodsState state = this.cbbStatus.GetSelectedEnum<PopGoodsState>();
+                    this.lastShop = this.cbbShops.SelectedItem as Shop;
+                    if (this.lastShop == null)
+                    {
+                        throw new Exception("未选择店铺");
+                    }
+                    if (this.lastShop.AppEnabled == false)
+                    {
+                        string htmlRet = this.wb1.GetTextAsync().Result;
+                        if (htmlRet.Contains(this.lastShop.PopSellerId) == false)
+                        {
+                            throw new Exception("选择店铺与当前登录店铺不一致");
+                        }
+                    }
+                    goodsDownloadWorker = new GoodsDownloadWorker(this.lastShop, title, code, stockCode, state);
+                    this.popGoodsInfoViewModels.Clear();
+                    goodsDownloadWorker.Download += GoodsDownloadWorker_Download;
+                    goodsDownloadWorker.DownloadData += GoodsDownloadWorker_DownloadData;
+                    goodsDownloadWorker.Pausing += GoodsDownloadWorker_Pausing;
+                    goodsDownloadWorker.Start();
                 }
-                this.popGoodsInfoViewModels.Clear();
-                this.task = Task.Factory.StartNew(() => QueryTask(this.lastShop, title, code, stockCode, state, type));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void GoodsDownloadWorker_Pausing(object sender, GoodsDownloadPauseEventArgs e)
+        {
+            if (e.Msg == "用户暂停")
+            {
+                return;
+            }
+            this.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                if (e.IsVerify)
+                {
+                    MessageBox.Show("登录超时需要登录验证，进行操作后点击继续");
+                }
+                else
+                {
+                    Task.Factory.StartNew(new Action(() => OverlayTask(e)));
+                }
+            }));
+        }
+
+        private void GoodsDownloadWorker_DownloadData(object sender, GoodsDownloadDataEventArgs e)
+        {
+            GoodsDownloadWorker worker = sender as GoodsDownloadWorker;
+            this.Dispatcher.BeginInvoke(new Action(() => AppendDataToUi(e.Goods, worker.shop, worker.title, worker.code, worker.stockCode, worker.state)));
+        }
+
+        private void GoodsDownloadWorker_Download(object sender, GoodsDownloadWorkerEventArgs e)
+        {
+            GoodsDownloadWorkerEventArgs le = e;
+            this.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                this.btnQuery.Content = le.BtnQueryTitle;
+                this.btnStop.IsEnabled = le.BtnStopEnabled;
+                this.tbMsg.Text = le.Msg;
+                if (e.IsComppleted)
+                {
+                    for (int i = 0; i < this.popGoodsInfoViewModels.Count; i++)
+                    {
+                        var v = this.popGoodsInfoViewModels[i];
+                        if (v.PopGoodsInfo.Skus.Any(o => string.IsNullOrWhiteSpace(o.Code)))
+                        {
+                            v.State = "有SKU库存编码为空";
+                        }
+                        if (this.popGoodsInfoViewModels.Any(obj => obj != v && obj.SkuCodesInfo.Equals(v.SkuCodesInfo, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            v.State += "商品重复";
+                        }
+                    }
+                    if (this.popGoodsInfoViewModels.Any(obj => string.IsNullOrWhiteSpace(obj.State) == false))
+                    {
+                        MessageBox.Show("下载完成，有商品库存编码为空或者商品重复");
+                    }
+                    else
+                    {
+                        MessageBox.Show("下载完成");
+                    }
+                    this.goodsDownloadWorker = null;
+                }
+            }));
+        }
+
+        private void BtnStop_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.goodsDownloadWorker == null)
+            {
+                return;
+            }
+
+            try
+            {
+                this.goodsDownloadWorker.Stop();
             }
             catch (Exception ex)
             {
@@ -336,7 +470,7 @@ namespace ShopErp.App.Views.Goods
                 }
                 else if (shop.PopType == PopType.TMALL)
                 {
-                    url = "https://ipublish.tmall.com/tmall/manager/render.htm?tab=all";
+                    url = "https://item.manager.tmall.com/tmall/manager/render.htm";
                 }
                 if (string.IsNullOrWhiteSpace(url) == false)
                 {
@@ -367,241 +501,6 @@ namespace ShopErp.App.Views.Goods
             {
                 MessageBox.Show(ex.Message);
             }
-        }
-
-        private void QueryTask(Shop shop, string title, string code, string stockCode, PopGoodsState state, GoodsType type)
-        {
-            List<PopGoods> goods = new List<PopGoods>();
-
-            var titles = title.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-            try
-            {
-                this.SetUiMsg(this.btnQuery, "下载线程已开始执行", true, "停止", "查询");
-                this.isStop = false;
-                int pageIndex = 0;
-                while (this.isStop == false)
-                {
-                    SetUiMsg(this.btnQuery, "正在下载第:" + (pageIndex + 1) + "页", true, "停止", "查询");
-                    List<PopGoods> ggs = null;
-                    if (shop.AppEnabled)
-                    {
-                        ggs = ServiceContainer.GetService<GoodsService>().SearchPopGoods(shop, state, pageIndex, 50).Datas;
-                    }
-                    else
-                    {
-                        ggs = this.QueryHtmlGoods(shop, pageIndex + 1, state);
-                    }
-                    if (ggs == null || ggs.Count < 1)
-                    {
-                        break;
-                    }
-                    goods.AddRange(ggs);
-                    pageIndex++;
-                    SetUiMsg(this.btnQuery, "已经下载:" + goods.Count, true, "停止", "查询");
-                    this.Dispatcher.Invoke(new Action(() => AppendDataToUi(ggs, shop, title, code, stockCode, state, type)));
-                }
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message != "调用失败:")
-                    MessageBox.Show(ex.Message);
-            }
-            finally
-            {
-                this.isStop = true;
-                this.task = null;
-                this.SetUiMsg(this.btnQuery, "下载完成", false, "停止", "查询");
-                this.Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    for (int i = 0; i < this.popGoodsInfoViewModels.Count; i++)
-                    {
-                        var v = this.popGoodsInfoViewModels[i];
-                        if (v.PopGoodsInfo.Skus.Any(o => string.IsNullOrWhiteSpace(o.Code)))
-                        {
-                            v.State = "有SKU库存编码为空";
-                        }
-                        if (this.popGoodsInfoViewModels.Any(obj => obj != v && obj.SkuCodesInfo.Equals(v.SkuCodesInfo, StringComparison.OrdinalIgnoreCase)))
-                        {
-                            v.State += "商品重复";
-                        }
-                    }
-                    if (this.popGoodsInfoViewModels.Any(obj => string.IsNullOrWhiteSpace(obj.State) == false))
-                    {
-                        MessageBox.Show("下载完成，有商品库存编码为空或者商品重复");
-                    }
-                    else
-                    {
-                        MessageBox.Show("下载完成");
-                    }
-                }));
-            }
-        }
-
-        private List<PopGoods> QueryHtmlGoods(Shop shop, int pageIndex, PopGoodsState state)
-        {
-            string htmlRet = this.wb1.GetTextAsync().Result;
-            if (htmlRet.Contains(shop.PopSellerId) == false)
-            {
-                throw new Exception("选择店铺与当前登录店铺不一致");
-            }
-            var cefCookieVisitor = new CefCookieVisitor(shop.PopType == PopType.TMALL ? "ipublish.tmall.com" : "item.publish.taobao.com", "XSRF-TOKEN");
-            Cef.GetGlobalCookieManager().VisitAllCookies(cefCookieVisitor);
-            var cookieValue = cefCookieVisitor.WaitValue();
-            if (string.IsNullOrWhiteSpace(cookieValue))
-            {
-                throw new Exception("当前店铺没有登录");
-            }
-            string goodsState = state == PopGoodsState.NONE ? "all" : (state == PopGoodsState.ONSALE ? "on_sale" : "in_stock");
-            string goodsListUrl = shop.PopType == PopType.TMALL ? "https://ipublish.tmall.com/tmall/manager/table.htm" : "https://item.publish.taobao.com/taobao/manager/table.htm";
-            string goodsListScript = ScriptManager.GetBody(jspath, "TAOBAO_SEARCH_GOODS").Replace("###url", goodsListUrl).Replace("###pageIndex", pageIndex.ToString()).Replace("###state", goodsState).Replace("###xsrf-token", cookieValue); ;
-            string goodsEditDetailUrl = shop.PopType == PopType.TMALL ? "https://ipublish.tmall.com/tmall/publish.htm?id=" : "https://item.publish.taobao.com/sell/publish.htm?itemId=";
-
-            JavascriptResponse ret = wb1.GetBrowser().MainFrame.EvaluateScriptAsync(goodsListScript, "", 1, new TimeSpan(0, 0, 30)).Result;
-            if (ret.Success == false || (ret.Result != null && ret.Result.ToString().StartsWith("ERROR")))
-            {
-                throw new Exception("执行操作失败：" + ret.Message);
-            }
-            var content = ret.Result.ToString();
-            var resp = Newtonsoft.Json.JsonConvert.DeserializeObject<TaobaoQueryGoodsListResponse>(content);
-            List<PopGoods> goods = new List<PopGoods>();
-            if (resp.data.table.dataSource == null)
-            {
-                return goods;
-            }
-            var last = DateTime.Now;
-            foreach (var g in resp.data.table.dataSource)
-            {
-                if (this.isStop)
-                {
-                    break;
-                }
-                long mis = (long)DateTime.Now.Subtract(last).TotalMilliseconds;
-                if (mis < 2000)
-                {
-                    Thread.Sleep(2000 - (int)mis);
-                }
-                last = DateTime.Now;
-                Debug.WriteLine("开始抓取商品：" + g.itemId);
-
-                this.SetUiMsg(this.btnQuery, "正在下载第：" + pageIndex + "/" + ((resp.data.pagination.total / resp.data.pagination.pageSize) + 1) + "页，第" + (goods.Count + 1) + "条商品详情", true, "停止", "查询");
-                string url = goodsEditDetailUrl + g.itemId;
-                string goodsEditDetailScript = ScriptManager.GetBody(jspath, "TAOBAO_GET_GOODS").Replace("###url", url);
-                ret = wb1.GetBrowser().MainFrame.EvaluateScriptAsync(goodsEditDetailScript, "", 1, new TimeSpan(0, 0, 30)).Result;
-                if (ret.Success == false || (ret.Result != null && ret.Result.ToString().StartsWith("ERROR")))
-                {
-                    throw new Exception("执行操作失败：" + ret.Message);
-                }
-                string htmlContent = ret.Result.ToString();
-
-                //第一步找JS JSON 起始符
-                int startIndex = htmlContent.IndexOf("window.Json =");
-                if (startIndex < 0)
-                {
-                    throw new Exception("读取商品编辑详情面失败：" + g.itemId);
-                }
-
-                //第二步，找JSON开始符
-                startIndex = htmlContent.IndexOf("{\"", startIndex);
-                if (startIndex < 0)
-                {
-                    throw new Exception("读取商品编辑详情面失败：" + g.itemId);
-                }
-                startIndex = htmlContent.IndexOf("{\"", startIndex);
-
-                //第三步找JSON结尾字符串
-                int end = htmlContent.IndexOf("}}};", startIndex);
-                if (end <= 0)
-                {
-                    throw new Exception("读取商品编辑详情面失败：" + g.itemId);
-                }
-                string json = htmlContent.Substring(startIndex, end + 3 - startIndex);
-                var goodsDetail = Newtonsoft.Json.JsonConvert.DeserializeObject<TaobaoQueryGoodsDetailResponse>(json);
-                var pg = new PopGoods { AddTime = "", CatId = g.catId, Code = goodsDetail.models.formValues.outerId, Id = g.itemId, Images = goodsDetail.models.formValues.images.Select(obj => obj.url.StartsWith("http") ? obj.url : "https:" + obj.url).ToArray(), SaleNum = g.soldQuantity_m, UpdateTime = g.upShelfDate_m.value };
-
-                //状态 
-                pg.State = g.upShelfDate_m.status.text == "出售中" ? PopGoodsState.ONSALE : PopGoodsState.NOTSALE;
-                pg.Title = g.itemDesc.desc.FirstOrDefault(obj => string.IsNullOrWhiteSpace(obj.href) == false).text.Trim();
-
-                //SKU
-                foreach (var vSku in goodsDetail.models.formValues.sku)
-                {
-                    var pSku = new PopGoodsSku
-                    {
-                        Code = vSku.skuOuterId ?? "",
-                        Id = vSku.skuId ?? "",
-                        Stock = vSku.skuStock.ToString(),
-                        Price = vSku.skuPrice.ToString("F2"),
-                        Status = PopGoodsState.ONSALE,
-                        Color = vSku.props[0].text.Trim(),
-                        Size = vSku.props[1].text.Trim(),
-                    };
-                    if (vSku.skuImage != null && vSku.skuImage.Length > 0)
-                    {
-                        pSku.Image = vSku.skuImage[0].url;
-                    }
-                    else
-                    {
-                        pSku.Image = goodsDetail.models.formValues.saleProp.Colors.FirstOrDefault(obj => obj.text == pSku.Color).img;
-                    }
-
-                    if (string.IsNullOrWhiteSpace(pSku.Image))
-                    {
-                        throw new Exception("商品SKU图片为空：" + pg.Id);
-                    }
-                    if (pSku.Image.StartsWith("http") == false)
-                    {
-                        pSku.Image = "https:" + pSku.Image;
-                    }
-                    pg.Skus.Add(pSku);
-                }
-                //属性 天猫
-                //基本属性
-                if (goodsDetail.models.formValues.bindProp != null)
-                {
-                    foreach (var v in goodsDetail.models.formValues.bindProp)
-                    {
-                        string key = goodsDetail.models.bindProp.dataSource.First(obj => obj.name == v.name).label;
-                        string values = string.Join("@#@", v.values.Select(obj => obj.text));
-                        pg.Properties.Add(new KeyValuePairClass<string, string>(key, values));
-                    }
-                }
-                if (goodsDetail.models.formValues.itemProp != null)
-                {
-                    foreach (var v in goodsDetail.models.formValues.itemProp)
-                    {
-                        string key = goodsDetail.models.itemProp.dataSource.First(obj => obj.name == v.name).label;
-                        string values = string.Join("@#@", v.values.Select(obj => obj.text));
-                        pg.Properties.Add(new KeyValuePairClass<string, string>(key, values));
-                    }
-                }
-
-                if (goodsDetail.models.formValues.catProp != null)
-                {
-                    foreach (var v in goodsDetail.models.formValues.catProp)
-                    {
-                        string key = goodsDetail.models.catProp.dataSource.First(obj => obj.name == v.name).label;
-                        string values = string.Join("@#@", v.values.Select(obj => obj.text));
-                        pg.Properties.Add(new KeyValuePairClass<string, string>(key, values));
-                    }
-                }
-                pg.PopType = shop.PopType;
-                pg.Type = goodsDetail.models.catpath.value.Split(new string[] { ">>", "》" }, StringSplitOptions.RemoveEmptyEntries)[1];
-                pg.ShippingCity = goodsDetail.models.formValues.location != null ? goodsDetail.models.formValues.location.value.text : goodsDetail.models.global.location.city;
-                //详情图片
-                pg.DescImages = ParseImages(goodsDetail.models.formValues.desc);
-                goods.Add(pg);
-            }
-            return goods;
-        }
-
-        private string[] ParseImages(string desc)
-        {
-            HtmlAgilityPack.HtmlDocument htmlDocument = new HtmlAgilityPack.HtmlDocument();
-            htmlDocument.LoadHtml(desc);
-            var nodes = htmlDocument.DocumentNode.SelectNodes("//img");
-            string[] ss = nodes.Select(obj => obj.GetAttributeValue("src", "")).Where(obj => string.IsNullOrWhiteSpace(obj) == false).ToArray();
-            return ss;
         }
 
         private void BtnExportToPdd_Click(object sender, RoutedEventArgs e)
@@ -741,7 +640,7 @@ namespace ShopErp.App.Views.Goods
                     this.Dispatcher.BeginInvoke(new Action(() => pgs[index].State = exportMsg));
                 }
             }
-            this.task = null;
+            this.goodsDownloadWorker = null;
             this.isStop = true;
             this.Dispatcher.BeginInvoke(new Action(() =>
             {
@@ -840,4 +739,430 @@ namespace ShopErp.App.Views.Goods
 
         public ImageRspModuleDirChildren[] children;
     }
+
+    public enum WorkerState
+    {
+        INIT = 0,
+        WORKING = 1,
+        STOPED = 2,
+        PAUSE = 3
+    }
+
+    public class GoodsDownloadWorkerEventArgs : EventArgs
+    {
+        public string BtnQueryTitle { get; set; }
+
+        public bool BtnStopEnabled { get; set; }
+
+        public string Msg { get; set; }
+
+        public bool IsComppleted { get; set; }
+    }
+
+    public class GoodsDownloadDataEventArgs : EventArgs
+    {
+        public List<PopGoods> Goods { get; set; }
+    }
+
+    public class GoodsDownloadPauseEventArgs : EventArgs
+    {
+        public bool IsVerify { get; set; }
+
+        public string Msg { get; set; }
+
+        public int WaitSeconds { get; set; }
+    }
+
+    public class GoodsDownloadWorker
+    {
+        public Shop shop;
+
+        public string title;
+
+        public string code;
+
+        public string stockCode;
+
+        public PopGoodsState state;
+
+        private AutoResetEvent waiterLock = new AutoResetEvent(false);
+
+        private Task task = null;
+
+        private bool isStop = false;
+
+        public WorkerState WorkerState { get; private set; }
+
+        public event EventHandler<GoodsDownloadWorkerEventArgs> Download;
+
+        public event EventHandler<GoodsDownloadDataEventArgs> DownloadData;
+
+        public event EventHandler<GoodsDownloadPauseEventArgs> Pausing;
+
+        protected void OnDownload(string btnQueryTitle, bool btnStopEnabled, string msg, bool isCompeleted)
+        {
+            if (this.Download != null)
+            {
+                this.Download(this, new GoodsDownloadWorkerEventArgs { BtnQueryTitle = btnQueryTitle, BtnStopEnabled = btnStopEnabled, Msg = msg, IsComppleted = isCompeleted });
+            }
+        }
+
+        protected void OnDownloadData(List<PopGoods> goods)
+        {
+            if (this.DownloadData != null)
+            {
+                this.DownloadData(this, new GoodsDownloadDataEventArgs { Goods = goods });
+            }
+        }
+
+        protected void OnPausing(bool isVerify, string msg, int waitSeconds)
+        {
+            if (this.Pausing != null)
+            {
+                this.Pausing(this, new GoodsDownloadPauseEventArgs { IsVerify = isVerify, Msg = msg, WaitSeconds = waitSeconds });
+            }
+        }
+
+        public GoodsDownloadWorker(Shop shop, string title, string code, string stockCode, PopGoodsState state)
+        {
+            this.shop = shop;
+            this.title = title;
+            this.code = code;
+            this.stockCode = stockCode;
+            this.state = state;
+            this.WorkerState = WorkerState.INIT;
+        }
+
+        public void Start()
+        {
+            if (WorkerState != WorkerState.INIT)
+            {
+                throw new Exception("线程不是初始状态无法启动");
+            }
+            this.task = Task.Factory.StartNew(TaskFunc);
+        }
+
+        public void Pause(bool isVerify, string msg, int waitSeconds)
+        {
+            if (WorkerState != WorkerState.WORKING)
+            {
+                throw new Exception("线程不是运行状态无法暂停");
+            }
+            this.WorkerState = WorkerState.PAUSE;
+            this.Download(this, new GoodsDownloadWorkerEventArgs { BtnQueryTitle = "继续", BtnStopEnabled = true, IsComppleted = false, Msg = msg });
+            this.OnPausing(isVerify, msg, waitSeconds);
+        }
+
+        public void GoOn()
+        {
+            if (WorkerState != WorkerState.PAUSE)
+            {
+                throw new Exception("线程不是暂停状态，无法继续");
+            }
+            this.WorkerState = WorkerState.WORKING;
+            this.waiterLock.Set();
+        }
+
+        public bool WaitGoOn()
+        {
+            if (this.isStop)
+            {
+                return false;
+            }
+
+            if (this.WorkerState != WorkerState.PAUSE)
+            {
+                return true;
+            }
+            //无限期等待
+            this.waiterLock.WaitOne();
+            return !this.isStop;
+        }
+
+        public void Stop()
+        {
+            this.isStop = true;
+            this.waiterLock.Set();
+            if (this.task == null || task.Status == TaskStatus.Canceled || task.Status == TaskStatus.Faulted || task.Status == TaskStatus.RanToCompletion)
+            {
+                return;
+            }
+            if (this.task.Wait(1000 * 60 * 20) == false)
+            {
+                throw new Exception("等待20分钟，停止任务失败，后台线程还在继续运行，可以关闭程序");
+            }
+        }
+
+        public void TaskFunc()
+        {
+            bool hasError = false;
+            try
+            {
+                this.WorkerState = WorkerState.WORKING;
+                this.isStop = false;
+                List<PopGoods> goods = new List<PopGoods>();
+                this.OnDownload("暂停", true, "下载线程已开始执行", false);
+                int pageIndex = 0;
+                while (this.WaitGoOn())
+                {
+                    this.OnDownload("暂停", true, "正在下载第:" + (pageIndex + 1) + "页", false);
+                    List<PopGoods> ggs = null;
+                    if (shop.AppEnabled)
+                    {
+                        ggs = ServiceContainer.GetService<GoodsService>().SearchPopGoods(shop, state, pageIndex, 50).Datas;
+                    }
+                    else
+                    {
+                        ggs = this.QueryHtmlGoodsPage(shop, pageIndex + 1, state);
+                    }
+                    if (ggs == null || ggs.Count < 1)
+                    {
+                        break;
+                    }
+                    goods.AddRange(ggs);
+                    pageIndex++;
+                    this.OnDownload("暂停", true, "已经下载:" + goods.Count, false);
+                    this.OnDownloadData(ggs);
+                }
+            }
+            catch (Exception ex)
+            {
+                hasError = true;
+                this.OnDownload("开始", false, "错误：" + ex.Message, true);
+            }
+            finally
+            {
+                this.isStop = true;
+                this.task = null;
+                if (hasError == false)
+                {
+                    this.OnDownload("开始", false, "下载完成", true);
+                }
+            }
+        }
+
+        private List<PopGoods> QueryHtmlGoodsPage(Shop shop, int pageIndex, PopGoodsState state)
+        {
+            Uri goodsListPageUri = new Uri(shop.PopType == PopType.TMALL ? "https://item.manager.tmall.com/tmall/manager/table.htm" : "https://item.publish.taobao.com/taobao/manager/table.htm");
+            string goodsEditPageDomain = shop.PopType == PopType.TMALL ? "item.upload.tmall.com" : "item.publish.taobao.com";
+            string goodsEditPageUrlBase = shop.PopType == PopType.TMALL ? "https://item.upload.tmall.com/tmall/publish.htm?id=" : "https://item.publish.taobao.com/sell/publish.htm?itemId=";
+
+            var goodsListPageXsrfCookieValue = CefCookieVisitor.GetCookieValues(goodsListPageUri.Host, "XSRF-TOKEN");
+            if (string.IsNullOrWhiteSpace(goodsListPageXsrfCookieValue))
+            {
+                throw new Exception("没有找到相应XSRF-TOKEN,刷新页面重新登录");
+            }
+            var goodsListPageDomainCookie = CefCookieVisitor.GetCookieValues(goodsListPageUri.Host, null);
+            if (string.IsNullOrWhiteSpace(goodsListPageDomainCookie))
+            {
+                throw new Exception("未找到域:" + goodsListPageUri.Host + " 的任何COOKIE ,刷新页面重新登录");
+            }
+            var goodsEditPageCookie = CefCookieVisitor.GetCookieValues(goodsEditPageDomain, null);
+            string goodsState = state == PopGoodsState.NONE ? "all" : (state == PopGoodsState.ONSALE ? "on_sale" : "in_stock");
+            var xhrdata = "jsonBody=" + MsHttpRestful.UrlEncode("{\"filter\":{},\"pagination\":{\"current\":" + pageIndex + ",\"pageSize\":20},\"table\":{\"sort\":{}},\"tab\":\"" + goodsState + "\"}", Encoding.UTF8);
+            var header = new Dictionary<string, string>();
+            header.Add("X-XSRF-TOKEN", goodsListPageXsrfCookieValue.Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries)[1]);
+
+            var content = MsHttpRestful.SendTbData(System.Net.Http.HttpMethod.Post, goodsListPageUri, header, goodsListPageDomainCookie, xhrdata);
+            var resp = Newtonsoft.Json.JsonConvert.DeserializeObject<TaobaoQueryGoodsListResponse>(content);
+            List<PopGoods> goods = new List<PopGoods>();
+            if (resp == null || resp.success == false)
+            {
+                throw new Exception("返回数据错误，请点击页面分页进行验证后重新开始");
+            }
+            if (resp.data.table.dataSource == null)
+            {
+                return goods;
+            }
+            foreach (var g in resp.data.table.dataSource)
+            {
+                if (this.WaitGoOn() == false)
+                {
+                    break;
+                }
+                //每个商品获取的时候，都有可能，登录超时或者其它问题，需要循环
+                PopGoods pg = null;
+                string goodsEditPageUrl = goodsEditPageUrlBase + g.itemId;
+
+                for (int i = 0; i < 5; i++)
+                {
+                    if (this.WaitGoOn() == false)
+                    {
+                        break;
+                    }
+                    Debug.WriteLine("开始抓取商品：" + g.itemId);
+                    this.OnDownload("暂停", true, "第:" + (i + 1) + " 次下载，第：" + pageIndex + "/" + ((resp.data.pagination.total / resp.data.pagination.pageSize) + 1) + "页，第" + (goods.Count + 1) + "条商品详情", false);
+                    bool ret = QueryHtmlGoods(g, goodsEditPageUrl, goodsEditPageCookie, ref pg);
+                    if (ret == true)
+                    {
+                        goods.Add(pg);
+                        break;
+                    }
+                }
+                if (this.isStop == false && pg == null)
+                {
+                    throw new Exception("抓取商品5次都为成功：" + g.itemId);
+                }
+                if (this.WaitGoOn() == false)
+                {
+                    break;
+                }
+                //每次等待3秒，太快淘宝会返回错误
+                //Thread.Sleep(3000);
+            }
+            return goods;
+        }
+
+        private bool QueryHtmlGoods(TaobaoQueryGoodsListResponseDataTableDataSource g, string url, string cookie, ref PopGoods popGoods)
+        {
+            string htmlContent = MsHttpRestful.SendTbData(System.Net.Http.HttpMethod.Get, new Uri(url), null, cookie, null);
+
+            try
+            {
+                var error = Newtonsoft.Json.JsonConvert.DeserializeObject<TaobaoQueryGoodsDetailErrorResponse>(htmlContent);
+                if (error.success == false)
+                {
+                    if ("SYS_REQUEST_TOO_FAST".Equals(error.code, StringComparison.OrdinalIgnoreCase))
+                    {
+                        int wait = error.data == null ? 70 : error.data.wait + 10;
+                        this.Pause(false, "程序读取商品详情过快，等待：" + wait + "秒", wait);
+                        return false;
+                    }
+                    else
+                    {
+                        Log.Logger.Log("获取淘宝详情失败,错误信息:" + htmlContent);
+                        throw new Exception("获取淘宝详情失败,错误信息：" + error.code + "," + error.msg);
+                    }
+                }
+            }
+            catch (Newtonsoft.Json.JsonException ex)
+            {
+                //不是JSON格式，是正常的返回内容
+                Debug.WriteLine(ex.GetType().FullName + ":" + ex.Message);
+            }
+
+            //第一步找JS JSON 起始符
+            int startIndex = htmlContent.IndexOf("window.Json =");
+            if (startIndex < 0)
+            {
+                Debug.WriteLine("商品详情：" + g.itemId + ":" + htmlContent);
+                throw new Exception("分析商品编辑页失败，未找到window.Json =：" + g.itemId);
+            }
+
+            //第二步，找JSON开始符
+            startIndex = htmlContent.IndexOf("{\"", startIndex);
+            if (startIndex < 0)
+            {
+                Debug.WriteLine("商品详情：" + g.itemId + ":" + htmlContent);
+                throw new Exception("分析商品编辑页失败，未找到window.Json =：之后的{\"" + g.itemId);
+            }
+            startIndex = htmlContent.IndexOf("{\"", startIndex);
+
+            //第三步找JSON结尾字符串
+            int end = htmlContent.IndexOf("}}};", startIndex);
+            if (end <= 0)
+            {
+                Debug.WriteLine("商品详情：" + g.itemId + ":" + htmlContent);
+                throw new Exception("分析商品编辑页失败，未找到JSON结束符}}};" + g.itemId);
+            }
+            string json = htmlContent.Substring(startIndex, end + 3 - startIndex);
+            var goodsDetail = Newtonsoft.Json.JsonConvert.DeserializeObject<TaobaoQueryGoodsDetailResponse>(json);
+            var pg = new PopGoods { AddTime = "", CatId = g.catId, Code = goodsDetail.models.formValues.outerId, Id = g.itemId, Images = goodsDetail.models.formValues.images.Select(obj => obj.url.StartsWith("http") ? obj.url : "https:" + obj.url).ToArray(), SaleNum = g.soldQuantity_m, UpdateTime = g.upShelfDate_m.value };
+
+            //状态 
+            pg.State = g.upShelfDate_m.status.text == "出售中" ? PopGoodsState.ONSALE : PopGoodsState.NOTSALE;
+            pg.Title = g.itemDesc.desc.FirstOrDefault(obj => string.IsNullOrWhiteSpace(obj.href) == false).text.Trim();
+
+            //SKU
+            foreach (var vSku in goodsDetail.models.formValues.sku)
+            {
+                var pSku = new PopGoodsSku
+                {
+                    Code = vSku.skuOuterId ?? "",
+                    Id = vSku.skuId ?? "",
+                    Stock = vSku.skuStock.ToString(),
+                    Price = vSku.skuPrice.ToString("F2"),
+                    Status = PopGoodsState.ONSALE,
+                    Color = vSku.props[0].text.Trim(),
+                    Size = vSku.props[1].text.Trim(),
+                };
+                if (vSku.skuImage != null && vSku.skuImage.Length > 0)
+                {
+                    pSku.Image = vSku.skuImage[0].url;
+                }
+                else
+                {
+                    pSku.Image = goodsDetail.models.formValues.saleProp.Colors.FirstOrDefault(obj => obj.text == pSku.Color).img;
+                }
+
+                if (string.IsNullOrWhiteSpace(pSku.Image))
+                {
+                    throw new Exception("商品SKU图片为空：" + pg.Id);
+                }
+                if (pSku.Image.StartsWith("http") == false)
+                {
+                    pSku.Image = "https:" + pSku.Image;
+                }
+                pg.Skus.Add(pSku);
+            }
+            //属性 天猫
+            //基本属性
+            if (goodsDetail.models.formValues.bindProp != null)
+            {
+                foreach (var v in goodsDetail.models.formValues.bindProp)
+                {
+                    string key = goodsDetail.models.bindProp.dataSource.First(obj => obj.name == v.name).label;
+                    string values = string.Join("@#@", v.values.Select(obj => obj.text));
+                    pg.Properties.Add(new KeyValuePairClass<string, string>(key, values));
+                }
+            }
+            if (goodsDetail.models.formValues.itemProp != null)
+            {
+                foreach (var v in goodsDetail.models.formValues.itemProp)
+                {
+                    string key = goodsDetail.models.itemProp.dataSource.First(obj => obj.name == v.name).label;
+                    string values = string.Join("@#@", v.values.Select(obj => obj.text));
+                    pg.Properties.Add(new KeyValuePairClass<string, string>(key, values));
+                }
+            }
+
+            if (goodsDetail.models.formValues.catProp != null)
+            {
+                foreach (var v in goodsDetail.models.formValues.catProp)
+                {
+                    string key = goodsDetail.models.catProp.dataSource.First(obj => obj.name == v.name).label;
+                    string values = string.Join("@#@", v.values.Select(obj => obj.text));
+                    pg.Properties.Add(new KeyValuePairClass<string, string>(key, values));
+                }
+            }
+            pg.PopType = shop.PopType;
+            pg.Type = goodsDetail.models.catpath.value.Split(new string[] { ">>", "》" }, StringSplitOptions.RemoveEmptyEntries)[1];
+            pg.ShippingCity = goodsDetail.models.formValues.location != null ? goodsDetail.models.formValues.location.value.text : goodsDetail.models.global.location.city;
+            if (shop.PopType == PopType.TMALL && (goodsDetail.models.formValues.modularDesc == null || goodsDetail.models.formValues.modularDesc.Length < 1))
+            {
+                throw new Exception("商品：" + g.itemId + " 电脑端描述为空");
+            }
+            if (shop.PopType == PopType.TAOBAO && string.IsNullOrWhiteSpace(goodsDetail.models.formValues.desc))
+            {
+                throw new Exception("商品：" + g.itemId + " 电脑端描述为空");
+            }
+
+            //详情图片
+            pg.DescImages = ParseImages(shop.PopType == PopType.TMALL ? goodsDetail.models.formValues.modularDesc.First().content : goodsDetail.models.formValues.desc);
+            popGoods = pg;
+            return true;
+        }
+
+        private string[] ParseImages(string desc)
+        {
+            HtmlAgilityPack.HtmlDocument htmlDocument = new HtmlAgilityPack.HtmlDocument();
+            htmlDocument.LoadHtml(desc);
+            var nodes = htmlDocument.DocumentNode.SelectNodes("//img");
+            string[] ss = nodes.Select(obj => obj.GetAttributeValue("src", "")).Where(obj => string.IsNullOrWhiteSpace(obj) == false).ToArray();
+            return ss;
+        }
+
+    }
+
+
 }

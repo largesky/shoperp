@@ -149,7 +149,8 @@ namespace ShopErp.App.Views.Goods
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                Log.Logger.Log("获取商品信息错误：", ex);
+                MessageBox.Show(ex.Message + ex.StackTrace);
             }
         }
 

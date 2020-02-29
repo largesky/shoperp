@@ -2,6 +2,7 @@
 using CefSharp.WinForms;
 using ShopErp.App.CefSharpUtils;
 using ShopErp.App.Service;
+using ShopErp.App.Service.Net;
 using ShopErp.App.Utils;
 using ShopErp.App.Views;
 using ShopErp.Domain;
@@ -11,6 +12,7 @@ using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Windows;
 
 namespace ShopErp.App

@@ -6,7 +6,7 @@
              mc:Ignorable="d"
              xmlns:cefwf="clr-namespace:CefSharp.WinForms;assembly=CefSharp.WinForms"
              d:DesignHeight="300" d:DesignWidth="1600" Loaded="UserControl_Loaded">
-    <Grid>
+    <Grid Panel.ZIndex="1">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -14,8 +14,6 @@
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="3">
             <TextBlock Text="店铺:" Margin="3" VerticalAlignment="Center" />
             <ComboBox Name="cbbShops" Margin="3" VerticalAlignment="Center" DisplayMemberPath="Mark" Width="60" SelectionChanged="CbbShops_SelectionChanged"/>
-            <TextBlock Text="类型:" Margin="3" VerticalAlignment="Center"/>
-            <ComboBox Name="cbbTypes" Margin="3" VerticalAlignment="Center" Width="60"/>
             <TextBlock Text="名称:" Margin="3" VerticalAlignment="Center" />
             <TextBox Name="tbTitle" Margin="3" VerticalAlignment="Center" Width="100" />
             <TextBlock Text="商家编码:" Margin="3" VerticalAlignment="Center" />
@@ -25,6 +23,7 @@
             <TextBlock Text="状态:" Margin="3" VerticalAlignment="Center" />
             <ComboBox Name="cbbStatus" Margin="3" VerticalAlignment="Center" />
             <Button Name="btnQuery" Content="查询" Width="60" Margin="3" VerticalAlignment="Center" Click="btnQuery_Click" />
+            <Button Name="btnStop" Content="停止" Width="60" Margin="3" VerticalAlignment="Center" Click="BtnStop_Click" />
             <TextBlock Text="重置所有备注为:" Margin="3" VerticalAlignment="Center" />
             <TextBox Name="tbComment" Margin="3" VerticalAlignment="Center" Width="100" />
             <Button Name="btnClear" Content="重置" Width="60" Margin="3" VerticalAlignment="Center" Click="btnClear_Click" />
@@ -40,7 +39,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <DataGrid Grid.Column="0" AutoGenerateColumns="False" SelectionMode="Extended" SelectionUnit="CellOrRowHeader"  CanUserAddRows="False" CanUserDeleteRows="False" Name="dgvGoods" CellEditEnding="dgvGoods_CellEditEnding">
+            <DataGrid Grid.Column="0" Panel.ZIndex="1" AutoGenerateColumns="False" SelectionMode="Extended" SelectionUnit="CellOrRowHeader"  CanUserAddRows="False" CanUserDeleteRows="False" Name="dgvGoods" CellEditEnding="dgvGoods_CellEditEnding">
                 <DataGrid.Columns>
                     <DataGridCheckBoxColumn  Binding="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="False" >
                         <DataGridCheckBoxColumn.HeaderTemplate>
@@ -81,10 +80,23 @@
                     </DataGridHyperlinkColumn>
                 </DataGrid.Columns>
             </DataGrid>
+            <Grid Grid.Column="0" Name="overlay" Panel.ZIndex="2" Opacity="0.5" Visibility="Collapsed"  Background="#FF978686">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto" MaxWidth="1000"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="1" Grid.Column="1" Name="tbCount" Text="这是显示倒计时数据的111111" FontSize="24" Foreground="Red" TextWrapping="Wrap" Opacity="1"/>
+            </Grid>
             <WindowsFormsHost Grid.Column="1" Name="wfh" >
                 <cefwf:ChromiumWebBrowser x:Name="wb1"/>
             </WindowsFormsHost>
         </Grid>
-
     </Grid>
+
 </UserControl>

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace ShopErp.App.Domain.TaobaoHtml.Goods
 {
-    class TaobaoQueryGoodsDetailResponseModelFormValuesDesc
+    class TaobaoQueryGoodsDetailErrorResponseData
     {
-        public string Value;
+        public int wait;
     }
 }

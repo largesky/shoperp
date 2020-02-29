@@ -81,7 +81,7 @@ namespace ShopErp.App.Converters
                 {
                     BitmapImage image = new BitmapImage();
                     image.BeginInit();
-                    image.StreamSource = new MemoryStream(MsHttpRestful.DoWithRetry(() => MsHttpRestful.GetUrlEncodeBodyReturnBytes(img, null)));
+                    image.StreamSource = new MemoryStream(MsHttpRestful.GetUrlEncodeBodyReturnBytes(img, null));
                     image.EndInit();
                     return image;
                 }

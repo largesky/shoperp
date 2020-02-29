@@ -48,9 +48,14 @@ namespace ShopErp.App.Domain.TaobaoHtml.Goods
         public TaobaoQueryGoodsDetailResponseModelFormValuesLocation location;
 
         /// <summary>
-        /// 商品PC端描述
+        /// 商品PC端描述,淘宝
         /// </summary>
-        [JsonConverter(typeof(TaobaoQueryGoodsDetailResponseModelFormValuesDescConverter))]
         public string desc;
+
+
+        /// <summary>
+        /// 商品PC端描述,天猫
+        /// </summary>
+        public TaobaoQueryGoodsDetailResponseModelFormValuesModularDesc[] modularDesc;
     }
 }
