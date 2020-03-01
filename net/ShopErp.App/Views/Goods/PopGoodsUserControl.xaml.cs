@@ -552,7 +552,7 @@ namespace ShopErp.App.Views.Goods
         {
             try
             {
-                var allGoods = ServiceContainer.GetService<GoodsService>().GetByAll(this.lastShop.Id, GoodsState.NONE, 0, DateTime.MinValue, DateTime.MinValue, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", 0, 0).Datas.OrderBy(obj => obj.VendorId).ToList();
+                var allGoods = ServiceContainer.GetService<GoodsService>().GetByAll(this.lastShop.Id, GoodsState.UPLOADED, 0, DateTime.MinValue, DateTime.MinValue, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", 0, 0).Datas.OrderBy(obj => obj.VendorId).ToList();
                 var popGoods = this.popGoodsInfoViewModels.ToList();
                 var vendors = ServiceContainer.GetService<VendorService>().GetByAll("", "", "", "", 0, 0).Datas.ToList();
 
@@ -653,14 +653,22 @@ namespace ShopErp.App.Views.Goods
         {
             try
             {
-                string text = Clipboard.GetText();
-                if (string.IsNullOrWhiteSpace(text))
+                var shop = this.cbbShops.SelectedItem as ShopErp.Domain.Shop;
+                if (shop == null)
                 {
-                    throw new Exception("粘贴板里面没有数据");
+                    throw new Exception("只有淘宝天猫可以进行匹配");
                 }
-                var rsp = Newtonsoft.Json.JsonConvert.DeserializeObject<ImageRsp>(text);
+                string tadgetDomainCookies = CefCookieVisitor.GetCookieValues("tadget.taobao.com", null);
+                string tbToken = CefCookieVisitor.GetCookieValues("tadget.taobao.com", "_tb_token_");
+                if (string.IsNullOrWhiteSpace(tbToken))
+                {
+                    throw new Exception("获取_tb_token cookie 为空");
+                }
+                var url = new Uri("https://tadget.taobao.com/redaction/redaction/json.json?cmd=json_dirTree_query&count=true&_input_charset=utf-8&_tb_token_=" + tbToken.Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries)[1]);
+                string json = MsHttpRestful.SendTbData(System.Net.Http.HttpMethod.Get, url, null, tadgetDomainCookies, null);
+                var rsp = Newtonsoft.Json.JsonConvert.DeserializeObject<ImageRsp>(json);
                 var imageDirs = rsp.module.dirs.children.FirstOrDefault(obj => obj.name == "商品图片").children.Select(obj => obj.name).ToArray();
-                var allGoods = ServiceContainer.GetService<GoodsService>().GetByAll((this.cbbShops.SelectedItem as Shop).Id, GoodsState.NONE, 0, DateTime.MinValue, DateTime.MinValue, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", 0, 0).Datas.OrderBy(obj => obj.VendorId).ToList();
+                var allGoods = ServiceContainer.GetService<GoodsService>().GetByAll((this.cbbShops.SelectedItem as Shop).Id, GoodsState.UPLOADED, 0, DateTime.MinValue, DateTime.MinValue, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", 0, 0).Datas.OrderBy(obj => obj.VendorId).ToList();
                 var vendors = ServiceContainer.GetService<VendorService>().GetByAll("", "", "", "", 0, 0).Datas.ToList();
 
                 List<ShopErp.Domain.Goods> unMatchGoods = new List<ShopErp.Domain.Goods>();
@@ -739,6 +747,7 @@ namespace ShopErp.App.Views.Goods
 
         public ImageRspModuleDirChildren[] children;
     }
+
 
     public enum WorkerState
     {
@@ -896,11 +905,12 @@ namespace ShopErp.App.Views.Goods
         public void TaskFunc()
         {
             bool hasError = false;
+            DateTime start = DateTime.Now;
+            List<PopGoods> goods = new List<PopGoods>();
             try
             {
                 this.WorkerState = WorkerState.WORKING;
                 this.isStop = false;
-                List<PopGoods> goods = new List<PopGoods>();
                 this.OnDownload("暂停", true, "下载线程已开始执行", false);
                 int pageIndex = 0;
                 while (this.WaitGoOn())
@@ -932,6 +942,8 @@ namespace ShopErp.App.Views.Goods
             }
             finally
             {
+                DateTime end = DateTime.Now;
+                Debug.WriteLine("用时：" + (end - start).TotalSeconds + ",共下载：" + goods.Count);
                 this.isStop = true;
                 this.task = null;
                 if (hasError == false)
@@ -1008,7 +1020,7 @@ namespace ShopErp.App.Views.Goods
                     break;
                 }
                 //每次等待3秒，太快淘宝会返回错误
-                //Thread.Sleep(3000);
+                Thread.Sleep(3000);
             }
             return goods;
         }
@@ -1017,28 +1029,41 @@ namespace ShopErp.App.Views.Goods
         {
             string htmlContent = MsHttpRestful.SendTbData(System.Net.Http.HttpMethod.Get, new Uri(url), null, cookie, null);
 
+            if (string.IsNullOrWhiteSpace(htmlContent))
+            {
+                throw new Exception("读取商品详情返回为空：" + g.itemId);
+            }
+
             try
             {
-                var error = Newtonsoft.Json.JsonConvert.DeserializeObject<TaobaoQueryGoodsDetailErrorResponse>(htmlContent);
-                if (error.success == false)
+                if (htmlContent[0] == '{' && htmlContent.Last() == '}')
                 {
-                    if ("SYS_REQUEST_TOO_FAST".Equals(error.code, StringComparison.OrdinalIgnoreCase))
+                    var error = Newtonsoft.Json.JsonConvert.DeserializeObject<TaobaoQueryGoodsDetailErrorResponse>(htmlContent);
+                    if (error.success == false)
                     {
-                        int wait = error.data == null ? 70 : error.data.wait + 10;
-                        this.Pause(false, "程序读取商品详情过快，等待：" + wait + "秒", wait);
-                        return false;
-                    }
-                    else
-                    {
-                        Log.Logger.Log("获取淘宝详情失败,错误信息:" + htmlContent);
-                        throw new Exception("获取淘宝详情失败,错误信息：" + error.code + "," + error.msg);
+                        if ("SYS_REQUEST_TOO_FAST".Equals(error.code, StringComparison.OrdinalIgnoreCase))
+                        {
+                            int wait = error.data == null ? 70 : error.data.wait + 10;
+                            this.Pause(false, "程序读取商品详情过快，等待：" + wait + "秒", wait);
+                            return false;
+                        }
+                        else
+                        {
+                            Log.Logger.Log("获取淘宝详情失败,错误信息:" + htmlContent);
+                            throw new Exception("获取淘宝详情失败,错误信息：" + error.code + "," + error.msg);
+                        }
                     }
                 }
             }
-            catch (Newtonsoft.Json.JsonException ex)
+            catch (Newtonsoft.Json.JsonException)
             {
-                //不是JSON格式，是正常的返回内容
-                Debug.WriteLine(ex.GetType().FullName + ":" + ex.Message);
+            }
+
+            if (htmlContent.Contains("客官别急") && htmlContent.Contains("交通拥堵"))
+            {
+                Debug.WriteLine(DateTime.Now + "检测到返回网页操作过快");
+                this.Pause(false, "程序读取商品详情过快，等待：70 秒", 70);
+                return false;
             }
 
             //第一步找JS JSON 起始符

@@ -37,13 +37,14 @@ namespace ShopErp.App.CefSharpUtils
             //查找某个指定的COOKIE
             if (string.IsNullOrWhiteSpace(Name) == false)
             {
-                if (cookie.Domain == this.Domain && cookie.Name == this.Name)
+                Debug.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(cookie));
+                if (Domain.IndexOf(cookie.Domain, StringComparison.OrdinalIgnoreCase) >= 0 && cookie.Name == this.Name)
                 {
                     this.Cookies.Add(Name, cookie.Value);
                     find = true;
                 }
 
-                if (find || count >= total)
+                if (find || count >= total - 1)
                 {
                     this.autoResetEvent.Set();
                 }
