@@ -75,7 +75,7 @@ namespace ShopErp.App.Views.Delivery
                 {
                     if (o.OrderGoodss != null && o.OrderGoodss.Count > 0)
                     {
-                        goodsInfo += string.Join(" ", o.OrderGoodss.Select(og => og.Vendor + " " + og.Edtion + " " + og.Color + " " + og.Size + "(" + og.Count + ")")) + ",";
+                        goodsInfo += string.Join(" ", o.OrderGoodss.Select(og => og.Vendor + " " + og.Number + " " + og.Edtion + " " + og.Color + " " + og.Size + "(" + og.Count + ")")) + ",";
                     }
                 }
                 DeliveryScanViewModel svm = new DeliveryScanViewModel
