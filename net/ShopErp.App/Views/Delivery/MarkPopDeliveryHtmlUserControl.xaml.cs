@@ -23,6 +23,9 @@ using ShopErp.App.ViewModels;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using ShopErp.App.CefSharpUtils;
+using ShopErp.App.Service.Net;
+using System.ComponentModel;
 
 namespace ShopErp.App.Views.Delivery
 {
@@ -528,16 +531,8 @@ namespace ShopErp.App.Views.Delivery
                 //分析
                 foreach (var order in orders)
                 {
-                    var time = DateTime.Now.Subtract(order.Source.PopPayTime).TotalHours;
-                    var sTime = shops.FirstOrDefault(obj => obj.Id == order.Source.ShopId).ShippingHours;
-                    if (time >= sTime)
+                    if (order.Source.State == OrderState.SHIPPED)
                     {
-                        order.Background = Brushes.Red;
-                        order.IsChecked = true;
-                    }
-                    else if (time - sTime >= -1)
-                    {
-                        order.Background = Brushes.Yellow;
                         order.IsChecked = true;
                     }
                     this.orders.Add(order);
@@ -563,60 +558,79 @@ namespace ShopErp.App.Views.Delivery
             }
         }
 
-        private PopOrderState ParseOrderState(string popOrderId)
-        {
-            var pos = new PopOrderState()
-            {
-                PopOrderId = popOrderId,
-                PopOrderStateValue = "",
-                State = OrderState.NONE
-            };
-
-            //订单信息
-            var js = ScriptManager.GetBody(jspath, "//TAOBAO_GET_ORDER").Replace("###bizOrderId", popOrderId);
-            var task = wb1.GetBrowser().MainFrame.EvaluateScriptAsync(js, "", 1, new TimeSpan(0, 0, 30));
-            var ret = task.Result;
-            if (ret.Success == false || (ret.Result != null && ret.Result.ToString().StartsWith("ERROR")))
-            {
-                throw new Exception("执行操作失败：" + ret.Message);
-            }
-
-            var content = ret.Result.ToString();
-            int si = content.IndexOf("var detailData");
-            if (si <= 0)
-            {
-                throw new Exception("未找到订单详情数据");
-            }
-
-            int ei = content.IndexOf("</script>", si);
-            if (ei <= si)
-            {
-                throw new Exception("未找到详情结尾数据");
-            }
-            string orderInfo = content.Substring(si + "var detailData".Length, ei - si - "var detailData".Length).Trim().TrimStart('=');
-
-            var oi = Newtonsoft.Json.JsonConvert.DeserializeObject<ShopErp.App.Domain.TaobaoHtml.Order.TmallQueryOrderDetailResponse>(orderInfo);
-
-            pos.PopOrderStateValue = oi.overStatus.status.content[0].text;
-            pos.State = ConvertState(pos.PopOrderStateValue);
-            return pos;
-        }
-
         private void MarkPopDelivery(string popOrderId, string deliveryCompany, string deliveryNumber)
         {
-            //订单信息
-            var js = ScriptManager.GetBody(jspath, "//TAOBAO_MARK_DELIVERY").Replace("###companyCode", deliveryCompany).Replace("###mailNo", deliveryNumber).Replace("###taobaoTradeId", popOrderId).Replace("###trade_id", popOrderId);
-            var task = wb1.GetBrowser().MainFrame.EvaluateScriptAsync(js, "", 1, new TimeSpan(0, 0, 30));
-            var ret = task.Result;
-            if (ret.Success == false || (ret.Result != null && ret.Result.ToString().StartsWith("ERROR")))
+            string formId = "//form[@id = 'orderForm']";
+            string inputMark = "input";
+            //第一步读取页面信息
+            var uri = new Uri("https://wuliu.taobao.com/user/consign.htm?trade_id=" + popOrderId);
+            string cookies = CefCookieVisitor.GetCookieValues(uri.Host, null);
+            string html = MsHttpRestful.SendTbData(System.Net.Http.HttpMethod.Get, uri, null, cookies, null);
+
+            //第二步 提取数据
+            Dictionary<string, string> paras = new Dictionary<string, string>();
+            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(html);
+
+            var form = doc.DocumentNode.SelectSingleNode(formId);
+            if (form == null)
             {
-                throw new Exception("执行操作失败：" + ret.Message);
+                Debug.WriteLine(form);
+                throw new Exception("未在页面中找到：" + formId);
             }
-            var content = ret.Result.ToString();
-            if (content.Contains("运单号不符合规则或已经被使用"))
+
+            var inputNodes = doc.DocumentNode.SelectNodes("//input");
+            if (inputNodes == null || inputNodes.Count < 1)
+            {
+                throw new Exception("未找到任何：" + inputMark + " 元素");
+            }
+
+            foreach (var v in inputNodes)
+            {
+                if (string.IsNullOrWhiteSpace(v.GetAttributeValue("name", "")))
+                {
+                    continue;
+                }
+                paras[v.GetAttributeValue("name", "")] = v.GetAttributeValue("value", "");
+            }
+            paras.Remove("q");
+            paras.Remove("type");
+            paras.Remove("cat");
+            paras["companyName"] = "请输入物流公司名称";
+            paras["event_submit_do_offline_consign"] = "1";
+            paras["offlineNewFlag"] = "1";
+            paras["_fmw.r._0.c"] = paras["receiverContactName"];
+            paras["_fmw.r._0.adr"] = paras["receiverDetail"];
+            paras["_fmw.f._0.fe"] = "";
+            paras["_fmw.f._0.fet"] = "";
+            paras["_fmw.n._0.g"] = "您可以在此输入备忘信息（仅卖家自己可见）。";
+            paras["initialWeightOld"] = "all";
+            //进行几种常见错误的检测
+            if (paras.ContainsKey("receiverZipCode") == false || paras["receiverZipCode"].Length != 6)
+            {
+                throw new Exception("邮政编码不为6位,当前值：" + paras["receiverZipCode"]);
+            }
+            if (paras.ContainsKey("receiverDetail") == false || paras["receiverDetail"].Length < 4)
+            {
+                throw new Exception("详细地址必须大于等于4个字，当前值：" + paras["receiverDetail"]);
+            }
+
+            paras["mailNo"] = deliveryNumber;
+            paras["companyCode"] = deliveryCompany;
+
+            //生成数据，该页面使用GBK编码
+            List<string> ss = paras.Select(obj => obj.Key + "=" + MsHttpRestful.UrlEncode(obj.Value, Encoding.GetEncoding("GBK"))).ToList();
+            string urlEncodeData = string.Join("&", ss);
+            string ret = MsHttpRestful.SendTbData(System.Net.Http.HttpMethod.Post, uri, null, cookies, urlEncodeData);
+            if (ret.Contains("恭喜您，操作成功"))
+            {
+                return;
+            }
+            if (ret.Contains("运单号不符合规则或已经被使用"))
             {
                 throw new Exception("运单号不符合规则或已经被使用");
             }
+            throw new Exception("返回页面数据无法识别，请查看相应结果");
         }
 
         private void btnMarkDelivery_Click(object sender, RoutedEventArgs e)
@@ -628,6 +642,15 @@ namespace ShopErp.App.Views.Delivery
                 {
                     throw new Exception("没有选择订单");
                 }
+
+                if (so.Any(obj => obj.Source.State == OrderState.RETURNING))
+                {
+                    if (MessageBox.Show("所选订单中含有退款中订单是否确认发货？", "警告", MessageBoxButton.YesNo, MessageBoxImage.Asterisk) != MessageBoxResult.Yes)
+                    {
+                        return;
+                    }
+                }
+
                 var dcs = ServiceContainer.GetService<DeliveryCompanyService>().GetByAll().Datas;
                 var os = ServiceContainer.GetService<OrderService>();
                 foreach (var o in so)
@@ -635,20 +658,10 @@ namespace ShopErp.App.Views.Delivery
                     WPFHelper.DoEvents();
                     try
                     {
-                        var st = ParseOrderState(o.Source.PopOrderId);
-                        if ((int)st.State >= (int)(OrderState.SHIPPED))
-                        {
-                            o.State = "订单已经发货";
-                            o.Background = null;
-                            o.Source.PopDeliveryTime = DateTime.Now;
-                        }
-                        else
-                        {
-                            var dc = dcs.FirstOrDefault(obj => obj.Name == o.DeliveryCompany).PopMapTaobao;
-                            MarkPopDelivery(o.Source.PopOrderId, dc, o.DeliveryNumber);
-                            o.State = "标记成功";
-                            o.Background = null;
-                        }
+                        var dc = dcs.FirstOrDefault(obj => obj.Name == o.DeliveryCompany).PopMapTaobao;
+                        MarkPopDelivery(o.Source.PopOrderId, dc, o.DeliveryNumber);
+                        o.State = "标记成功";
+                        o.Background = null;
                     }
                     catch (Exception ex)
                     {
@@ -836,6 +849,41 @@ namespace ShopErp.App.Views.Delivery
                 var os = ServiceContainer.GetService<OrderService>();
                 os.MarkPopDelivery(order.Source.Id, os.FormatTime(DateTime.Now));
                 order.State = "已标记";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void DgvOrders_Sorting(object sender, DataGridSortingEventArgs e)
+        {
+            try
+            {
+                string sortPath = e.Column.SortMemberPath;
+                if (this.orders.Count < 1)
+                {
+                    return;
+                }
+                var sortType = e.Column.SortDirection == null ? ListSortDirection.Ascending : (e.Column.SortDirection == ListSortDirection.Ascending ? ListSortDirection.Descending : ListSortDirection.Ascending);
+                List<OrderViewModel> newVms = null;
+
+                EnumerableKeySelector selector = new EnumerableKeySelector(orders[0].GetType(), sortPath);
+                if (sortType == ListSortDirection.Ascending)
+                {
+                    newVms = orders.OrderBy(obj => selector.GetData(obj)).ToList();
+                }
+                else
+                {
+                    newVms = orders.OrderByDescending(obj => selector.GetData(obj)).ToList();
+                }
+                this.orders.Clear();
+                foreach (var v in newVms)
+                {
+                    this.orders.Add(v);
+                }
+                e.Column.SortDirection = sortType;
+                e.Handled = true;
             }
             catch (Exception ex)
             {

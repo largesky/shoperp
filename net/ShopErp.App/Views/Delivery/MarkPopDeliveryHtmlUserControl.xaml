@@ -21,12 +21,12 @@
             <TextBlock Text="1小时内超时订单" Margin="3" VerticalAlignment="Center" />
             <Button Name="btnGoToTaobao" Margin="3" Content="打开淘宝" VerticalAlignment="Center" Width="60" Click="btnGoToTaobao_Click" />
             <Button Name="btnRefresh" Margin="3" VerticalAlignment="Center" Width="60" Content="刷新" Click="btnRefresh_Click" />
-            <Button Name="btnMarkDelivery" Margin="3" VerticalAlignment="Center" Width="60" Content="标记发货" Click="btnMarkDelivery_Click" Visibility="Collapsed"/>
+            <Button Name="btnMarkDelivery" Margin="3" VerticalAlignment="Center" Width="60" Content="标记发货" Click="btnMarkDelivery_Click"/>
             <TextBlock Name="tbTotal" Margin="3" VerticalAlignment="Center" />
             <TextBlock Grid.Row="1" Name="tbMsg" Margin="3" VerticalAlignment="Center" />
             <TextBlock Grid.Row="1" Name="tbMsg1" Margin="3" VerticalAlignment="Center" FontSize="16" Foreground="Red"/>
         </StackPanel>
-        <DataGrid Grid.Row="1" Name="dgvOrders" Style="{StaticResource ResourceKey=OrderDataGridStyle}" SelectedCellsChanged="dgvOrders_SelectedCellsChanged">
+        <DataGrid Grid.Row="1" Name="dgvOrders" Style="{StaticResource ResourceKey=OrderDataGridStyle}" SelectedCellsChanged="dgvOrders_SelectedCellsChanged" Sorting="DgvOrders_Sorting">
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="向前选择" Name="miSelectPre" Click="miSelectPre_Click" />
