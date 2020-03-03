@@ -593,8 +593,8 @@ namespace ShopErp.App.Views.Goods
                 }
                 if (unMatchGoods.Count > 0 || unMatchPopGoods.Count > 0)
                 {
-                    string msg1 = string.Join(",", unMatchGoods.Select(obj => vendors.FirstOrDefault(o => o.Id == obj.VendorId).Name + "&" + obj.Number));
-                    string msg2 = string.Join(",", unMatchPopGoods.Select(obj => obj.SkuCodesInfo));
+                    string msg1 = string.Join(",", unMatchGoods.Select(obj => vendors.FirstOrDefault(o => o.Id == obj.VendorId).Name + "&" + obj.Number).OrderBy(o => o));
+                    string msg2 = string.Join(",", unMatchPopGoods.Select(obj => obj.SkuCodesInfo).OrderBy(o => o));
                     string msg = string.Format("系统中未在网站上匹配的：{0}\r\n,网站上未在系统中匹配的：{1}", msg1, msg2);
                     MessageBox.Show(msg);
                     Debug.WriteLine(msg);
