@@ -33,9 +33,9 @@ namespace ShopErp.Server.Dao.NHibernateDao
             hsql += this.MakeQuery("O0.DeliveryNumber", deliveryNumber, objs);
             hsql += this.MakeQuery("O0.State", (int)state);
             hsql += this.MakeQuery("O0.PopPayType", (int)payType);
-            hsql += this.MakeQueryLike("OG0.Vendor", vendorName, objs);
-            hsql += this.MakeQueryLike("OG0.Number", number, objs);
-            hsql += this.MakeQueryLike("OG0.Size", size, objs);
+            hsql += this.MakeQueryLike("Vendor", vendorName, objs);
+            hsql += this.MakeQueryLike("Number", number, objs);
+            hsql += this.MakeQueryLike("Size", size, objs);
 
             if (ofs != null && ofs.Length > 0)
             {
@@ -48,7 +48,8 @@ namespace ShopErp.Server.Dao.NHibernateDao
             hsql += this.MakeQuery("O0.ShopId", shopId);
             hsql += this.MakeQuery("O0.CreateType", (int)createType, (int)OrderCreateType.NONE);
             hsql += this.MakeQuery("O0.Type", (int)type, (int)OrderType.NONE);
-            return this.GetPageEx("select distinct O0 " + this.TrimHSql(hsql) + " order by O0.PopPayTime desc", "select count( distinct O0.Id) " + this.TrimHSql(hsql).Replace("fetch", ""), pageIndex, pageSize, objs.ToArray());
+            hsql = this.TrimHSql(hsql);
+            return this.GetPageEx("select distinct O0 " +hsql + " order by O0.PopPayTime desc", "select count( distinct O0.Id) " + hsql, pageIndex, pageSize, objs.ToArray());
         }
 
         public DataCollectionResponse<Order> GetPayedAndPrintedOrders(long[] shopId, OrderCreateType createType, PopPayType payType, int pageIndex, int pageSize)
