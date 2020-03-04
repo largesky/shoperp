@@ -12,25 +12,25 @@
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5">
             <RadioButton Name="rbUnLable" Margin="5">
-                <Image Source="/ShopErp.App;component/Resources/Images/UnLable.png" Stretch="Fill" Height="14"
+                <Image Source="/ShopErp.App;component/Resources/Images/Flag_UnLable.png" Stretch="Fill" Height="14"
                        Width="14" />
             </RadioButton>
             <RadioButton Name="rbRed" Margin="5">
-                <Image Source="/ShopErp.App;component/Resources/Images/Red.png" Stretch="Fill" Height="14" Width="14" />
+                <Image Source="/ShopErp.App;component/Resources/Images/Flag_Red.png" Stretch="Fill" Height="14" Width="14" />
             </RadioButton>
             <RadioButton Name="rbYellow" Margin="5">
-                <Image Height="14" Width="14" Source="/ShopErp.App;component/Resources/Images/Yellow.png"
+                <Image Height="14" Width="14" Source="/ShopErp.App;component/Resources/Images/Flag_Yellow.png"
                        Stretch="Fill" />
             </RadioButton>
             <RadioButton Name="rbGreen" Margin="5">
-                <Image Height="14" Width="14" Source="/ShopErp.App;component/Resources/Images/Green.png"
+                <Image Height="14" Width="14" Source="/ShopErp.App;component/Resources/Images/Flag_Green.png"
                        Stretch="Fill" />
             </RadioButton>
             <RadioButton Name="rbBlue" Margin="5">
-                <Image Height="14" Width="14" Source="/ShopErp.App;component/Resources/Images/Blue.png" Stretch="Fill" />
+                <Image Height="14" Width="14" Source="/ShopErp.App;component/Resources/Images/Flag_Blue.png" Stretch="Fill" />
             </RadioButton>
             <RadioButton Name="rbPink" Margin="5">
-                <Image Height="14" Width="14" Source="/ShopErp.App;component/Resources/Images/Pink.png" Stretch="Fill" />
+                <Image Height="14" Width="14" Source="/ShopErp.App;component/Resources/Images/Flag_Pink.png" Stretch="Fill" />
             </RadioButton>
         </StackPanel>
         <TextBox Grid.Row="1" Name="tbComment" Margin="3" AcceptsReturn="True" TextWrapping="Wrap"

@@ -1091,9 +1091,6 @@
   <ItemGroup>
     <Resource Include="Resources\Images\pay_h.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="jsx1.jsx" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy $(ProjectDir)Resources\\TAOBAOJS.js $(TargetDir)DATA\\TAOBAOJS.js</PostBuildEvent>
