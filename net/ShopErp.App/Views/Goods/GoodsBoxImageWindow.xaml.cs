@@ -1,5 +1,6 @@
 ﻿using ShopErp.App.Service;
 using ShopErp.App.Service.Restful;
+using ShopErp.App.Utils;
 using ShopErp.Domain;
 using System;
 using System.Collections.Generic;
@@ -65,11 +66,7 @@ namespace ShopErp.App.Views.Goods
             {
                 this.cbbColor.Text = "";
             }
-
-            string saveMode = LocalConfigService.GetValue(SystemNames.CONFIG_GOODS_BOX_IMAGE_SAVE_MODE, false.ToString());
-            bool sm = Boolean.Parse(saveMode);
-            this.cbbImageSaveMode.SelectedIndex = sm ? 1 : 0;
-            this.tbPingpai.Text= LocalConfigService.GetValue(SystemNames.CONFIG_GOODS_BOX_IMAGE_BRAND, "花儿锦");
+            this.tbPingpai.Text = LocalConfigService.GetValue(SystemNames.CONFIG_GOODS_BOX_IMAGE_BRAND, "花儿锦");
         }
 
         private void cbbMateria_TextChanged(object sender, TextChangedEventArgs e)
@@ -93,6 +90,8 @@ namespace ShopErp.App.Views.Goods
             {
                 string dir = this.Goods.ImageDir;
                 string webdir = LocalConfigService.GetValue(ShopErp.Domain.SystemNames.CONFIG_WEB_IMAGE_DIR);
+                var vendorPingying = ServiceContainer.GetService<VendorService>().GetVendorPingyingName(this.Goods.VendorId);
+
                 if (string.IsNullOrWhiteSpace(webdir))
                 {
                     throw new Exception("没有配置网络图片路径，请在系统中配置");
@@ -113,43 +112,42 @@ namespace ShopErp.App.Views.Goods
                     throw new Exception("材质信息为空");
                 }
 
+                if (string.IsNullOrWhiteSpace(vendorPingying))
+                {
+                    throw new Exception("厂家未配置拼单名称");
+                }
+                string ptDir = fulldir + "\\PT";
+                if (System.IO.Directory.Exists(ptDir) == false)
+                {
+                    System.IO.Directory.CreateDirectory(ptDir);
+                    System.IO.Directory.CreateDirectory(ptDir + "\\ZT");
+                    System.IO.Directory.CreateDirectory(ptDir + "\\YST");
+                    string ptHeadersDir = System.IO.Path.Combine(EnvironmentDirHelper.DIR_DATA, "PTHeaders");
+                    if(System.IO.Directory.Exists(ptHeadersDir))
+                    {
+                        string[] jpgs = System.IO.Directory.GetFiles(System.IO.Path.Combine(EnvironmentDirHelper.DIR_DATA, "PTHeaders"));
+                        foreach (var v in jpgs)
+                        {
+                            if (v.EndsWith("jpg", StringComparison.OrdinalIgnoreCase) || v.EndsWith("png", StringComparison.OrdinalIgnoreCase))
+                            {
+                                var fi = new FileInfo(v);
+                                System.IO.File.Copy(v, ptDir + "\\" + fi.Name + "." + fi.Extension);
+                            }
+                        }
+                    }
+                }
+                System.IO.Directory.CreateDirectory(fulldir + "\\YT");
                 RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap((int)dv.ActualWidth, (int)dv.ActualHeight, 96, 96, PixelFormats.Pbgra32);
                 renderTargetBitmap.Render(dv);
                 JpegBitmapEncoder jpegBitmapEncoder = new JpegBitmapEncoder();
                 jpegBitmapEncoder.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
-
-                bool createYTPT = this.cbbImageSaveMode.SelectedIndex == 1;
-                string path = "";
-                if (createYTPT)
-                {
-                    System.IO.Directory.CreateDirectory(fulldir + "\\PT");
-                    System.IO.Directory.CreateDirectory(fulldir + "\\PT\\ZT");
-                    System.IO.Directory.CreateDirectory(fulldir + "\\PT\\YST");
-                    System.IO.Directory.CreateDirectory(fulldir + "\\YT");
-                    path = fulldir + "\\PT\\ZT\\" + Goods.Number + ".jpg";
-                }
-                else
-                {
-                    Microsoft.Win32.SaveFileDialog sfd = new Microsoft.Win32.SaveFileDialog();
-                    sfd.FileName = Goods.Number + ".jpg";
-                    bool? ret = sfd.ShowDialog();
-                    if (ret.Value == false)
-                    {
-                        return;
-                    }
-                    path = sfd.FileName;
-                }
-
+                string path = fulldir + "\\PT\\ZT\\XIEHE_" + vendorPingying + "&" + Goods.Number + ".jpg";
                 using (FileStream fs = new FileStream(path, FileMode.Create))
                 {
                     jpegBitmapEncoder.Save(fs);
                 }
-
-                LocalConfigService.UpdateValue(SystemNames.CONFIG_GOODS_BOX_IMAGE_SAVE_MODE, createYTPT.ToString());
                 LocalConfigService.UpdateValue(SystemNames.CONFIG_GOODS_BOX_IMAGE_BRAND, this.tbPingpai.Text.Trim());
-
                 MessageBox.Show("保存成功");
-
                 this.DialogResult = true;
             }
             catch (Exception ex)
