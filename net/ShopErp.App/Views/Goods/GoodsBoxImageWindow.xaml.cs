@@ -131,7 +131,7 @@ namespace ShopErp.App.Views.Goods
                             if (v.EndsWith("jpg", StringComparison.OrdinalIgnoreCase) || v.EndsWith("png", StringComparison.OrdinalIgnoreCase))
                             {
                                 var fi = new FileInfo(v);
-                                System.IO.File.Copy(v, ptDir + "\\" + fi.Name + "." + fi.Extension);
+                                System.IO.File.Copy(v, ptDir + "\\" + fi.Name);
                             }
                         }
                     }
