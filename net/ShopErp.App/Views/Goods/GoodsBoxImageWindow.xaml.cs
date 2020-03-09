@@ -54,34 +54,49 @@ namespace ShopErp.App.Views.Goods
             this.tbSize.Text = "尺码：" + r.Next(34, 39).ToString();
 
             //材质
-            this.cbbMateria.Text = Goods.Material;
+            this.cbbParaMateria.Text = Goods.Material;
 
             //颜色
             string[] colors = Goods.Colors.Split(new char[] { ',', '，', ' ' }, StringSplitOptions.RemoveEmptyEntries);
             if (colors.Length > 0)
             {
-                this.cbbColor.Text = colors[r.Next(0, colors.Length)];
+                this.cbbParaColor.Text = colors[r.Next(0, colors.Length)];
             }
             else
             {
-                this.cbbColor.Text = "";
+                this.cbbParaColor.Text = "";
             }
-            this.tbPingpai.Text = LocalConfigService.GetValue(SystemNames.CONFIG_GOODS_BOX_IMAGE_BRAND, "花儿锦");
+            this.tbParaBrand.Text = LocalConfigService.GetValue(SystemNames.CONFIG_GOODS_BOX_IMAGE_BRAND, "花儿锦");
         }
 
-        private void cbbMateria_TextChanged(object sender, TextChangedEventArgs e)
+        private void UI_TextChanged(object sender, TextChangedEventArgs e)
         {
-            this.tbMeteria.Text = "材质：" + this.cbbMateria.Text.Trim();
+            if (this.IsLoaded == false)
+            {
+                return;
+            }
+
+            this.tbBrand.Text = "品牌：" + this.cbbParaColor.Text.Trim();
+            this.tbMeteria.Text = "材质：" + this.cbbParaMateria.Text.Trim();
+            this.tbColor.Text = "颜色：" + this.cbbParaColor.Text.Trim();
+
+            this.tbMeteriaDetail.Text = this.cbbParaMateria.Text.Trim();
+            this.tbMeteriaDetailButom.Text = this.cbbParaMeteriaButom.Text.Trim();
+            this.tbHeight.Text = this.tbParaHeight.Text.Trim() + "厘米";
+            this.tbHeightFront.Text = this.tbParaHeightFront.Text.Trim() + "厘米";
         }
 
-        private void cbbColor_TextChanged(object sender, TextChangedEventArgs e)
+        private void SaveJpg(string path, Grid grid)
         {
-            this.tbColor.Text = "颜色：" + this.cbbColor.Text.Trim();
-        }
-
-        private void TbPingpai_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            this.tbBrand.Text = "品牌：" + this.tbPingpai.Text.Trim();
+            RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap((int)grid.ActualWidth, (int)grid.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+            renderTargetBitmap.Clear();
+            renderTargetBitmap.Render(grid);
+            JpegBitmapEncoder jpegBitmapEncoder = new JpegBitmapEncoder();
+            jpegBitmapEncoder.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
+            using (FileStream fs = new FileStream(path, FileMode.Create))
+            {
+                jpegBitmapEncoder.Save(fs);
+            }
         }
 
         private void btnCreate_Click(object sender, RoutedEventArgs e)
@@ -102,20 +117,36 @@ namespace ShopErp.App.Views.Goods
                     throw new Exception("文件夹路径不存在：" + fulldir);
                 }
 
-                if (string.IsNullOrWhiteSpace(this.cbbColor.Text.Trim()))
+                if (string.IsNullOrWhiteSpace(this.cbbParaColor.Text.Trim()))
                 {
                     throw new Exception("颜色信息为空");
                 }
 
-                if (string.IsNullOrWhiteSpace(this.cbbMateria.Text.Trim()))
+                if (string.IsNullOrWhiteSpace(this.cbbParaMateria.Text.Trim()))
                 {
                     throw new Exception("材质信息为空");
+                }
+
+                if (string.IsNullOrWhiteSpace(this.cbbParaMeteriaButom.Text.Trim()))
+                {
+                    throw new Exception("鞋底信息为空");
+                }
+
+                if (string.IsNullOrWhiteSpace(this.tbHeight.Text.Trim()))
+                {
+                    throw new Exception("跟高信息为空");
+                }
+
+                if (string.IsNullOrWhiteSpace(this.tbParaHeightFront.Text.Trim()))
+                {
+                    throw new Exception("防水台信息为空");
                 }
 
                 if (string.IsNullOrWhiteSpace(vendorPingying))
                 {
                     throw new Exception("厂家未配置拼单名称");
                 }
+
                 string ptDir = fulldir + "\\PT";
                 if (System.IO.Directory.Exists(ptDir) == false)
                 {
@@ -123,7 +154,7 @@ namespace ShopErp.App.Views.Goods
                     System.IO.Directory.CreateDirectory(ptDir + "\\ZT");
                     System.IO.Directory.CreateDirectory(ptDir + "\\YST");
                     string ptHeadersDir = System.IO.Path.Combine(EnvironmentDirHelper.DIR_DATA, "PTHeaders");
-                    if(System.IO.Directory.Exists(ptHeadersDir))
+                    if (System.IO.Directory.Exists(ptHeadersDir))
                     {
                         string[] jpgs = System.IO.Directory.GetFiles(System.IO.Path.Combine(EnvironmentDirHelper.DIR_DATA, "PTHeaders"));
                         foreach (var v in jpgs)
@@ -137,16 +168,9 @@ namespace ShopErp.App.Views.Goods
                     }
                 }
                 System.IO.Directory.CreateDirectory(fulldir + "\\YT");
-                RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap((int)dv.ActualWidth, (int)dv.ActualHeight, 96, 96, PixelFormats.Pbgra32);
-                renderTargetBitmap.Render(dv);
-                JpegBitmapEncoder jpegBitmapEncoder = new JpegBitmapEncoder();
-                jpegBitmapEncoder.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
-                string path = fulldir + "\\PT\\ZT\\XIEHE_" + vendorPingying + "&" + Goods.Number + ".jpg";
-                using (FileStream fs = new FileStream(path, FileMode.Create))
-                {
-                    jpegBitmapEncoder.Save(fs);
-                }
-                LocalConfigService.UpdateValue(SystemNames.CONFIG_GOODS_BOX_IMAGE_BRAND, this.tbPingpai.Text.Trim());
+                SaveJpg(ptDir + "\\ZT\\XIEHE_" + vendorPingying + "&" + Goods.Number + ".jpg", this.dvXieHe);
+                SaveJpg(ptDir + "\\11.jpg", this.dvDetail);
+                LocalConfigService.UpdateValue(SystemNames.CONFIG_GOODS_BOX_IMAGE_BRAND, this.tbParaBrand.Text.Trim());
                 MessageBox.Show("保存成功");
                 this.DialogResult = true;
             }
@@ -155,7 +179,5 @@ namespace ShopErp.App.Views.Goods
                 MessageBox.Show(ex.Message);
             }
         }
-
-
     }
 }

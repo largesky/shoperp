@@ -238,6 +238,15 @@ namespace ShopErp.App.Views.Goods
             this.ChangeState(GoodsState.UPLOADED, GoodsState.NOTSALE);
         }
 
+        private Size GetImageFileSize(string file)
+        {
+            BitmapImage image = new BitmapImage();
+            image.BeginInit();
+            image.StreamSource = new MemoryStream(File.ReadAllBytes(file));
+            image.EndInit();
+            return new Size(image.PixelWidth, image.PixelHeight);
+        }
+
         private void ChangeState(GoodsState from, GoodsState to)
         {
             try
@@ -252,6 +261,123 @@ namespace ShopErp.App.Views.Goods
                 {
                     throw new Exception("没有相关的上货店铺");
                 }
+
+                string webDir = LocalConfigService.GetValue(SystemNames.CONFIG_WEB_IMAGE_DIR, "");
+
+                //检查图片状态
+                if (from == GoodsState.WAITPROCESSIMAGE && to == GoodsState.WAITREVIEW)
+                {
+                    //YT
+                    string yt = webDir + "\\" + gu.Source.ImageDir + "\\YT";
+                    if (System.IO.Directory.Exists(yt) == false)
+                    {
+                        if (MessageBox.Show("YT 文件夹不存，是否继续", "错误", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                        {
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        if (System.IO.Directory.GetFiles(yt).Length == 0 && System.IO.Directory.GetDirectories(yt).Length == 0)
+                        {
+                            if (MessageBox.Show("YT 文件夹下面为空，是否继续", "错误", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                            {
+                                return;
+                            }
+                        }
+                    }
+
+                    //PT
+                    string pt = webDir + "\\" + gu.Source.ImageDir + "\\PT";
+                    if (System.IO.Directory.Exists(pt) == false)
+                    {
+                        if (MessageBox.Show("PT 文件夹不存，是否继续", "错误", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                        {
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        string zt = pt + "\\ZT";
+                        if (System.IO.Directory.Exists(zt) == false)
+                        {
+                            if (MessageBox.Show("ZT 文件夹不存，是否继续", "错误", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                            {
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            var files = System.IO.Directory.GetFiles(zt);
+                            foreach (var file in files)
+                            {
+                                int lastSlashIndex = file.LastIndexOf('\\');
+                                int lastDotIndex = file.LastIndexOf('.');
+                                string name = file.Substring(lastSlashIndex + 1, lastDotIndex - lastSlashIndex - 1);
+                                if (name.All(c => Char.IsDigit(c)))
+                                {
+                                    Size size = GetImageFileSize(file);
+                                    if (size.Width != size.Height || size.Width > 800)
+                                    {
+                                        if (MessageBox.Show(file + "长宽不相等，或者长宽超过800，是否继续", "错误", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                                        {
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        string yst = pt + "\\YST";
+                        if (System.IO.Directory.Exists(yst) == false)
+                        {
+                            if (MessageBox.Show("YST 文件夹不存，是否继续", "错误", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                            {
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            var files = System.IO.Directory.GetFiles(yst);
+                            foreach (var file in files)
+                            {
+                                Size size = GetImageFileSize(file);
+                                if (size.Width != size.Height || size.Width > 800)
+                                {
+                                    if (MessageBox.Show(file + "长宽不相等，或者长宽超过800，是否继续", "错误", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                                    {
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+
+                        string xqt = pt + "\\XQT";
+                        if (System.IO.Directory.Exists(yst) == false)
+                        {
+                            if (MessageBox.Show("xqt 文件夹不存，是否继续", "错误", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                            {
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            var files = System.IO.Directory.GetFiles(xqt);
+                            foreach (var file in files)
+                            {
+                                Size size = GetImageFileSize(file);
+                                if (size.Width > 790 || size.Height > 1500)
+                                {
+                                    if (MessageBox.Show(file + "宽超过790 或者高超过1500", "错误", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                                    {
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
 
                 var win = new GoodsShopSelectWindow
                 {
