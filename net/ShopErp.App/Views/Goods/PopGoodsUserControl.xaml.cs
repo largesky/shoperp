@@ -386,11 +386,11 @@ namespace ShopErp.App.Views.Goods
 
                 if (this.lastShop.PopType == PopType.TAOBAO)
                 {
-                    url = string.Format("https://upload.taobao.com/auction/container/publish.htm?catId={0}&itemId={1}", goods.PopGoodsInfo.CatId, goods.PopGoodsInfo.Id);
+                    url = "https://item.publish.taobao.com/sell/publish.htm?itemId=" + goods.PopGoodsInfo.Id;
                 }
                 else if (this.lastShop.PopType == PopType.TMALL)
                 {
-                    url = "https://upload.tmall.com/auction/publish/edit.htm?auto=fals&itemNumId=" + goods.PopGoodsInfo.Id;
+                    url = "https://item.upload.tmall.com/tmall/publish.htm?id=" + goods.PopGoodsInfo.Id;
                 }
                 else
                 {
