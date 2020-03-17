@@ -76,7 +76,7 @@ namespace ShopErp.App.Views.Goods
                 return;
             }
 
-            this.tbBrand.Text = "品牌：" + this.cbbParaColor.Text.Trim();
+            this.tbBrand.Text = "品牌：" + this.tbParaBrand.Text.Trim();
             this.tbMeteria.Text = "材质：" + this.cbbParaMateria.Text.Trim();
             this.tbColor.Text = "颜色：" + this.cbbParaColor.Text.Trim();
 
@@ -89,7 +89,7 @@ namespace ShopErp.App.Views.Goods
         private void SaveJpg(string path, Grid grid)
         {
             RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap((int)grid.ActualWidth, (int)grid.ActualHeight, 96, 96, PixelFormats.Pbgra32);
-            renderTargetBitmap.Clear();
+            //renderTargetBitmap.Clear();
             renderTargetBitmap.Render(grid);
             JpegBitmapEncoder jpegBitmapEncoder = new JpegBitmapEncoder();
             jpegBitmapEncoder.Frames.Add(BitmapFrame.Create(renderTargetBitmap));

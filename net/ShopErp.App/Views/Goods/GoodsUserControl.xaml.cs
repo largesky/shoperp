@@ -735,5 +735,23 @@ namespace ShopErp.App.Views.Goods
                 MessageBox.Show(ex.Message);
             }
         }
+
+        private void MiCopyVendorNumber_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var goods = this.GetSelctedItem().Source;
+                var vendor = ServiceContainer.GetService<VendorService>().GetById(goods.VendorId);
+                if (string.IsNullOrWhiteSpace(vendor.PingyingName))
+                {
+                    throw new Exception("厂家没有配置拼音");
+                }
+                Clipboard.SetText(vendor.PingyingName + "&" + goods.Number);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
     }
 }

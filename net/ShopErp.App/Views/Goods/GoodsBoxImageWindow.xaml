@@ -5,64 +5,60 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ShopErp.App.Views.Goods"
         mc:Ignorable="d"
-        Title="鞋盒图生成工具" Height="600" Width="790" Loaded="Window_Loaded" ResizeMode="CanMinimize" WindowStartupLocation="CenterOwner">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Name="dvXieHe" Background="LightGray">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="75"/>
-                <RowDefinition Height="75"/>
-                <RowDefinition Height="75"/>
-                <RowDefinition Height="75"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="1*"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Grid.Row="0" Grid.Column="0" Text="品牌：花儿锦" Margin="3" VerticalAlignment="Center" Grid.ColumnSpan="2" FontSize="40" Name="tbBrand"/>
-            <TextBlock Grid.Row="0" Grid.Column="2" Text="产地：成都" Margin="3" VerticalAlignment="Center" Grid.ColumnSpan="2" FontSize="40"/>
-            <TextBlock Grid.Row="1" Grid.Column="0" Text="等级：合格品" Margin="3" VerticalAlignment="Center" Grid.ColumnSpan="2" FontSize="40"/>
-            <TextBlock Grid.Row="1" Grid.Column="2" Text="检验：随机" Margin="3" VerticalAlignment="Center" Grid.ColumnSpan="2" FontSize="40" Name="tbCheck"/>
-            <TextBlock Grid.Row="2" Grid.Column="2" Text="货号：332-80" Margin="3" VerticalAlignment="Center" Grid.ColumnSpan="2" FontSize="40" Name="tbNumber"/>
-            <TextBlock Grid.Row="2" Grid.Column="0" Text="材质：绒面" Margin="3" VerticalAlignment="Center" Grid.ColumnSpan="2" FontSize="40" Name="tbMeteria"/>
-            <TextBlock Grid.Row="3" Grid.Column="0" Text="颜色：黑色" Margin="3" VerticalAlignment="Center" Grid.ColumnSpan="2" FontSize="40" Name="tbColor"/>
-            <TextBlock Grid.Row="3" Grid.Column="2" Text="尺码：随机" Margin="3" VerticalAlignment="Center" Grid.ColumnSpan="2" FontSize="40" Name="tbSize"/>
-        </Grid>
-
-        <Grid Grid.Row="1" Name="dvDetail"  Background="LightGray" Height="200">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="30"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="30*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="30*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="30*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="30*"/>
-                <ColumnDefinition Width="30"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Grid.Column="1" Text="鞋面：" Margin="3" VerticalAlignment="Center" FontSize="22"/>
-            <TextBlock Grid.Row="0" Grid.Column="2" Name="tbMeteriaDetail"  Text="PU" Margin="3" VerticalAlignment="Center" FontSize="22"/>
-            <TextBlock Grid.Row="0" Grid.Column="3" Text="鞋底：" Margin="3" VerticalAlignment="Center" FontSize="22"/>
-            <TextBlock Grid.Row="0" Grid.Column="4" Name="tbMeteriaDetailButom"  Text="橡胶底" Margin="3" VerticalAlignment="Center" FontSize="22"/>
-            <TextBlock Grid.Row="0" Grid.Column="5" Text="跟高：" Margin="3" VerticalAlignment="Center" FontSize="22"/>
-            <TextBlock Grid.Row="0" Grid.Column="6" Name="tbHeight"  Text="7厘米" Margin="3" VerticalAlignment="Center" FontSize="22"/>
-            <TextBlock Grid.Row="0" Grid.Column="7" Text="防水台：" Margin="3" VerticalAlignment="Center" FontSize="20"/>
-            <TextBlock Grid.Row="0" Grid.Column="8" Name="tbHeightFront"  Text="2厘米" Margin="3" VerticalAlignment="Center" FontSize="22"/>
-        </Grid>
-
+        Title="鞋盒图生成工具"  SizeToContent="WidthAndHeight" Loaded="Window_Loaded" ResizeMode="CanMinimize" WindowStartupLocation="CenterOwner">
+    <StackPanel>
+        <TabControl>
+            <TabItem Header="鞋盒图">
+                <Grid Grid.Row="1" Name="dvXieHe" Background="LightGray" Width="790">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="75"/>
+                        <RowDefinition Height="75"/>
+                        <RowDefinition Height="75"/>
+                        <RowDefinition Height="75"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="品牌：花儿锦" Margin="3" VerticalAlignment="Center" Grid.ColumnSpan="2" FontSize="40" Name="tbBrand"/>
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="产地：成都" Margin="3" VerticalAlignment="Center" Grid.ColumnSpan="2" FontSize="40"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="等级：合格品" Margin="3" VerticalAlignment="Center" Grid.ColumnSpan="2" FontSize="40"/>
+                    <TextBlock Grid.Row="1" Grid.Column="2" Text="检验：随机" Margin="3" VerticalAlignment="Center" Grid.ColumnSpan="2" FontSize="40" Name="tbCheck"/>
+                    <TextBlock Grid.Row="2" Grid.Column="2" Text="货号：332-80" Margin="3" VerticalAlignment="Center" Grid.ColumnSpan="2" FontSize="40" Name="tbNumber"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="材质：绒面" Margin="3" VerticalAlignment="Center" Grid.ColumnSpan="2" FontSize="40" Name="tbMeteria"/>
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="颜色：黑色" Margin="3" VerticalAlignment="Center" Grid.ColumnSpan="2" FontSize="40" Name="tbColor"/>
+                    <TextBlock Grid.Row="3" Grid.Column="2" Text="尺码：随机" Margin="3" VerticalAlignment="Center" Grid.ColumnSpan="2" FontSize="40" Name="tbSize"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <TabControl>
+            <TabItem Header="详情图">
+                <Grid Grid.Row="0" Name="dvDetail"  Background="LightGray" Width="790">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="30*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="30*"/>
+                        <ColumnDefinition Width="30"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="鞋面：" Margin="3" VerticalAlignment="Center" FontSize="22"/>
+                    <TextBlock Grid.Row="0" Grid.Column="2" Name="tbMeteriaDetail"  Text="PU" Margin="3" VerticalAlignment="Center" FontSize="22"/>
+                    <TextBlock Grid.Row="0" Grid.Column="3" Text="鞋底：" Margin="3" VerticalAlignment="Center" FontSize="22"/>
+                    <TextBlock Grid.Row="0" Grid.Column="4" Name="tbMeteriaDetailButom"  Text="橡胶底" Margin="3" VerticalAlignment="Center" FontSize="22"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="跟高：" Margin="3" VerticalAlignment="Center" FontSize="22"/>
+                    <TextBlock Grid.Row="1" Grid.Column="2" Name="tbHeight"  Text="7厘米" Margin="3" VerticalAlignment="Center" FontSize="22"/>
+                    <TextBlock Grid.Row="1" Grid.Column="3" Text="防水台：" Margin="3" VerticalAlignment="Center" FontSize="20"/>
+                    <TextBlock Grid.Row="1" Grid.Column="4" Name="tbHeightFront"  Text="-厘米" Margin="3" VerticalAlignment="Center" FontSize="22"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
         <StackPanel Grid.Row="2" Orientation="Horizontal" >
             <TextBlock Text="品牌：" Margin="3" VerticalAlignment="Center"/>
             <TextBox Name="tbParaBrand" Margin="3" VerticalAlignment="Center" Text="花儿锦" Width="60" TextChanged="UI_TextChanged"/>
@@ -97,10 +93,10 @@
                 <ComboBox.SelectedIndex>0</ComboBox.SelectedIndex>
             </ComboBox>
             <TextBlock Text="跟高：" Margin="3" VerticalAlignment="Center"/>
-            <TextBox Name="tbParaHeight" Margin="3" VerticalAlignment="Center" Width="60" TextChanged="UI_TextChanged"/>
+            <TextBox Name="tbParaHeight" Text="--" Margin="3" VerticalAlignment="Center" Width="60" TextChanged="UI_TextChanged"/>
             <TextBlock Text="防水台：" Margin="3" VerticalAlignment="Center"/>
-            <TextBox Name="tbParaHeightFront" Margin="3" VerticalAlignment="Center" Width="60" TextChanged="UI_TextChanged"/>
+            <TextBox Name="tbParaHeightFront" Text="--" Margin="3" VerticalAlignment="Center" Width="60" TextChanged="UI_TextChanged"/>
             <Button Name="btnCreate" Margin="3" VerticalAlignment="Center" Content="创建" Width="60" Click="btnCreate_Click"/>
         </StackPanel>
-    </Grid>
+    </StackPanel>
 </Window>

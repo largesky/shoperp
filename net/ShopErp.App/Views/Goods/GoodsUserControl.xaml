@@ -103,6 +103,7 @@
                     <MenuItem Header="打开文件夹" Name="miOpenDir" Click="miOpenDir_Click" />
                     <MenuItem Header="创建鞋盒图" Name="miCreateBoxImage" Click="miCreateBoxImage_Click" />
                     <MenuItem Header="查看详情" Name="miDetail" Click="miDetail_Click" />
+                    <MenuItem Header="复制厂家货号" Name="miCopyVendorNumber" Click="MiCopyVendorNumber_Click"/>
                 </ContextMenu>
             </DataGrid.ContextMenu>
             <DataGrid.Columns>
@@ -166,6 +167,7 @@
                     <MenuItem Header="打开文件夹" Click="miOpenDir_Click" />
                     <MenuItem Header="创建鞋盒图" Click="miCreateBoxImage_Click" />
                     <MenuItem Header="查看详情" Click="miDetail_Click" />
+                    <MenuItem Header="复制厂家货号"  Click="MiCopyVendorNumber_Click"/>
                 </ContextMenu>
             </ListBox.ContextMenu>
             <ListBox.ItemsPanel>

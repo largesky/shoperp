@@ -412,5 +412,67 @@ namespace ShopErp.App.Views.Orders
             SelectGoods(sender, (o1, o2) => o1.NumberId == o2.NumberId && o1.Edtion == o1.Edtion && o1.Color == o2.Color && o1.Size == o2.Size);
         }
 
+        private void BtnCopyInfo_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var items = this.dgOrders.ItemsSource as OrderViewModel[];
+                if (items == null || items.Length < 1)
+                {
+                    MessageBox.Show("没有任何数据");
+                    return;
+                }
+
+                //进行检查，以防止有些订单没有标记到。根据收货人电话号码进行检查,先检查手机号，手机号为空的检查座机
+                List<string> failPhones = new List<string>();
+                failPhones.AddRange(CheckOrder(items.Where(obj => string.IsNullOrWhiteSpace(obj.Source.ReceiverMobile) == false).ToArray(), true));
+                failPhones.AddRange(CheckOrder(items.Where(obj => string.IsNullOrWhiteSpace(obj.Source.ReceiverMobile)).ToArray(), false));
+                if (failPhones.Count > 0)
+                {
+                    string msg = "检查订单失败，有相同电话信息但订单类型不一致：" + Environment.NewLine + string.Join(",", failPhones) + Environment.NewLine + "是否继续复制？";
+                    if (MessageBox.Show(msg, "是否继续复制？", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                    {
+                        return;
+                    }
+                }
+
+                items = items.Where(obj => obj.IsChecked).ToArray();
+                if (items == null || items.Length < 1)
+                {
+                    MessageBox.Show("没有选择任何数据");
+                    return;
+                }
+
+                var shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas;
+                List<string> contents = new List<string>();
+                //合并订单
+                var normalOrders = items.Where(obj => obj.Source.Type == ShopErp.Domain.OrderType.NORMAL).OrderBy(obj => obj.Source.PopType).ToArray();
+                Dictionary<OrderViewModel, string> recieverAndGoods = new Dictionary<OrderViewModel, string>();
+                foreach (var o in normalOrders)
+                {
+                    var key = recieverAndGoods.Keys.FirstOrDefault(obj => obj.Source.ShopId == o.Source.ShopId && obj.Source.ReceiverName == o.Source.ReceiverName && obj.Source.ReceiverPhone == o.Source.ReceiverPhone && obj.Source.ReceiverMobile == o.Source.ReceiverMobile && obj.Source.ReceiverAddress == o.Source.ReceiverAddress && (string.IsNullOrWhiteSpace(obj.Source.PopBuyerId) ? true : obj.Source.PopBuyerId == o.Source.PopBuyerId));
+                    if (key == null)
+                    {
+                        recieverAndGoods[o] = o.GoodsInfoCanbeCount;
+                    }
+                    else
+                    {
+                        recieverAndGoods[key] = recieverAndGoods[key] + "," + Environment.NewLine + o.GoodsInfoCanbeCount;
+                    }
+                }
+
+                foreach (var pair in recieverAndGoods)
+                {
+                    var v = pair.Key;
+                    string[] ss = new string[] { pair.Value, v.Source.ReceiverName, string.IsNullOrWhiteSpace(v.Source.ReceiverPhone) ? v.Source.ReceiverMobile : v.Source.ReceiverMobile + "," + v.Source.ReceiverPhone, v.Source.ReceiverAddress };
+                    contents.Add(string.Join(" ", ss));
+                }
+                Clipboard.SetText(string.Join(Environment.NewLine, contents));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
     }
 }
