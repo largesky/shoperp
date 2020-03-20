@@ -125,53 +125,7 @@ namespace ShopErp.Server.Service.Restful
             }
         }
 
-        [OperationContract]
-        [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/parsepopordergoodsnumber.html")]
-        public ResponseBase ParsePopOrderGoodsNumber(OrderGoods og)
-        {
-            try
-            {
-                //上货时通常用&号，或者空格分开厂家货号
-                string stock = "";
-                if (og.Number.Contains("&") || og.Number.Contains(" "))
-                {
-                    stock = og.Number;
-                }
-                else
-                {
-                    stock = og.Vendor + "&" + og.Number;
-                }
-                string[] stocks = stock.Split(new char[] { '&', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                string rawVendor = null, rawNumber = null;
-                if (stocks.Length != 2)
-                {
-                    throw new Exception("无法解析厂家货号" + og.Number);
-                }
-                rawVendor = stocks[0].Trim();
-                rawNumber = stocks[1].Trim();
-                var g = ParseGoods(rawVendor, rawNumber).First;
-                if (g == null)
-                {
-                    throw new Exception("未能解析出商品货号:" + og.Number);
-                }
-                og.Number = g.Number;
-                og.NumberId = g.Id;
-                og.Image = g.Image;
-                og.Weight = g.Weight;
-                og.Price = g.Price;
-                og.Vendor = ServiceContainer.GetService<VendorService>().GetVendorName(g.VendorId).data;
-                if (g.IgnoreEdtion)
-                {
-                    og.Edtion = "";
-                }
-                return ResponseBase.SUCCESS;
-            }
-            catch (Exception e)
-            {
-                throw new WebFaultException<ResponseBase>(new ResponseBase(e.Message), HttpStatusCode.OK);
-            }
-        }
-
+      
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/parsegoods.html")]
         public DataCollectionResponse<Goods> ParseGoods(string vendorNameOrPingName, string number)
@@ -256,6 +210,40 @@ namespace ShopErp.Server.Service.Restful
             {
                 throw new WebFaultException<ResponseBase>(new ResponseBase(e.Message), HttpStatusCode.OK);
             }
+        }
+
+        public Goods ParsePopOrderGoodsNumber(OrderGoods og)
+        {
+            //上货时通常用&号，或者空格分开厂家货号
+            string stock = "";
+            if (og.Number.Contains("&") || og.Number.Contains(" "))
+            {
+                stock = og.Number;
+            }
+            else
+            {
+                stock = og.Vendor + "&" + og.Number;
+            }
+            string[] stocks = stock.Split(new char[] { '&', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string rawVendor = null, rawNumber = null;
+            if (stocks.Length != 2)
+            {
+                throw new Exception("无法解析厂家货号" + og.Number);
+            }
+            rawVendor = stocks[0].Trim();
+            rawNumber = stocks[1].Trim();
+            var g = ParseGoods(rawVendor, rawNumber).First;
+            if (g == null)
+            {
+                throw new Exception("未能解析出商品货号:" + og.Number);
+            }
+            og.Number = g.Number;
+            og.NumberId = g.Id;
+            og.Image = g.Image;
+            og.Weight = g.Weight;
+            og.Price = g.Price;
+            og.Vendor = ServiceContainer.GetService<VendorService>().GetVendorName(g.VendorId).data;
+            return g;
         }
 
         private Vendor GetMostMatchVendor(long[] vendorIds, string vendor)

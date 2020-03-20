@@ -71,8 +71,7 @@ namespace ShopErp.App.Service.Restful
             return DoPost<DataCollectionResponse<Goods>>(para);
         }
 
-        public DataCollectionResponse<PopGoods> SearchPopGoods(Shop shop, PopGoodsState state, int pageIndex,
-            int pageSize)
+        public DataCollectionResponse<PopGoods> SearchPopGoods(Shop shop, PopGoodsState state, int pageIndex,int pageSize)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
             para["shop"] = shop;

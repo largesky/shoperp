@@ -317,9 +317,9 @@ namespace ShopErp.App.Views.Goods
                                 if (name.All(c => Char.IsDigit(c)))
                                 {
                                     Size size = GetImageFileSize(file);
-                                    if (size.Width != size.Height || size.Width > 800)
+                                    if (size.Width != size.Height || size.Width > 800 || (new FileInfo(file)).Length > 500 * 1024)
                                     {
-                                        if (MessageBox.Show(file + "长宽不相等，或者长宽超过800，是否继续", "错误", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                                        if (MessageBox.Show(file + "长宽不相等，或者长宽超过800，或者大小超过500KB是否继续", "错误", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
                                         {
                                             return;
                                         }
@@ -342,9 +342,9 @@ namespace ShopErp.App.Views.Goods
                             foreach (var file in files)
                             {
                                 Size size = GetImageFileSize(file);
-                                if (size.Width != size.Height || size.Width > 800)
+                                if (size.Width != size.Height || size.Width > 800 || (new FileInfo(file)).Length > 500 * 1024)
                                 {
-                                    if (MessageBox.Show(file + "长宽不相等，或者长宽超过800，是否继续", "错误", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                                    if (MessageBox.Show(file + "长宽不相等，或者长宽超过800，或者大小超过500KB是否继续", "错误", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
                                     {
                                         return;
                                     }

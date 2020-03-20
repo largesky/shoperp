@@ -26,7 +26,10 @@ namespace ShopErp.Server.Service.Restful
         public const string UPDATE_RET_NOUPDATED = "未更新订单";
         public const string UPDATE_RET_UPDATED = "已更新订单";
 
-        protected static readonly char[] SPILTE_CHAR = new char[] { '(', '（', '[', '【' };
+        protected static readonly char[] SPILTE_CHAR_COMMENT_L = new char[] { '(', '（' };
+        protected static readonly char[] SPILTE_CHAR_COMMENT_R = new char[] { ')', '）' };
+        protected static readonly char[] SPILTE_CHAR_EDTION_L = new char[] { '[', '【' };
+        protected static readonly char[] SPILTE_CHAR_EDTION_R = new char[] { ']', '】' };
 
         private PopService ps = new PopService();
 
@@ -47,40 +50,33 @@ namespace ShopErp.Server.Service.Restful
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        protected static string FilterColorOrSize(string value)
+        protected static string RemoveByChar(string value, char[] lcs, char[] rcs)
         {
             if (string.IsNullOrWhiteSpace(value))
             {
                 return string.Empty;
             }
-            int indexL = value.IndexOfAny(new char[] { '(', '（' });
-            int indexR = value.IndexOfAny(new char[] { ')', '）' });
-
+            int indexL = value.IndexOfAny(lcs);
+            int indexR = value.IndexOfAny(rcs);
             if (indexL >= 0 && indexR > indexL)
             {
                 value = value.Substring(0, indexL);
             }
-
-            indexL = value.IndexOfAny(new char[] { '[', '【' });
-            indexR = value.IndexOfAny(new char[] { ']', '】' });
-
-            if (indexL >= 0 && indexR > indexL)
-            {
-                value = value.Substring(0, indexL);
-            }
-
             return value;
         }
 
         protected void ParseColorSizeEditon(string iColor, string iSize, out string oColor, out string oEdtion, out string oSize)
         {
-            oSize = FilterColorOrSize(iSize);
+            oSize = RemoveByChar(iSize, SPILTE_CHAR_COMMENT_L, SPILTE_CHAR_COMMENT_R);
+            oSize = RemoveByChar(oSize, SPILTE_CHAR_EDTION_L, SPILTE_CHAR_EDTION_R);
 
-            if (iColor.IndexOfAny(SPILTE_CHAR) >= 0)
+            oColor = RemoveByChar(iColor, SPILTE_CHAR_COMMENT_L, SPILTE_CHAR_COMMENT_R);
+
+            if (oColor.IndexOfAny(SPILTE_CHAR_EDTION_L) >= 0)
             {
-                oColor = iColor.Substring(0, iColor.IndexOfAny(SPILTE_CHAR));
-                oEdtion = iColor.Substring(iColor.IndexOfAny(SPILTE_CHAR));
+                oEdtion = oColor.Substring(oColor.IndexOfAny(SPILTE_CHAR_EDTION_L));
                 oEdtion = oEdtion.Replace("(", "").Replace("（", "").Replace(")", "").Replace("）", "").Replace("[", "").Replace("【", "").Replace("]", "").Replace("】", "").Replace(" ", "");
+                oColor = oColor.Substring(0, oColor.IndexOfAny(SPILTE_CHAR_EDTION_L));
             }
             else
             {
@@ -90,11 +86,16 @@ namespace ShopErp.Server.Service.Restful
             if (string.IsNullOrWhiteSpace(oEdtion) == false)
             {
                 oEdtion = oEdtion.Replace("版", "");
+                oEdtion = oEdtion.Replace("跟高", "");
             }
         }
 
         private void FillEmptyAndParseGoods(Order order)
         {
+            if (order.State == OrderState.NONE)
+            {
+                throw new Exception("订单State不能为NONE");
+            }
             if (order.ShopId < 1)
             {
                 throw new Exception("订单ShopId小于1");
@@ -111,17 +112,10 @@ namespace ShopErp.Server.Service.Restful
             {
                 throw new Exception("订单PopType不能为NONE");
             }
-            order.PopOrderId = order.PopOrderId ?? string.Empty;
-            order.PopBuyerId = order.PopBuyerId ?? string.Empty;
             if (order.PopPayType == PopPayType.None)
             {
                 throw new Exception("订单PopPayType不能为NONE");
             }
-            order.PopCodSevFee = order.PopCodSevFee < 0 ? 0 : order.PopCodSevFee;
-            order.PopCodNumber = order.PopCodNumber ?? string.Empty;
-            order.PopSellerComment = order.PopSellerComment ?? string.Empty;
-            order.PopBuyerComment = order.PopBuyerComment ?? string.Empty;
-            order.PopState = order.PopState ?? String.Empty;
             if (order.PopFlag == ColorFlag.None)
             {
                 throw new Exception("订单PopFlag不能为NONE");
@@ -138,10 +132,13 @@ namespace ShopErp.Server.Service.Restful
             {
                 throw new Exception("订单ReceiverPhone,与ReceiverMobile 不能同时为空");
             }
-            //if (order.DeliveryTemplateId < 1)
-            //{
-            //    throw new Exception("订单DeliveryTemplateId不能小于1");
-            //}
+            order.PopOrderId = order.PopOrderId ?? string.Empty;
+            order.PopBuyerId = order.PopBuyerId ?? string.Empty;
+            order.PopCodSevFee = order.PopCodSevFee < 0 ? 0 : order.PopCodSevFee;
+            order.PopCodNumber = order.PopCodNumber ?? string.Empty;
+            order.PopSellerComment = order.PopSellerComment ?? string.Empty;
+            order.PopBuyerComment = order.PopBuyerComment ?? string.Empty;
+            order.PopState = order.PopState ?? String.Empty;
             order.DeliveryCompany = order.DeliveryCompany ?? string.Empty;
             order.DeliveryNumber = order.DeliveryNumber ?? string.Empty;
             order.PopPayTime = this.IsDbMinTime(order.PopPayTime) ? DateTime.Now : order.PopPayTime;
@@ -155,23 +152,19 @@ namespace ShopErp.Server.Service.Restful
             order.DeliveryOperator = order.DeliveryOperator ?? string.Empty;
             order.CloseOperator = order.CloseOperator ?? string.Empty;
             order.ParseResult = true;
-
-            if (order.State == OrderState.NONE)
-            {
-                throw new Exception("订单State不能为NONE");
-            }
-
             if (order.OrderGoodss != null && order.OrderGoodss.Count > 0)
             {
                 foreach (var item in order.OrderGoodss)
                 {
-                    try
+                    if (item.State == OrderState.NONE)
                     {
-                        ServiceContainer.GetService<GoodsService>().ParsePopOrderGoodsNumber(item);
+                        throw new Exception("订单商品状态不能为NONE：" + item.Vendor + " " + item.Number);
                     }
-                    catch
+                    if (item.PopRefundState == PopRefundState.NONE)
                     {
+                        throw new Exception("订单商品退款不能为NONE：" + item.Vendor + " " + item.Number);
                     }
+
                     item.Vendor = item.Vendor ?? string.Empty;
                     item.Number = item.Number ?? string.Empty;
                     item.PopNumber = item.PopNumber ?? string.Empty;
@@ -187,20 +180,12 @@ namespace ShopErp.Server.Service.Restful
                     item.StockTime = this.IsDbMinTime(item.StockTime) ? this.GetDbMinTime() : item.StockTime;
                     item.StockOperator = item.StockOperator ?? string.Empty;
                     item.Image = item.Image ?? string.Empty;
-                    if (item.State == OrderState.NONE)
-                    {
-                        throw new Exception("订单商品状态不能为NONE：" + item.Vendor + " " + item.Number);
-                    }
-                    if (item.PopRefundState == PopRefundState.NONE)
-                    {
-                        throw new Exception("订单商品退款不能为NONE：" + item.Vendor + " " + item.Number);
-                    }
-                    //其中版本可能包含在颜色中
+                    Goods g = ServiceContainer.GetService<GoodsService>().ParsePopOrderGoodsNumber(item);
                     string color = null, edtion = null, size = null;
                     ParseColorSizeEditon(item.Color, item.Size, out color, out edtion, out size);
-                    item.Color = string.IsNullOrWhiteSpace(color) ? item.Color : color;
-                    item.Edtion = string.IsNullOrWhiteSpace(edtion) ? item.Edtion : edtion;
-                    item.Size = string.IsNullOrWhiteSpace(size) ? item.Size : size;
+                    item.Color = color ?? item.Color;
+                    item.Edtion = g.IgnoreEdtion ? string.Empty : (edtion ?? item.Edtion);
+                    item.Size = size ?? item.Size;
                 }
                 order.ParseResult = order.OrderGoodss.All(o => o.NumberId > 0);
             }
