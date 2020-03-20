@@ -63,6 +63,7 @@ namespace ShopErp.App
             mc.Add("收件记录", typeof(DeliveryInQueryUserControl));
             mc.Add("标记发货", typeof(MarkPopDeliveryUserControl));
             mc.Add("标记发货-网页", typeof(MarkPopDeliveryHtmlUserControl));
+            mc.Add("物流时限", typeof(DeliveryCheckUserControl));
             mc.Add("快递配置", typeof(DeliveryCompanyUserControl));
             mc.Add("运费模板", typeof(DeliveryTemplateUserControl));
             mcs.Add(mc);
@@ -71,7 +72,6 @@ namespace ShopErp.App
             mc.Add("打印订单", typeof(PrintUserControl));
             mc.Add("打印历史", typeof(PrintHistoryUserControl));
             mc.Add("打印模板", typeof(PrintTemplateUserControl));
-            //mc.Add("物流模板", typeof(WuliuTemplateUserControl));
             mc.Add("物流记录", typeof(WuliuNumberUserControl));
             mcs.Add(mc);
 
@@ -90,8 +90,8 @@ namespace ShopErp.App
 
             mc = new MenuConfig("财务", null);
             mc.Add("好评返现", typeof(ReturnCashUserControl));
-            mc.Add("日常记账", typeof(FinanceUserControl));
-            mc.Add("账户管理", typeof(FinanceAccountUserControl));
+            //mc.Add("日常记账", typeof(FinanceUserControl));
+            //mc.Add("账户管理", typeof(FinanceAccountUserControl));
             mcs.Add(mc);
 
 

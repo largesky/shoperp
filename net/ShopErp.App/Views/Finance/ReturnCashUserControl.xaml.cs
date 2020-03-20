@@ -141,28 +141,5 @@ namespace ShopErp.App.Views.Finance
                 MessageBox.Show(ex.Message);
             }
         }
-
-        private void btnViewImage_Click(object sender, RoutedEventArgs e)
-        {
-            var rc = this.GetSelectedCach();
-            if (rc == null)
-            {
-                return;
-            }
-            try
-            {
-                if (rc.Image == null || rc.Image.Length == 0)
-                {
-                    throw new Exception("没有图片");
-                }
-
-                ImageViewWindow win = new ImageViewWindow {ImgData = rc.Image};
-                win.Show();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
     }
 }

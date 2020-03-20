@@ -363,6 +363,9 @@
     <Compile Include="Views\DataCenter\SaleUserControl.xaml.cs">
       <DependentUpon>SaleUserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Delivery\DeliveryCheckUserControl.xaml.cs">
+      <DependentUpon>DeliveryCheckUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Orders\OrderBatchEditUserControl.xaml.cs">
       <DependentUpon>OrderBatchEditUserControl.xaml</DependentUpon>
     </Compile>
@@ -428,24 +431,6 @@
     <Compile Include="Views\Extenstions\ComboBoxExtension.cs" />
     <Compile Include="Views\Finance\CreateReturnCashWindow.xaml.cs">
       <DependentUpon>CreateReturnCashWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Finance\FinanceAccountUserControl.xaml.cs">
-      <DependentUpon>FinanceAccountUserControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Finance\FinanceCreateBatchWindow.xaml.cs">
-      <DependentUpon>FinanceCreateBatchWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Finance\FinanceEdit.xaml.cs">
-      <DependentUpon>FinanceEdit.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Finance\FinanceTypeConfigWindow.xaml.cs">
-      <DependentUpon>FinanceTypeConfigWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Finance\FinanceUserControl.xaml.cs">
-      <DependentUpon>FinanceUserControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Finance\ImageViewWindow.xaml.cs">
-      <DependentUpon>ImageViewWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Finance\ReturnCashCompleteWindow.xaml.cs">
       <DependentUpon>ReturnCashCompleteWindow.xaml</DependentUpon>
@@ -697,6 +682,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Delivery\DeliveryCheckUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Orders\OrderBatchEditUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -778,30 +767,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Finance\CreateReturnCashWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Finance\FinanceAccountUserControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Finance\FinanceCreateBatchWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Finance\FinanceEdit.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Finance\FinanceTypeConfigWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Finance\FinanceUserControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Finance\ImageViewWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

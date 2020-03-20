@@ -1,0 +1,61 @@
+﻿<UserControl x:Class="ShopErp.App.Views.Delivery.DeliveryCheckUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="1200">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" Grid.Row="2">
+                <Ellipse Width="20" Height="20" Fill="Red" Margin="3" />
+                <TextBlock Text="已超时订单" Margin="3" VerticalAlignment="Center" />
+                <Ellipse Width="20" Height="20" Fill="Yellow" Margin="3" />
+                <TextBlock Text="1小时内超时订单" Margin="3" VerticalAlignment="Center" />
+                <CheckBox Name="chkAutoLoadDelivery" Content="加载完成后读取物流" Margin="3" VerticalAlignment="Center" IsChecked="False" FlowDirection="RightToLeft"/>
+                <Button Name="btnRefresh" Margin="3" VerticalAlignment="Center" Width="60" Content="刷新"
+                        Click="btnRefresh_Click" />
+                <Button Name="btnExport" Margin="3,0,3,3" VerticalAlignment="Bottom" Width="60" Content="导出"
+                        Click="btnExport_Click" />
+                <TextBlock Name="tbTotal" Margin="3" VerticalAlignment="Center" />
+                <TextBlock Name="tbProgress" Margin="3" VerticalAlignment="Center" />
+            </StackPanel>
+        </StackPanel>
+
+        <DataGrid Grid.Row="1" Name="dgvOrders" AutoGenerateColumns="False" SelectionMode="Extended"
+                  SelectionUnit="CellOrRowHeader" CanUserAddRows="False"
+                  Style="{StaticResource ResourceKey=OrderDataGridStyle}">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="向前选择" Name="miSelectPre" Click="miSelectPre_Click" />
+                    <MenuItem Header="向后选择" Name="miSelectForward" Click="miSelectForward_Click" />
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+            <DataGrid.Columns>
+                <DataGridCheckBoxColumn Header="选择" Binding="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="False" />
+                <DataGridTextColumn Header="店铺" Binding="{Binding Source.ShopId,Converter={StaticResource shopMarkConverter}}" IsReadOnly="True" />
+                <DataGridTextColumn Header="订单编号" Binding="{Binding Source.PopOrderId}" IsReadOnly="True" />
+                <DataGridTextColumn Header="付款时间" Binding="{Binding Source.PopPayTime,Converter={StaticResource datetimeConverter}}" IsReadOnly="True" />
+                <DataGridTextColumn Header="标记时间" Binding="{Binding Source.PopDeliveryTime,Converter={StaticResource datetimeConverter}}" IsReadOnly="True" />
+                <DataGridTextColumn Header="商品信息" Binding="{Binding GoodsInfo}" IsReadOnly="True" />
+                <DataGridTextColumn Header="订单状态" Binding="{Binding Source.State,Converter={StaticResource descriptionConverter}}" IsReadOnly="True" />
+                <DataGridTextColumn Header="快递公司" Binding="{Binding Source.DeliveryCompany}" IsReadOnly="True" />
+                <DataGridTextColumn Header="快递单号" Binding="{Binding Source.DeliveryNumber}" IsReadOnly="True" />
+                <DataGridTextColumn Header="买家备注" Binding="{Binding Source.PopBuyerComment}" IsReadOnly="True" />
+                <DataGridTextColumn Header="卖家备注" Binding="{Binding Source.PopSellerComment}" IsReadOnly="True" />
+                <DataGridTextColumn Header="处理状态" Binding="{Binding State}" IsReadOnly="True" />
+                <DataGridTextColumn Header="第一条物流" Binding="{Binding FirstDeliveryInfo}" IsReadOnly="True" />
+                <DataGridTextColumn Header="第二条物流" Binding="{Binding SecondDeliveryInfo}" IsReadOnly="True" />
+                <DataGridTextColumn Header="收货人姓名" Binding="{Binding Source.ReceiverName}" IsReadOnly="True" />
+                <DataGridTextColumn Header="收货人电话" Binding="{Binding Source.ReceiverPhone}" IsReadOnly="True" />
+                <DataGridTextColumn Header="收货人手机" Binding="{Binding Source.ReceiverMobile}" IsReadOnly="True" />
+                <DataGridTextColumn Header="收货人地址" Binding="{Binding Source.ReceiverAddress}" IsReadOnly="True" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+    </Grid>
+</UserControl>

@@ -53,8 +53,6 @@
                     Width="40" />
             <Button Name="btnDelete" Content="删除" Click="btnDelete_Click" Margin="3" VerticalAlignment="Center"
                     Width="40" />
-            <Button Name="btnViewImage" Content="查看图片" Click="btnViewImage_Click" Margin="3" VerticalAlignment="Center"
-                    Width="55" />
         </StackPanel>
         <DataGrid Name="dgvItems" IsReadOnly="True" Grid.Row="1" SelectionMode="Extended"
                   SelectionUnit="CellOrRowHeader" CanUserAddRows="False" CanUserDeleteRows="False"
