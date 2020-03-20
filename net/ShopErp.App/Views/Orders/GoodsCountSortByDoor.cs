@@ -1,4 +1,4 @@
-﻿ 
+﻿
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,24 +26,9 @@ namespace ShopErp.App.Views.Orders
                 return 1;
             }
 
-            if (lhs.Area != rhs.Area)
+            if (lhs.Address.Equals(rhs.Address, StringComparison.OrdinalIgnoreCase)==false)
             {
-                return lhs.Area > rhs.Area ? 1 : -1;
-            }
-
-            if (lhs.LianLang != rhs.LianLang)
-            {
-                return lhs.LianLang ? -1 : 1;
-            }
-
-            if (lhs.Door != rhs.Door)
-            {
-                return lhs.Door > rhs.Door ? 1 : -1;
-            }
-
-            if (lhs.Street != rhs.Street)
-            {
-                return lhs.Street > rhs.Street ? 1 : -1;
+                return lhs.Address.CompareTo(rhs.Address);
             }
 
             if (lhs.Number.Equals(rhs.Number, StringComparison.OrdinalIgnoreCase) == false)

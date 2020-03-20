@@ -135,8 +135,7 @@ namespace ShopErp.App.Views.Orders
                     throw new Exception("请在系统配置里面，配置要使用的打印机");
                 }
 
-                if (MessageBox.Show("是否使用打印机:" + printer + Environment.NewLine + "打印?", "提示", MessageBoxButton.YesNo,
-                        MessageBoxImage.Question) != MessageBoxResult.Yes)
+                if (MessageBox.Show("是否使用打印机:" + printer + Environment.NewLine + "打印?", "提示", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 {
                     return;
                 }
@@ -148,8 +147,7 @@ namespace ShopErp.App.Views.Orders
                 List<GoodsCount> counts = new List<GoodsCount>();
                 foreach (var item in this.OrderReturns)
                 {
-                    string[] infos =
-                        item.Source.GoodsInfo.Split(new char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] infos = item.Source.GoodsInfo.Split(new char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
                     if (infos.Length < 4)
                     {
                         MessageBox.Show("退货信息不正确，请检查:" + item.Source.Id);
@@ -204,24 +202,8 @@ namespace ShopErp.App.Views.Orders
                             count.Color = infos[2].Trim();
                             count.Size = infos[3].Trim();
                         }
-
-                        //解析门牌，街道
-                        string address = vendor.MarketAddress;
-                        string door = VendorService.FindDoor(address);
-                        string area = VendorService.FindAreaOrStreet(address, "区");
-                        string street = VendorService.FindAreaOrStreet(address, "街");
-                        count.Address = string.Format("{0}-{1}-{2}", area, door, street);
+                        count.Address = vendor.MarketAddressShort;
                         count.Vendor = VendorService.FormatVendorName(count.Vendor);
-
-                        int iArea = 0, iDoor = 0, iStreet = 0;
-
-                        int.TryParse(area, out iArea);
-                        int.TryParse(door, out iDoor);
-                        int.TryParse(street, out iStreet);
-
-                        count.Area = iArea;
-                        count.Door = iDoor;
-                        count.Street = iStreet;
                         counts.Add(count);
                     }
                     foreach (var c in counts.Where(obj => obj.Vendor == count.Vendor && obj.Number == count.Number &&
@@ -246,15 +228,11 @@ namespace ShopErp.App.Views.Orders
                     count.Count += item.Source.Count;
                 }
                 IComparer<GoodsCount> comparer = new GoodsCountSortByDoor();
-                counts.Sort(comparer); //区
-                counts.Sort(comparer); //连
-                counts.Sort(comparer); //门
-                counts.Sort(comparer); //街
+                counts.Sort(comparer); //拿货地址
                 counts.Sort(comparer); //货号
                 counts.Sort(comparer); //版本
                 counts.Sort(comparer); //颜色
                 counts.Sort(comparer); //尺码
-
                 goodsCountDoc.PageSize = new Size(793, 1122.24);
                 goodsCountDoc.SetGoodsCount(counts.ToArray());
                 pd.PrintDocument(goodsCountDoc, "退货统计");

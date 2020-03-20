@@ -366,6 +366,7 @@
     <Compile Include="Views\Delivery\DeliveryCheckUserControl.xaml.cs">
       <DependentUpon>DeliveryCheckUserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Orders\GoodsCountSortByDoor.cs" />
     <Compile Include="Views\Orders\OrderBatchEditUserControl.xaml.cs">
       <DependentUpon>OrderBatchEditUserControl.xaml</DependentUpon>
     </Compile>
@@ -569,8 +570,6 @@
       <DependentUpon>PageBarUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageBar\PageChangeEventArgs.cs" />
-    <Compile Include="Views\Orders\GoodsCountSortByDoor.cs" />
-    <Compile Include="Views\Orders\GoodsCountSortByStreet.cs" />
     <Compile Include="Views\Orders\GoodsCountUserControl.xaml.cs">
       <DependentUpon>GoodsCountUserControl.xaml</DependentUpon>
     </Compile>

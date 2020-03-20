@@ -30,8 +30,7 @@ namespace ShopErp.App.Views.Orders
     {
         private OrderGoodsService goodsCountRepertory = ServiceContainer.GetService<OrderGoodsService>();
 
-        private System.Collections.ObjectModel.ObservableCollection<GoodsCount> gcs =
-            new System.Collections.ObjectModel.ObservableCollection<GoodsCount>();
+        private System.Collections.ObjectModel.ObservableCollection<GoodsCount> gcs = new System.Collections.ObjectModel.ObservableCollection<GoodsCount>();
 
         private bool myLoaded = false;
 
@@ -66,8 +65,7 @@ namespace ShopErp.App.Views.Orders
 
         private List<ColorFlag> GetSelectedOrderFlags()
         {
-            var ovms = (this.cbbFlags.ItemsSource as OrderFlagViewModel[]).Where(obj => obj.IsChecked)
-                .Select(obj => obj.Flag).ToList();
+            var ovms = (this.cbbFlags.ItemsSource as OrderFlagViewModel[]).Where(obj => obj.IsChecked).Select(obj => obj.Flag).ToList();
             return ovms;
         }
 
@@ -85,17 +83,13 @@ namespace ShopErp.App.Views.Orders
                 var end = this.dpEnd.Value == null ? DateTime.Now.AddDays(1) : this.dpEnd.Value.Value;
 
                 List<GoodsCount> counts = goodsCountRepertory.GetGoodsCount(flags, this.dpStart.Value.Value, end, 0, 0).Datas;
-                IComparer<GoodsCount> comparer = this.cbbSortType.SelectedIndex == 0 ? new GoodsCountSortByDoor() as IComparer<GoodsCount> : new GoodsCountSortByStreet() as IComparer<GoodsCount>;
-                counts.Sort(comparer); //区
-                counts.Sort(comparer); //连
-                counts.Sort(comparer); //门
-                counts.Sort(comparer); //街
+                IComparer<GoodsCount> comparer = new GoodsCountSortByDoor();
+                counts.Sort(comparer); //拿货地址
                 counts.Sort(comparer); //货号
                 counts.Sort(comparer); //版本
                 counts.Sort(comparer); //颜色
                 counts.Sort(comparer); //尺码
                 this.gcs.Clear();
-
                 foreach (var col in this.dgvGoodsCount.Columns)
                 {
                     col.SortDirection = null;

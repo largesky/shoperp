@@ -5,8 +5,6 @@ namespace ShopErp.Domain
 {
     public class GoodsCount
     {
-        public bool LianLang { get; set; }
-
         public string Address { get; set; }
 
         public string Vendor { get; set; }
@@ -22,12 +20,6 @@ namespace ShopErp.Domain
         public double Money { get; set; }
 
         public int Count { get; set; }
-
-        public int Area { get; set; }
-
-        public int Street { get; set; }
-
-        public int Door { get; set; }
 
         public DateTime FirstPayTime { get; set; }
 

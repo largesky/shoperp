@@ -14,12 +14,6 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal">
-            <TextBlock Text="排序类型:" Margin="3" VerticalAlignment="Center" />
-            <ComboBox Name="cbbSortType" Margin="3" VerticalAlignment="Center">
-                <ComboBoxItem>门牌</ComboBoxItem>
-                <ComboBoxItem>街道</ComboBoxItem>
-                <ComboBox.SelectedIndex>0</ComboBox.SelectedIndex>
-            </ComboBox>
             <TextBlock Text="旗帜颜色:" Margin="3" VerticalAlignment="Center" />
             <ListBox Grid.Row="3" Grid.Column="3" Name="cbbFlags" Margin="3" VerticalAlignment="Center"
                      BorderBrush="White">

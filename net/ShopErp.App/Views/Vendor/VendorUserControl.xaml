@@ -30,6 +30,7 @@
                     Click="btnEdit_Click" />
             <Button Name="btnDelete" Content="删除" Margin="3" VerticalAlignment="Center" Width="60" FontSize="12"
                     Click="btnDelete_Click" />
+            <Button Name="btnGenMarketAddressShort" Content="生成默认短地址" Margin="3" VerticalAlignment="Center" Width="100"  Click="BtnGenMarketAddressShort_Click"/>
             <TextBlock Name="tbMsg" Margin="3"></TextBlock>
         </StackPanel>
 
@@ -43,6 +44,7 @@
                 <DataGridTextColumn Header="均价" Binding="{Binding AveragePrice}" IsReadOnly="True" />
                 <DataGridTextColumn Header="备注(可编辑)" Binding="{Binding Comment}" />
                 <DataGridTextColumn Header="市场地址(可编辑)" Binding="{Binding MarketAddress}" />
+                <DataGridTextColumn Header="市场地址简写(可编辑)" Binding="{Binding MarketAddressShort}" />
                 <DataGridHyperlinkColumn Header="主页" Binding="{Binding HomePage}" IsReadOnly="True">
                     <DataGridHyperlinkColumn.ElementStyle>
                         <Style>

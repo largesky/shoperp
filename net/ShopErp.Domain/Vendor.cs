@@ -8,6 +8,7 @@ namespace ShopErp.Domain
         public virtual string Name { get; set; }
         public virtual string PingyingName { get; set; }
         public virtual string MarketAddress { get; set; }
+        public string MarketAddressShort { get; set; }
         public virtual string HomePage { get; set; }
         public virtual DateTime CreateTime { get; set; }
         public bool Watch { get; set; }
@@ -15,6 +16,7 @@ namespace ShopErp.Domain
         public int AveragePrice { get; set; }
         public string Comment { get; set; }
         public string Alias { get; set; }
+
 
         public override string ToString()
         {

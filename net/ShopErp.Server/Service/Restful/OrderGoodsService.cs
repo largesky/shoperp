@@ -17,10 +17,6 @@ namespace ShopErp.Server.Service.Restful
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Multiple, AddressFilterMode = AddressFilterMode.Exact)]
     public class OrderGoodsService : ServiceBase<OrderGoods, OrderGoodsDao>
     {
-        private static readonly char[] NUMBERS = "0123456789０１２３４５６７８９一二三四五六七八九".ToArray();
-        private static readonly List<char> NUMBERS_REPLAYCE = "０１２３４５６７８９".ToList();
-        private static readonly List<char> NUMBERS_REPLAYCE1 = "一二三四五六七八九".ToList();
-
         private GoodsCount[] MegerGoodsCount(IList<GoodsCount> gcs)
         {
             var goodsCountMarks = ServiceContainer.GetService<DeliveryCompanyService>().GetByAll().Datas;
@@ -102,62 +98,13 @@ namespace ShopErp.Server.Service.Restful
 
             //下载厂家地址
             Vendor[] vendors = ServiceContainer.GetService<VendorService>().GetByAll("", "", "", "", 0, 0).Datas.ToArray();
-            //填充地址
-            foreach (var count in goodsCounts)
-            {
-                try
-                {
-                    Vendor vendor = vendors.FirstOrDefault(obj => obj.Name.Equals(count.Vendor));
-                    if (vendor != null)
-                    {
-                        count.Address = vendor.MarketAddress;
-                    }
-                    else
-                    {
-                        count.Address = "";
-                    }
-                }
-                catch
-                {
-
-                }
-            }
-
             //分析区号,计算备注
             foreach (var goodsCount in goodsCounts)
             {
                 //计算门牌编号
                 Vendor vendor = vendors.FirstOrDefault(obj => obj.Name.Equals(goodsCount.Vendor));
-                string address = vendor == null ? "" : (vendor.MarketAddress ?? "");
                 goodsCount.Vendor = VendorService.FormatVendorName(goodsCount.Vendor);
-
-                try
-                {
-                    goodsCount.Door = int.Parse(VendorService.FindDoor(address));
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine("解析厂家门牌号出错：" + ex.Message);
-                }
-                try
-                {
-                    goodsCount.Area = int.Parse(VendorService.FindAreaOrStreet(address, "区"));
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine("解析厂家门区出错：" + ex.Message);
-                }
-                try
-                {
-                    goodsCount.Street = int.Parse(VendorService.FindAreaOrStreet(address, "街"));
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine("解析厂家街道出错：" + ex.Message);
-                }
-                goodsCount.LianLang = address.Contains("连廊");
-                goodsCount.Address = string.Format("{0}-{1}-{2}", goodsCount.Area, goodsCount.Door, goodsCount.Street);
-
+                goodsCount.Address = vendor.MarketAddressShort;
                 //计算是否是其它快快递
                 if (string.IsNullOrWhiteSpace(goodsCount.DeliveryCompany) == false)
                 {

@@ -171,7 +171,7 @@ namespace ShopErp.App.Views.Vendor
                     throw new InvalidProgramException("类型控件不为：" + typeof(TextBox));
                 }
                 string nv = tb.Text.Trim();
-                if (e.Column.Header.ToString().Contains("拼音名称"))
+                if (e.Column.Header.ToString().Contains("拼音名称(可编辑)"))
                 {
                     vendor.PingyingName = nv;
                 }
@@ -179,9 +179,13 @@ namespace ShopErp.App.Views.Vendor
                 {
                     vendor.Comment = nv;
                 }
-                else if (e.Column.Header.ToString().Contains("市场地址"))
+                else if (e.Column.Header.ToString().Contains("市场地址(可编辑)"))
                 {
                     vendor.MarketAddress = nv;
+                }
+                else if(e.Column.Header.ToString().Contains("市场地址简写(可编辑)"))
+                {
+                    vendor.MarketAddressShort = nv;
                 }
                 else if (e.Column.Header.ToString().Contains("同一厂家别名"))
                 {
@@ -237,6 +241,35 @@ namespace ShopErp.App.Views.Vendor
             catch (Exception exception)
             {
                 MessageBox.Show(exception.Message);
+            }
+        }
+
+        private void BtnGenMarketAddressShort_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var vendors = ServiceContainer.GetService<VendorService>().GetByAll("", "", "", "", 0, 0).Datas;
+                foreach (var v in vendors)
+                {
+                    v.MarketAddressShort = VendorService.FormatVendorDoor(v.MarketAddress);
+                    if (v.MarketAddress.Contains("温州") || v.MarketAddress.Contains("晋江") || v.MarketAddress.Contains("温岭"))
+                    {
+
+                    }
+                    else
+                    {
+                        if (v.MarketAddress.StartsWith("成都") == false)
+                        {
+                            v.MarketAddress = "成都 " + v.MarketAddress;
+                        }
+                    }
+                    ServiceContainer.GetService<VendorService>().Update(v);
+                }
+                MessageBox.Show("更新成功");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
     }
