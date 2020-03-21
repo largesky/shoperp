@@ -36,7 +36,6 @@ import bjc.shoperp.service.restful.SystemConfigService;
 public class GoodsCountActivity extends AppCompatActivity {
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
-    private Spinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,20 +76,12 @@ public class GoodsCountActivity extends AppCompatActivity {
                     for (int i = 0; i < values.length; i++) {
                         values[i] = (int) flags.get( i );
                     }
-                    int index = spinner.getSelectedItemPosition();
-                    LocalConfigService.update( GoodsCountActivity.this, LocalConfigService.CONFIG_GOODSCOUNTSORTTYPE, index + "" );
-                    new UserStartDownloadTask( start, end, values, (ProgressBar) findViewById( R.id.download_progress ), (TextView) findViewById( R.id.goodsdownload_msg ), GoodsCountActivity.this.spinner.getSelectedItemPosition() ).execute();
+                    new UserStartDownloadTask( start, end, values, (ProgressBar) findViewById( R.id.download_progress ), (TextView) findViewById( R.id.goodsdownload_msg ) ).execute();
                 } catch (Exception ex) {
                     ((TextView) findViewById( R.id.goodsdownload_msg )).setText( ex.getMessage() );
                 }
             }
         } );
-
-        String[] sortTypes = {"门牌编号", "街道编号"};
-        ArrayAdapter<String> aa = new ArrayAdapter<String>( this, android.R.layout.simple_spinner_item, sortTypes );
-        spinner = (Spinner) findViewById( R.id.goods_count_spinner );
-        spinner.setAdapter( aa );
-        spinner.setSelection( Integer.parseInt( LocalConfigService.get( this, LocalConfigService.CONFIG_GOODSCOUNTSORTTYPE, "0" ) ) );
         ((Button) findViewById( R.id.goodscount_btn_sys )).setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -137,19 +128,17 @@ public class GoodsCountActivity extends AppCompatActivity {
         private int[] flags;
         private ProgressBar progressBar;
         private TextView msgTextView;
-        private int sortType;
         private boolean hasError;
         private String error;
         private int total;
         private ArrayList<GoodsCount> goods = new ArrayList<GoodsCount>();
 
-        public UserStartDownloadTask(Date startTime, Date endTime, int[] flags, ProgressBar progressBar, TextView msgTextView, int sortType) {
+        public UserStartDownloadTask(Date startTime, Date endTime, int[] flags, ProgressBar progressBar, TextView msgTextView) {
             this.startTime = startTime;
             this.endTime = endTime;
             this.flags = flags;
             this.progressBar = progressBar;
             this.msgTextView = msgTextView;
-            this.sortType = sortType;
         }
 
         private void setTextMsg(final String msg) {
@@ -171,11 +160,8 @@ public class GoodsCountActivity extends AppCompatActivity {
                     this.total = gcs.Total;
                     break;
                 } while (true);
-                Comparator<GoodsCount> comparator = sortType == 0 ? new GoodsCountSort( false ) : new GoodsCountSort( true );
-                Collections.sort( goods, comparator );//区
-                Collections.sort( goods, comparator );//连
-                Collections.sort( goods, comparator );//街道或者门牌
-                Collections.sort( goods, comparator );//街道或者门牌
+                Comparator<GoodsCount> comparator =  new GoodsCountSort( );
+                Collections.sort( goods, comparator );//地址
                 Collections.sort( goods, comparator );//货号
                 Collections.sort( goods, comparator );//版本
                 Collections.sort( goods, comparator );//颜色

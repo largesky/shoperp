@@ -7,13 +7,6 @@ import java.util.Comparator;
  */
 
 public class GoodsCountSort implements Comparator<GoodsCount> {
-
-    private boolean isByStreet=false;
-
-    public GoodsCountSort(boolean isByStreet) {
-        this.isByStreet=isByStreet;
-    }
-
     @Override
     public int compare(GoodsCount lhs, GoodsCount rhs) {
         if (lhs == null && rhs == null) {
@@ -28,43 +21,22 @@ public class GoodsCountSort implements Comparator<GoodsCount> {
             return -1;
         }
 
-        if (lhs.Area != rhs.Area) {
-            return lhs.Area > rhs.Area ? 1 : -1;
-        }
-
-        if(lhs.LianLang!=rhs.LianLang){
-            return lhs.LianLang?-1:1;
-        }
-
-        if(this.isByStreet==false){
-            if (lhs.Door != rhs.Door) {
-                return lhs.Door > rhs.Door ? 1 : -1;
-            }
-
-            if (lhs.Street != rhs.Street) {
-                return lhs.Street > rhs.Street ? 1 : -1;
-            }
-        }else{
-            if (lhs.Street != rhs.Street) {
-                return lhs.Street > rhs.Street ? 1 : -1;
-            }
-            if (lhs.Door != rhs.Door) {
-                return lhs.Door > rhs.Door ? 1 : -1;
-            }
+        if(lhs.Address.equalsIgnoreCase(rhs.Address)==false){
+            return lhs.Address.compareToIgnoreCase(rhs.Address);
         }
 
         if ( lhs.Number.equalsIgnoreCase(rhs.Number)==false) {
-            return lhs.Number.compareTo(rhs.Number);
+            return lhs.Number.compareToIgnoreCase(rhs.Number);
         }
 
         if (lhs.Edtion.equalsIgnoreCase( rhs.Edtion)==false) {
-            return lhs.Edtion.compareTo(rhs.Edtion);
+            return lhs.Edtion.compareToIgnoreCase(rhs.Edtion);
         }
 
         if (lhs.Color.equalsIgnoreCase( rhs.Color)==false) {
-            return lhs.Color.compareTo(rhs.Color);
+            return lhs.Color.compareToIgnoreCase(rhs.Color);
         }
 
-        return lhs.Size.compareTo(rhs.Size);
+        return lhs.Size.compareToIgnoreCase(rhs.Size);
     }
 }

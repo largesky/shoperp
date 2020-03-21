@@ -5,9 +5,6 @@ package bjc.shoperp.domain;
  */
 
 public class GoodsCount {
-
-    public boolean LianLang;
-
     public String Address;
 
     public String Vendor;
@@ -23,12 +20,6 @@ public class GoodsCount {
     public double Money;
 
     public int Count;
-
-    public int Area;
-
-    public int Street;
-
-    public int Door;
 
     public java.util.Date FirstPayTime;
 
