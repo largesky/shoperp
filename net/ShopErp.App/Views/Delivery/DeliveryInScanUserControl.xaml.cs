@@ -114,7 +114,7 @@ namespace ShopErp.App.Views.Delivery
         private void ProcessReturn(string deliveryCompany, string deliveryNumber)
         {
             //先读取发出信息，在系统找到相应信息,返回单号，有时会填写系统备注中
-            var data = ServiceContainer.GetService<OrderService>().GetByAll("", "", "", "", DateTime.MinValue, DateTime.MinValue, "", "", OrderState.NONE, PopPayType.None, "", "", "", null, -1, deliveryNumber, 0, OrderCreateType.NONE, OrderType.NONE, 0, 0);
+            var data = ServiceContainer.GetService<OrderService>().GetByAll("", "", "", "", DateTime.MinValue, DateTime.MinValue, "", "", OrderState.NONE, PopPayType.None, "", "", "", null, -1, deliveryNumber, 0, OrderCreateType.NONE, OrderType.NONE, "", 0, 0);
             if (data != null && data.Datas.Count > 0)
             {
                 this.ProcessOrders(data.Datas.ToArray(), deliveryCompany, deliveryNumber, false);

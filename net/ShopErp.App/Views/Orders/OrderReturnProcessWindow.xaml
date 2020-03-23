@@ -1,4 +1,4 @@
-﻿<Window x:Class="ShopErp.App.Views.Orders.ReturnProcessWindowEx"
+﻿<Window x:Class="ShopErp.App.Views.Orders.OrderReturnProcessWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="退货处理" Height="500" Width="300" SizeToContent="Height" WindowStartupLocation="CenterScreen"

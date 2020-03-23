@@ -294,7 +294,7 @@ namespace ShopErp.App.Views.Delivery
         {
             try
             {
-                var os = OrderDownloadWindow.DownloadOrder(PopPayType.ONLINE);
+                var os = OrderDownloadWindow.DownloadOrder(PopPayType.ONLINE, "");
                 var orders1 = os.Where(obj => obj.State == OrderState.PAYED).ToArray();
                 if (this.chkIncludeDis.IsChecked == false)
                 {

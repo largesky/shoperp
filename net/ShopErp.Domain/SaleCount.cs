@@ -24,7 +24,7 @@ namespace ShopErp.Domain
 
         public string Number { get; set; }
 
-        public long NumberId { get; set; }
+        public long GoodsId { get; set; }
 
         public DateTime PopPayTime { get; set; }
 

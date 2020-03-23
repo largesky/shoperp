@@ -24,8 +24,7 @@ namespace ShopErp.App.Service.Restful
             return DoPost<DataCollectionResponse<GoodsCount>>(para);
         }
 
-        public DataCollectionResponse<SaleCount> GetSaleCount(long shopId, OrderType type, int timeType, DateTime startTime, DateTime endTime,
-            string popNumberId, int pageIndex, int pageSize)
+        public DataCollectionResponse<SaleCount> GetSaleCount(long shopId, OrderType type, int timeType, DateTime startTime, DateTime endTime, int pageIndex, int pageSize)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
             para["shopId"] = shopId;
@@ -33,7 +32,6 @@ namespace ShopErp.App.Service.Restful
             para["timeType"] = timeType;
             para["startTime"] = startTime;
             para["endTime"] = endTime;
-            para["popNumberId"] = popNumberId;
             para["pageIndex"] = pageIndex;
             para["pageSize"] = pageSize;
             return DoPost<DataCollectionResponse<SaleCount>>(para);

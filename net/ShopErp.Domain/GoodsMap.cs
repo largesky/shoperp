@@ -8,11 +8,9 @@
 
         public string Number { get; set; }
 
-        public long TargetNumberId { get; set; }
+        public long TargetGoodsId { get; set; }
 
         public float Price { get; set; }
-
-        public bool ShowTargetNumber { get; set; }
 
         public bool IgnoreEdtion { get; set; }
     }

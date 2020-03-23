@@ -19,11 +19,11 @@ namespace ShopErp.App.Views.Goods
     /// <summary>
     /// Interaction logic for GoodsAddMapWindow.xaml
     /// </summary>
-    public partial class GoodsAddMapWindow : Window
+    public partial class GoodsMapCreateWindow : Window
     {
         public long GoodsId { get; set; }
 
-        public GoodsAddMapWindow()
+        public GoodsMapCreateWindow()
         {
             InitializeComponent();
         }
@@ -45,7 +45,6 @@ namespace ShopErp.App.Views.Goods
 
                 this.tbVendorName.Text = vendor.Name;
                 this.tbPrice.Text = gu.Price.ToString("F2");
-                this.chkShowTargetNumber.IsChecked = false;
                 this.chkDeleteEdtion.IsChecked = false;
             }
             catch (Exception ex)
@@ -96,8 +95,7 @@ namespace ShopErp.App.Views.Goods
                 {
                     IgnoreEdtion = this.chkDeleteEdtion.IsChecked.Value,
                     Number = number,
-                    TargetNumberId = this.GoodsId,
-                    ShowTargetNumber = this.chkShowTargetNumber.IsChecked.Value,
+                    TargetGoodsId = this.GoodsId,
                     Price = price,
                     VendorId = vendor[0].Id,
                     Id = 0,

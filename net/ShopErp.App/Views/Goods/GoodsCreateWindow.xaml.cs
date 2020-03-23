@@ -65,6 +65,7 @@ namespace ShopErp.App.Views.Goods
                 this.cbbTypes.Bind<GoodsType>();
                 this.cbbVideoType.Bind<GoodsVideoType>();
                 this.cbbShops.ItemsSource = ServiceContainer.GetService<ShopService>().GetByAll().Datas.Where(obj => obj.Enabled).Select(obj => new ShopCheckViewModel(obj) { IsChecked = false }).ToArray();
+                this.cbbShippers.ItemsSource = ServiceContainer.GetService<GoodsService>().GetAllShippers().Datas;
                 if (this.Goods != null)
                 {
                     this.imagePath = this.Goods.Image;
@@ -77,7 +78,7 @@ namespace ShopErp.App.Views.Goods
                 }
                 else
                 {
-                    this.Goods = new ShopErp.Domain.Goods { Colors = "", Comment = "", CreateOperator = OperatorService.LoginOperator.Number, CreateTime = DateTime.Now, Flag = ColorFlag.UN_LABEL, Id = 0, IgnoreEdtion = false, Image = "", ImageDir = "", LastSellTime = DateTime.Now, Material = "", Number = "", Price = 0, Shops = new List<GoodsShop>(), Star = 0, Type = GoodsType.GOODS_SHOES_NONE, UpdateEnabled = true, UpdateTime = DateTime.Now, Url = "", VendorId = 0, VideoType = GoodsVideoType.NONE, Weight = 0 };
+                    this.Goods = new ShopErp.Domain.Goods { Colors = "", Comment = "", CreateOperator = OperatorService.LoginOperator.Number, CreateTime = DateTime.Now, Flag = ColorFlag.UN_LABEL, Id = 0, IgnoreEdtion = false, Image = "", ImageDir = "", Material = "", Number = "", Price = 0, Shops = new List<GoodsShop>(), Star = 0, Type = GoodsType.GOODS_SHOES_NONE, UpdateEnabled = true, UpdateTime = DateTime.Now, Url = "", VendorId = 0, VideoType = GoodsVideoType.NONE, Weight = 0, Shipper = "" };
                 }
             }
             catch (Exception ex)
@@ -128,7 +129,7 @@ namespace ShopErp.App.Views.Goods
                 string url = this.tbUrl.Text.Trim();
 
                 url = url.Substring(0, url.IndexOf('?') < 0 ? url.Length : url.IndexOf('?'));
-                var goods = SpiderBase.CreateSpider(url).GetGoodsInfoByUrl(url, ref vendorHomePage, ref goodsVideoUrl, false, true);
+                var goods = SpiderBase.CreateSpider(url).GetGoodsInfoByUrl(url, ref vendorHomePage, ref goodsVideoUrl, false);
 
                 var vendors = ServiceContainer.GetService<VendorService>().GetByAll("", "", "", "", 0, 0).Datas;
                 var vendor = vendors.FirstOrDefault(obj => obj.Alias.IndexOf(vendorHomePage, StringComparison.OrdinalIgnoreCase) >= 0);

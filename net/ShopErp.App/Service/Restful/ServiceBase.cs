@@ -15,7 +15,6 @@ namespace ShopErp.App.Service.Restful
 
         static JsonSerializerSettings jsonDatetimeSetting = new JsonSerializerSettings { DateFormatHandling = DateFormatHandling.MicrosoftDateFormat };
 
-
         private static T DeserializeObject<T>(string json) where T : ResponseBase
         {
             if (string.IsNullOrWhiteSpace(json))

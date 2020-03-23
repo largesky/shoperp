@@ -86,7 +86,7 @@ namespace ShopErp.App.Views.Goods
                     }
                     else
                     {
-                        var d = this.shoesService.GetByAll(0, GoodsState.NONE, 0, DateTime.MinValue, DateTime.MinValue, strId, "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", 0, 0).Datas;
+                        var d = this.shoesService.GetByAll(0, GoodsState.NONE, 0, DateTime.MinValue, DateTime.MinValue, strId, "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", "", "", 0, 0).Datas;
                         foreach (var gu in d)
                         {
                             this.shoes.Add(new GoodUpdateViewModel { Source = gu });
@@ -98,7 +98,7 @@ namespace ShopErp.App.Views.Goods
                 int pageIndex = 0;
                 do
                 {
-                    var data = this.shoesService.GetByAll(0, GoodsState.NONE, 0, DateTime.MinValue, DateTime.MinValue, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", pageIndex, 500);
+                    var data = this.shoesService.GetByAll(0, GoodsState.NONE, 0, DateTime.MinValue, DateTime.MinValue, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", "", "", pageIndex, 500);
                     if (data.Datas.Count < 1)
                     {
                         break;
@@ -166,7 +166,7 @@ namespace ShopErp.App.Views.Goods
                         {
                             throw new Exception("商品没有URL地址");
                         }
-                        var g = this.sb.GetGoodsInfoByUrl(gu.Source.Url, ref vendorHomePage, ref goodsVideoUrl, true, false);
+                        var g = this.sb.GetGoodsInfoByUrl(gu.Source.Url, ref vendorHomePage, ref goodsVideoUrl, true);
                         if (g == null)
                         {
                             throw new Exception("获取商品方法返回NULL");

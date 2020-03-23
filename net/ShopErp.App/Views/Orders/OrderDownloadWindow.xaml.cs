@@ -28,6 +28,8 @@ namespace ShopErp.App.Views.Orders
     {
         public PopPayType PayType { get; set; }
 
+        public string Shipper { get; set; }
+
         public List<Order> Orders { get { return this.allOrders; } }
 
         private Task task = null;
@@ -223,7 +225,7 @@ namespace ShopErp.App.Views.Orders
         /// </summary>
         /// <param name="payType">支付类型</param>
         /// <returns></returns>
-        public static List<Order> DownloadOrder(PopPayType payType)
+        public static List<Order> DownloadOrder(PopPayType payType, string shipper)
         {
             var allShops = ServiceContainer.GetService<ShopService>().GetByAll().Datas.Where(obj => obj.Enabled).ToList();
             var allAppEnabledShops = allShops.Where(obj => obj.AppEnabled).ToArray();
@@ -237,7 +239,7 @@ namespace ShopErp.App.Views.Orders
             string mode = LocalConfigService.GetValue(SystemNames.CONFIG_ORDER_DOWNLOAD_MODE, "").Trim();
             if (mode.Equals("本地读取"))
             {
-                return ServiceContainer.GetService<OrderService>().GetPayedAndPrintedOrders(null, OrderCreateType.NONE, payType, 0, 0).Datas.OrderBy(obj => obj.ShopId).ToList();
+                return ServiceContainer.GetService<OrderService>().GetPayedAndPrintedOrders(null, OrderCreateType.NONE, payType, shipper, 0, 0).Datas.OrderBy(obj => obj.ShopId).ToList();
             }
 
             OrderDownloadWindow win = new OrderDownloadWindow() { PayType = payType };
@@ -248,27 +250,45 @@ namespace ShopErp.App.Views.Orders
             }
             var onlineOrders = win.Orders.Where(obj => obj.PopPayType == payType).ToList();
 
-            if(allAppEnabledShops.Length>0)
+            if (allAppEnabledShops.Length > 0)
             {
                 //对于采用自动下载订单的店铺，需要再读取其手动创建的订单
-                var orders = ServiceContainer.GetService<OrderService>().GetPayedAndPrintedOrders(allAppEnabledShops.Select(obj => obj.Id).ToArray(), OrderCreateType.MANUAL, payType, 0, 0).Datas;
+                var orders = ServiceContainer.GetService<OrderService>().GetPayedAndPrintedOrders(allAppEnabledShops.Select(obj => obj.Id).ToArray(), OrderCreateType.MANUAL, payType, shipper, 0, 0).Datas;
                 if (orders.Count > 0)
                 {
                     onlineOrders.AddRange(orders);
                 }
             }
 
-            if(allAppUnEnabledShops.Length>0)
+            if (allAppUnEnabledShops.Length > 0)
             {
                 //对于没有自动下载的订单需要读取所有的订单
-                var orders = ServiceContainer.GetService<OrderService>().GetPayedAndPrintedOrders(allAppUnEnabledShops.Select(obj => obj.Id).ToArray(), OrderCreateType.NONE, payType, 0, 0).Datas;
+                var orders = ServiceContainer.GetService<OrderService>().GetPayedAndPrintedOrders(allAppUnEnabledShops.Select(obj => obj.Id).ToArray(), OrderCreateType.NONE, payType, shipper, 0, 0).Datas;
                 if (orders.Count > 0)
                 {
                     onlineOrders.AddRange(orders);
                 }
             }
+            if (string.IsNullOrWhiteSpace(shipper))
+            {
+                return onlineOrders;
+            }
 
-            return onlineOrders;
+            var retOrders = new List<Order>();
+            foreach (var o in onlineOrders)
+            {
+                if (o.OrderGoodss == null || o.OrderGoodss.Count < 0)
+                {
+                    continue;
+                }
+
+                if (o.OrderGoodss.Any(obj => obj.Shipper.Equals(shipper, StringComparison.OrdinalIgnoreCase)))
+                {
+                    retOrders.Add(o);
+                }
+            }
+
+            return retOrders;
         }
     }
 }

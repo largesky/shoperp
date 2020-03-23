@@ -11,11 +11,11 @@ namespace ShopErp.App.Service.Print.GoodsFormatters
         public object Format(PrintTemplate template, PrintTemplateItem item, OrderGoods orderGoods)
         {
             string ma = "材质:";
-            if (orderGoods.NumberId < 1)
+            if (orderGoods.GoodsId < 1)
             {
                 return ma;
             }
-            var gu = ServiceContainer.GetService<GoodsService>().GetById(orderGoods.NumberId);
+            var gu = ServiceContainer.GetService<GoodsService>().GetById(orderGoods.GoodsId);
             if (gu != null)
             {
                 return ma + gu.Material;

@@ -35,12 +35,23 @@ namespace ShopErp.App.Views.Orders
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if (this.myLoaded)
+            try
             {
-                return;
+                if (this.myLoaded)
+                {
+                    return;
+                }
+                this.cbbOrderTypes.Bind<OrderType>();
+                var shippers = ServiceContainer.GetService<GoodsService>().GetAllShippers().Datas;
+                shippers.Insert(0, "");
+                this.cbbShippers.ItemsSource = shippers;
+                this.myLoaded = true;
             }
-            this.cbbOrderTypes.Bind<OrderType>();
-            this.myLoaded = true;
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
         }
 
         private void btnExport_Click(object sender, RoutedEventArgs e)
@@ -134,7 +145,7 @@ namespace ShopErp.App.Views.Orders
                     return;
                 }
                 var dcs = ServiceContainer.GetService<DeliveryCompanyService>().GetByAll().Datas.Where(obj => obj.PaperMark);
-                var orders = ServiceContainer.GetService<OrderService>().GetPayedAndPrintedOrders(shopids, ShopErp.Domain.OrderCreateType.NONE, ShopErp.Domain.PopPayType.None, 0, 0).Datas.OrderBy(obj => obj.PopPayTime).Select(obj => new OrderViewModel(obj)).ToArray();
+                var orders = ServiceContainer.GetService<OrderService>().GetPayedAndPrintedOrders(shopids, ShopErp.Domain.OrderCreateType.NONE, ShopErp.Domain.PopPayType.None, this.cbbShippers.Text.Trim(), 0, 0).Datas.OrderBy(obj => obj.PopPayTime).Select(obj => new OrderViewModel(obj)).ToArray();
                 var selType = this.cbbOrderTypes.GetSelectedEnum<OrderType>();
                 if (selType != OrderType.NONE)
                 {
@@ -231,7 +242,7 @@ namespace ShopErp.App.Views.Orders
             try
             {
                 var item = this.GetMIOrder(sender);
-                var w = new Orders.OrderReceiverInfoModifyWindow { Order = item.Source };
+                var w = new Orders.OrderModifyReciverInfoWindow { Order = item.Source };
                 bool? ret = w.ShowDialog();
                 if (ret.Value)
                 {
@@ -394,7 +405,7 @@ namespace ShopErp.App.Views.Orders
 
         private void MiSelectSameGoodsById_Click(object sender, RoutedEventArgs e)
         {
-            SelectGoods(sender, (o1, o2) => o1.NumberId == o2.NumberId);
+            SelectGoods(sender, (o1, o2) => o1.GoodsId == o2.GoodsId);
         }
 
         private void MiSelectSameShop_Click(object sender, RoutedEventArgs e)
@@ -409,7 +420,7 @@ namespace ShopErp.App.Views.Orders
 
         private void MiSelectSameGoodsByIdAndColorSize_Click(object sender, RoutedEventArgs e)
         {
-            SelectGoods(sender, (o1, o2) => o1.NumberId == o2.NumberId && o1.Edtion == o1.Edtion && o1.Color == o2.Color && o1.Size == o2.Size);
+            SelectGoods(sender, (o1, o2) => o1.GoodsId == o2.GoodsId && o1.Edtion == o1.Edtion && o1.Color == o2.Color && o1.Size == o2.Size);
         }
 
         private void BtnCopyInfo_Click(object sender, RoutedEventArgs e)

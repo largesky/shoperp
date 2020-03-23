@@ -22,10 +22,10 @@ namespace ShopErp.Domain
         public bool UpdateEnabled { get; set; }
         public ColorFlag Flag { get; set; }
         public DateTime CreateTime { get; set; }
-        public DateTime LastSellTime { get; set; }
         public DateTime UpdateTime { get; set; }
         public string CreateOperator { get; set; }
         public GoodsVideoType VideoType { get; set; }
+        public string Shipper { get; set; }
         public IList<GoodsShop> Shops { get; set; }
         //这个字段用于HIBERNATE数据查询使用
         protected virtual Vendor Vendor { get; set; }

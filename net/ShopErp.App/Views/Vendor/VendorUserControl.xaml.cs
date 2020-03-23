@@ -121,12 +121,11 @@ namespace ShopErp.App.Views.Vendor
 
                 var vendor = this.dgvVendors.SelectedCells[0].Item as ShopErp.Domain.Vendor;
 
-                if (ServiceContainer.GetService<GoodsService>().GetByAll(0, GoodsState.NONE, 0, DateTime.MinValue, DateTime.MinValue, vendor.Name, "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", 1, 1).Total > 0)
+                if (vendor.Count > 0)
                 {
                     throw new Exception("厂家还存在商品，需要先删除商品");
                 }
-                if (MessageBox.Show("确认删除厂家:" + vendor.Name, "警告", MessageBoxButton.YesNo, MessageBoxImage.Question) !=
-                    MessageBoxResult.Yes)
+                if (MessageBox.Show("确认删除厂家:" + vendor.Name, "警告", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 {
                     return;
                 }
@@ -183,7 +182,7 @@ namespace ShopErp.App.Views.Vendor
                 {
                     vendor.MarketAddress = nv;
                 }
-                else if(e.Column.Header.ToString().Contains("市场地址简写(可编辑)"))
+                else if (e.Column.Header.ToString().Contains("市场地址简写(可编辑)"))
                 {
                     vendor.MarketAddressShort = nv;
                 }

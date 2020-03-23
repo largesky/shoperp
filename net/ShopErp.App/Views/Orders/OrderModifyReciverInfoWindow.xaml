@@ -1,4 +1,4 @@
-﻿<Window x:Class="ShopErp.App.Views.Orders.OrderReceiverInfoModifyWindow"
+﻿<Window x:Class="ShopErp.App.Views.Orders.OrderModifyReciverInfoWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="修改收货人信息" Height="300" Width="400" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen"

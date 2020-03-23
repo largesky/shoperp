@@ -13,11 +13,8 @@
     <property name="Number">
       <column name="Number" sql-type="string" not-null="true" />
     </property>
-    <property name="PopNumber">
-      <column name="PopNumber" sql-type="string" not-null="true" />
-    </property>
-    <property name="NumberId">
-      <column name="NumberId" sql-type="bigint(20)" not-null="true" />
+    <property name="GoodsId">
+      <column name="GoodsId" sql-type="bigint(20)" not-null="true" />
     </property>
     <property name="Edtion">
       <column name="Edtion" sql-type="string" not-null="true" />
@@ -70,14 +67,14 @@
     <property name="State">
       <column name="State" sql-type="int" not-null="true" />
     </property>
-    <property name="PopRefundState">
-      <column name="PopRefundState" sql-type="int" not-null="true" />
-    </property>
     <property name="Weight">
       <column name="Weight" sql-type="DECIMAL(22,2)" not-null="true" />
     </property>
     <property name="IsPeijian">
       <column name="IsPeijian" sql-type="boolean" not-null="true" />
+    </property>
+    <property name="Shipper">
+      <column name="Shipper" sql-type="string" not-null="true" />
     </property>
   </class>
 </hibernate-mapping>

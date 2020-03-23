@@ -9,7 +9,7 @@ namespace ShopErp.App.Service.Print.GoodsFormatters
 
         public  object Format(PrintTemplate template, PrintTemplateItem item, OrderGoods orderGoods)
         {
-            return "货号:" + (orderGoods.NumberId > 0 ? orderGoods.Number : "");
+            return "货号:" + (orderGoods.GoodsId > 0 ? orderGoods.Number : "");
         }
     }
 }

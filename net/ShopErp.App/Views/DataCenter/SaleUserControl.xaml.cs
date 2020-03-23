@@ -73,7 +73,7 @@ namespace ShopErp.App.Views.DataCenter
             try
             {
                 long shopId = this.cbbShops.SelectedItem == null ? 0 : (this.cbbShops.SelectedItem as Shop).Id;
-                var scs = ServiceContainer.GetService<OrderGoodsService>().GetSaleCount(shopId, this.cbbOrderTypes.GetSelectedEnum<OrderType>(), this.cbbTimeType.SelectedIndex, this.dpStart.Value.Value, this.dpEnd.Value.Value, "", 0, 0).Datas.ToArray();
+                var scs = ServiceContainer.GetService<OrderGoodsService>().GetSaleCount(shopId, this.cbbOrderTypes.GetSelectedEnum<OrderType>(), this.cbbTimeType.SelectedIndex, this.dpStart.Value.Value, this.dpEnd.Value.Value, 0, 0).Datas.ToArray();
                 //订单信息金额汇总
                 List<SaleInfo> sis = new List<SaleInfo>();
                 //根据一个订单包含多个子订单重新计算每一双鞋子应该的价格，根据比例
@@ -90,12 +90,12 @@ namespace ShopErp.App.Views.DataCenter
                 SaleCount[] targetScs = null;
                 //左下分析，有货号，则分析商品SKU卖出情况
                 string vendor = this.tbVendorName.Text.Trim();
-                string numberId = this.tbNumberId.Text.Trim();
+                string goodsId = this.tbGoodsId.Text.Trim();
 
                 //根据商品编号查询
-                if (string.IsNullOrWhiteSpace(numberId) == false)
+                if (string.IsNullOrWhiteSpace(goodsId) == false)
                 {
-                    targetScs = scs.Where(obj => obj.NumberId.ToString() == numberId).ToArray();
+                    targetScs = scs.Where(obj => obj.GoodsId.ToString() == goodsId).ToArray();
                     float total = targetScs.Select(obj => obj.PopSellerGetMoney).Sum();
                     int count = targetScs.Length;
                     this.FillSaleMoneyInfo(targetScs);
@@ -202,7 +202,7 @@ namespace ShopErp.App.Views.DataCenter
                             PerSaleMoney = (100.0F * obj.Select(o => o.PopSellerGetMoney).Sum() / total)
                         }).OrderByDescending(obj => obj.PerSaleMoney).ToArray();
                     //右下统计商品销售占比
-                    var gGroup = targetScs.GroupBy(obj => obj.NumberId).ToArray();
+                    var gGroup = targetScs.GroupBy(obj => obj.GoodsId).ToArray();
                     this.dgvGoodsInfo.ItemsSource = gGroup
                         .Select(obj => new SaleCountInfo
                         {

@@ -52,7 +52,6 @@ namespace ShopErp.Server.Service.Restful
             }
         }
 
-
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/update.html")]
         public ResponseBase Update(Goods value)
@@ -92,11 +91,11 @@ namespace ShopErp.Server.Service.Restful
 
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/getbyall.html")]
-        public DataCollectionResponse<Goods> GetByAll(long shopId, GoodsState state, int timeType, DateTime start, DateTime end, string vendor, string number, GoodsType type, string comment, ColorFlag flag, GoodsVideoType videoType, string order, int pageIndex, int pageSize)
+        public DataCollectionResponse<Goods> GetByAll(long shopId, GoodsState state, int timeType, DateTime start, DateTime end, string vendor, string number, GoodsType type, string comment, ColorFlag flag, GoodsVideoType videoType, string order, string vendorAdd, string shipper, int pageIndex, int pageSize)
         {
             try
             {
-                return this.dao.GetByAll(shopId, state, timeType, start, end, vendor, number, type, comment, flag, videoType, order, pageIndex, pageSize);
+                return this.dao.GetByAll(shopId, state, timeType, start, end, vendor, number, type, comment, flag, videoType, order, vendorAdd, shipper, pageIndex, pageSize);
             }
             catch (Exception ex)
             {
@@ -125,7 +124,6 @@ namespace ShopErp.Server.Service.Restful
             }
         }
 
-      
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/parsegoods.html")]
         public DataCollectionResponse<Goods> ParseGoods(string vendorNameOrPingName, string number)
@@ -160,7 +158,7 @@ namespace ShopErp.Server.Service.Restful
                         throw new Exception(string.Format("解析失败:{0}&{1}找到多个匹配", vendorNameOrPingName, number));
                     }
                     var matchGoodsMap = goodsMaps.FirstOrDefault(obj => obj.VendorId == vendor.Id);
-                    var g = goodsMaps.Select(obj => ServiceContainer.GetService<GoodsService>().GetById(obj.TargetNumberId)).FirstOrDefault(obj => obj != null).First;
+                    var g = goodsMaps.Select(obj => ServiceContainer.GetService<GoodsService>().GetById(obj.TargetGoodsId)).FirstOrDefault(obj => obj != null).First;
                     if (g == null)
                     {
                         return null;
@@ -168,10 +166,7 @@ namespace ShopErp.Server.Service.Restful
                     g.IgnoreEdtion = matchGoodsMap.IgnoreEdtion;
                     g.Price = matchGoodsMap.Price;
                     g.VendorId = matchGoodsMap.VendorId;
-                    if (matchGoodsMap.ShowTargetNumber == false)
-                    {
-                        g.Number = matchGoodsMap.Number;
-                    }
+                    g.Number = matchGoodsMap.Number;
                     return new DataCollectionResponse<Goods>(g);
                 }
                 return new DataCollectionResponse<Goods>();
@@ -181,6 +176,20 @@ namespace ShopErp.Server.Service.Restful
                 throw new WebFaultException<ResponseBase>(new ResponseBase(e.Message), HttpStatusCode.OK);
             }
 
+        }
+
+        [OperationContract]
+        [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/getallshippers.html")]
+        public DataCollectionResponse<string> GetAllShippers()
+        {
+            try
+            {
+                return new DataCollectionResponse<string>(this.dao.GetColumnValueBySqlQuery<string>("select distinct Shipper from `goods`"));
+            }
+            catch (Exception e)
+            {
+                throw new WebFaultException<ResponseBase>(new ResponseBase(e.Message), HttpStatusCode.OK);
+            }
         }
 
         [OperationContract]
@@ -196,7 +205,6 @@ namespace ShopErp.Server.Service.Restful
                 throw new WebFaultException<ResponseBase>(new ResponseBase(e.Message), HttpStatusCode.OK);
             }
         }
-
 
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/addgoods.html")]
@@ -238,7 +246,7 @@ namespace ShopErp.Server.Service.Restful
                 throw new Exception("未能解析出商品货号:" + og.Number);
             }
             og.Number = g.Number;
-            og.NumberId = g.Id;
+            og.GoodsId = g.Id;
             og.Image = g.Image;
             og.Weight = g.Weight;
             og.Price = g.Price;

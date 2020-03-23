@@ -227,7 +227,7 @@ namespace ShopErp.App.Views.Orders
 
                     count.Count += item.Source.Count;
                 }
-                IComparer<GoodsCount> comparer = new GoodsCountSortByDoor();
+                IComparer<GoodsCount> comparer = new OrderGoodsCountSortByDoor();
                 counts.Sort(comparer); //拿货地址
                 counts.Sort(comparer); //货号
                 counts.Sort(comparer); //版本

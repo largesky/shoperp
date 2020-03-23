@@ -10,7 +10,7 @@ namespace ShopErp.Server.Dao.NHibernateDao
     {
         static readonly string[] TIME_TYPES = { "CreateTime", "ProcessImageTime", "UploadTime" };
 
-        public DataCollectionResponse<Goods> GetByAll(long shopId, GoodsState state, int timeType, DateTime start, DateTime end, string vendor, string number, GoodsType type, string comment, ColorFlag flag, GoodsVideoType videoType, string order, int pageIndex, int pageSize)
+        public DataCollectionResponse<Goods> GetByAll(long shopId, GoodsState state, int timeType, DateTime start, DateTime end, string vendor, string number, GoodsType type, string comment, ColorFlag flag, GoodsVideoType videoType, string order, string vendorAdd, string shipper, int pageIndex, int pageSize)
         {
             List<object> para = new List<object>();
             string dataHsqlHeader = " select distinct  G  from " + this.GetEntiyName() + " as  G left join fetch G.Vendor as V left join  G.Shops as GS ";
@@ -46,10 +46,12 @@ namespace ShopErp.Server.Dao.NHibernateDao
                 para.Add('%' + vendor + '%');
                 para.Add('%' + vendor + '%');
             }
+            where += this.MakeQueryLike("V.MarketAddress", vendorAdd, para);
             where += this.MakeQueryLike("G.Number", number, para);
             where += this.MakeQueryLike("G.Comment", comment, para);
             where += this.MakeQuery("G.Flag", (int)flag, (int)ColorFlag.None);
             where += this.MakeQuery("G.VideoType", (int)videoType, (int)GoodsVideoType.NONE);
+            where += this.MakeQueryLike("G.Shipper", shipper, para);
             string dataHsql = dataHsqlHeader + this.TrimHSql("where " + where) + " order by ";
             if (string.IsNullOrWhiteSpace(order))
             {
@@ -89,6 +91,6 @@ namespace ShopErp.Server.Dao.NHibernateDao
             return this.GetPageEx(this.TrimHSql("select G0 " + hsql) + " order by G0.Id desc", this.TrimHSql("select count(G0.Id) " + hsql), pageIndex, pageSize, para.ToArray());
 
         }
- 
+
     }
 }

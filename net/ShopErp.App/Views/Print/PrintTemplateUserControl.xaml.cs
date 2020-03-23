@@ -389,7 +389,7 @@ namespace ShopErp.App.Views.Print
                 Color = "白色",
                 Count = 2,
                 Edtion = "升级版",
-                NumberId = 1076,
+                GoodsId = 1076,
                 Id = 2076969,
                 Image = "",
                 Number = "D34",

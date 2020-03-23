@@ -34,7 +34,7 @@ namespace ShopErp.App.Views.Vendor
             try
             {
                 this.lstGoods.ItemsSource = ServiceContainer.GetService<GoodsService>()
-                    .GetByAll(0, GoodsState.NONE, 0, DateTime.MinValue, DateTime.MinValue, VendorName, "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", 0, 0).Datas.Select(obj => new GoodsViewModel(obj));
+                    .GetByAll(0, GoodsState.NONE, 0, DateTime.MinValue, DateTime.MinValue, VendorName, "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", "", "", 0, 0).Datas.Select(obj => new GoodsViewModel(obj));
             }
             catch (Exception exception)
             {

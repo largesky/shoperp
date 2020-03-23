@@ -41,11 +41,11 @@ namespace ShopErp.App
             mc.Add("订单同步-网页", typeof(OrderSyncHtmlUserControl));
             mc.Add("退货管理", typeof(OrderReturnUserControl));
             mc.Add("退货出单", typeof(OrderReturnOutUserControl));
-            mc.Add("货物统计", typeof(GoodsCountUserControl));
-            mc.Add("拿货扫描", typeof(OrderGetedMarkUserControl));
+            mc.Add("货物统计", typeof(OrderGoodsCountUserControl));
+            mc.Add("拿货扫描", typeof(OrderMarkGetStateUserControl));
             mc.Add("订单导出", typeof(OrderExportUserControl));
             mc.Add("批量设置", typeof(OrderBatchEditUserControl));
-            mc.Add("批量导入", typeof(OrderImportUserControl));
+            mc.Add("批量导入", typeof(OrderImportDeliveryUserControl));
             mcs.Add(mc);
 
             mc = new MenuConfig("商品与厂家", null);

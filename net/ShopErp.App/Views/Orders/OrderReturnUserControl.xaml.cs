@@ -168,7 +168,7 @@ namespace ShopErp.App.Views.Orders
         {
             try
             {
-                var window = new OrderGoodsCreateReturnWithoutOrderWindow();
+                var window = new OrderReturnCreateWithoutOrderWindow();
                 window.ShowDialog();
             }
             catch (Exception ex)
@@ -200,7 +200,7 @@ namespace ShopErp.App.Views.Orders
                     throw new Exception("快递公司和快递单号不能为空");
                 }
 
-                ReturnProcessWindowEx window = new ReturnProcessWindowEx { OrderReturn = vm };
+                OrderReturnProcessWindow window = new OrderReturnProcessWindow { OrderReturn = vm };
                 window.ShowDialog();
             }
             catch (Exception ex)
@@ -254,12 +254,12 @@ namespace ShopErp.App.Views.Orders
                 {
                     return;
                 }
-                int numberId = (int)fe.Tag;
-                if (numberId <= 0)
+                int goodsId = (int)fe.Tag;
+                if (goodsId <= 0)
                 {
                     return;
                 }
-                var s = ServiceContainer.GetService<GoodsService>().GetById(numberId);
+                var s = ServiceContainer.GetService<GoodsService>().GetById(goodsId);
                 if (s == null)
                 {
                     MessageBox.Show("无法获取指定的商品");

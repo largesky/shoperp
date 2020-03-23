@@ -12,70 +12,6 @@ namespace ShopErp.App.Service.Spider.Go2
     {
         private readonly Dictionary<string, string> empty_value_dic = new Dictionary<string, string>();
 
-        private static string[] FormatColors(string str)
-        {
-            if (string.IsNullOrWhiteSpace(str))
-            {
-                return new string[0];
-            }
-            string[] colors = str.Split(",，，.。。\\、＼:：： ".ToArray(), StringSplitOptions.RemoveEmptyEntries);
-            return colors;
-        }
-
-        private static string[] FormatSizes(string str)
-        {
-            if (string.IsNullOrWhiteSpace(str))
-            {
-                return new string[0];
-            }
-
-            string[] sizes = str.Split(",，，:：：.。。\\、＼ ".ToArray(), StringSplitOptions.RemoveEmptyEntries);
-            return sizes;
-        }
-
-        private static GoodsType FormatType(string type)
-        {
-            if (type == "凉鞋")
-            {
-                return GoodsType.GOODS_SHOES_LIANGXIE;
-            }
-            if (type == "低帮鞋")
-            {
-                return GoodsType.GOODS_SHOES_DIBANGXIE;
-            }
-            if (type == "高帮鞋")
-            {
-                return GoodsType.GOODS_SHOES_GAOBANGXIE;
-            }
-            if (type == "拖鞋")
-            {
-                return GoodsType.GOODS_SHOES_TUOXIE;
-            }
-            if (type == "靴子")
-            {
-                return GoodsType.GOODS_SHOES_XUEZI;
-            }
-            if (type == "男鞋")
-            {
-                return GoodsType.GOODS_SHOES_NANXIE;
-            }
-            if (type == "帆布鞋")
-            {
-                return GoodsType.GOODS_SHOES_FANBUXIE;
-            }
-            if (type == "雨鞋")
-            {
-                return GoodsType.GOODS_SHOES_YUXIE;
-            }
-
-            return GoodsType.GOODS_SHOES_OTHER;
-        }
-
-        public override bool AcceptUrl(Uri uri)
-        {
-            return uri.Host.ToLower().Equals("www.go2.cn") || uri.Host.ToLower().Equals("z.go2.cn");
-        }
-
         private HtmlAgilityPack.HtmlDocument GetHtmlDocWithRetry(string url)
         {
             string html = MsHttpRestful.GetUrlEncodeBodyReturnString(url, null);
@@ -84,9 +20,9 @@ namespace ShopErp.App.Service.Spider.Go2
             return doc;
         }
 
-        public override Goods GetGoodsInfoByUrl(string url, ref string vendorHomePage, ref string videoUrl, bool raiseExceptionOnGoodsNotSale, bool getGoodsType)
+        public override Goods GetGoodsInfoByUrl(string url, ref string vendorHomePage, ref string videoUrl, bool raiseExceptionOnGoodsNotSale)
         {
-            Goods g = new Goods { Comment = "", CreateTime = DateTime.Now, Image = "", LastSellTime = DateTime.Now, Number = "", Price = 0, Type = 0, UpdateEnabled = true, UpdateTime = DateTime.Now, Url = url, VendorId = 0, Weight = 0, Id = 0, Colors = "", CreateOperator = "", Flag = ColorFlag.UN_LABEL, IgnoreEdtion = false, ImageDir = "", Material = "", Shops = new List<GoodsShop>(), Star = 0, VideoType = GoodsVideoType.NONE};
+            Goods g = new Goods { Comment = "", CreateTime = DateTime.Now, Image = "", Number = "", Price = 0, Type = 0, UpdateEnabled = true, UpdateTime = DateTime.Now, Url = url, VendorId = 0, Weight = 0, Id = 0, Colors = "", CreateOperator = "", Flag = ColorFlag.UN_LABEL, IgnoreEdtion = false, ImageDir = "", Material = "", Shops = new List<GoodsShop>(), Star = 0, VideoType = GoodsVideoType.NONE, Shipper = "" };
             var htmlDoc = this.GetHtmlDocWithRetry(url);
 
             //商品已删除 
@@ -187,6 +123,8 @@ namespace ShopErp.App.Service.Spider.Go2
                     videoUrl = "";
                 }
             }
+
+            //颜色
             var colorNode = htmlDoc.DocumentNode.SelectSingleNode("//div[@class='details-item']/div/ul/li[@class='details-attribute-item props-color']");
             if (colorNode != null)
             {
@@ -200,6 +138,7 @@ namespace ShopErp.App.Service.Spider.Go2
                 g.Colors = "";
             }
 
+            //帮面材质
             var detailNodes = htmlDoc.DocumentNode.SelectNodes("//div[@class='details-item']/div/ul/li[@class='details-attribute-item']");
             if (detailNodes != null && detailNodes.Count > 0)
             {
@@ -218,7 +157,7 @@ namespace ShopErp.App.Service.Spider.Go2
 
         public override Vendor GetVendorInfoByUrl(string url)
         {
-            Vendor ven = new Vendor { AveragePrice = 0, Count = 1, CreateTime = DateTime.Now, HomePage = "", Id = 0, MarketAddress = "", Name = "", PingyingName = "", Watch = false, Comment = "", Alias = "" };
+            Vendor ven = new Vendor { AveragePrice = 0, Count = 1, CreateTime = DateTime.Now, HomePage = "", Id = 0, MarketAddress = "", Name = "", PingyingName = "", Watch = false, Comment = "", Alias = "", MarketAddressShort = "" };
             var doc = this.GetHtmlDocWithRetry(url);
             //获取厂家名称url地址
             var vendorUrlNode = doc.DocumentNode.SelectSingleNode("//a[contains(@class,'merchant-title')]");
@@ -244,104 +183,11 @@ namespace ShopErp.App.Service.Spider.Go2
                 throw new Exception("厂家拿货地址结点为空");
             }
             string add = addNode.InnerText.Trim();
-            ven.MarketAddress = add;
+            ven.MarketAddress = add.StartsWith("成都") ? add : "成都" + add;
             ven.Name = vendorName;
-            ven.HomePage = u;
-            ven.HomePage = ven.HomePage.TrimEnd('/');
+            ven.HomePage = u.TrimEnd('/');
+
             return ven;
-        }
-
-        protected void GetVendors(char c, List<Vendor> vendors)
-        {
-            int totalPage = 10;
-            int currentPage = 1;
-            Dictionary<string, string> pa = new Dictionary<string, string>();
-            while (currentPage <= totalPage && this.IsStop == false)
-            {
-                //从网络读取html
-                string pageUrl = string.Format("http://www.go2.cn/supplier/yshy-0-0-0-0-{0}-0-all/page{1}.html", c, currentPage);
-                HtmlAgilityPack.HtmlDocument doc = GetHtmlDocWithRetry(pageUrl);
-                if (doc.DocumentNode.InnerText.Contains("暂未找到相关的商家"))
-                {
-                    return;
-                }
-                //获取总页数
-                var changePageNode = doc.DocumentNode.SelectNodes("//div[@class='changepage clearfix']/p").Last();
-                string txt = changePageNode.InnerText;
-                string pageTxt = string.Join("", txt.ToArray().Where(cc => Char.IsDigit(cc)));
-                totalPage = int.Parse(pageTxt);
-
-                //解析厂家
-                var vendorNodes = doc.DocumentNode.SelectNodes("//div[@class='certified-list-info pull-left']");
-                foreach (var xe in vendorNodes)
-                {
-                    if (this.IsStop)
-                    {
-                        break;
-                    }
-                    Vendor vendor = new Vendor { PingyingName = "", CreateTime = DateTime.Now, HomePage = "", Id = 0, MarketAddress = "", Name = "", Comment = "", Alias = "" };
-                    try
-                    {
-                        //名称Node
-                        var nameAndHomePageNode = xe.SelectSingleNode("p[@class='clearfix']/a");
-                        //拿货地址
-                        var addN = xe.SelectNodes("p/span[@class='title']");
-
-                        if (nameAndHomePageNode == null)
-                        {
-                            throw new Exception("HTML中未找到厂家名称连接结点");
-                        }
-
-                        if (addN == null)
-                        {
-                            throw new Exception("HTML中未找到地址结点");
-                        }
-
-                        //名称
-                        vendor.Name = nameAndHomePageNode.InnerText.Trim();
-                        //主页
-                        vendor.HomePage = nameAndHomePageNode.GetAttributeValue("href", "").Trim().TrimEnd('/');
-
-                        string add = addN.Last().InnerText.Trim();
-                        if (add.Contains("拿货地址") == false)
-                        {
-                            throw new Exception("数据中不包含拿货地址:" + add);
-                        }
-                        //拿货地址
-                        vendor.MarketAddress = add.Replace(" ", "").Replace("拿货地址", "").Replace(":", "").Replace("：", "").Trim();
-                        //Debug.WriteLine(DateTime.Now + ":" + vendor.Name + "  " + vendor.HomePage + "  " + pageUrl);
-                        if (vendors.Any(obj => obj.HomePage.Equals(vendor.HomePage)))
-                        {
-                            this.OnMessage("当前抓取队列中已包含该厂家，将跳过:" + vendor.Name + "  " + vendor.HomePage);
-                            Debug.WriteLine("当前抓取队列中已包含该厂家，将跳过:" + vendor.Name + "  " + vendor.HomePage);
-                        }
-                        else
-                        {
-                            vendors.Add(vendor);
-                            this.OnVendorGeted(vendor);
-                            this.OnMessage(string.Format("已下载:{0} {1}", vendors.Count, vendor.Name));
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine(ex);
-                        throw;
-                    }
-                }
-                currentPage++;
-            }
-        }
-
-        protected override void GetVendors()
-        {
-            string urlChars = "9ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            List<Vendor> vendors = new List<Vendor>();
-
-            foreach (var c in urlChars)
-            {
-                if (this.IsStop == false)
-                    this.GetVendors(c, vendors);
-            }
         }
     }
 }

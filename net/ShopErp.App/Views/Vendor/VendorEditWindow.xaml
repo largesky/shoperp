@@ -35,9 +35,6 @@
         <TextBlock Grid.Row="1" Grid.Column="0" Text="拼音名称:" Margin="3" VerticalAlignment="Center" />
         <TextBox Grid.Row="1" Grid.Column="1" Name="tbPingyingName" Text="{Binding PingyingName}" Margin="3"
                  VerticalAlignment="Center" />
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="联系电话:" Margin="3" VerticalAlignment="Center" />
-        <TextBox Grid.Row="2" Grid.Column="1" Name="tbPhone" Margin="3" Text="{Binding Phone}"
-                 VerticalAlignment="Center" />
         <TextBlock Grid.Row="3" Grid.Column="0" Text="拿货地址:" Margin="3" VerticalAlignment="Center" />
         <TextBox Grid.Row="3" Grid.Column="1" Name="tbMarketAddress" Text="{Binding MarketAddress}" Margin="3"
                  VerticalAlignment="Center" />

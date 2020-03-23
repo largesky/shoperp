@@ -19,7 +19,6 @@
             <converters:OrderPayTypeVisibilityConverter x:Key="OrderPayTypeVisibilityConverter" />
             <converters:VendorNameFormatConverter x:Key="VendorNameFormatConverter" />
             <converters:OrderGoodsStateConverter x:Key="OrderGoodsStateConverter"/>
-            <converters:FinanceAccountConverter x:Key="FinanceAccountConverter"></converters:FinanceAccountConverter>
             <converters:VideoTypeConverter x:Key="VideoTypeConverter"/>
             <converters:WuliuTemplateConverter x:Key="WuliuTemplateConverter"/>
             <converters:PopImageConverter x:Key="PopImageConverter"/>

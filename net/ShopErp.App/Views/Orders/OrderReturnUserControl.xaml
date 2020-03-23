@@ -58,12 +58,12 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <Button BorderBrush="White" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"
-                                            BorderThickness="0" Tag="{Binding OrderGoods.NumberId}"
+                                            BorderThickness="0" Tag="{Binding OrderGoods.GoodsId}"
                                             Style="{StaticResource ImageButton}">
                                         <Image
                                             Source="{Binding OrderGoods.Image,Converter={StaticResource webUrlImageConverter}}"
                                             Margin="3" Height="60" Width="60" Stretch="Fill"
-                                            Tag="{Binding OrderGoods.NumberId}" />
+                                            Tag="{Binding OrderGoods.GoodsId}" />
                                     </Button>
                                     <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Left">
                                         <StackPanel Orientation="Horizontal">

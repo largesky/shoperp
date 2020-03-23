@@ -53,6 +53,9 @@ namespace ShopErp.App.Views.Goods
                 this.cbbTypes.Bind<GoodsType>();
                 this.cbbFlags.Bind<ColorFlag>();
                 this.cbbVideoTypes.Bind<GoodsVideoType>();
+                var shippers = ServiceContainer.GetService<GoodsService>().GetAllShippers().Datas;
+                shippers.Insert(0, "");
+                this.cbbShippers.ItemsSource = shippers;
                 cbbDisplayType_SelectionChanged(null, null);
                 this.myLoaded = true;
             }
@@ -79,6 +82,8 @@ namespace ShopErp.App.Views.Goods
                 this.pb1.Parameters.Add("Order", (this.cbbSortType.SelectedItem as ComboBoxItem).Tag.ToString());
                 this.pb1.Parameters.Add("Flag", this.cbbFlags.GetSelectedEnum<ColorFlag>());
                 this.pb1.Parameters.Add("VideoType", this.cbbVideoTypes.GetSelectedEnum<GoodsVideoType>());
+                this.pb1.Parameters.Add("VendorAdd", this.cbbVendorAdds.Text.Trim());
+                this.pb1.Parameters.Add("Shipper", this.cbbShippers.Text.Trim());
                 this.pb1.StartPage();
             }
             catch (Exception ex)
@@ -103,6 +108,8 @@ namespace ShopErp.App.Views.Goods
                     e.GetParameter<ColorFlag>("Flag"),
                     e.GetParameter<GoodsVideoType>("VideoType"),
                     e.GetParameter<string>("Order"),
+                    e.GetParameter<string>("VendorAdd"),
+                    e.GetParameter<string>("Shipper"),
                     e.CurrentPage - 1,
                     e.PageSize);
                 this.pb1.Total = data.Total;
@@ -590,7 +597,7 @@ namespace ShopErp.App.Views.Goods
                 {
                     return;
                 }
-                var w = new GoodsEditMapWindow { GoodsId = gu.Source.Id };
+                var w = new GoodsMapWindow { GoodsId = gu.Source.Id };
                 w.Show();
             }
             catch (Exception ex)

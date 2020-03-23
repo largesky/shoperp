@@ -52,9 +52,6 @@
     <property name="CreateTime">
       <column name="CreateTime" sql-type="datetime" not-null="true" />
     </property>
-    <property name="LastSellTime">
-      <column name="LastSellTime" sql-type="datetime" not-null="true" />
-    </property>
     <property name="UpdateTime">
       <column name="UpdateTime" sql-type="datetime" not-null="true" />
     </property>
@@ -71,5 +68,8 @@
     <many-to-one name="Vendor" class="Vendor" cascade="none" update="false" insert="false"  not-found="ignore" >
       <column name="VendorId" sql-type="int"/>
     </many-to-one>
+    <property name="Shipper">
+      <column name="Shipper" sql-type="string" not-null="true" />
+    </property>
   </class>
 </hibernate-mapping>

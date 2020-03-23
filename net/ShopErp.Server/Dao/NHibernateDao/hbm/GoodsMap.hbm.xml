@@ -10,14 +10,11 @@
     <property name="Number">
       <column name="Number" sql-type="string" not-null="true" />
     </property>
-    <property name="TargetNumberId">
-      <column name="TargetNumberId" sql-type="bigint(20)" not-null="true" />
+    <property name="TargetGoodsId">
+      <column name="TargetGoodsId" sql-type="bigint(20)" not-null="true" />
     </property>
     <property name="Price">
       <column name="Price" sql-type="DECIMAL(22,2)" not-null="true" />
-    </property>
-    <property name="ShowTargetNumber">
-      <column name="ShowTargetNumber" sql-type="boolean" not-null="true" />
     </property>
     <property name="IgnoreEdtion">
       <column name="IgnoreEdtion" sql-type="boolean" not-null="true" />

@@ -51,7 +51,7 @@ namespace ShopErp.App.Views.Delivery
                 {
                     this.orders.Clear();
                     this.shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas.ToArray();
-                    var os = ServiceContainer.GetService<OrderService>().GetByAll("", "", "", "", DateTime.Now.AddDays(-90), DateTime.MinValue, "", "", OrderState.PRINTED, PopPayType.None, "", "", "", null, -1, "", 0, OrderCreateType.NONE, OrderType.NONE, 0, 0).Datas;
+                    var os = ServiceContainer.GetService<OrderService>().GetByAll("", "", "", "", DateTime.Now.AddDays(-90), DateTime.MinValue, "", "", OrderState.PRINTED, PopPayType.None, "", "", "", null, -1, "", 0, OrderCreateType.NONE, OrderType.NONE, "", 0, 0).Datas;
                     var orders = os.Select(obj => new DeliveryCheckViewModel(obj) { State = "" }).OrderBy(obj => obj.Source.PopPayTime).ToArray();
                     if (orders.Length < 1)
                     {

@@ -26,7 +26,7 @@ namespace ShopErp.App.Views.Orders
     /// <summary>
     /// CountUserControl.xaml 的交互逻辑
     /// </summary>
-    public partial class GoodsCountUserControl : UserControl
+    public partial class OrderGoodsCountUserControl : UserControl
     {
         private OrderGoodsService goodsCountRepertory = ServiceContainer.GetService<OrderGoodsService>();
 
@@ -34,7 +34,7 @@ namespace ShopErp.App.Views.Orders
 
         private bool myLoaded = false;
 
-        public GoodsCountUserControl()
+        public OrderGoodsCountUserControl()
         {
             InitializeComponent();
         }
@@ -83,7 +83,7 @@ namespace ShopErp.App.Views.Orders
                 var end = this.dpEnd.Value == null ? DateTime.Now.AddDays(1) : this.dpEnd.Value.Value;
 
                 List<GoodsCount> counts = goodsCountRepertory.GetGoodsCount(flags, this.dpStart.Value.Value, end, 0, 0).Datas;
-                IComparer<GoodsCount> comparer = new GoodsCountSortByDoor();
+                IComparer<GoodsCount> comparer = new OrderGoodsCountSortByDoor();
                 counts.Sort(comparer); //拿货地址
                 counts.Sort(comparer); //货号
                 counts.Sort(comparer); //版本
@@ -157,8 +157,8 @@ namespace ShopErp.App.Views.Orders
 
                 var item = this.dgvGoodsCount.SelectedCells[0].Item as GoodsCount;
                 var s = ServiceContainer.GetService<OrderReturnService>();
-                var gu = ServiceContainer.GetService<GoodsService>().GetById(item.NumberId);
-                if (gu == null || item.NumberId < 1)
+                var gu = ServiceContainer.GetService<GoodsService>().GetById(item.GoodsId);
+                if (gu == null || item.GoodsId < 1)
                 {
                     MessageBox.Show("该商品不能正确解析");
                     return;

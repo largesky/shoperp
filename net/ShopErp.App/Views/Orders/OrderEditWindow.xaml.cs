@@ -135,7 +135,7 @@ namespace ShopErp.App.Views.Orders
         {
             try
             {
-                this.ogs.Add(new OrderGoods { Count = 1, PopRefundState = PopRefundState.NOT, State = this.Order.State });
+                this.ogs.Add(new OrderGoods { Count = 1,  State = this.Order.State });
             }
             catch (Exception ex)
             {

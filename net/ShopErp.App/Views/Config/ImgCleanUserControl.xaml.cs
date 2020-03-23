@@ -73,7 +73,7 @@ namespace ShopErp.App.Views.Config
         {
             try
             {
-                IList<ShopErp.Domain.Goods> gus = ServiceContainer.GetService<GoodsService>().GetByAll(0, GoodsState.NONE, 0, DateTime.MinValue, DateTime.MinValue, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", 0, 0).Datas.ToList();
+                IList<ShopErp.Domain.Goods> gus = ServiceContainer.GetService<GoodsService>().GetByAll(0, GoodsState.NONE, 0, DateTime.MinValue, DateTime.MinValue, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", "", "", 0, 0).Datas.ToList();
                 IList<ShopErp.Domain.Vendor> vendors = ServiceContainer.GetService<VendorService>().GetByAll("", "", "", "", 0, 0).Datas;
                 List<string> goodsDirs = new List<string>();
                 int gusCount = gus.Count;

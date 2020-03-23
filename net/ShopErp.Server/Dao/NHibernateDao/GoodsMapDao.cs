@@ -36,7 +36,7 @@ namespace ShopErp.Server.Dao.NHibernateDao
             return ret.Datas[0];
         }
 
-        public DataCollectionResponse<GoodsMap> GetByAll(string vendor, string number, long targetNumberId, int pageIndex, int pageSize)
+        public DataCollectionResponse<GoodsMap> GetByAll(string vendor, string number, long targetGoodsId, int pageIndex, int pageSize)
         {
             List<object> para = new List<object>();
             string hsql = "from " + this.GetEntiyName() + " GM0,Vendor V0 where GM0.VendorId=V0.Id and ";
@@ -48,9 +48,9 @@ namespace ShopErp.Server.Dao.NHibernateDao
                 para.Add('%' + vendor + '%');
             }
             hsql += this.MakeQueryLike("GM0.Number", number, para);
-            if (targetNumberId > 0)
+            if (targetGoodsId > 0)
             {
-                hsql += this.MakeQuery("GM0.TargetNumberId", targetNumberId);
+                hsql += this.MakeQuery("GM0.TargetGoodsId", targetGoodsId);
             }
             return this.GetPageEx(this.TrimHSql("select GM0 " + hsql) + " order by GM0.Id desc", this.TrimHSql("select count(GM0.Id) " + hsql), pageIndex, pageSize, para.ToArray());
 

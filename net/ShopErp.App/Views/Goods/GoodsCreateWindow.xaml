@@ -101,11 +101,14 @@
             <TextBlock Grid.Row="14" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="主图视频:" />
             <ComboBox Grid.Row="14" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="cbbVideoType" SelectedItem="{Binding Goods.VideoType, ElementName=window,Converter={StaticResource descriptionConverter}}"/>
 
-            <StackPanel Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal">
+            <TextBlock Grid.Row="15" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="发货仓库:" />
+            <ComboBox Grid.Row="15" Grid.Column="1" Name="cbbShippers" Margin="3" VerticalAlignment="Center" IsEditable="True" Text="{Binding Goods.Shipper,ElementName=window}"/>
+
+            <StackPanel Grid.Row="16" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal">
                 <CheckBox Name="chkUpdateEnabled" Content="允许网络更新" Margin="3" VerticalAlignment="Center" IsChecked="{Binding Goods.UpdateEnabled, ElementName=window}" />
                 <CheckBox Name="chkIgnoreEdtion" Content="解析时忽略版本" Margin="3" VerticalAlignment="Center" IsChecked="{Binding Goods.IgnoreEdtion, ElementName=window}" />
             </StackPanel>
-            <Button Grid.Row="16" Grid.Column="1" Name="btnSave" Content="保存" Margin="3" VerticalAlignment="Center" Width="60" Click="btnSave_Click" HorizontalAlignment="Right" />
+            <Button Grid.Row="17" Grid.Column="1" Name="btnSave" Content="保存" Margin="3" VerticalAlignment="Center" Width="60" Click="btnSave_Click" HorizontalAlignment="Right" />
         </Grid>
     </Grid>
 </Window>

@@ -12,7 +12,7 @@ namespace ShopErp.Server.Dao.NHibernateDao
         public DataCollectionResponse<Order> GetByAll(string popBuyerId, string receiverMobile,
             string receiverName, string receiverAddress, DateTime startTime, DateTime endTime, string deliveryCompany, string deliveryNumber,
             OrderState state, PopPayType payType, string vendorName, string number, string size,
-            ColorFlag[] ofs, int parseResult, string comment, long shopId, OrderCreateType createType, OrderType type,
+            ColorFlag[] ofs, int parseResult, string comment, long shopId, OrderCreateType createType, OrderType type, string shipper,
             int pageIndex, int pageSize)
         {
             string hsql = "from " + this.GetEntiyName() + " as O0 left join O0.OrderGoodss as OG0 where ";
@@ -36,7 +36,7 @@ namespace ShopErp.Server.Dao.NHibernateDao
             hsql += this.MakeQueryLike("Vendor", vendorName, objs);
             hsql += this.MakeQueryLike("Number", number, objs);
             hsql += this.MakeQueryLike("Size", size, objs);
-
+            hsql += this.MakeQueryLike("Shipper", shipper, objs);
             if (ofs != null && ofs.Length > 0)
             {
                 hsql += "(";
@@ -49,19 +49,22 @@ namespace ShopErp.Server.Dao.NHibernateDao
             hsql += this.MakeQuery("O0.CreateType", (int)createType, (int)OrderCreateType.NONE);
             hsql += this.MakeQuery("O0.Type", (int)type, (int)OrderType.NONE);
             hsql = this.TrimHSql(hsql);
-            return this.GetPageEx("select distinct O0 " +hsql + " order by O0.PopPayTime desc", "select count( distinct O0.Id) " + hsql, pageIndex, pageSize, objs.ToArray());
+            return this.GetPageEx("select distinct O0 " + hsql + " order by O0.PopPayTime desc", "select count( distinct O0.Id) " + hsql, pageIndex, pageSize, objs.ToArray());
         }
 
-        public DataCollectionResponse<Order> GetPayedAndPrintedOrders(long[] shopId, OrderCreateType createType, PopPayType payType, int pageIndex, int pageSize)
+        public DataCollectionResponse<Order> GetPayedAndPrintedOrders(long[] shopId, OrderCreateType createType, PopPayType payType, string shipper, int pageIndex, int pageSize)
         {
-            string hsql = "from " + this.GetEntiyName() + " where  (State=" + (int)OrderState.PAYED + " or State=" + (int)OrderState.PRINTED + ")  and ";
+            List<object> objs = new List<object>();
+            string hsql = "from " + this.GetEntiyName() + " as O0 left join O0.OrderGoodss as OG0 where (O0.State = " + (int)OrderState.PAYED + " or O0.State = " + (int)OrderState.PRINTED + ")  and ";
             if (shopId != null && shopId.Length > 0)
             {
                 hsql += " ShopId In (" + string.Join(",", shopId.Select(o => o.ToString())) + ") and ";
             }
             hsql += this.MakeQuery("CreateType", (int)createType, (int)OrderCreateType.NONE);
             hsql += this.MakeQuery("PopPayType", (int)payType, (int)PopPayType.None);
-            return this.GetPage(hsql, pageIndex, pageSize);
+            hsql += this.MakeQuery("Shipper", shipper, objs);
+            hsql = this.TrimHSql(hsql);
+            return this.GetPageEx("select distinct O0 " + hsql + " order by O0.PopPayTime desc", "select count( distinct O0.Id) " + hsql, pageIndex, pageSize, objs.ToArray());
         }
 
         public DataCollectionResponse<Order> GetOrdersByInfoIDNotEqual(string popBuyerId, string receiverPhone, string receiverMobile, string receiverAddress, long id)

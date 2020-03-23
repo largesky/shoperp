@@ -72,8 +72,7 @@ namespace ShopErp.App.Views.Orders
                 this.cbbDeliveryCompany.ItemsSource = coms;
 
                 //店铺
-                var shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas.Where(obj => obj.Enabled)
-                    .ToList();
+                var shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas.Where(obj => obj.Enabled).ToList();
                 shops.Insert(0, new Shop { Mark = "" });
                 this.cbbShops.ItemsSource = shops;
 
@@ -84,6 +83,11 @@ namespace ShopErp.App.Views.Orders
                 };
                 var flagVms = flags.Select(obj => new OrderFlagViewModel(false, obj)).ToArray();
                 this.cbbFlags.ItemsSource = flagVms;
+
+                var shippers = ServiceContainer.GetService<GoodsService>().GetAllShippers().Datas;
+                shippers.Insert(0, "");
+                this.cbbShippers.ItemsSource = shippers;
+
                 this.myLoaded = true;
             }
             catch (Exception ex)
@@ -130,6 +134,7 @@ namespace ShopErp.App.Views.Orders
                 this.pbBar.Parameters.Add("CreateType", this.cbbCreateType.GetSelectedEnum<OrderCreateType>());
                 this.pbBar.Parameters.Add("SellerComment", this.tbSellerComment.Text.Trim());
                 this.pbBar.Parameters.Add("ShopId", this.cbbShops.SelectedItem == null ? 0 : (this.cbbShops.SelectedItem as Shop).Id);
+                this.pbBar.Parameters.Add("Shipper", this.cbbShippers.Text.Trim());
 
                 this.pbBar.StartPage();
             }
@@ -156,7 +161,7 @@ namespace ShopErp.App.Views.Orders
                         e.GetParameter<DateTime>("StartTime"), e.GetParameter<DateTime>("EndTime"), e.GetParameter<string>("DeliveryCompany"),
                         e.GetParameter<string>("DeliveryNumber"), e.GetParameter<OrderState>("OrderState"), PopPayType.None, e.GetParameter<string>("Vendor"),
                         e.GetParameter<string>("Number"), e.GetParameter<string>("Size"), e.GetParameter<ColorFlag[]>("Flags"), e.GetParameter<int>("ParseResult"),
-                        e.GetParameter<string>("SellerComment"), e.GetParameter<long>("ShopId"), e.GetParameter<OrderCreateType>("CreateType"), e.GetParameter<OrderType>("Type"),
+                        e.GetParameter<string>("SellerComment"), e.GetParameter<long>("ShopId"), e.GetParameter<OrderCreateType>("CreateType"), e.GetParameter<OrderType>("Type"), e.GetParameter<string>("Shipper"),
                         e.CurrentPage - 1, e.PageSize);
                 }
 
@@ -316,19 +321,16 @@ namespace ShopErp.App.Views.Orders
                 }
                 else
                 {
-                    long numberId = og.NumberId;
-                    if (numberId <= 0)
+                    if (og.GoodsId <= 0)
                     {
                         return;
                     }
-
-                    var gu = ServiceContainer.GetService<GoodsService>().GetById(numberId);
+                    var gu = ServiceContainer.GetService<GoodsService>().GetById(og.GoodsId);
                     if (gu == null)
                     {
                         throw new Exception("指定的商品不存在");
                     }
                     url = gu.Url;
-
                     if (string.IsNullOrWhiteSpace(url))
                     {
                         return;
@@ -624,7 +626,7 @@ namespace ShopErp.App.Views.Orders
                 {
                     MessageBox.Show("盒子里面有差价请注意检查!!!!!!!!!!!!", "警告", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-                OrderGoodsCreateReturnWindow win = new OrderGoodsCreateReturnWindow { OrderGoods = orderGoods };
+                OrderReturnCreateWindow win = new OrderReturnCreateWindow { OrderGoods = orderGoods };
                 if (win.ShowDialog().Value == true)
                     this.RefreshItems();
             }
@@ -648,7 +650,7 @@ namespace ShopErp.App.Views.Orders
                 {
                     throw new Exception("订单未付过款不能创建");
                 }
-                var win = new CreateReturnCashWindow { Order = or.Source };
+                var win = new ReturnCashCreateWindow { Order = or.Source };
                 var ret = win.ShowDialog();
                 if (ret.Value)
                 {

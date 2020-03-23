@@ -58,7 +58,7 @@ namespace ShopErp.App.Views.Orders
                     }
                     else if (type == 2)
                     {
-                        orders = ServiceContainer.GetService<OrderService>().GetByAll(popOrderId, "", "", "", DateTime.MinValue, DateTime.MinValue, "", "", OrderState.NONE, PopPayType.None, "", "", "", null, -1, "", 0, OrderCreateType.NONE, OrderType.NONE, 0, 0).Datas;
+                        orders = ServiceContainer.GetService<OrderService>().GetByAll(popOrderId, "", "", "", DateTime.MinValue, DateTime.MinValue, "", "", OrderState.NONE, PopPayType.None, "", "", "", null, -1, "", 0, OrderCreateType.NONE, OrderType.NONE, "", 0, 0).Datas;
                     }
                     if (orders == null || orders.Count < 1)
                     {

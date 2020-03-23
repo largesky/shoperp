@@ -36,7 +36,7 @@
             <TextBlock Text="厂家名称:" Margin="3" VerticalAlignment="Center" />
             <TextBox Name="tbVendorName" Margin="3" VerticalAlignment="Center" Width="60" />
             <TextBlock Text="商品编号:" Margin="3" VerticalAlignment="Center" />
-            <TextBox Name="tbNumberId" Margin="3" VerticalAlignment="Center" Width="60" />
+            <TextBox Name="tbGoodsId" Margin="3" VerticalAlignment="Center" Width="60" />
 
             <Button Name="btnQuery" Margin="3" VerticalAlignment="Center" Content="查询" Width="60"
                     Click="btnQuery_Click" />

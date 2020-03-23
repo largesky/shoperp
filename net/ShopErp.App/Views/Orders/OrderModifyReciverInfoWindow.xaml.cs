@@ -20,11 +20,11 @@ namespace ShopErp.App.Views.Orders
     /// <summary>
     /// Interaction logic for OrderReceiverInfoModifyWindow.xaml
     /// </summary>
-    public partial class OrderReceiverInfoModifyWindow : Window
+    public partial class OrderModifyReciverInfoWindow : Window
     {
         public Order Order { get; set; }
 
-        public OrderReceiverInfoModifyWindow()
+        public OrderModifyReciverInfoWindow()
         {
             InitializeComponent();
         }

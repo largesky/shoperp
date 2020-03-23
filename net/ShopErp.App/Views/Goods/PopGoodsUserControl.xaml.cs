@@ -552,7 +552,7 @@ namespace ShopErp.App.Views.Goods
         {
             try
             {
-                var allGoods = ServiceContainer.GetService<GoodsService>().GetByAll(this.lastShop.Id, GoodsState.UPLOADED, 0, DateTime.MinValue, DateTime.MinValue, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", 0, 0).Datas.OrderBy(obj => obj.VendorId).ToList();
+                var allGoods = ServiceContainer.GetService<GoodsService>().GetByAll(this.lastShop.Id, GoodsState.UPLOADED, 0, DateTime.MinValue, DateTime.MinValue, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", "", "", 0, 0).Datas.OrderBy(obj => obj.VendorId).ToList();
                 var popGoods = this.popGoodsInfoViewModels.ToList();
                 var vendors = ServiceContainer.GetService<VendorService>().GetByAll("", "", "", "", 0, 0).Datas.ToList();
 
@@ -668,7 +668,7 @@ namespace ShopErp.App.Views.Goods
                 string json = MsHttpRestful.SendTbData(System.Net.Http.HttpMethod.Get, url, null, tadgetDomainCookies, null);
                 var rsp = Newtonsoft.Json.JsonConvert.DeserializeObject<ImageRsp>(json);
                 var imageDirs = rsp.module.dirs.children.FirstOrDefault(obj => obj.name == "商品图片").children.Select(obj => obj.name).ToArray();
-                var allGoods = ServiceContainer.GetService<GoodsService>().GetByAll((this.cbbShops.SelectedItem as Shop).Id, GoodsState.UPLOADED, 0, DateTime.MinValue, DateTime.MinValue, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", 0, 0).Datas.OrderBy(obj => obj.VendorId).ToList();
+                var allGoods = ServiceContainer.GetService<GoodsService>().GetByAll((this.cbbShops.SelectedItem as Shop).Id, GoodsState.UPLOADED, 0, DateTime.MinValue, DateTime.MinValue, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", "", "", 0, 0).Datas.OrderBy(obj => obj.VendorId).ToList();
                 var vendors = ServiceContainer.GetService<VendorService>().GetByAll("", "", "", "", 0, 0).Datas.ToList();
 
                 List<ShopErp.Domain.Goods> unMatchGoods = new List<ShopErp.Domain.Goods>();

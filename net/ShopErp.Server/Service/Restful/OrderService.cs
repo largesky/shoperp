@@ -160,14 +160,8 @@ namespace ShopErp.Server.Service.Restful
                     {
                         throw new Exception("订单商品状态不能为NONE：" + item.Vendor + " " + item.Number);
                     }
-                    if (item.PopRefundState == PopRefundState.NONE)
-                    {
-                        throw new Exception("订单商品退款不能为NONE：" + item.Vendor + " " + item.Number);
-                    }
-
                     item.Vendor = item.Vendor ?? string.Empty;
                     item.Number = item.Number ?? string.Empty;
-                    item.PopNumber = item.PopNumber ?? string.Empty;
                     item.Edtion = item.Edtion ?? string.Empty;
                     item.Color = item.Color ?? string.Empty;
                     item.Size = item.Size ?? string.Empty;
@@ -180,14 +174,19 @@ namespace ShopErp.Server.Service.Restful
                     item.StockTime = this.IsDbMinTime(item.StockTime) ? this.GetDbMinTime() : item.StockTime;
                     item.StockOperator = item.StockOperator ?? string.Empty;
                     item.Image = item.Image ?? string.Empty;
-                    Goods g = ServiceContainer.GetService<GoodsService>().ParsePopOrderGoodsNumber(item);
                     string color = null, edtion = null, size = null;
                     ParseColorSizeEditon(item.Color, item.Size, out color, out edtion, out size);
                     item.Color = color ?? item.Color;
-                    item.Edtion = g.IgnoreEdtion ? string.Empty : (edtion ?? item.Edtion);
+                    item.Edtion = (edtion ?? item.Edtion);
                     item.Size = size ?? item.Size;
+                    Goods g = ServiceContainer.GetService<GoodsService>().ParsePopOrderGoodsNumber(item);
+                    if (g != null)
+                    {
+                        item.Shipper = g.Shipper;
+                        item.Edtion = g.IgnoreEdtion ? string.Empty : item.Edtion;
+                    }
                 }
-                order.ParseResult = order.OrderGoodss.All(o => o.NumberId > 0);
+                order.ParseResult = order.OrderGoodss.All(o => o.GoodsId > 0);
             }
         }
 
@@ -393,7 +392,7 @@ namespace ShopErp.Server.Service.Restful
             try
             {
                 string op = ServiceContainer.GetCurrentLoginInfo().op.Number;
-                var allOrders = this.GetByAll("", "", "", "", DateTime.Now.AddDays(-90), DateTime.MinValue, "", deliveryNumber, OrderState.NONE, PopPayType.None, "", "", "", null, -1, "", 0, OrderCreateType.NONE, OrderType.NONE, 0, 0).Datas;
+                var allOrders = this.GetByDeliveryNumber(deliveryNumber).Datas;
 
                 if (allOrders == null || allOrders.Count < 1)
                 {
@@ -644,12 +643,12 @@ namespace ShopErp.Server.Service.Restful
         public DataCollectionResponse<Order> GetByAll(string popBuyerId, string receiverMobile,
             string receiverName, string receiverAddress, DateTime startTime, DateTime endTime, string deliveryCompany, string deliveryNumber,
             OrderState state, PopPayType payType, string vendorName, string number, string size,
-            ColorFlag[] ofs, int parseResult, string comment, long shopId, OrderCreateType createType, OrderType type,
+            ColorFlag[] ofs, int parseResult, string comment, long shopId, OrderCreateType createType, OrderType type, string shipper,
             int pageIndex, int pageSize)
         {
             try
             {
-                return this.dao.GetByAll(popBuyerId, receiverMobile, receiverName, receiverAddress, startTime, endTime, deliveryCompany, deliveryNumber, state, payType, vendorName, number, size, ofs, parseResult, comment, shopId, createType, type, pageIndex, pageSize);
+                return this.dao.GetByAll(popBuyerId, receiverMobile, receiverName, receiverAddress, startTime, endTime, deliveryCompany, deliveryNumber, state, payType, vendorName, number, size, ofs, parseResult, comment, shopId, createType, type, shipper, pageIndex, pageSize);
             }
             catch (Exception ex)
             {
@@ -659,11 +658,11 @@ namespace ShopErp.Server.Service.Restful
 
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/getpayedandprintedorders.html")]
-        public DataCollectionResponse<Order> GetPayedAndPrintedOrders(long[] shopId, OrderCreateType createType, PopPayType payType, int pageIndex, int pageSize)
+        public DataCollectionResponse<Order> GetPayedAndPrintedOrders(long[] shopId, OrderCreateType createType, PopPayType payType, string shipper, int pageIndex, int pageSize)
         {
             try
             {
-                return this.dao.GetPayedAndPrintedOrders(shopId, createType, payType, pageIndex, pageSize);
+                return this.dao.GetPayedAndPrintedOrders(shopId, createType, payType, shipper, pageIndex, pageSize);
             }
             catch (Exception e)
             {
@@ -871,7 +870,7 @@ namespace ShopErp.Server.Service.Restful
                         Edtion = og.Edtion,
                         Image = og.Image,
                         Number = og.Number,
-                        NumberId = og.NumberId,
+                        GoodsId = og.GoodsId,
                         PopInfo = og.PopInfo,
                         PopOrderSubId = og.PopOrderSubId,
                         PopPrice = og.PopPrice,
@@ -879,8 +878,6 @@ namespace ShopErp.Server.Service.Restful
                         Size = og.Size,
                         Vendor = og.Vendor,
                         Weight = og.Weight,
-                        PopNumber = og.PopNumber,
-                        PopRefundState = PopRefundState.NOT,
                     };
                     nor.OrderGoodss.Add(nog);
 
@@ -898,12 +895,12 @@ namespace ShopErp.Server.Service.Restful
 
                 //新订单商品总额
                 nor.Weight = nor.OrderGoodss.Select(obj => obj.Weight * obj.Count).Sum();
-                nor.ParseResult = nor.OrderGoodss.Count(obj => obj.NumberId <= 0) > 0 ? false : true;
+                nor.ParseResult = nor.OrderGoodss.Count(obj => obj.GoodsId <= 0) > 0 ? false : true;
 
                 //旧订单
                 ogs = or.OrderGoodss.Where(obj => obj.State != OrderState.SPILTED).ToList();
                 or.Weight = ogs.Select(obj => obj.Weight * obj.Count).Sum();
-                or.ParseResult = ogs.Count(obj => obj.NumberId <= 0) > 0 ? false : true;
+                or.ParseResult = ogs.Count(obj => obj.GoodsId <= 0) > 0 ? false : true;
 
                 // 保存数据
                 try

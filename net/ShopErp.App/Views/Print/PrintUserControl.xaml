@@ -59,8 +59,9 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="订单付款类型：" Margin="3" VerticalAlignment="Center" />
+                <TextBlock Text="付款类型：" Margin="3" VerticalAlignment="Center" />
                 <ComboBox Name="cbbPopPayTypes" Margin="3" VerticalAlignment="Center" Width="80" SelectionChanged="cbbPopPayTypes_SelectionChanged" />
+                
                 <TextBlock Text="旗帜颜色:" Margin="3" VerticalAlignment="Center" />
                 <ListBox Grid.Row="3" Grid.Column="3" Name="cbbFlags" Margin="3" VerticalAlignment="Center"
                          BorderBrush="White">
@@ -79,6 +80,8 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+                <TextBlock Text="发货仓库：" Margin="3" VerticalAlignment="Center" />
+                <ComboBox Name="cbbShippers" Margin="3" VerticalAlignment="Center" MinWidth="80" IsEditable="True" />
                 <TextBlock Text="付款时间到:" Margin="3" VerticalAlignment="Center" />
                 <xctk:DateTimePicker Grid.Row="1" xctk:Format="Custom" xctk:TimeFormatString="yyyy-MM-dd HH:mm:ss" Grid.Column="5" Name="dpEnd" Margin="3" VerticalAlignment="Center" MinWidth="140" />
                 <Button x:Name="btnDownloadOrder" Content="搜索订单" Click="btnDownloadOrder_Click" Margin="3" VerticalAlignment="Center" Width="100" />

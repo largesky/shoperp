@@ -20,11 +20,11 @@ namespace ShopErp.App.Views.Orders
     /// <summary>
     /// CreateOrderReturnWithoutOrderWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class OrderGoodsCreateReturnWithoutOrderWindow : Window
+    public partial class OrderReturnCreateWithoutOrderWindow : Window
     {
         OrderReturnService ors = ServiceContainer.GetService<OrderReturnService>();
 
-        public OrderGoodsCreateReturnWithoutOrderWindow()
+        public OrderReturnCreateWithoutOrderWindow()
         {
             InitializeComponent();
         }

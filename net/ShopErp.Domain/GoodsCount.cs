@@ -27,7 +27,7 @@ namespace ShopErp.Domain
 
         public string OrderId { get; set; }
 
-        public long NumberId { get; set; }
+        public long GoodsId { get; set; }
 
         public PopType PopType { get; set; }
 

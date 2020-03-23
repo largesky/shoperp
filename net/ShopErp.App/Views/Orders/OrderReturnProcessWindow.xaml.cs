@@ -28,12 +28,12 @@ namespace ShopErp.App.Views.Orders
     /// <summary>
     /// ReturnProcessWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class ReturnProcessWindowEx : System.Windows.Window
+    public partial class OrderReturnProcessWindow : System.Windows.Window
     {
         public OrderReturnViewModel OrderReturn { get; set; }
         private VendorService vs = ServiceContainer.GetService<VendorService>();
 
-        public ReturnProcessWindowEx()
+        public OrderReturnProcessWindow()
         {
             InitializeComponent();
         }

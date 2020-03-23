@@ -119,6 +119,8 @@
             <ComboBox Grid.Row="2" Grid.Column="3" Name="cbbState" Margin="3" VerticalAlignment="Center" />
             <TextBlock Grid.Row="2" Grid.Column="4" Text="订单类型:" Margin="3" VerticalAlignment="Center" />
             <ComboBox Grid.Row="2" Grid.Column="5" Name="cbbOrderType" Margin="3" VerticalAlignment="Center" />
+            <TextBlock Grid.Row="2" Grid.Column="6" Text="发货仓库:" Margin="3" VerticalAlignment="Center" />
+            <ComboBox Grid.Row="2" Grid.Column="7" Name="cbbShippers" Margin="3" VerticalAlignment="Center" IsEditable="True"/>
             <TextBlock Grid.Row="2" Grid.Column="8" Text="商品尺码:" Margin="3" VerticalAlignment="Center" />
             <TextBox Grid.Row="2" Grid.Column="9" Name="tbSize" Margin="3" VerticalAlignment="Center" />
 
@@ -489,7 +491,7 @@
                                                                 Orientation="Horizontal" VerticalAlignment="Center"
                                                                 HorizontalAlignment="Right">
                                                         <Image
-                                                            Source="/Qiniu.ShopErp.App;component/Resource/Images/pay_h.png"
+                                                            Source="/ShopErp.App;component/Resources/Images/pay_h.png"
                                                             Stretch="Fill" HorizontalAlignment="Right"
                                                             Visibility="{Binding Source.PopPayType, Converter={StaticResource OrderPayTypeVisibilityConverter}}"
                                                             Margin="3" />

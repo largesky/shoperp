@@ -21,7 +21,7 @@ namespace ShopErp.App.Views.Orders
     /// <summary>
     /// Interaction logic for OrderGetedMarkUserControl.xaml
     /// </summary>
-    public partial class OrderGetedMarkUserControl : UserControl
+    public partial class OrderMarkGetStateUserControl : UserControl
     {
         private bool myIsLoaded = false;
 
@@ -31,7 +31,7 @@ namespace ShopErp.App.Views.Orders
         private OrderService os = ServiceContainer.GetService<OrderService>();
         SpeechSynthesizer synth = new SpeechSynthesizer();
 
-        public OrderGetedMarkUserControl()
+        public OrderMarkGetStateUserControl()
         {
             InitializeComponent();
         }

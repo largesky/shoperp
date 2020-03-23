@@ -14,8 +14,6 @@ namespace ShopErp.App.Views.Goods
     {
         public static readonly DependencyProperty FlagProperty = DependencyProperty.Register("Flag", typeof(ColorFlag), typeof(GoodsViewModel));
 
-        public static readonly DependencyProperty ImageDownloadStateProperty = DependencyProperty.Register("ImageDownloadState", typeof(string), typeof(GoodsViewModel));
-
         public static readonly DependencyProperty CommentProperty = DependencyProperty.Register("Comment", typeof(string), typeof(GoodsViewModel));
 
         public static readonly DependencyProperty StarStringProperty = DependencyProperty.Register("StarString", typeof(string), typeof(GoodsViewModel));
@@ -23,39 +21,6 @@ namespace ShopErp.App.Views.Goods
         public static readonly DependencyProperty StarImageProperty = DependencyProperty.Register("StarImage", typeof(BitmapSource), typeof(GoodsViewModel));
 
         public ShopErp.Domain.Goods Source { get; set; }
-
-        public string ImageDownloadState
-        {
-            get
-            {
-                if (this.Source == null)
-                {
-                    return "";
-                }
-
-                if (this.Source.Shops != null &&
-                    this.Source.Shops.Any(obj => (int)obj.State >= (int)GoodsState.WAITREVIEW))
-                {
-                    return "";
-                }
-                return (string)this.GetValue(ImageDownloadStateProperty);
-            }
-            set
-            {
-                if (this.Source == null)
-                {
-                    this.SetValue(ImageDownloadStateProperty, "");
-                    return;
-                }
-
-                if (this.Source.Shops != null &&
-                    this.Source.Shops.Any(obj => (int)obj.State >= (int)GoodsState.WAITREVIEW))
-                {
-                    this.SetValue(ImageDownloadStateProperty, "");
-                }
-                this.SetValue(ImageDownloadStateProperty, value);
-            }
-        }
 
         public string Comment
         {

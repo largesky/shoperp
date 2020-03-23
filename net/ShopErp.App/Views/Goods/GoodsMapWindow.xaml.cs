@@ -20,11 +20,11 @@ namespace ShopErp.App.Views.Goods
     /// <summary>
     /// Interaction logic for GoodsEditMapWindow.xaml
     /// </summary>
-    public partial class GoodsEditMapWindow : Window
+    public partial class GoodsMapWindow : Window
     {
         public long GoodsId { get; set; }
 
-        public GoodsEditMapWindow()
+        public GoodsMapWindow()
         {
             InitializeComponent();
         }
@@ -60,7 +60,7 @@ namespace ShopErp.App.Views.Goods
         {
             try
             {
-                new GoodsAddMapWindow {GoodsId = this.GoodsId}.ShowDialog();
+                new GoodsMapCreateWindow {GoodsId = this.GoodsId}.ShowDialog();
                 this.Window_Loaded(null, null);
             }
             catch (Exception ex)

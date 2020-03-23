@@ -1,4 +1,4 @@
-﻿<Window x:Class="ShopErp.App.Views.Goods.GoodsEditMapWindow"
+﻿<Window x:Class="ShopErp.App.Views.Goods.GoodsMapWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="编辑关联货号" Height="300" Width="600" Loaded="Window_Loaded">
@@ -11,14 +11,11 @@
         <DataGrid Grid.Row="0" Name="dgvGoodsMap" SelectionMode="Extended" SelectionUnit="CellOrRowHeader"
                   AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="厂家名称"
-                                    Binding="{Binding VendorId,Converter={StaticResource vendorConverter}}" />
+                <DataGridTextColumn Header="厂家名称" Binding="{Binding VendorId,Converter={StaticResource vendorConverter}}" />
                 <DataGridTextColumn Header="厂家货号" Binding="{Binding Number}" />
                 <DataGridTextColumn Header="拿货价格" Binding="{Binding Price,StringFormat=F2}" />
-                <DataGridTextColumn Header="解析时显示主货号"
-                                    Binding="{Binding ShowTargetNumber,Converter={StaticResource boolConverter},ConverterParameter=否|是}" />
-                <DataGridTextColumn Header="解析时删除版本"
-                                    Binding="{Binding IgnoreEdtion,Converter={StaticResource boolConverter},ConverterParameter=否|是}" />
+                <DataGridTextColumn Header="解析时显示主货号" Binding="{Binding ShowTargetNumber,Converter={StaticResource boolConverter},ConverterParameter=否|是}" />
+                <DataGridTextColumn Header="解析时删除版本" Binding="{Binding IgnoreEdtion,Converter={StaticResource boolConverter},ConverterParameter=否|是}" />
             </DataGrid.Columns>
         </DataGrid>
         <StackPanel Grid.Row="1" Orientation="Horizontal">

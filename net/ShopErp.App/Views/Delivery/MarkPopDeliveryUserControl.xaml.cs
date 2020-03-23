@@ -38,7 +38,7 @@ namespace ShopErp.App.Views.Delivery
                 this.orders.Clear();
                 var showShops = ServiceContainer.GetService<ShopService>().GetByAll().Datas.Where(obj => obj.Enabled && obj.AppEnabled).ToList();
                 var showShopIds = showShops.Select(obj => obj.Id).ToArray();
-                var downloadOrders = OrderDownloadWindow.DownloadOrder(PopPayType.ONLINE);
+                var downloadOrders = OrderDownloadWindow.DownloadOrder(PopPayType.ONLINE, "");
                 if (downloadOrders == null || downloadOrders.Count < 1)
                 {
                     return;

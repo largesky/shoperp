@@ -78,11 +78,11 @@ namespace ShopErp.Server.Service.Restful
 
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/getbyall.html")]
-        public DataCollectionResponse<GoodsMap> GetByAll(string vendor, string number, long targetNumberId, int pageIndex, int pageSize)
+        public DataCollectionResponse<GoodsMap> GetByAll(string vendor, string number, long targetGoodsId, int pageIndex, int pageSize)
         {
             try
             {
-                return this.dao.GetByAll(vendor, number, targetNumberId, pageIndex, pageSize);
+                return this.dao.GetByAll(vendor, number, targetGoodsId, pageIndex, pageSize);
             }
             catch (Exception ex)
             {

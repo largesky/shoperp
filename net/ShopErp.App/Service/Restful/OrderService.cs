@@ -94,7 +94,7 @@ namespace ShopErp.App.Service.Restful
         public DataCollectionResponse<Order> GetByAll(string popBuyerId, string receiverMobile,
             string receiverName, string receiverAddress, DateTime startTime, DateTime endTime, string deliveryCompany, string deliveryNumber,
             OrderState state, PopPayType payType, string vendorName, string number, string size,
-            ColorFlag[] ofs, int parseResult, string comment, long shopId, OrderCreateType createType, OrderType type,
+            ColorFlag[] ofs, int parseResult, string comment, long shopId, OrderCreateType createType, OrderType type, string shipper,
             int pageIndex, int pageSize)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
@@ -120,18 +120,20 @@ namespace ShopErp.App.Service.Restful
 
             para["createType"] = createType;
             para["type"] = type;
+            para["shipper"] = shipper;
             para["pageIndex"] = pageIndex;
             para["pageSize"] = pageSize;
 
             return DoPost<DataCollectionResponse<Order>>(para);
         }
 
-        public DataCollectionResponse<Order> GetPayedAndPrintedOrders(long[] shopId, OrderCreateType createType, PopPayType payType, int pageIndex, int pageSize)
+        public DataCollectionResponse<Order> GetPayedAndPrintedOrders(long[] shopId, OrderCreateType createType, PopPayType payType, string shipper, int pageIndex, int pageSize)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
             para["shopId"] = shopId;
             para["createType"] = createType;
             para["payType"] = payType;
+            para["shipper"] = shipper;
             para["pageIndex"] = pageIndex;
             para["pageSize"] = pageSize;
             return DoPost<DataCollectionResponse<Order>>(para);

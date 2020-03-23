@@ -33,20 +33,28 @@ namespace ShopErp.App.Views.Goods
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            this.tbMode.Text = "当前设置模式:" + ((this.Goods != null && this.Goods.Length > 0) ? "部分" : "所有");
-            this.cbbEditFlag.Bind<ColorFlag>();
-            var shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas;
-            this.cbbShop.ItemsSource = shops;
-            if (shops != null && shops.Count > 0)
+            try
             {
-                this.cbbShop.SelectedIndex = 0;
+                this.tbMode.Text = "当前设置模式:" + ((this.Goods != null && this.Goods.Length > 0) ? "部分" : "所有");
+                this.cbbEditFlag.Bind<ColorFlag>();
+                var shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas;
+                this.cbbShop.ItemsSource = shops;
+                if (shops != null && shops.Count > 0)
+                {
+                    this.cbbShop.SelectedIndex = 0;
+                }
+                this.cbbState.Bind<GoodsState>();
+                this.cbbShippers.ItemsSource = ServiceContainer.GetService<GoodsService>().GetAllShippers().Datas;
+                if (OperatorService.LoginOperator.Rights.Contains("批量管理商品") == false)
+                {
+                    this.IsEnabled = false;
+                    this.DialogResult = false;
+                    MessageBox.Show("你没有权限");
+                }
             }
-            this.cbbState.Bind<GoodsState>();
-            if (OperatorService.LoginOperator.Rights.Contains("批量管理商品") == false)
+            catch (Exception ex)
             {
-                this.IsEnabled = false;
-                this.DialogResult = false;
-                MessageBox.Show("你没有权限");
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -109,7 +117,7 @@ namespace ShopErp.App.Views.Goods
                 return this.Goods;
             }
 
-            var data = ServiceContainer.GetService<GoodsService>().GetByAll(0, GoodsState.NONE, 0, DateTime.MinValue, DateTime.MinValue, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", 0, 0).Datas;
+            var data = ServiceContainer.GetService<GoodsService>().GetByAll(0, GoodsState.NONE, 0, DateTime.MinValue, DateTime.MinValue, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", "", "", 0, 0).Datas;
             return data.Select(obj => new GoodsViewModel(obj)).ToArray();
         }
 
@@ -250,6 +258,28 @@ namespace ShopErp.App.Views.Goods
                     }
                     gs.State = state;
                     ServiceContainer.GetService<GoodsShopService>().Update(gs);
+                }
+                MessageBox.Show("更新完成");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void BtnSetShipper_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string shipper = this.cbbShippers.Text.Trim();
+                if (MessageBox.Show("是否将发货仓库设置成：" + shipper, "提示", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                {
+                    return;
+                }
+                foreach (var g in this.GetGoodss())
+                {
+                    g.Source.Shipper = shipper;
+                    ServiceContainer.GetService<GoodsService>().Update(g.Source);
                 }
                 MessageBox.Show("更新完成");
             }

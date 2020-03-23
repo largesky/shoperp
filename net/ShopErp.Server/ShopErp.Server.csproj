@@ -93,9 +93,6 @@
     <Compile Include="Dao\NHibernateDao\DeliveryOutDao.cs" />
     <Compile Include="Dao\NHibernateDao\DeliveryTemplateAreaDao.cs" />
     <Compile Include="Dao\NHibernateDao\DeliveryTemplateDao.cs" />
-    <Compile Include="Dao\NHibernateDao\FinanceAccountDao.cs" />
-    <Compile Include="Dao\NHibernateDao\FinanceDao.cs" />
-    <Compile Include="Dao\NHibernateDao\FinanceTypeDao.cs" />
     <Compile Include="Dao\NHibernateDao\GoodsMapDao.cs" />
     <Compile Include="Dao\NHibernateDao\GoodsTaskDao.cs" />
     <Compile Include="Dao\NHibernateDao\GoodsDao.cs" />
@@ -189,9 +186,6 @@
     <Compile Include="Service\Restful\DeliveryOutService.cs" />
     <Compile Include="Service\Restful\DeliveryTemplateAreaService.cs" />
     <Compile Include="Service\Restful\DeliveryTemplateService.cs" />
-    <Compile Include="Service\Restful\FinanceAccountService.cs" />
-    <Compile Include="Service\Restful\FinanceService.cs" />
-    <Compile Include="Service\Restful\FinanceTypeService.cs" />
     <Compile Include="Service\Restful\GoodsMapService.cs" />
     <Compile Include="Service\Restful\GoodsService.cs" />
     <Compile Include="Service\Restful\GoodsShopService.cs" />
@@ -244,7 +238,6 @@
     <EmbeddedResource Include="Dao\NHibernateDao\hbm\DeliveryOut.hbm.xml" />
     <EmbeddedResource Include="Dao\NHibernateDao\hbm\DeliveryTemplate.hbm.xml" />
     <EmbeddedResource Include="Dao\NHibernateDao\hbm\DeliveryTemplateArea.hbm.xml" />
-    <EmbeddedResource Include="Dao\NHibernateDao\hbm\Finance.hbm.xml" />
     <EmbeddedResource Include="Dao\NHibernateDao\hbm\Goods.hbm.xml" />
     <EmbeddedResource Include="Dao\NHibernateDao\hbm\GoodsMap.hbm.xml" />
     <EmbeddedResource Include="Dao\NHibernateDao\hbm\GoodsShop.hbm.xml" />
@@ -262,8 +255,6 @@
     <EmbeddedResource Include="Dao\NHibernateDao\hbm\Shop.hbm.xml" />
     <EmbeddedResource Include="Dao\NHibernateDao\hbm\SystemConfig.hbm.xml" />
     <EmbeddedResource Include="Dao\NHibernateDao\hbm\Vendor.hbm.xml" />
-    <EmbeddedResource Include="Dao\NHibernateDao\hbm\FinanceAccount.hbm.xml" />
-    <EmbeddedResource Include="Dao\NHibernateDao\hbm\FinanceType.hbm.xml" />
     <EmbeddedResource Include="Dao\NHibernateDao\hbm\WuliuNumber.hbm.xml" />
     <EmbeddedResource Include="Dao\NHibernateDao\hbm\TaobaoKeyword.hbm.xml" />
     <EmbeddedResource Include="Dao\NHibernateDao\hbm\TaobaoKeywordDetail.hbm.xml" />

@@ -19,13 +19,13 @@ namespace ShopErp.App.Views.Finance
     /// <summary>
     /// Interaction logic for CreateReturnCashWindow.xaml
     /// </summary>
-    public partial class CreateReturnCashWindow : Window
+    public partial class ReturnCashCreateWindow : Window
     {
         public Order Order { get; set; }
 
         public ReturnCash ReturnCash { get; set; }
 
-        public CreateReturnCashWindow()
+        public ReturnCashCreateWindow()
         {
             InitializeComponent();
         }

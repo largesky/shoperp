@@ -6,31 +6,49 @@
         xmlns:local="clr-namespace:ShopErp.App.Views.Goods"
         mc:Ignorable="d"
         Title="商品批量编辑" Height="300" Width="500" Loaded="Window_Loaded" SizeToContent="WidthAndHeight">
-    <StackPanel Orientation="Vertical">
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Name="tbMode" FontSize="16" Margin="3" VerticalAlignment="Center" Foreground="Red" Text="当前设置模式" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="将旗帜批量设置为：" Margin="3" VerticalAlignment="Center" />
-            <ComboBox Name="cbbEditFlag" Margin="3" VerticalAlignment="Center" Width="100" />
-            <Button Name="btnEditFlag" Content="更新" Width="60" VerticalAlignment="Center" Click="btnEditFlag_Click" Margin="3" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="将星级批量设置为：" Margin="3" VerticalAlignment="Center" />
-            <TextBox Name="tbStar" Margin="3" VerticalAlignment="Center" Width="100" />
-            <Button Name="btnEditStar" Content="更新" Width="60" VerticalAlignment="Center" Click="btnEditStar_Click" Margin="3" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="将状态批量设置为：" Margin="3" VerticalAlignment="Center" />
-            <ComboBox Name="cbbState" Margin="3" VerticalAlignment="Center" Width="100" />
-            <Button Name="btnSetState" Content="更新" Width="60" VerticalAlignment="Center" Click="BtnSetState_Click" Margin="3" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="商品批量设置店铺：" Margin="3" VerticalAlignment="Center" />
-            <ComboBox Name="cbbShop" Margin="3" VerticalAlignment="Center" Width="100" DisplayMemberPath="Mark" />
-            <Button Name="btnAddShop" Content="添加" Width="60" VerticalAlignment="Center" Click="btnAddShop_Click" Margin="3" />
-            <Button Name="btnDelShop" Content="删除" Width="60" VerticalAlignment="Center" Click="btnDelShop_Click" Margin="3" />
-        </StackPanel>
 
-    </StackPanel>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Name="tbMode" FontSize="16" Margin="3" VerticalAlignment="Center" Foreground="Red" Text="当前设置模式" />
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="将旗帜批量设置为：" Margin="3" VerticalAlignment="Center" />
+        <ComboBox  Grid.Row="1" Grid.Column="1"  Name="cbbEditFlag" Margin="3" VerticalAlignment="Center" Width="100" />
+        <Button  Grid.Row="1" Grid.Column="2"  Name="btnEditFlag" Content="更新" Width="60" VerticalAlignment="Center" Click="btnEditFlag_Click" Margin="3" />
+
+        <TextBlock  Grid.Row="2" Grid.Column="0" Text="将星级批量设置为：" Margin="3" VerticalAlignment="Center" />
+        <TextBox  Grid.Row="2" Grid.Column="1" Name="tbStar" Margin="3" VerticalAlignment="Center" Width="100" />
+        <Button  Grid.Row="2" Grid.Column="2" Name="btnEditStar" Content="更新" Width="60" VerticalAlignment="Center" Click="btnEditStar_Click" Margin="3" />
+
+        <TextBlock  Grid.Row="3" Grid.Column="0" Text="将状态批量设置为：" Margin="3" VerticalAlignment="Center" />
+        <ComboBox Grid.Row="3" Grid.Column="1"  Name="cbbState" Margin="3" VerticalAlignment="Center" Width="100" />
+        <Button Grid.Row="3" Grid.Column="2"  Name="btnSetState" Content="更新" Width="60" VerticalAlignment="Center" Click="BtnSetState_Click" Margin="3" />
+        
+        <TextBlock Grid.Row="4" Grid.Column="0"  Text="将发货仓库批量设置为：" Margin="3" VerticalAlignment="Center" />
+        <ComboBox  Grid.Row="4" Grid.Column="1"   Name="cbbShippers" Margin="3" VerticalAlignment="Center" Width="100" IsEditable="True"/>
+        <Button Grid.Row="4" Grid.Column="2"   Name="btnSetShipper" Content="更新" Width="60" VerticalAlignment="Center" Click="BtnSetShipper_Click" Margin="3" />
+        
+        <TextBlock Grid.Row="5" Grid.Column="0"  Text="商品批量设置店铺：" Margin="3" VerticalAlignment="Center" />
+        <ComboBox Grid.Row="5" Grid.Column="1"  Name="cbbShop" Margin="3" VerticalAlignment="Center" Width="100" DisplayMemberPath="Mark" />
+        <Button Grid.Row="5" Grid.Column="2"  Name="btnAddShop" Content="添加" Width="60" VerticalAlignment="Center" Click="btnAddShop_Click" Margin="3" />
+        <Button Grid.Row="5" Grid.Column="3"  Name="btnDelShop" Content="删除" Width="60" VerticalAlignment="Center" Click="btnDelShop_Click" Margin="3" />
+
+    </Grid>
+
 </Window>

@@ -73,6 +73,9 @@ namespace ShopErp.App.Views.Print
                 //支付类型
                 this.cbbPopPayTypes.Bind<PopPayType>();
                 this.cbbPopPayTypes.SetSelectedEnum(PopPayType.ONLINE);
+                var shippers = ServiceContainer.GetService<GoodsService>().GetAllShippers().Datas;
+                shippers.Insert(0, "");
+                this.cbbShippers.ItemsSource = shippers;
                 this.tc1.ItemsSource = printOrderPages;
                 this.myLoaded = true;
             }
@@ -145,7 +148,7 @@ namespace ShopErp.App.Views.Print
                     return;
                 }
 
-                var downloadOrders = OrderDownloadWindow.DownloadOrder(payType);
+                var downloadOrders = OrderDownloadWindow.DownloadOrder(payType,this.cbbShippers.Text.Trim());
                 if (downloadOrders == null || downloadOrders.Count < 1)
                 {
                     this.printOrderPages.Clear();
@@ -177,7 +180,7 @@ namespace ShopErp.App.Views.Print
                     MessageBox.Show("选择支付类型");
                     return;
                 }
-                var orders = this.orderService.GetByAll("", "", "", "", DateTime.Now.AddDays(-30), DateTime.MinValue, "", "", OrderState.RETURNING, payType, "", "", "", selectFlags.ToArray(), -1, "", 0, OrderCreateType.NONE, OrderType.NONE, 0, 0).Datas.ToArray();
+                var orders = this.orderService.GetByAll("", "", "", "", DateTime.Now.AddDays(-90), DateTime.MinValue, "", "", OrderState.RETURNING, payType, "", "", "", selectFlags.ToArray(), -1, "", 0, OrderCreateType.NONE, OrderType.NONE, this.cbbShippers.Text.Trim(), 0, 0).Datas.ToArray();
                 List<Order> os = new List<Order>();
                 foreach (var o in orders)
                 {
@@ -481,7 +484,7 @@ namespace ShopErp.App.Views.Print
 
         private void MiSelectSameGoodsById_Click(object sender, RoutedEventArgs e)
         {
-            SelectGoods(sender, (o1, o2) => o1.NumberId == o2.NumberId);
+            SelectGoods(sender, (o1, o2) => o1.GoodsId == o2.GoodsId);
         }
 
         private void MiSelectSameShop_Click(object sender, RoutedEventArgs e)
@@ -496,7 +499,7 @@ namespace ShopErp.App.Views.Print
 
         private void MiSelectSameGoodsByIdAndColorSize_Click(object sender, RoutedEventArgs e)
         {
-            SelectGoods(sender, (o1, o2) => o1.NumberId == o2.NumberId && o1.Edtion == o1.Edtion && o1.Color == o2.Color && o1.Size == o2.Size);
+            SelectGoods(sender, (o1, o2) => o1.GoodsId == o2.GoodsId && o1.Edtion == o1.Edtion && o1.Color == o2.Color && o1.Size == o2.Size);
         }
 
         private void miEditOrder_Click(object sender, RoutedEventArgs e)
@@ -504,7 +507,7 @@ namespace ShopErp.App.Views.Print
             try
             {
                 var item = this.GetMIOrder(sender);
-                var w = new Orders.OrderReceiverInfoModifyWindow { Order = item.Source };
+                var w = new Orders.OrderModifyReciverInfoWindow { Order = item.Source };
                 bool? ret = w.ShowDialog();
                 if (ret.Value)
                 {

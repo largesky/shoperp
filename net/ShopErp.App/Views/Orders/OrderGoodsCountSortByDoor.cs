@@ -7,7 +7,7 @@ using ShopErp.Domain;
 
 namespace ShopErp.App.Views.Orders
 {
-    public class GoodsCountSortByDoor : IComparer<GoodsCount>
+    public class OrderGoodsCountSortByDoor : IComparer<GoodsCount>
     {
         public int Compare(GoodsCount lhs, GoodsCount rhs)
         {

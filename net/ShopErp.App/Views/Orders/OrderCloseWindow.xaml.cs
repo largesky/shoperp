@@ -66,7 +66,7 @@ namespace ShopErp.App.Views.Orders
                 vms = this.Order.OrderGoodss.Where(obj => (int) obj.State <= (int) OrderState.SHIPPED)
                     .Select(obj => new OrderGoodsCloseViewModel
                     {
-                        Title = obj.Number + "," + obj.Color + obj.Size + "," + obj.NumberId,
+                        Title = obj.Number + "," + obj.Color + obj.Size + "," + obj.GoodsId,
                         OrderGoodsId = obj.Id
                     }).ToList();
             }

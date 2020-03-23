@@ -83,11 +83,6 @@
     <Compile Include="DeliveryTemplate.cs" />
     <Compile Include="DeliveryTemplateArea.cs" />
     <Compile Include="EnumDescriptionAttribute.cs" />
-    <Compile Include="Finance.cs" />
-    <Compile Include="FinanceAccount.cs" />
-    <Compile Include="FinanceAccountType.cs" />
-    <Compile Include="FinanceType.cs" />
-    <Compile Include="FinanceTypeMode.cs" />
     <Compile Include="Goods.cs" />
     <Compile Include="GoodsCount.cs" />
     <Compile Include="GoodsMap.cs" />

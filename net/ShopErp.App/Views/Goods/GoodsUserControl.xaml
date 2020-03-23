@@ -6,7 +6,7 @@
              mc:Ignorable="d"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:goodsui="clr-namespace:ShopErp.App.Views.Goods"
-             d:DesignHeight="300" d:DesignWidth="1800" Loaded="UserControl_Loaded">
+             d:DesignHeight="300" d:DesignWidth="1280" Loaded="UserControl_Loaded">
     <Grid Name="gHost">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -22,65 +22,93 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" MinWidth="150"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" MinWidth="150" />
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
-                <TextBlock Text="显示模式:" Margin="3" VerticalAlignment="Center" />
-                <ComboBox Name="cbbDisplayType" Margin="3" VerticalAlignment="Center"
-                          SelectionChanged="cbbDisplayType_SelectionChanged">
-                    <ComboBoxItem>列表</ComboBoxItem>
-                    <ComboBoxItem>图片</ComboBoxItem>
-                    <ComboBox.SelectedIndex>1</ComboBox.SelectedIndex>
-                </ComboBox>
-                <ComboBox Name="cbbSortType" VerticalAlignment="Center">
-                    <ComboBoxItem Tag="CreateTime asc">时间升序</ComboBoxItem>
-                    <ComboBoxItem Tag="CreateTime desc">时间降序</ComboBoxItem>
-                    <ComboBoxItem Tag="Vendor asc">厂家升序</ComboBoxItem>
-                    <ComboBoxItem Tag="Vendor desc">厂家降序</ComboBoxItem>
-                    <ComboBoxItem Tag="Type asc">类型升序</ComboBoxItem>
-                    <ComboBoxItem Tag="Type desc">类型降序</ComboBoxItem>
-                    <ComboBoxItem Tag="Price asc">价格升序</ComboBoxItem>
-                    <ComboBoxItem Tag="Price desc">价格降序</ComboBoxItem>
-                    <ComboBoxItem Tag="State asc">状态升序</ComboBoxItem>
-                    <ComboBoxItem Tag="State desc">状态降序</ComboBoxItem>
-                    <ComboBoxItem Tag="Star asc">星级升序</ComboBoxItem>
-                    <ComboBoxItem Tag="Star desc">星级降序</ComboBoxItem>
-                    <ComboBox.SelectedIndex>1</ComboBox.SelectedIndex>
-                </ComboBox>
-                <TextBlock Text="旗帜:" Margin="3" VerticalAlignment="Center" />
-                <ComboBox Name="cbbFlags" Margin="3" VerticalAlignment="Center" />
-                <TextBlock Text="上货店铺:" Margin="3" VerticalAlignment="Center" />
-                <ComboBox Name="cbbShops" Margin="3" VerticalAlignment="Center" DisplayMemberPath="Mark" />
-                <TextBlock Text="状态:" Margin="3" VerticalAlignment="Center" />
-                <ComboBox Name="cbbStates" Margin="3" VerticalAlignment="Center" />
-                <TextBlock Text="时间类型:" Margin="3" VerticalAlignment="Center" />
-                <ComboBox Name="cbbTimeType" Margin="3" VerticalAlignment="Center">
-                    <ComboBoxItem>创建时间</ComboBoxItem>
-                    <ComboBoxItem>出图时间</ComboBoxItem>
-                    <ComboBoxItem>上货时间</ComboBoxItem>
-                    <ComboBox.SelectedIndex>0</ComboBox.SelectedIndex>
-                </ComboBox>
-                <TextBlock Text="开始时间:" Margin="3" VerticalAlignment="Center" />
-                <xctk:DateTimePicker xctk:Format="Custom" xctk:TimeFormatString="yyyy-MM-dd HH:mm:ss" Name="dpStart"
-                                     Margin="3" VerticalAlignment="Center" MinWidth="140" />
-                <TextBlock Text="到:" Margin="3" VerticalAlignment="Center" />
-                <xctk:DateTimePicker xctk:Format="Custom" xctk:TimeFormatString="yyyy-MM-dd HH:mm:ss" Name="dpEnd"
-                                     Margin="3" VerticalAlignment="Center" MinWidth="140" />
-                <TextBlock Text="类型:" Margin="3" VerticalAlignment="Center" />
-                <ComboBox Name="cbbTypes" Margin="3" VerticalAlignment="Center" />
-                <TextBlock Text="主图视频:" Margin="3" VerticalAlignment="Center" />
-                <ComboBox Name="cbbVideoTypes" Margin="3" VerticalAlignment="Center" />
-                <TextBlock Text="厂家:" Margin="3" VerticalAlignment="Center" />
-                <TextBox Name="tbVendor" Margin="3" Width="60" VerticalAlignment="Center" />
-                <TextBlock Text="货号:" Margin="3" VerticalAlignment="Center" />
-                <TextBox Name="tbNumber" Margin="3" Width="60" VerticalAlignment="Center" />
-                <TextBlock Text="备注:" Margin="3" VerticalAlignment="Center" />
-                <TextBox Name="tbComment" Margin="3" Width="60" VerticalAlignment="Center" />
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="显示模式:" Margin="3" VerticalAlignment="Center" />
+            <ComboBox Grid.Row="0" Grid.Column="1" Name="cbbDisplayType" Margin="3" VerticalAlignment="Center" SelectionChanged="cbbDisplayType_SelectionChanged">
+                <ComboBoxItem>列表</ComboBoxItem>
+                <ComboBoxItem>图片</ComboBoxItem>
+                <ComboBox.SelectedIndex>1</ComboBox.SelectedIndex>
+            </ComboBox>
+
+            <TextBlock Grid.Row="0" Grid.Column="2" Text="排序规则:" Margin="3" VerticalAlignment="Center" />
+            <ComboBox Grid.Row="0" Grid.Column="3" Name="cbbSortType" VerticalAlignment="Center">
+                <ComboBoxItem Tag="CreateTime asc">时间升序</ComboBoxItem>
+                <ComboBoxItem Tag="CreateTime desc">时间降序</ComboBoxItem>
+                <ComboBoxItem Tag="Vendor asc">厂家升序</ComboBoxItem>
+                <ComboBoxItem Tag="Vendor desc">厂家降序</ComboBoxItem>
+                <ComboBoxItem Tag="Type asc">类型升序</ComboBoxItem>
+                <ComboBoxItem Tag="Type desc">类型降序</ComboBoxItem>
+                <ComboBoxItem Tag="Price asc">价格升序</ComboBoxItem>
+                <ComboBoxItem Tag="Price desc">价格降序</ComboBoxItem>
+                <ComboBoxItem Tag="State asc">状态升序</ComboBoxItem>
+                <ComboBoxItem Tag="State desc">状态降序</ComboBoxItem>
+                <ComboBoxItem Tag="Star asc">星级升序</ComboBoxItem>
+                <ComboBoxItem Tag="Star desc">星级降序</ComboBoxItem>
+                <ComboBox.SelectedIndex>1</ComboBox.SelectedIndex>
+            </ComboBox>
+            <TextBlock Grid.Row="0" Grid.Column="4" Text="旗帜:" Margin="3" VerticalAlignment="Center" />
+            <ComboBox Grid.Row="0" Grid.Column="5" Name="cbbFlags" Margin="3" VerticalAlignment="Center" />
+            <TextBlock Grid.Row="0" Grid.Column="6" Text="上货店铺:" Margin="3" VerticalAlignment="Center" />
+            <ComboBox Grid.Row="0" Grid.Column="7" Name="cbbShops" Margin="3" VerticalAlignment="Center" DisplayMemberPath="Mark" />
+            <TextBlock Grid.Row="0" Grid.Column="8" Text="状态:" Margin="3" VerticalAlignment="Center" />
+            <ComboBox Grid.Row="0" Grid.Column="9"  Name="cbbStates" Margin="3" VerticalAlignment="Center" />
+            <TextBlock Grid.Row="0" Grid.Column="10" Text="时间类型:" Margin="3" VerticalAlignment="Center" />
+            <ComboBox Grid.Row="0" Grid.Column="11" Name="cbbTimeType" Margin="3" VerticalAlignment="Center">
+                <ComboBoxItem>创建时间</ComboBoxItem>
+                <ComboBoxItem>出图时间</ComboBoxItem>
+                <ComboBoxItem>上货时间</ComboBoxItem>
+                <ComboBox.SelectedIndex>0</ComboBox.SelectedIndex>
+            </ComboBox>
+            <TextBlock Grid.Row="0" Grid.Column="12" Text="开始时间:" Margin="3" VerticalAlignment="Center" />
+            <xctk:DateTimePicker Grid.Row="0" Grid.Column="13" xctk:Format="Custom" xctk:TimeFormatString="yyyy-MM-dd HH:mm:ss" Name="dpStart" Margin="3" VerticalAlignment="Center" MinWidth="140" />
+            <TextBlock  Grid.Row="0" Grid.Column="14" Text="到:" Margin="3" VerticalAlignment="Center" />
+            <xctk:DateTimePicker  Grid.Row="0" Grid.Column="15" xctk:Format="Custom" xctk:TimeFormatString="yyyy-MM-dd HH:mm:ss" Name="dpEnd" Margin="3" VerticalAlignment="Center" MinWidth="140" />
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="类型:" Margin="3" VerticalAlignment="Center" />
+            <ComboBox Grid.Row="1" Grid.Column="1" Name="cbbTypes" Margin="3" VerticalAlignment="Center" />
+            <TextBlock Grid.Row="1" Grid.Column="2" Text="主图视频:" Margin="3" VerticalAlignment="Center" />
+            <ComboBox Grid.Row="1" Grid.Column="3" Name="cbbVideoTypes" Margin="3" VerticalAlignment="Center" />
+            <TextBlock Grid.Row="1" Grid.Column="4" Text="厂家:" Margin="3" VerticalAlignment="Center" />
+            <TextBox Grid.Row="1" Grid.Column="5" Name="tbVendor" Margin="3"   VerticalAlignment="Center" />
+            <TextBlock Grid.Row="1" Grid.Column="6" Text="货号:" Margin="3" VerticalAlignment="Center" />
+            <TextBox Grid.Row="1" Grid.Column="7" Name="tbNumber" Margin="3"  VerticalAlignment="Center" />
+            <TextBlock Grid.Row="1" Grid.Column="8" Text="厂址:" Margin="3" VerticalAlignment="Center"/>
+            <ComboBox Grid.Row="1" Grid.Column="9" Name="cbbVendorAdds" Margin="3"  VerticalAlignment="Center" IsEditable="True">
+                <ComboBox.Items>
+                    <ComboBoxItem></ComboBoxItem>
+                    <ComboBoxItem>成都</ComboBoxItem>
+                    <ComboBoxItem>温岭</ComboBoxItem>
+                    <ComboBoxItem>温州</ComboBoxItem>
+                    <ComboBoxItem>横峰</ComboBoxItem>
+                    <ComboBoxItem>城北</ComboBoxItem>
+                </ComboBox.Items>
+            </ComboBox>
+            <TextBlock Grid.Row="1" Grid.Column="10" Text="发货仓库:" Margin="3" VerticalAlignment="Center" />
+            <ComboBox Grid.Row="1" Grid.Column="11" Name="cbbShippers" Margin="3"   VerticalAlignment="Center" />
+            <TextBlock Grid.Row="1" Grid.Column="12" Text="备注:" Margin="3" VerticalAlignment="Center" />
+            <TextBox Grid.Row="1" Grid.Column="13" Name="tbComment" Margin="3"   VerticalAlignment="Center" />
+            <StackPanel Grid.Row="1" Grid.Column="14" Grid.ColumnSpan="10" Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Name="btnQuery" Margin="3" Content="查询" VerticalAlignment="Center" Click="btnQuery_Click" Width="60" />
                 <Button Name="btnCreatePrivate" Margin="3" Content="新建" VerticalAlignment="Center" Width="60" Click="btnCreatePrivate_Click" />
                 <Button Name="btnPatchEdit" Margin="3" VerticalAlignment="Center" Content="批量更新" Width="60" Click="btnPatchEdit_Click" />
-                <Button Name="btnTest" Margin="3" VerticalAlignment="Bottom" Content="检查下架" Width="60" Click="btnUpdate_Click" Visibility="Visible" />
+                <Button Name="btnTest" Margin="3" VerticalAlignment="Bottom" Content="检查下架" Width="60" Click="btnUpdate_Click" Visibility="Collapsed" />
             </StackPanel>
         </Grid>
+
         <DataGrid Grid.Row="1" AutoGenerateColumns="False" Name="dgvGoods" SelectionMode="Extended"
                   SelectionUnit="CellOrRowHeader" AllowDrop="True" FrozenColumnCount="2"
                   CellEditEnding="dgvGoods_CellEditEnding">
@@ -226,6 +254,7 @@
 
             </ListBox.ItemContainerStyle>
         </ListBox>
+
         <PageBar:PageBarUserControl Grid.Row="3" x:Name="pb1" PageSize="100" PageChanging="pb1_PageChanging" />
     </Grid>
 </UserControl>

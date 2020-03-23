@@ -1,4 +1,4 @@
-﻿<Window x:Class="ShopErp.App.Views.Orders.OrderGoodsCreateReturnWithoutOrderWindow"
+﻿<Window x:Class="ShopErp.App.Views.Orders.OrderReturnCreateWithoutOrderWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="创建无单退货" Height="500" Width="300" SizeToContent="WidthAndHeight" Loaded="Window_Loaded"

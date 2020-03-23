@@ -73,7 +73,6 @@ namespace ShopErp.App.Views.Config
                     Time = "",
                     Title = "好评返现"
                 });
-                items.Add(new SystemCleanViewModel { State = "待处理", TableName = typeof(ShopErp.Domain.Finance).Name.ToLower(), Time = "", Title = "日常记账" });
                 items.Add(new SystemCleanViewModel { State = "待处理", TableName = typeof(Order).Name.ToLower(), Time = "", Title = "订单" });
                 items.Add(new SystemCleanViewModel
                 {
