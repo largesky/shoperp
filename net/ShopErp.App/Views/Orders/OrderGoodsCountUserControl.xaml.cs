@@ -53,8 +53,11 @@ namespace ShopErp.App.Views.Orders
                 var flagVms = flags.Select(obj => new OrderFlagViewModel(false, obj)).ToArray();
                 flagVms.Where(obj => obj.Flag == ColorFlag.GREEN || obj.Flag == ColorFlag.BLUE).ToList().ForEach(obj => obj.IsChecked = true);
                 this.cbbFlags.ItemsSource = flagVms;
+                var shippers = ServiceContainer.GetService<GoodsService>().GetAllShippers().Datas;
+                shippers.Insert(0, "");
+                this.cbbShippers.ItemsSource = shippers;
                 this.dgvGoodsCount.ItemsSource = this.gcs;
-                this.dpStart.Value = DateTime.Now.AddDays(-45);
+                this.dpStart.Value = DateTime.Now.AddDays(-60);
                 this.myLoaded = true;
             }
             catch (Exception exception)
@@ -82,7 +85,7 @@ namespace ShopErp.App.Views.Orders
 
                 var end = this.dpEnd.Value == null ? DateTime.Now.AddDays(1) : this.dpEnd.Value.Value;
 
-                List<GoodsCount> counts = goodsCountRepertory.GetGoodsCount(flags, this.dpStart.Value.Value, end, 0, 0).Datas;
+                List<GoodsCount> counts = goodsCountRepertory.GetGoodsCount(flags, this.cbbShippers.Text.Trim(), this.dpStart.Value.Value, end, 0, 0).Datas;
                 IComparer<GoodsCount> comparer = new OrderGoodsCountSortByDoor();
                 counts.Sort(comparer); //拿货地址
                 counts.Sort(comparer); //货号

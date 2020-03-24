@@ -11,11 +11,11 @@ namespace ShopErp.App.Service.Restful
 {
     public class OrderGoodsService : ServiceBase<OrderGoods>
     {
-        public DataCollectionResponse<GoodsCount> GetGoodsCount(ColorFlag[] flags, DateTime startTime, DateTime endTime,
-            int pageIndex, int pageSize)
+        public DataCollectionResponse<GoodsCount> GetGoodsCount(ColorFlag[] flags, string shipper, DateTime startTime, DateTime endTime, int pageIndex, int pageSize)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
             para["flags"] = flags;
+            para["shipper"] = shipper;
             para["startTime"] = startTime;
             para["endTime"] = endTime;
             para["pageIndex"] = pageIndex;

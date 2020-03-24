@@ -32,26 +32,19 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-
+            <TextBlock Text="发货仓库：" Margin="3" VerticalAlignment="Center" />
+            <ComboBox Name="cbbShippers" Margin="3" VerticalAlignment="Center" MinWidth="80" IsEditable="True" />
             <TextBlock Text="开始时间:" Margin="3" VerticalAlignment="Center" />
-            <xctk:DateTimePicker xctk:Format="Custom" xctk:TimeFormatString="yyyy-MM-dd HH:mm:ss" Grid.Row="1"
-                                 Grid.Column="3" Name="dpStart" Margin="3" VerticalAlignment="Center" MinWidth="140" />
+            <xctk:DateTimePicker xctk:Format="Custom" xctk:TimeFormatString="yyyy-MM-dd HH:mm:ss" Grid.Row="1" Grid.Column="3" Name="dpStart" Margin="3" VerticalAlignment="Center" MinWidth="140" />
             <TextBlock Grid.Row="1" Grid.Column="4" Text="结束时间:" Margin="3" VerticalAlignment="Center" />
-            <xctk:DateTimePicker Grid.Row="1" xctk:Format="Custom" xctk:TimeFormatString="yyyy-MM-dd HH:mm:ss"
-                                 Grid.Column="5" Name="dpEnd" Margin="3" VerticalAlignment="Center" MinWidth="140" />
-            <Button Content="下载" Name="btnDownload" Click="btnDownload_Click" Width="60" HorizontalAlignment="Left"
-                    Margin="3" />
-            <Button Content="打印" Name="btnPrint" Click="btnPrint_Click" Width="60" HorizontalAlignment="Left"
-                    Margin="3" />
+            <xctk:DateTimePicker Grid.Row="1" xctk:Format="Custom" xctk:TimeFormatString="yyyy-MM-dd HH:mm:ss" Grid.Column="5" Name="dpEnd" Margin="3" VerticalAlignment="Center" MinWidth="140" />
+            <Button Content="下载" Name="btnDownload" Click="btnDownload_Click" Width="60" HorizontalAlignment="Left" Margin="3" />
+            <Button Content="打印" Name="btnPrint" Click="btnPrint_Click" Width="60" HorizontalAlignment="Left" Margin="3" />
             <TextBlock Text="最小数量:" Margin="3" VerticalAlignment="Center" />
             <TextBox Name="tbMinCount" Margin="3" Text="4" Width="20" VerticalAlignment="Center" />
-            <Button Name="btnPrintNew" Content="打印" Margin="3" VerticalAlignment="Center" Click="btnPrintNew_Click"
-                    Width="60" />
-            <Button Name="btnCreateReturn" Content="创建退货" Click="btnCreateReturn_Click" Margin="3" Width="60"
-                    HorizontalAlignment="Center" />
-            <Button Name="btnDelete" Content="删除选中" Click="btnDelete_Click" Margin="3" Width="60"
-                    VerticalAlignment="Center" />
-
+            <Button Name="btnPrintNew" Content="打印" Margin="3" VerticalAlignment="Center" Click="btnPrintNew_Click" Width="60" />
+            <Button Name="btnCreateReturn" Content="创建退货" Click="btnCreateReturn_Click" Margin="3" Width="60" HorizontalAlignment="Center" />
+            <Button Name="btnDelete" Content="删除选中" Click="btnDelete_Click" Margin="3" Width="60" VerticalAlignment="Center" />
         </StackPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <TextBlock Margin="3" VerticalAlignment="Center" Name="tbTotalCount" />
@@ -69,11 +62,9 @@
                 <DataGridTextColumn Header="版本" Width="Auto" Binding="{Binding Edtion}" IsReadOnly="True" />
                 <DataGridTextColumn Header="颜色" Width="Auto" Binding="{Binding Color}" IsReadOnly="True" />
                 <DataGridTextColumn Header="尺码" Width="Auto" Binding="{Binding Size}" IsReadOnly="True" />
-                <DataGridTextColumn Header="单价" Width="Auto" Binding="{Binding Money,StringFormat=F0}"
-                                    IsReadOnly="True" />
+                <DataGridTextColumn Header="单价" Width="Auto" Binding="{Binding Money,StringFormat=F0}" IsReadOnly="True" />
                 <DataGridTextColumn Header="数量" Width="Auto" Binding="{Binding Count}" />
-                <DataGridTextColumn Header="最早日期" Width="Auto"
-                                    Binding="{Binding FirstPayTime,Converter={StaticResource datetimeConverter}}" />
+                <DataGridTextColumn Header="最早日期" Width="Auto" Binding="{Binding FirstPayTime,Converter={StaticResource datetimeConverter}}" />
                 <DataGridTextColumn Header="订单编号" Width="*" Binding="{Binding OrderId}" />
             </DataGrid.Columns>
         </DataGrid>

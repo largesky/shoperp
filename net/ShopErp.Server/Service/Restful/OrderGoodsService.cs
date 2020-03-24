@@ -128,11 +128,11 @@ namespace ShopErp.Server.Service.Restful
 
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/getgoodscount.html")]
-        public DataCollectionResponse<GoodsCount> GetGoodsCount(ColorFlag[] flags, DateTime startTime, DateTime endTime, int pageIndex, int pageSize)
+        public DataCollectionResponse<GoodsCount> GetGoodsCount(ColorFlag[] flags, string shipper, DateTime startTime, DateTime endTime, int pageIndex, int pageSize)
         {
             try
             {
-                var gcs = this.dao.GetOrderGoodsCount(flags, startTime, endTime, pageIndex, pageSize).Datas;
+                var gcs = this.dao.GetOrderGoodsCount(flags, shipper, startTime, endTime, pageIndex, pageSize).Datas;
                 var ngcs = this.MegerGoodsCount(gcs);
                 return new DataCollectionResponse<GoodsCount>(ngcs);
             }
@@ -144,7 +144,7 @@ namespace ShopErp.Server.Service.Restful
 
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/getsalecount.html")]
-        public DataCollectionResponse<SaleCount> GetSaleCount(long shopId, OrderType type, int timeType, DateTime startTime, DateTime endTime,  int pageIndex, int pageSize)
+        public DataCollectionResponse<SaleCount> GetSaleCount(long shopId, OrderType type, int timeType, DateTime startTime, DateTime endTime, int pageIndex, int pageSize)
         {
             try
             {

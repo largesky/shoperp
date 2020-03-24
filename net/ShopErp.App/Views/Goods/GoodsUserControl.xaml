@@ -33,9 +33,9 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" MinWidth="150"/>
+                <ColumnDefinition Width="*" MinWidth="200"/>
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" MinWidth="150" />
+                <ColumnDefinition Width="*" MinWidth="200" />
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Row="0" Grid.Column="0" Text="显示模式:" Margin="3" VerticalAlignment="Center" />
             <ComboBox Grid.Row="0" Grid.Column="1" Name="cbbDisplayType" Margin="3" VerticalAlignment="Center" SelectionChanged="cbbDisplayType_SelectionChanged">
@@ -74,9 +74,9 @@
                 <ComboBox.SelectedIndex>0</ComboBox.SelectedIndex>
             </ComboBox>
             <TextBlock Grid.Row="0" Grid.Column="12" Text="开始时间:" Margin="3" VerticalAlignment="Center" />
-            <xctk:DateTimePicker Grid.Row="0" Grid.Column="13" xctk:Format="Custom" xctk:TimeFormatString="yyyy-MM-dd HH:mm:ss" Name="dpStart" Margin="3" VerticalAlignment="Center" MinWidth="140" />
+            <xctk:DateTimePicker Grid.Row="0" Grid.Column="13" xctk:Format="Custom" xctk:TimeFormatString="yyyy-MM-dd HH:mm:ss" Name="dpStart" Margin="3" VerticalAlignment="Center" MinWidth="200" />
             <TextBlock  Grid.Row="0" Grid.Column="14" Text="到:" Margin="3" VerticalAlignment="Center" />
-            <xctk:DateTimePicker  Grid.Row="0" Grid.Column="15" xctk:Format="Custom" xctk:TimeFormatString="yyyy-MM-dd HH:mm:ss" Name="dpEnd" Margin="3" VerticalAlignment="Center" MinWidth="140" />
+            <xctk:DateTimePicker  Grid.Row="0" Grid.Column="15" xctk:Format="Custom" xctk:TimeFormatString="yyyy-MM-dd HH:mm:ss" Name="dpEnd" Margin="3" VerticalAlignment="Center" MinWidth="200" />
 
             <TextBlock Grid.Row="1" Grid.Column="0" Text="类型:" Margin="3" VerticalAlignment="Center" />
             <ComboBox Grid.Row="1" Grid.Column="1" Name="cbbTypes" Margin="3" VerticalAlignment="Center" />

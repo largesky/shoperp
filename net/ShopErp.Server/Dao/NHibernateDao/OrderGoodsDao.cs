@@ -10,7 +10,7 @@ namespace ShopErp.Server.Dao.NHibernateDao
 {
     public class OrderGoodsDao : NHibernateDaoBase<OrderGoods>
     {
-        public DataCollectionResponse<SaleCount> GetSaleCount(long shopId, OrderType type, int timeType, DateTime startTime, DateTime endTime,int pageIndex, int pageSize)
+        public DataCollectionResponse<SaleCount> GetSaleCount(long shopId, OrderType type, int timeType, DateTime startTime, DateTime endTime, int pageIndex, int pageSize)
         {
             ISession session = null;
             try
@@ -77,7 +77,7 @@ namespace ShopErp.Server.Dao.NHibernateDao
             }
         }
 
-        public DataCollectionResponse<GoodsCount> GetOrderGoodsCount(ColorFlag[] flags, DateTime startTime, DateTime endTime, int pageIndex, int pageSize)
+        public DataCollectionResponse<GoodsCount> GetOrderGoodsCount(ColorFlag[] flags, string shipper, DateTime startTime, DateTime endTime, int pageIndex, int pageSize)
         {
             ISession session = null;
             try
@@ -88,14 +88,16 @@ namespace ShopErp.Server.Dao.NHibernateDao
                     f = " and " + "(" + f + ")";
                 }
 
-                String hsqlWhere = String.Format("from Order order,OrderGoods orderGoods where order.Id=orderGoods.OrderId and order.Type<>2 and order.PopPayTime>='{0}' and order.PopPayTime<='{1}' and orderGoods.GetedCount<orderGoods.Count and (PopPayType=1 or (PopPayType=2 {2})) and order.State>={3} and order.State<{4}", this.FormatDateTime(startTime), this.FormatDateTime(endTime), f, (int)OrderState.PAYED, (int)OrderState.SHIPPED);
+                String hsqlWhere = String.Format("from Order order,OrderGoods orderGoods where order.Id=orderGoods.OrderId and order.Type<>2 and order.PopPayTime>='{0}' and order.PopPayTime<='{1}' and orderGoods.GetedCount<orderGoods.Count and (PopPayType=1 or (PopPayType=2 {2})) and order.State>={3} and order.State<{4} ", this.FormatDateTime(startTime), this.FormatDateTime(endTime), f, (int)OrderState.PAYED, (int)OrderState.SHIPPED);
+
+                if (string.IsNullOrWhiteSpace(shipper) == false)
+                {
+                    hsqlWhere += " and Shipper='" + shipper + "'";
+                }
+
                 String contenthsql = "select order.Id,orderGoods.Vendor,orderGoods.Number,orderGoods.Edtion,orderGoods.Color,orderGoods.Size,orderGoods.Count,orderGoods.GetedCount,orderGoods.Price,order.PopPayTime,orderGoods.State, orderGoods.GoodsId,order.PopType,order.DeliveryCompany ";
                 string hsqlData = contenthsql + hsqlWhere;
                 string hsqlCount = "select count(orderGoods.id) " + hsqlWhere;
-
-                Debug.WriteLine("HsqlWhere:" + hsqlWhere);
-                Debug.WriteLine("HsqlData:" + hsqlData);
-                Debug.WriteLine("HsqlCount:" + hsqlCount);
 
                 session = OpenSession();
                 var query = session.CreateQuery(hsqlData);
