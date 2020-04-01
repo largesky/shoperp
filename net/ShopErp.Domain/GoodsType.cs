@@ -16,7 +16,7 @@
         GOODS_SHOES_GAOBANGXIE,
         [EnumDescription("靴子")]
         GOODS_SHOES_XUEZI,
-        [EnumDescription("凡布鞋")]
+        [EnumDescription("帆布鞋")]
         GOODS_SHOES_FANBUXIE,
         [EnumDescription("运动鞋")]
         GOODS_SHOES_YUNDONGXIE,

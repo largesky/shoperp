@@ -62,22 +62,34 @@ namespace ShopErp.App.Service.Spider.K3
 
             //颜色
             var hnColors = doc.DocumentNode.SelectNodes("//div[@class='default-color']/div/span/a");
-            if (hnColors != null & hnColors.Count > 0)
+            if (hnColors != null && hnColors.Count > 0)
             {
                 string[] colors = hnColors.Select(obj => obj.InnerText.Trim()).ToArray();
                 g.Colors = string.Join(",", colors);
             }
+            else
+            {
+                hnColors = doc.DocumentNode.SelectNodes("//div[@class='color_box']/div/p");
+                if (hnColors != null && hnColors.Count > 0)
+                {
+                    string[] colors = hnColors.Select(obj => obj.InnerText.Trim()).ToArray();
+                    g.Colors = string.Join(",", colors);
+                }
+            }
             //帮面材质
             var hnPropertys = doc.DocumentNode.SelectNodes("//div[@class='shoes_info']/span[@class='text_box']");
-            foreach (var v in hnPropertys)
+            if (hnPropertys != null)
             {
-                if (v.InnerText.Contains("帮面材质"))
+                foreach (var v in hnPropertys)
                 {
-                    var hnA = v.SelectSingleNode("a");
-                    if (hnA != null)
+                    if (v.InnerText.Contains("帮面材质"))
                     {
-                        g.Material = hnA.InnerText.Trim();
-                        break;
+                        var hnA = v.SelectSingleNode("a");
+                        if (hnA != null)
+                        {
+                            g.Material = hnA.InnerText.Trim();
+                            break;
+                        }
                     }
                 }
             }

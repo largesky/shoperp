@@ -35,7 +35,7 @@
                     <MenuItem Header="选择相同厂家" Name="miSelectSameVendor" Click="MiSelectSameVendor_Click"/>
                     <MenuItem Header="选择相同商品" Name="miSelectSameGoodsById" Click="MiSelectSameGoodsById_Click"/>
                     <MenuItem Header="选择相同商品颜色尺码" Name="miSelectSameGoodsByIdAndColorSize" Click="MiSelectSameGoodsByIdAndColorSize_Click"/>
-                    <MenuItem Header="编辑订单" Name="miEditOrder" Click="miEditOrder_Click" />
+                    <MenuItem Header="编辑收货人信息" Name="miEditOrder" Click="miEditOrder_Click" />
                 </ContextMenu>
             </DataGrid.ContextMenu>
             <DataGrid.Columns>
