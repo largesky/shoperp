@@ -146,6 +146,10 @@ namespace ShopErp.App.Views.Goods
                 this.imagePath = goods.Image;
                 this.hasImageSet = true;
                 this.Goods = goods;
+                if (this.cbbShippers.ItemsSource is List<string> && (this.cbbShippers.ItemsSource as List<string>).Count == 1)
+                {
+                    this.cbbShippers.SelectedIndex = 0;
+                }
                 e.Handled = true;
             }
             catch (Exception ex)
@@ -197,6 +201,11 @@ namespace ShopErp.App.Views.Goods
                 {
                     MessageBox.Show("请选择商品图片");
                     return;
+                }
+
+                if (string.IsNullOrWhiteSpace(this.Goods.Shipper))
+                {
+                    throw new Exception("发货仓库不能为空");
                 }
 
                 //查找该厂家是其它厂家的别名

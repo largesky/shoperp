@@ -89,12 +89,12 @@ namespace ShopErp.App.Service.Restful
             return DoPost<DataCollectionResponse<PopGoods>>(para);
         }
 
-        public DataCollectionResponse<string> AddGoods(Shop shop, PopGoods[] goods, float[] buyInPrices)
+        public DataCollectionResponse<string> AddGoods(Shop shop, PopGoods popGoods, float  buyInPrice)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
             para["shop"] = shop;
-            para["goods"] = goods;
-            para["buyInPrices"] = buyInPrices;
+            para["popGoods"] = popGoods;
+            para["buyInPrice"] = buyInPrice;
             return DoPost<DataCollectionResponse<string>>(para);
         }
 

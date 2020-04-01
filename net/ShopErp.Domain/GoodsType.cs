@@ -18,6 +18,8 @@
         GOODS_SHOES_XUEZI,
         [EnumDescription("凡布鞋")]
         GOODS_SHOES_FANBUXIE,
+        [EnumDescription("运动鞋")]
+        GOODS_SHOES_YUNDONGXIE,
         [EnumDescription("雨鞋")]
         GOODS_SHOES_YUXIE,
         [EnumDescription("男鞋")]

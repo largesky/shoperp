@@ -37,5 +37,7 @@ namespace ShopErp.Domain
 
         public const string CONFIG_NETWORK_MAX_TIMEOUT = "NETWORK_MAX_TIMEOUT";
 
+        public const string CONFIG_PRINT_OFFSETS = "PRINT_OFFSETS";
+
     }
 }

@@ -208,11 +208,11 @@ namespace ShopErp.Server.Service.Restful
 
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/addgoods.html")]
-        public DataCollectionResponse<string> AddGoods(Shop shop, PopGoods[] goods, float[] buyInPrices)
+        public DataCollectionResponse<string> AddGoods(Shop shop, PopGoods popGoods, float  buyInPrice)
         {
             try
             {
-                return new DataCollectionResponse<string>((new PopService().AddGoods(shop, goods, buyInPrices)));
+                return new DataCollectionResponse<string>((new PopService().AddGoods(shop, popGoods, buyInPrice)));
             }
             catch (Exception e)
             {

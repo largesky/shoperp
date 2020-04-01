@@ -53,6 +53,10 @@ namespace ShopErp.App.ViewModels
 
         public static readonly DependencyProperty PrintServerAddProperty = DependencyProperty.Register("PrintServerAdd", typeof(string), typeof(PrintOrderPageViewModel));
 
+        public static readonly DependencyProperty XOffsetProperty = DependencyProperty.Register("XOffset", typeof(int), typeof(PrintOrderPageViewModel));
+
+        public static readonly DependencyProperty YOffsetProperty = DependencyProperty.Register("YOffset", typeof(int), typeof(PrintOrderPageViewModel));
+
         private PrintHistoryService printHistoryService = ServiceContainer.GetService<PrintHistoryService>();
 
         private OrderService orderService = ServiceContainer.GetService<OrderService>();
@@ -142,6 +146,18 @@ namespace ShopErp.App.ViewModels
             set { this.SetValue(PrinterProperty, value); }
         }
 
+        public int XOffset
+        {
+            get { return (int)this.GetValue(XOffsetProperty); }
+            set { this.SetValue(XOffsetProperty, value); }
+        }
+
+        public int YOffset
+        {
+            get { return (int)this.GetValue(YOffsetProperty); }
+            set { this.SetValue(YOffsetProperty, value); }
+        }
+
         public PrintOrderPageViewModel(PrintOrderViewModel[] orders)
         {
             this.OrderViewModels = new ObservableCollection<PrintOrderViewModel>();
@@ -160,6 +176,8 @@ namespace ShopErp.App.ViewModels
             this.Checked = true;
             this.SelectedCount = orders.Count(obj => obj.IsChecked);
             this.PrintButtonString = "打印";
+            this.XOffset = 0;
+            this.YOffset = 0;
         }
 
         private void OrderViewModels_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -260,6 +278,21 @@ namespace ShopErp.App.ViewModels
                     {
                         throw new Exception("暂时不支持的平台");
                     }
+                    string[] offsets = LocalConfigService.GetValue(SystemNames.CONFIG_PRINT_OFFSETS, "").Split(new string[] { "###" }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var v in offsets)
+                    {
+                        string url = this.WuliuPrintTemplate.UserOrIsvTemplateAreaUrl ?? this.WuliuPrintTemplate.StandTemplateUrl;
+                        if (v.Contains(url))
+                        {
+                            string[] oss = v.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                            if (oss.Length == 3)
+                            {
+                                XOffset = int.Parse(oss[1]);
+                                YOffset = int.Parse(oss[2]);
+                            }
+                            break;
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -304,7 +337,8 @@ namespace ShopErp.App.ViewModels
                 this.IsUserStop = false;
                 this.IsRunning = true;
                 this.PrintButtonString = "停止";
-
+                this.WuliuPrintTemplate.XOffset = this.XOffset;
+                this.WuliuPrintTemplate.YOffset = this.YOffset;
                 string senderName = ServiceContainer.GetService<SystemConfigService>().Get(-1, SystemNames.CONFIG_CAINIAO_SENDER_NAME, "");
                 string senderPhone = ServiceContainer.GetService<SystemConfigService>().Get(-1, SystemNames.CONFIG_CAINIAO_SENDER_PHONE, "");
 
@@ -489,6 +523,13 @@ namespace ShopErp.App.ViewModels
                     File.WriteAllBytes(sfd.FileName, content);
                 }
                 LocalConfigService.UpdateValue(SystemNames.CONFIG_PRINTER_DELIVERY_HOT, this.Printer);
+                var offsets = LocalConfigService.GetValue(SystemNames.CONFIG_PRINT_OFFSETS, "").Split(new string[] { "###" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                string url = this.WuliuPrintTemplate.UserOrIsvTemplateAreaUrl ?? this.WuliuPrintTemplate.StandTemplateUrl;
+                string urlOffset = url + "," + XOffset + "," + YOffset;
+                offsets.RemoveAll(obj => obj.Contains(url));
+                offsets.Add(urlOffset);
+                string strOffsets = string.Join("###", offsets);
+                LocalConfigService.UpdateValue(SystemNames.CONFIG_PRINT_OFFSETS, strOffsets);
             }
             finally
             {

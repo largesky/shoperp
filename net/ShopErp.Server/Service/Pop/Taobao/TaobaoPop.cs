@@ -899,7 +899,7 @@ namespace ShopErp.Server.Service.Pop.Taobao
             return xDoc;
         }
 
-        public override string[] AddGoods(Shop shop, PopGoods[] popGoods, float[] buyInPrices)
+        public override string AddGoods(Shop shop, PopGoods popGoods, float buyInPrice)
         {
             throw new NotImplementedException();
         }

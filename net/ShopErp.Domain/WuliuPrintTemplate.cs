@@ -58,6 +58,10 @@ namespace ShopErp.Domain
         /// </summary>
         public bool IsIsv { get; set; }
 
+        public int XOffset { get; set; }
+
+        public int YOffset { get; set; }
+
         public override string ToString()
         {
             return Name;

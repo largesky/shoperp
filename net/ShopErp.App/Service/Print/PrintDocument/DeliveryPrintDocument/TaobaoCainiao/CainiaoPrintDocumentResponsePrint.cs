@@ -10,8 +10,6 @@ namespace ShopErp.App.Service.Print.PrintDocument.DeliveryPrintDocument.TaobaoCa
     {
         public string taskID;
 
-        public string status;
-
         public string previewURL;
 
         public string[] previewImage;

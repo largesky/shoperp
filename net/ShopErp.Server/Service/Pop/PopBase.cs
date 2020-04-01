@@ -46,7 +46,7 @@ namespace ShopErp.Server.Service.Pop
 
         public abstract void UpdateWuliuNumber(Shop shop, WuliuPrintTemplate wuliuTemplate, Order order, WuliuNumber wuliuNumber);
 
-        public abstract string[] AddGoods(Shop shop, PopGoods[] popGoods, float[] buyInPrices);
+        public abstract string AddGoods(Shop shop, PopGoods  popGoods, float buyInPrice);
 
         public abstract XDocument GetAddress(Shop shop);
     }

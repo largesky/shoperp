@@ -244,12 +244,14 @@ namespace ShopErp.App.Views.Goods
 
         private void GoodsDownloadWorker_DownloadData(object sender, GoodsDownloadDataEventArgs e)
         {
+            Debug.WriteLine("GoodsDownloadWorker_DownloadData");
             GoodsDownloadWorker worker = sender as GoodsDownloadWorker;
             this.Dispatcher.BeginInvoke(new Action(() => AppendDataToUi(e.Goods, worker.shop, worker.title, worker.code, worker.stockCode, worker.state)));
         }
 
         private void GoodsDownloadWorker_Download(object sender, GoodsDownloadWorkerEventArgs e)
         {
+            Debug.WriteLine("GoodsDownloadWorker_Download");
             GoodsDownloadWorkerEventArgs le = e;
             this.Dispatcher.BeginInvoke(new Action(() =>
             {
@@ -427,15 +429,11 @@ namespace ShopErp.App.Views.Goods
         {
             try
             {
-                for (int i = 0; i < 5; i++)
+                if (MessageBox.Show("您正重置所有备注，请确认", "警告", MessageBoxButton.YesNo, MessageBoxImage.Asterisk, MessageBoxResult.No) != MessageBoxResult.Yes)
                 {
-                    string msg = string.Format("您正重置备注，共提醒{0}次，当前第{1}次", 5, i + 1);
-                    if (MessageBox.Show(msg, "警告", MessageBoxButton.YesNo, MessageBoxImage.Asterisk, MessageBoxResult.No) != MessageBoxResult.Yes)
-                    {
-                        return;
-                    }
+                    return;
                 }
-                var goods = this.dgvGoods.ItemsSource as PopGoodsInfoViewModel[];
+                var goods = popGoodsInfoViewModels.ToArray();
                 if (goods == null || goods.Length < 1)
                 {
                     throw new Exception("没有需要重置的数据");
@@ -612,8 +610,6 @@ namespace ShopErp.App.Views.Goods
 
         private void ExportToPddTask(Shop shop, PopGoodsInfoViewModel[] pgs, float[] buyInPrice)
         {
-            var popGoods = new PopGoods[1];
-            var price = new float[1];
             string exportMsg = "";
             for (int i = 0; i < pgs.Length && this.isStop == false; i++)
             {
@@ -621,14 +617,12 @@ namespace ShopErp.App.Views.Goods
                 this.SetUiMsg(this.btnExportToPdd, "正在导入： " + (index + 1) + "/" + pgs.Length + " " + pgs[index].PopGoodsInfo.Id + " " + pgs[index].SkuCodesInfo, true, "停止", "导入");
                 try
                 {
-                    popGoods[0] = pgs[i].PopGoodsInfo;
-                    price[0] = buyInPrice[i];
-                    var ret = ServiceContainer.GetService<GoodsService>().AddGoods(shop, popGoods, price);
+                    var ret = ServiceContainer.GetService<GoodsService>().AddGoods(shop, pgs[i].PopGoodsInfo, buyInPrice[i]);
                     exportMsg = ret.Datas[0];
                     if (index < pgs.Length - 1)
                     {
-                        this.SetUiMsg(this.btnExportToPdd, "等待2秒后继续导入", true, "停止", "导入");
-                        Thread.Sleep(2000);
+                        this.SetUiMsg(this.btnExportToPdd, "等待60秒后继续导入", true, "停止", "导入");
+                        Thread.Sleep(60000);
                     }
                 }
                 catch (Exception ee)
@@ -637,6 +631,8 @@ namespace ShopErp.App.Views.Goods
                 }
                 finally
                 {
+                    pgs[i].GoodsTask.Comment = exportMsg;
+                    ServiceContainer.GetService<GoodsTaskService>().Save(pgs[i].GoodsTask);
                     this.Dispatcher.BeginInvoke(new Action(() => pgs[index].State = exportMsg));
                 }
             }
@@ -644,9 +640,11 @@ namespace ShopErp.App.Views.Goods
             this.isStop = true;
             this.Dispatcher.BeginInvoke(new Action(() =>
             {
+                this.task = null;
                 this.SetUiMsg(this.btnExportToPdd, "导入完成", false, "停止", "导入");
                 MessageBox.Show("导入完成");
             }));
+
         }
 
         private void BtnCheckImage_Click(object sender, RoutedEventArgs e)

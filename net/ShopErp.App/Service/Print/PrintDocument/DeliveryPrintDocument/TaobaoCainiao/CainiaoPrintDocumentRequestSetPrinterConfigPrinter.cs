@@ -6,14 +6,12 @@ using System.Threading.Tasks;
 
 namespace ShopErp.App.Service.Print.PrintDocument.DeliveryPrintDocument.TaobaoCainiao
 {
-    public class CainiaoPrintDocumentResponse
+    class CainiaoPrintDocumentRequestSetPrinterConfigPrinter
     {
-        public string cmd;
+        public string name;
 
-        public string requestID;
+        public int horizontalOffset;
 
-        public string status = "success";
-
-        public string msg = "";
+        public int verticalOffset;
     }
 }

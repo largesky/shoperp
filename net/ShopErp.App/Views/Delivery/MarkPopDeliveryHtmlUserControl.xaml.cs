@@ -26,6 +26,7 @@ using System.Text.RegularExpressions;
 using ShopErp.App.CefSharpUtils;
 using ShopErp.App.Service.Net;
 using System.ComponentModel;
+using System.Web;
 
 namespace ShopErp.App.Views.Delivery
 {
@@ -358,7 +359,7 @@ namespace ShopErp.App.Views.Delivery
                     Vendor = "",
                     IsPeijian = false,
                 };
-                og.PopInfo = og.Number + "||颜色:" + og.Color + "|尺码:" + og.Size;
+                og.PopInfo = og.Number + " " + og.Color + " " + og.Size;
 
                 if (so.operations != null && so.operations.FirstOrDefault(obj => obj.text.Trim() == "退款成功") != null)
                 {
@@ -382,8 +383,8 @@ namespace ShopErp.App.Views.Delivery
 
             string add = "";
             string[] reinfos = reciverInfo.Split(new char[] { '，', ',' }, StringSplitOptions.RemoveEmptyEntries);
-            order.ReceiverName = reinfos[0].Trim();
-            order.ReceiverMobile = reinfos[1].Replace("86-", "");
+            order.ReceiverName = HttpUtility.HtmlDecode(reinfos[0].Trim());
+            order.ReceiverMobile = HttpUtility.HtmlDecode(reinfos[1].Replace("86-", ""));
             int start = 2;
             if (reinfos[2].All(c => Char.IsDigit(c) || c == '-'))
             {
@@ -398,7 +399,7 @@ namespace ShopErp.App.Views.Delivery
                 }
                 add += reinfos[start] + ",";
             }
-            order.ReceiverAddress = add.Trim(',');
+            order.ReceiverAddress = HttpUtility.HtmlDecode(add.Trim(','));
             return order;
         }
 

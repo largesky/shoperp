@@ -217,13 +217,13 @@ namespace ShopErp.Server.Service.Pop
             this.InvokeWithRefreshAccessToken(shop, (Action)(() => GetPop(shop.PopType).UpdateWuliuNumber(shop, wuliuTemplate, order, wuliuNumber)));
         }
 
-        public string[] AddGoods(Shop shop, PopGoods[] popGoods, float[] buyInPrices)
+        public string AddGoods(Shop shop, PopGoods popGoods, float buyInPrice)
         {
             if (shop.AppEnabled == false)
             {
                 throw new Exception("店铺订单发货接口已禁用，无法调用相应接口操作");
             }
-            return GetPop(shop.PopType).AddGoods(shop, popGoods, buyInPrices);
+            return GetPop(shop.PopType).AddGoods(shop, popGoods, buyInPrice);
         }
 
         public XDocument GetAddress(Shop shop)

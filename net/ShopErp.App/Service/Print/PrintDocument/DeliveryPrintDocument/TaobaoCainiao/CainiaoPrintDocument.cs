@@ -99,6 +99,10 @@ namespace ShopErp.App.Service.Print.PrintDocument.DeliveryPrintDocument.TaobaoCa
                 {
                     throw new Exception("发送的请求：" + request.requestID + " 与返回的请求不匹配：" + response.requestID);
                 }
+                if (response.status.Equals("success", StringComparison.OrdinalIgnoreCase) == false)
+                {
+                    throw new Exception("发送指令失败：" + response.msg);
+                }
                 return response;
             }
             catch (AggregateException ae)
@@ -134,6 +138,8 @@ namespace ShopErp.App.Service.Print.PrintDocument.DeliveryPrintDocument.TaobaoCa
 
         public override string StartPrint(string printer, string printServerAdd)
         {
+            var configReq = new CainiaoPrintDocumentRequestSetPrinterConfig { printer = new CainiaoPrintDocumentRequestSetPrinterConfigPrinter { horizontalOffset = this.CloudPrintTemplate.XOffset, verticalOffset = this.CloudPrintTemplate.YOffset, name = printer } };
+            var configRsp = SendAndReciveObject<CainiaoPrintDocumentResponse>(configReq, printServerAdd);
             var req = GetPrintData(printer);
             var rsp = SendAndReciveObject<CainiaoPrintDocumentResponsePrint>(req, printServerAdd);
             if (rsp.status.Equals("success", StringComparison.OrdinalIgnoreCase) == false)

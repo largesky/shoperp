@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ShopErp.App.Service.Net;
+using ShopErp.App.Utils;
 using ShopErp.Domain;
 
 namespace ShopErp.App.Service.Spider.K3
@@ -12,7 +13,7 @@ namespace ShopErp.App.Service.Spider.K3
     {
         public override Goods GetGoodsInfoByUrl(string url, ref string vendorHomePage, ref string videoUrl, bool raiseExceptionOnGoodsNotSale)
         {
-            Goods g = new Goods { Comment = "", CreateTime = DateTime.Now, Image = "", Number = "", Price = 0, Type = 0, UpdateEnabled = true, UpdateTime = DateTime.Now, Url = url, VendorId = 0, Weight = 0, Id = 0, Colors = "", CreateOperator = "", Flag = ColorFlag.UN_LABEL, IgnoreEdtion = false, ImageDir = "", Material = "", Shops = new List<GoodsShop>(), Star = 0, VideoType = GoodsVideoType.NONE, Shipper = "" };
+            Goods g = new Goods { Comment = "", CreateTime = DateTime.Now, Image = "", Number = "", Price = 0, Type = 0, UpdateEnabled = true, UpdateTime = DateTime.Now, Url = url, VendorId = 0, Weight = 0, Id = 0, Colors = "", CreateOperator = "", Flag = ColorFlag.UN_LABEL, IgnoreEdtion = false, ImageDir = "", Material = "", Shops = new List<GoodsShop>(), Star = 0, VideoType = GoodsVideoType.NONE, Shipper = "WL" };
             string html = MsHttpRestful.GetUrlEncodeBodyReturnString(url, null);
             HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(html);
@@ -49,8 +50,15 @@ namespace ShopErp.App.Service.Spider.K3
             }
             g.Image = hnImages.GetAttributeValue("src", "");
 
+            //类型
+            var hnTypes = doc.DocumentNode.SelectNodes("//div[@class='category']/span");
+            if (hnTypes == null || hnTypes.Count < 1)
+            {
+                throw new Exception("未找到类型结点 //div[@class='category']/span");
+            }
+            var type = hnTypes.First().InnerText.Replace("类型：", "");
+            g.Type = EnumUtil.GetEnumValueByDesc<GoodsType>(type);
             //主图视频
-
 
             //颜色
             var hnColors = doc.DocumentNode.SelectNodes("//div[@class='default-color']/div/span/a");

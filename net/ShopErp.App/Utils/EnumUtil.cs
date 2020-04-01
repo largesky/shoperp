@@ -41,7 +41,6 @@ namespace ShopErp.App.Utils
             throw new Exception("无法解析枚举信息:" + en.GetType().FullName + "  " + en);
         }
 
-
         public static string[] GetEnumDescriptions(Type t)
         {
             lock (typefieldDescriptionCaches)
@@ -78,6 +77,20 @@ namespace ShopErp.App.Utils
                 return null;
             }
             return values.GetValue(index);
+        }
+
+        public static T GetEnumValueByDesc<T>(string desc) where T : Enum
+        {
+            var descs = GetEnumDescriptions(typeof(T)).ToList();
+            var values = Enum.GetValues(typeof(T));
+
+            int index = descs.IndexOf(desc);
+
+            if (index < 0)
+            {
+                throw new Exception("无法转换指定值：" + typeof(T).FullName + " , " + desc);
+            }
+            return (T)values.GetValue(index);
         }
     }
 }
