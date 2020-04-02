@@ -32,15 +32,26 @@ namespace ShopErp.App.Views.Delivery
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            List<string> com = ServiceContainer.GetService<DeliveryCompanyService>().GetByAll().Datas.Select(obj => obj.Name).ToList();
-            com.Insert(0, "");
-            List<Shop> shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas.ToList();
-            shops.Insert(0, new Shop { });
-            this.cbbDeliveryCompany.ItemsSource = com;
-            this.cbbShops.ItemsSource = shops;
-            this.cbbShops.SelectedIndex = 0;
-            this.cbbPayTypes.Bind<PopPayType>();
-            this.cbbPayTypes.SelectedIndex = 0;
+            try
+            {
+                List<string> com = ServiceContainer.GetService<DeliveryCompanyService>().GetByAll().Datas.Select(obj => obj.Name).ToList();
+                com.Insert(0, "");
+                List<Shop> shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas.ToList();
+                shops.Insert(0, new Shop { });
+                var shippers = ServiceContainer.GetService<GoodsService>().GetAllShippers().Datas;
+                shippers.Insert(0, "");
+
+                this.cbbDeliveryCompany.ItemsSource = com;
+                this.cbbShops.ItemsSource = shops;
+                this.cbbShops.SelectedIndex = 0;
+                this.cbbPayTypes.Bind<PopPayType>();
+                this.cbbPayTypes.SelectedIndex = 0;
+                this.cbbShippers.ItemsSource = shippers;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void btnSearch_Click(object sender, RoutedEventArgs e)
@@ -53,15 +64,12 @@ namespace ShopErp.App.Views.Delivery
                 DateTime end = this.dpEnd.Value == null ? DateTime.MinValue : this.dpEnd.Value.Value;
                 string vendor = this.tbVendor.Text.Trim();
                 string number = this.tbNumber.Text.Trim();
-                var data = ServiceContainer.GetService<DeliveryOutService>()
-                    .GetByAll(this.cbbPayTypes.GetSelectedEnum<PopPayType>(), (this.cbbShops.SelectedItem as Shop).Id,
-                        deliveryCompany, deliveryNumber, vendor, number, start, end, 0, 0);
+                var data = ServiceContainer.GetService<DeliveryOutService>().GetByAll(this.cbbPayTypes.GetSelectedEnum<PopPayType>(), (this.cbbShops.SelectedItem as Shop).Id, deliveryCompany, deliveryNumber, vendor, number, this.cbbShippers.Text.Trim(), start, end, 0, 0);
                 var sortDatas = data.Datas.OrderBy(obj => obj.DeliveryCompany).ToArray();
                 this.dgvItems.ItemsSource = sortDatas;
                 this.outs = sortDatas;
                 //生成统计信息
-                string message = string.Format(
-                    "当前共:{0}条发货记录,  {1}条快递记录,  成本运费金额:{2},  平台运费金额:{3},  货到付款服务费用:{4},  成本商品金额:{5},  平台商品金额:{6}",
+                string message = string.Format("当前共:{0}条发货记录,  {1}条快递记录,  成本运费金额:{2},  平台运费金额:{3},  货到付款服务费用:{4},  成本商品金额:{5},  平台商品金额:{6}",
                     this.outs.Length,
                     this.outs.Select(obj => obj.DeliveryNumber).Distinct().Count(),
                     this.outs.Select(obj => obj.ERPDeliveryMoney).Sum(),
@@ -91,8 +99,7 @@ namespace ShopErp.App.Views.Delivery
                     throw new Exception("你没有权限删除");
                 }
 
-                if (MessageBox.Show("是否删除?", "警告", MessageBoxButton.YesNo, MessageBoxImage.Question) !=
-                    MessageBoxResult.Yes)
+                if (MessageBox.Show("是否删除?", "警告", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 {
                     return;
                 }

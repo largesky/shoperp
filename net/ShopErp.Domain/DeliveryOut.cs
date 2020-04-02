@@ -21,5 +21,6 @@ namespace ShopErp.Domain
         public string GoodsInfo { get; set; }
         public string Operator { get; set; }
         public DateTime CreateTime { get; set; }
+        public string Shipper { get; set; }
     }
 }

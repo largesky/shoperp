@@ -462,11 +462,16 @@ namespace ShopErp.Server.Service.Restful
                 {
                     throw new Exception("商品数量不匹配");
                 }
-
+                foreach (var og in totalOgs)
+                {
+                    if (totalOgs.Any(obj => obj.Shipper.Length > og.Shipper.Length ? obj.Shipper.IndexOf(og.Shipper, StringComparison.OrdinalIgnoreCase) < 0 : og.Shipper.IndexOf(obj.Shipper, StringComparison.OrdinalIgnoreCase) < 0))
+                    {
+                        throw new Exception("不同仓库不能用一个单号发货");
+                    }
+                }
 
                 //第一个正常的订单，如果都不是，则默认为第一个订单
                 var mainOrder = normalOrders.Length > 0 ? normalOrders[0] : allOrders[0];
-
                 //计算快递费用
                 double deliveryMoney = ServiceContainer.GetService<DeliveryTemplateService>().ComputeDeliveryMoneyImplByCount(mainOrder.DeliveryCompany, mainOrder.ReceiverAddress, mainOrder.Type != OrderType.NORMAL, mainOrder.PopPayType, goodsCount);
 
@@ -554,6 +559,7 @@ namespace ShopErp.Server.Service.Restful
                     Weight = goodsCount,
                     PopCodSevFee = normalOrders.Select(obj => obj.PopCodSevFee).Sum(),
                     GoodsInfo = string.Join(",", totalOgs.Select(obj => VendorService.FormatVendorName(obj.Vendor) + " " + obj.Number + " " + obj.Edtion + " " + obj.Color + " " + obj.Size + " " + obj.Count)),
+                    Shipper = totalOgs[0].Shipper,
                 };
                 if (deliveryOut.GoodsInfo.Length > 1000)
                 {

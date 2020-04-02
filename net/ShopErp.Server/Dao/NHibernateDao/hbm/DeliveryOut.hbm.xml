@@ -49,5 +49,8 @@
     <property name="CreateTime">
       <column name="CreateTime" sql-type="datetime" not-null="true" />
     </property>
+    <property name="Shipper">
+      <column name="Shipper" sql-type="string" not-null="true" />
+    </property>
   </class>
 </hibernate-mapping>

@@ -30,7 +30,7 @@
                     Click="btnEdit_Click" />
             <Button Name="btnDelete" Content="删除" Margin="3" VerticalAlignment="Center" Width="60" FontSize="12"
                     Click="btnDelete_Click" />
-            <Button Name="btnGenMarketAddressShort" Content="生成默认短地址" Margin="3" VerticalAlignment="Center" Width="100"  Click="BtnGenMarketAddressShort_Click"/>
+            <Button Name="btnGenMarketAddressShort" Content="生成成都默认短地址" Margin="3" VerticalAlignment="Center" Width="120"  Click="BtnGenMarketAddressShort_Click"/>
             <TextBlock Name="tbMsg" Margin="3"></TextBlock>
         </StackPanel>
 

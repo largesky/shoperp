@@ -8,7 +8,7 @@ namespace ShopErp.Server.Dao.NHibernateDao
 {
     public class DeliveryOutDao : NHibernateDaoBase<DeliveryOut>
     {
-        public DataCollectionResponse<DeliveryOut> GetByAll(PopPayType payType, int shopId, string deliveryCompany, string deliveryNumber, string vendor, string number, DateTime startTime, DateTime endTime, int pageIndex, int pageSize)
+        public DataCollectionResponse<DeliveryOut> GetByAll(PopPayType payType, int shopId, string deliveryCompany, string deliveryNumber, string vendor, string number, string shipper, DateTime startTime, DateTime endTime, int pageIndex, int pageSize)
         {
             string hsql = "from " + this.GetEntiyName() + " where ";
             List<Object> objs = new List<object>();
@@ -21,6 +21,7 @@ namespace ShopErp.Server.Dao.NHibernateDao
             hsql += this.MakeQuery("CreateTime", endTime, false);
             hsql += this.MakeQueryLike("GoodsInfo", vendor, objs);
             hsql += this.MakeQueryLike("GoodsInfo", number, objs);
+            hsql += this.MakeQueryLike("Shipper", shipper, objs);
             return this.GetPage(hsql, pageIndex, pageSize, objs.ToArray());
         }
 

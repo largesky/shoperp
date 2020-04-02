@@ -92,7 +92,7 @@ namespace ShopErp.Server.Dao.NHibernateDao
 
                 if (string.IsNullOrWhiteSpace(shipper) == false)
                 {
-                    hsqlWhere += " and Shipper='" + shipper + "'";
+                    hsqlWhere += " and Shipper like '%" + shipper + "%'";
                 }
 
                 String contenthsql = "select order.Id,orderGoods.Vendor,orderGoods.Number,orderGoods.Edtion,orderGoods.Color,orderGoods.Size,orderGoods.Count,orderGoods.GetedCount,orderGoods.Price,order.PopPayTime,orderGoods.State, orderGoods.GoodsId,order.PopType,order.DeliveryCompany ";

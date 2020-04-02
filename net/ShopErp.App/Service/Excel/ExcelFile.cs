@@ -147,8 +147,6 @@ namespace ShopErp.App.Service.Excel
                         continue;
                     }
 
-                    Debug.WriteLine(sheet.SheetName + " Row: " + sheet.LastRowNum + " Col: ");
-
                     //获取最大的列数
                     List<int> cols = new List<int>();
                     for (int j = sheet.FirstRowNum; j <= sheet.LastRowNum; j++)

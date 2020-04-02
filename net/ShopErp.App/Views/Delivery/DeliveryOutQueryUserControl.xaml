@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-             d:DesignHeight="300" d:DesignWidth="1400" Loaded="UserControl_Loaded">
+             d:DesignHeight="300" d:DesignWidth="1440" Loaded="UserControl_Loaded">
     <Grid Grid.Column="1">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -16,10 +16,12 @@
         <StackPanel Grid.Row="0" Orientation="Horizontal">
             <TextBlock Text="店铺:" Margin="3" VerticalAlignment="Center" />
             <ComboBox Name="cbbShops" Margin="3" VerticalAlignment="Center" DisplayMemberPath="Mark" Width="40" />
-            <TextBlock Text="类型:" Margin="3" VerticalAlignment="Center" />
+            <TextBlock Text="付款类型:" Margin="3" VerticalAlignment="Center" />
             <ComboBox Name="cbbPayTypes" Margin="3" VerticalAlignment="Center" Width="90" />
             <TextBlock Text="快递:" Margin="3" VerticalAlignment="Center" />
             <ComboBox Name="cbbDeliveryCompany" Margin="3" VerticalAlignment="Center" Width="90" />
+            <TextBlock Text="仓库:" Margin="3" VerticalAlignment="Center" />
+            <ComboBox Name="cbbShippers" Margin="3" VerticalAlignment="Center"  Width="50" IsEditable="True"/>
             <TextBlock Text="单号:" Margin="3" VerticalAlignment="Center" />
             <TextBox Name="tbDeliveryNumber" Margin="3" VerticalAlignment="Center" Width="90" />
             <TextBlock Text="厂家:" Margin="3" VerticalAlignment="Center" />
@@ -27,17 +29,12 @@
             <TextBlock Text="货号:" Margin="3" VerticalAlignment="Center" />
             <TextBox Name="tbNumber" Margin="3" VerticalAlignment="Center" Width="90" />
             <TextBlock Text="开始时间:" Margin="3" VerticalAlignment="Center" />
-            <xctk:DateTimePicker Name="dpStart" Margin="3" VerticalAlignment="Center" Width="140" Format="Custom"
-                                 FormatString="yyyy-MM-dd HH:mm:ss" />
+            <xctk:DateTimePicker Name="dpStart" Margin="3" VerticalAlignment="Center" Width="140" Format="Custom" FormatString="yyyy-MM-dd HH:mm:ss" />
             <TextBlock Text="到:" Margin="3" VerticalAlignment="Center" />
-            <xctk:DateTimePicker Name="dpEnd" Margin="3" VerticalAlignment="Center" Width="140" Format="Custom"
-                                 FormatString="yyyy-MM-dd HH:mm:ss" />
-            <Button Name="btnSearch" Content="查询" Margin="3" VerticalAlignment="Center" Width="60"
-                    Click="btnSearch_Click" />
-            <Button Name="btnDelete" Content="删除选中" Margin="3" VerticalAlignment="Center" Width="60"
-                    Click="btnDelete_Click" />
-            <Button Name="btnMatch" Content="比较差异" Margin="3" VerticalAlignment="Center" Width="60"
-                    Click="btnMatch_Click" />
+            <xctk:DateTimePicker Name="dpEnd" Margin="3" VerticalAlignment="Center" Width="140" Format="Custom" FormatString="yyyy-MM-dd HH:mm:ss" />
+            <Button Name="btnSearch" Content="查询" Margin="3" VerticalAlignment="Center" Width="60" Click="btnSearch_Click" />
+            <Button Name="btnDelete" Content="删除选中" Margin="3" VerticalAlignment="Center" Width="60" Click="btnDelete_Click" />
+            <Button Name="btnMatch" Content="比较差异" Margin="3" VerticalAlignment="Center" Width="60" Click="btnMatch_Click" />
         </StackPanel>
 
         <TextBlock Grid.Row="1" Name="tbTotal" Margin="3" VerticalAlignment="Center" FontSize="13" />
@@ -52,11 +49,10 @@
                   SelectionMode="Extended"
                   SelectionUnit="CellOrRowHeader">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="店铺" Binding="{Binding ShopId,Converter={StaticResource shopMarkConverter}}"
-                                    Width="Auto" />
+                <DataGridTextColumn Header="店铺" Binding="{Binding ShopId,Converter={StaticResource shopMarkConverter}}" Width="Auto" />
                 <DataGridTextColumn Header="订单编号" Binding="{Binding OrderId}" Width="Auto" />
-                <DataGridTextColumn Header="付款类型"
-                                    Binding="{Binding PopPayType,Converter={StaticResource descriptionConverter}}" />
+                <DataGridTextColumn Header="付款类型" Binding="{Binding PopPayType,Converter={StaticResource descriptionConverter}}" />
+                <DataGridTextColumn Header="发货仓库" Binding="{Binding Shipper}" Width="Auto" />
                 <DataGridTextColumn Header="物流公司" Binding="{Binding DeliveryCompany}" Width="Auto" />
                 <DataGridTextColumn Header="物流单号" Binding="{Binding DeliveryNumber}" Width="Auto" />
                 <DataGridTextColumn Header="重量" Binding="{Binding Weight,StringFormat=F2}" Width="Auto" />
@@ -64,14 +60,11 @@
                 <DataGridTextColumn Header="成本快递金额" Binding="{Binding ERPDeliveryMoney,StringFormat=F2}" Width="Auto" />
                 <DataGridTextColumn Header="成本商品金额" Binding="{Binding ERPGoodsMoney,StringFormat=F2}" Width="Auto" />
                 <DataGridTextColumn Header="平台快递金额" Binding="{Binding PopDeliveryMoney,StringFormat=F2}" Width="Auto" />
-                <DataGridTextColumn Header="货到付款服务" Binding="{Binding PopCodSevFee,StringFormat=F2}" Width="Auto" />
                 <DataGridTextColumn Header="平台商品金额" Binding="{Binding PopGoodsMoney,StringFormat=F2}" Width="Auto" />
-                <DataGridTextColumn Header="发货时间"
-                                    Binding="{Binding CreateTime,Converter={StaticResource datetimeConverter}}"
-                                    Width="Auto" />
+                <DataGridTextColumn Header="货到付款服务费" Binding="{Binding PopCodSevFee,StringFormat=F2}" Width="Auto" />
+                <DataGridTextColumn Header="发货时间" Binding="{Binding CreateTime,Converter={StaticResource datetimeConverter}}" Width="Auto" />
                 <DataGridTextColumn Header="收货人地址" Binding="{Binding ReceiverAddress}" Width="Auto" />
             </DataGrid.Columns>
         </DataGrid>
-
     </Grid>
 </UserControl>
