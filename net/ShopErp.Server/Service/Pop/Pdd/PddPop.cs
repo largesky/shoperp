@@ -261,6 +261,7 @@ namespace ShopErp.Server.Service.Pop.Pdd
                             StockTime = DateTime.MinValue,
                             Vendor = "",
                             Weight = 0,
+                            Shipper = ""
                         };
                         //拼多以 ‘，’号分开，前面为颜色，后面为尺码
                         string[] stocks = goods.goods_spec.Split(new char[] { ',', '，' }, StringSplitOptions.RemoveEmptyEntries);

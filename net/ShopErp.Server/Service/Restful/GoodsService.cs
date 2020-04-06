@@ -208,7 +208,7 @@ namespace ShopErp.Server.Service.Restful
 
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/addgoods.html")]
-        public DataCollectionResponse<string> AddGoods(Shop shop, PopGoods popGoods, float  buyInPrice)
+        public DataCollectionResponse<string> AddGoods(Shop shop, PopGoods popGoods, float buyInPrice)
         {
             try
             {
@@ -223,27 +223,19 @@ namespace ShopErp.Server.Service.Restful
         public Goods ParsePopOrderGoodsNumber(OrderGoods og)
         {
             //上货时通常用&号，或者空格分开厂家货号
-            string stock = "";
-            if (og.Number.Contains("&") || og.Number.Contains(" "))
-            {
-                stock = og.Number;
-            }
-            else
-            {
-                stock = og.Vendor + "&" + og.Number;
-            }
+            string stock = og.Number.Contains("&") || og.Number.Contains(" ") ? og.Number : og.Vendor + "&" + og.Number;
             string[] stocks = stock.Split(new char[] { '&', ' ' }, StringSplitOptions.RemoveEmptyEntries);
             string rawVendor = null, rawNumber = null;
             if (stocks.Length != 2)
             {
-                throw new Exception("无法解析厂家货号" + og.Number);
+                return null;
             }
             rawVendor = stocks[0].Trim();
             rawNumber = stocks[1].Trim();
             var g = ParseGoods(rawVendor, rawNumber).First;
             if (g == null)
             {
-                throw new Exception("未能解析出商品货号:" + og.Number);
+                return null;
             }
             og.Number = g.Number;
             og.GoodsId = g.Id;

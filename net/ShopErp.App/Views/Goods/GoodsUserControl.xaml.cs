@@ -760,5 +760,40 @@ namespace ShopErp.App.Views.Goods
                 MessageBox.Show(ex.Message);
             }
         }
+
+        private void MiCopyPopNumber_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var goods = this.GetSelctedItem().Source;
+                var vendor = ServiceContainer.GetService<VendorService>().GetById(goods.VendorId);
+                Clipboard.SetText(vendor.Id.ToString("D4") + (goods.Number.Length < 3 ? goods.Number.PadRight(3, '0') : goods.Number.Substring(goods.Number.Length - 3)));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void MiCopyYstPath_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var goods = this.GetSelctedItem().Source;
+                var vendor = ServiceContainer.GetService<VendorService>().GetById(goods.VendorId);
+                string dir = goods.ImageDir;
+                string webdir = LocalConfigService.GetValue(ShopErp.Domain.SystemNames.CONFIG_WEB_IMAGE_DIR);
+                if (string.IsNullOrWhiteSpace(webdir))
+                {
+                    throw new Exception("没有配置网络图片路径，请在系统中配置");
+                }
+                string ystDir = System.IO.Path.Combine(webdir, dir) + "\\PT\\YST";
+                Clipboard.SetText(ystDir);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
     }
 }

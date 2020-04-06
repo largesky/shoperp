@@ -33,40 +33,58 @@ namespace ShopErp.App.Views.Goods
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Random r = new Random(DateTime.Now.Millisecond);
-            //检验
-            this.tbCheck.Text = "检验：" + Service.Restful.OperatorService.LoginOperator.Number.Substring(2);
-            //货号
-            ShopErp.Domain.Vendor vendor = ServiceContainer.GetService<VendorService>().GetById(Goods.VendorId);
-            if (vendor == null)
+            try
             {
-                throw new Exception("厂家获取为空，不能生成图片");
-            }
-            string door = VendorService.FindDoor(vendor.MarketAddress);
-            if (string.IsNullOrWhiteSpace(door))
-            {
-                door = "001";
-            }
-            string number = Goods.Number.Length < 3 ? Goods.Number.PadRight(3, '0') : Goods.Number;
-            this.tbNumber.Text = "货号：" + door.Substring(door.Length - 3) + number.Substring(number.Length - 3);
+                Random r = new Random(DateTime.Now.Millisecond);
+                //检验
+                this.tbCheck.Text = "检验：" + Service.Restful.OperatorService.LoginOperator.Number.Substring(2);
+                //货号
+                ShopErp.Domain.Vendor vendor = ServiceContainer.GetService<VendorService>().GetById(Goods.VendorId);
+                if (vendor == null)
+                {
+                    throw new Exception("厂家获取为空，不能生成图片");
+                }
+                this.tbNumber.Text = "货号：" + vendor.Id.ToString("D4") + (Goods.Number.Length < 3 ? Goods.Number.PadRight(3, '0') : Goods.Number);
 
-            //尺码
-            this.tbSize.Text = "尺码：" + r.Next(34, 39).ToString();
+                //尺码
+                this.tbSize.Text = "尺码：" + r.Next(34, 39).ToString();
 
-            //材质
-            this.cbbParaMateria.Text = Goods.Material;
+                //材质
+                this.cbbParaMateria.Text = Goods.Material;
 
-            //颜色
-            string[] colors = Goods.Colors.Split(new char[] { ',', '，', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            if (colors.Length > 0)
-            {
-                this.cbbParaColor.Text = colors[r.Next(0, colors.Length)];
+                //颜色
+                string[] colors = Goods.Colors.Split(new char[] { ',', '，', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                if (colors.Length > 0)
+                {
+                    this.cbbParaColor.Text = colors[r.Next(0, colors.Length)];
+                }
+                else
+                {
+                    this.cbbParaColor.Text = "";
+                }
+                this.tbParaBrand.Text = LocalConfigService.GetValue(SystemNames.CONFIG_GOODS_BOX_IMAGE_BRAND, "花儿锦");
+                string dir = this.Goods.ImageDir;
+                string webdir = LocalConfigService.GetValue(ShopErp.Domain.SystemNames.CONFIG_WEB_IMAGE_DIR);
+                if (string.IsNullOrWhiteSpace(webdir))
+                {
+                    throw new Exception("没有配置网络图片路径，请在系统中配置");
+                }
+                string file = System.IO.Path.Combine(webdir, dir) + "\\PT\\店主听闻" + this.Goods.Number + ".txt";
+                if (File.Exists(file))
+                {
+                    this.tbSay.Text = File.ReadAllText(file);
+                }
+                string fileSource = System.IO.Path.Combine(webdir, dir) + "\\PT\\店主听闻来源" + this.Goods.Number + ".txt";
+                if (File.Exists(fileSource))
+                {
+                    this.tbSaySource.Text = File.ReadAllText(fileSource);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                this.cbbParaColor.Text = "";
+                MessageBox.Show(ex.Message);
             }
-            this.tbParaBrand.Text = LocalConfigService.GetValue(SystemNames.CONFIG_GOODS_BOX_IMAGE_BRAND, "花儿锦");
+
         }
 
         private void UI_TextChanged(object sender, TextChangedEventArgs e)
@@ -79,7 +97,6 @@ namespace ShopErp.App.Views.Goods
             this.tbBrand.Text = "品牌：" + this.tbParaBrand.Text.Trim();
             this.tbMeteria.Text = "材质：" + this.cbbParaMateria.Text.Trim();
             this.tbColor.Text = "颜色：" + this.cbbParaColor.Text.Trim();
-
             this.tbMeteriaDetail.Text = this.cbbParaMateria.Text.Trim();
             this.tbMeteriaDetailButom.Text = this.cbbParaMeteriaButom.Text.Trim();
             this.tbHeight.Text = this.tbParaHeight.Text.Trim() + "厘米";
@@ -89,7 +106,6 @@ namespace ShopErp.App.Views.Goods
         private void SaveJpg(string path, Grid grid)
         {
             RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap((int)grid.ActualWidth, (int)grid.ActualHeight, 96, 96, PixelFormats.Pbgra32);
-            //renderTargetBitmap.Clear();
             renderTargetBitmap.Render(grid);
             JpegBitmapEncoder jpegBitmapEncoder = new JpegBitmapEncoder();
             jpegBitmapEncoder.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
@@ -148,28 +164,29 @@ namespace ShopErp.App.Views.Goods
                 }
 
                 string ptDir = fulldir + "\\PT";
-                if (System.IO.Directory.Exists(ptDir) == false)
+                System.IO.Directory.CreateDirectory(ptDir);
+                System.IO.Directory.CreateDirectory(ptDir + "\\ZT");
+                System.IO.Directory.CreateDirectory(ptDir + "\\YST");
+                System.IO.Directory.CreateDirectory(ptDir + "\\XQT");
+                string ptHeadersDir = System.IO.Path.Combine(EnvironmentDirHelper.DIR_DATA, "PTHeaders");
+                if (System.IO.Directory.Exists(ptHeadersDir))
                 {
-                    System.IO.Directory.CreateDirectory(ptDir);
-                    System.IO.Directory.CreateDirectory(ptDir + "\\ZT");
-                    System.IO.Directory.CreateDirectory(ptDir + "\\YST");
-                    string ptHeadersDir = System.IO.Path.Combine(EnvironmentDirHelper.DIR_DATA, "PTHeaders");
-                    if (System.IO.Directory.Exists(ptHeadersDir))
+                    string[] jpgs = System.IO.Directory.GetFiles(System.IO.Path.Combine(EnvironmentDirHelper.DIR_DATA, "PTHeaders"));
+                    foreach (var v in jpgs)
                     {
-                        string[] jpgs = System.IO.Directory.GetFiles(System.IO.Path.Combine(EnvironmentDirHelper.DIR_DATA, "PTHeaders"));
-                        foreach (var v in jpgs)
+                        if (v.EndsWith("jpg", StringComparison.OrdinalIgnoreCase) || v.EndsWith("png", StringComparison.OrdinalIgnoreCase))
                         {
-                            if (v.EndsWith("jpg", StringComparison.OrdinalIgnoreCase) || v.EndsWith("png", StringComparison.OrdinalIgnoreCase))
-                            {
-                                var fi = new FileInfo(v);
-                                System.IO.File.Copy(v, ptDir + "\\" + fi.Name);
-                            }
+                            var fi = new FileInfo(v);
+                            System.IO.File.Copy(v, ptDir + "\\" + fi.Name, true);
                         }
                     }
                 }
-                System.IO.Directory.CreateDirectory(fulldir + "\\YT");
                 SaveJpg(ptDir + "\\ZT\\XIEHE_" + vendorPingying + "&" + Goods.Number + ".jpg", this.dvXieHe);
                 SaveJpg(ptDir + "\\11.jpg", this.dvDetail);
+                SaveJpg(ptDir + "\\XQT\\XQT_00.jpg", this.dvSay);
+                System.IO.File.WriteAllText(ptDir + "\\店主听闻" + this.Goods.Number + ".txt", this.tbSay.Text);
+                System.IO.File.WriteAllText(ptDir + "\\店主听闻来源" + this.Goods.Number + ".txt", this.tbSaySource.Text);
+                System.IO.Directory.CreateDirectory(fulldir + "\\YT");
                 LocalConfigService.UpdateValue(SystemNames.CONFIG_GOODS_BOX_IMAGE_BRAND, this.tbParaBrand.Text.Trim());
                 MessageBox.Show("保存成功");
                 this.DialogResult = true;

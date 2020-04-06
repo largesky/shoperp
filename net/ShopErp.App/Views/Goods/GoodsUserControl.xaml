@@ -132,6 +132,8 @@
                     <MenuItem Header="创建鞋盒图" Name="miCreateBoxImage" Click="miCreateBoxImage_Click" />
                     <MenuItem Header="查看详情" Name="miDetail" Click="miDetail_Click" />
                     <MenuItem Header="复制厂家货号" Name="miCopyVendorNumber" Click="MiCopyVendorNumber_Click"/>
+                    <MenuItem Header="复制平台货号" Name="miCopyPopNumber" Click="MiCopyPopNumber_Click"/>
+                    <MenuItem Header="复制颜色图路径" Name="miCopyYstPath" Click="MiCopyYstPath_Click"/>
                 </ContextMenu>
             </DataGrid.ContextMenu>
             <DataGrid.Columns>
@@ -196,6 +198,8 @@
                     <MenuItem Header="创建鞋盒图" Click="miCreateBoxImage_Click" />
                     <MenuItem Header="查看详情" Click="miDetail_Click" />
                     <MenuItem Header="复制厂家货号"  Click="MiCopyVendorNumber_Click"/>
+                    <MenuItem Header="复制平台货号"  Click="MiCopyPopNumber_Click"/>
+                    <MenuItem Header="复制颜色图路径"   Click="MiCopyYstPath_Click"/>
                 </ContextMenu>
             </ListBox.ContextMenu>
             <ListBox.ItemsPanel>

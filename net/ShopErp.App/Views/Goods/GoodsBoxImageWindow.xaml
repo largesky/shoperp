@@ -9,12 +9,16 @@
     <StackPanel>
         <TabControl>
             <TabItem Header="鞋盒图">
-                <Grid Grid.Row="1" Name="dvXieHe" Background="LightGray" Width="790">
+                <Grid Grid.Row="1" Name="dvXieHe" Background="#FFF6F6F6" Width="790">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="75"/>
-                        <RowDefinition Height="75"/>
-                        <RowDefinition Height="75"/>
-                        <RowDefinition Height="75"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -35,27 +39,165 @@
         </TabControl>
         <TabControl>
             <TabItem Header="详情图">
-                <Grid Grid.Row="0" Name="dvDetail"  Background="LightGray" Width="790">
+                <Grid Grid.Row="0" Name="dvDetail"  Background="White" Width="790" >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="30"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="30*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="30*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="30"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Row="0" Grid.Column="1" Text="鞋面：" Margin="3" VerticalAlignment="Center" FontSize="22"/>
-                    <TextBlock Grid.Row="0" Grid.Column="2" Name="tbMeteriaDetail"  Text="PU" Margin="3" VerticalAlignment="Center" FontSize="22"/>
-                    <TextBlock Grid.Row="0" Grid.Column="3" Text="鞋底：" Margin="3" VerticalAlignment="Center" FontSize="22"/>
-                    <TextBlock Grid.Row="0" Grid.Column="4" Name="tbMeteriaDetailButom"  Text="橡胶底" Margin="3" VerticalAlignment="Center" FontSize="22"/>
+                    <TextBlock Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="3" Name="tbMeteriaDetail"  Text="PU" Margin="3" VerticalAlignment="Center" FontSize="22"/>
+                    <TextBlock Grid.Row="0" Grid.Column="5" Text="鞋底：" Margin="3" VerticalAlignment="Center" FontSize="22"/>
+                    <TextBlock Grid.Row="0" Grid.Column="6" Grid.ColumnSpan="4" Name="tbMeteriaDetailButom"  Text="橡胶底" Margin="3" VerticalAlignment="Center" FontSize="22"/>
                     <TextBlock Grid.Row="1" Grid.Column="1" Text="跟高：" Margin="3" VerticalAlignment="Center" FontSize="22"/>
-                    <TextBlock Grid.Row="1" Grid.Column="2" Name="tbHeight"  Text="7厘米" Margin="3" VerticalAlignment="Center" FontSize="22"/>
-                    <TextBlock Grid.Row="1" Grid.Column="3" Text="防水台：" Margin="3" VerticalAlignment="Center" FontSize="20"/>
-                    <TextBlock Grid.Row="1" Grid.Column="4" Name="tbHeightFront"  Text="-厘米" Margin="3" VerticalAlignment="Center" FontSize="22"/>
+                    <TextBlock Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="3" Name="tbHeight"  Text="7厘米" Margin="3" VerticalAlignment="Center" FontSize="22"/>
+                    <TextBlock Grid.Row="1" Grid.Column="5" Text="防水台：" Margin="3" VerticalAlignment="Center" FontSize="20"/>
+                    <TextBlock Grid.Row="1" Grid.Column="6" Grid.ColumnSpan="3" Name="tbHeightFront"  Text="-厘米" Margin="3" VerticalAlignment="Center" FontSize="22"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Text="尺码对照表/SIZE" FontSize="24" Margin="5" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="2" Text="此款标准尺码"  FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Left" Background="LightGray"/>
+
+                    <Border Grid.Row="3" Grid.Column="1" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="标准码" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" Width="{Binding }"/>
+                    </Border>
+                    <Border Grid.Row="3" Grid.Column="2" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                        <TextBlock Grid.Row="3" Grid.Column="2" Text="33" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
+                    </Border>
+                    <Border Grid.Row="3" Grid.Column="3" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                        <TextBlock Grid.Row="3" Grid.Column="3" Text="34" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
+                    </Border>
+                    <Border Grid.Row="3" Grid.Column="4" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                        <TextBlock Grid.Row="3" Grid.Column="4" Text="35" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
+                    </Border>
+                    <Border Grid.Row="3" Grid.Column="5" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                        <TextBlock Grid.Row="3" Grid.Column="5" Text="36" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
+                    </Border>
+                    <Border Grid.Row="3" Grid.Column="6" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                        <TextBlock Grid.Row="3" Grid.Column="6" Text="37" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
+                    </Border>
+                    <Border Grid.Row="3" Grid.Column="7" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                        <TextBlock Grid.Row="3" Grid.Column="7" Text="38" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
+                    </Border>
+                    <Border Grid.Row="3" Grid.Column="8" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                        <TextBlock Grid.Row="3" Grid.Column="8" Text="39" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
+                    </Border>
+                    <Border Grid.Row="3" Grid.Column="9" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                        <TextBlock Grid.Row="3" Grid.Column="9" Text="40" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
+                    </Border>
+                    <Border Grid.Row="4" Grid.Column="1" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="内长CM" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
+                    </Border>
+                    <Border Grid.Row="4" Grid.Column="2" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                        <TextBlock Grid.Row="4" Grid.Column="2" Text="21.5" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
+                    </Border>
+                    <Border Grid.Row="4" Grid.Column="3" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                        <TextBlock Grid.Row="4" Grid.Column="3" Text="22" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
+                    </Border>
+                    <Border Grid.Row="4" Grid.Column="4" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                        <TextBlock Grid.Row="4" Grid.Column="4" Text="22.5" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
+                    </Border>
+                    <Border Grid.Row="4" Grid.Column="5" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                        <TextBlock Grid.Row="4" Grid.Column="5" Text="23" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
+                    </Border>
+                    <Border Grid.Row="4" Grid.Column="6" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                        <TextBlock Grid.Row="4" Grid.Column="6" Text="23.5" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
+                    </Border>
+                    <Border Grid.Row="4" Grid.Column="7" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                        <TextBlock Grid.Row="4" Grid.Column="7" Text="24" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
+                    </Border>
+                    <Border Grid.Row="4" Grid.Column="8" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                        <TextBlock Grid.Row="4" Grid.Column="8" Text="24.5" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
+                    </Border>
+                    <Border Grid.Row="4" Grid.Column="9" BorderBrush="#FFF0F0F0" BorderThickness="2">
+                        <TextBlock Text="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
+                    </Border>
+                    <TextBlock Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" Text="温馨提示：" FontSize="20" Background="LightGray"></TextBlock>
+                    <TextBlock Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="9" Margin="5" Text="1:您的左右脚大小可能会有差异，上午与下午可能会有差异，应以较大的为准。" FontSize="16" TextWrapping="Wrap"></TextBlock>
+                    <TextBlock Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="10" Margin="5" Text="2:每个人的实际情况受脚的胖宽瘦、异形影响会所有差异，您应充分结合平时穿的同类鞋标准尺码选购。" FontSize="16" TextWrapping="Wrap"></TextBlock>
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <TabControl>
+            <TabItem Header="掌柜说">
+                <Grid Grid.Row="0" Name="dvSay"  Background="White" Width="790">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Margin="5" VerticalAlignment="Center" FontSize="26"  TextWrapping="Wrap"  FontFamily="方正行楷简体" Text="为什么您可以选择我们？">
+                        <TextBlock.TextDecorations>
+                            <TextDecoration/>
+                        </TextBlock.TextDecorations>
+                        <TextBlock.Effect>
+                            <DropShadowEffect Direction="120" Opacity="0.75" RenderingBias="Quality" BlurRadius="19"/>
+                        </TextBlock.Effect>
+                    </TextBlock>
+                    <TextBlock Grid.Row="1" Margin="20,5,5,5" VerticalAlignment="Center" FontSize="20"  TextWrapping="Wrap"  FontFamily="方正行楷简体" Text="A1:优惠的价格，我们省去高额的直通车费用，以工厂价形式直接让利各位消费者。一些店铺一年广告费用可高达数百万甚至千万，而这些高价实际上都将由消费者买单。" >
+                        <TextBlock.TextDecorations>
+                            <TextDecoration/>
+                        </TextBlock.TextDecorations>
+                    </TextBlock>
+                    <TextBlock Grid.Row="2" Margin="20,5,5,5" VerticalAlignment="Center" FontSize="20"  TextWrapping="Wrap"  FontFamily="方正行楷简体" Text="A2:所有商品保质保量，且享受超长售后服务。30天内脱胶可免费换新，120天内断底可免费换新。敢承诺这么久，是因为信得过自己的产品。">
+                        <TextBlock.TextDecorations>
+                            <TextDecoration/>
+                        </TextBlock.TextDecorations>
+                    </TextBlock>
+                    <TextBlock Grid.Row="3" Margin="20,5,5,5" VerticalAlignment="Center" FontSize="20"  TextWrapping="Wrap" FontFamily="方正行楷简体"  Text="A3:赠送运费险，退换无忧。运费险具体情况可以在订单详情里查询。">
+                        <TextBlock.TextDecorations>
+                            <TextDecoration/>
+                        </TextBlock.TextDecorations>
+                    </TextBlock>
+                    <TextBlock Grid.Row="8" Margin="5,10,5,5"  Text="店主听闻：" FontSize="26"   FontFamily="方正行楷简体">
+                        <TextBlock.Effect>
+                            <DropShadowEffect Direction="120" Opacity="0.75" RenderingBias="Quality" BlurRadius="19"/>
+                        </TextBlock.Effect>
+                        <TextBlock.TextDecorations>
+                            <TextDecoration/>
+                        </TextBlock.TextDecorations>
+                    </TextBlock>
+                    <TextBox Grid.Row="9" Margin="20,5,5,5" Name="tbSay" VerticalAlignment="Center" Background="White"  FontSize="20" Text="" TextWrapping="Wrap"  FontFamily="方正行楷简体" BorderBrush="White" BorderThickness="0" AcceptsReturn="True" >
+                        <TextBox.TextDecorations>
+                            <TextDecoration/>
+                        </TextBox.TextDecorations>
+                    </TextBox>
+                    <TextBox Grid.Row="10" Margin="20,5,5,5" Name="tbSaySource" VerticalAlignment="Center" HorizontalAlignment="Right" Background="White"  FontSize="20" Text="来源：       "   FontFamily="方正行楷简体"  BorderBrush="White" BorderThickness="0" >
+                        <TextBox.TextDecorations>
+                            <TextDecoration/>
+                        </TextBox.TextDecorations>
+                    </TextBox>
                 </Grid>
             </TabItem>
         </TabControl>

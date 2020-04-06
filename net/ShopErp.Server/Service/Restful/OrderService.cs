@@ -185,6 +185,10 @@ namespace ShopErp.Server.Service.Restful
                         item.Shipper = g.Shipper;
                         item.Edtion = g.IgnoreEdtion ? string.Empty : item.Edtion;
                     }
+                    else
+                    {
+                        item.Shipper = "";
+                    }
                 }
                 order.ParseResult = order.OrderGoodss.All(o => o.GoodsId > 0);
             }
@@ -884,6 +888,7 @@ namespace ShopErp.Server.Service.Restful
                         Size = og.Size,
                         Vendor = og.Vendor,
                         Weight = og.Weight,
+                        Shipper = "",
                     };
                     nor.OrderGoodss.Add(nog);
 
