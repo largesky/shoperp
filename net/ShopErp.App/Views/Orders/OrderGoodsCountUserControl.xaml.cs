@@ -107,6 +107,7 @@ namespace ShopErp.App.Views.Orders
             }
             catch (Exception ex)
             {
+                MessageBox.Show(ex.StackTrace);
                 MessageBox.Show("下载出错:" + ex.Message);
             }
         }

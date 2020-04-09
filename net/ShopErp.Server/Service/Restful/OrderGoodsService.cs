@@ -20,8 +20,9 @@ namespace ShopErp.Server.Service.Restful
         private GoodsCount[] MegerGoodsCount(IList<GoodsCount> gcs)
         {
             var goodsCountMarks = ServiceContainer.GetService<DeliveryCompanyService>().GetByAll().Datas;
+            Vendor[] vendors = ServiceContainer.GetService<VendorService>().GetByAll("", "", "", "", 0, 0).Datas.ToArray();
 
-            //合并，生成统计
+            //合并数据
             var goodsCounts = new List<GoodsCount>();
             foreach (var orderGoods in gcs)
             {
@@ -30,98 +31,59 @@ namespace ShopErp.Server.Service.Restful
                 orderGoods.Number = orderGoods.Number.Trim();
                 orderGoods.Edtion = orderGoods.Edtion.Trim().Replace("版本", "").Replace("版", "");
                 //搜索当前是否存在相同属性的信息
-                var count = goodsCounts.FirstOrDefault(obj => obj.Vendor == orderGoods.Vendor && obj.Number == orderGoods.Number && obj.Edtion == orderGoods.Edtion && obj.Color == orderGoods.Color && obj.Size == orderGoods.Size);
-                if (count == null)
+                var gc = goodsCounts.FirstOrDefault(obj => obj.Vendor == orderGoods.Vendor && obj.Number == orderGoods.Number && obj.Edtion == orderGoods.Edtion && obj.Color == orderGoods.Color && obj.Size == orderGoods.Size);
+                if (gc == null)
                 {
-                    count = orderGoods;
-                    count.DeliveryCounts = new List<DeliveryCount>();
-                    count.DeliveryCompany = count.DeliveryCompany ?? string.Empty;
-                    count.LastPayTime = count.FirstPayTime;
-                    count.DeliveryCounts.Add(new DeliveryCount { DeliveryCompany = count.DeliveryCompany, Count = orderGoods.Count });
-                    goodsCounts.Add(count);
+                    gc = orderGoods;
+                    gc.DeliveryCounts = new List<DeliveryCount>();
+                    gc.DeliveryCompany = gc.DeliveryCompany ?? string.Empty;
+                    gc.LastPayTime = gc.FirstPayTime;
+                    gc.DeliveryCounts.Add(new DeliveryCount { DeliveryCompany = gc.DeliveryCompany, Count = orderGoods.Count });
+                    goodsCounts.Add(gc);
                 }
                 else
                 {
-                    count.OrderId += "," + orderGoods.OrderId;
-                    count.Count += orderGoods.Count;
-                    if (count.DeliveryCompany.Contains(orderGoods.DeliveryCompany) == false)
+                    gc.OrderId += "," + orderGoods.OrderId;
+                    gc.Count += orderGoods.Count;
+                    if (gc.DeliveryCounts.FirstOrDefault(obj => obj.DeliveryCompany == gc.DeliveryCompany) != null)
                     {
-                        count.DeliveryCompany += "," + orderGoods.DeliveryCompany;
-                    }
-
-                    if (count.DeliveryCounts.FirstOrDefault(obj => obj.DeliveryCompany == count.DeliveryCompany) != null)
-                    {
-                        count.DeliveryCounts.FirstOrDefault(obj => obj.DeliveryCompany == count.DeliveryCompany).Count += orderGoods.Count;
+                        gc.DeliveryCounts.FirstOrDefault(obj => obj.DeliveryCompany == gc.DeliveryCompany).Count += orderGoods.Count;
                     }
                     else
                     {
-                        string d = orderGoods.DeliveryCompany ?? String.Empty;
-                        count.DeliveryCounts.Add(new DeliveryCount { DeliveryCompany = d, Count = count.Count });
-                    }
-
-                    //需要设置天猫或者楚楚街优先级
-                    if (count.PopType != PopType.TMALL && (orderGoods.PopType == PopType.TMALL || orderGoods.PopType == PopType.CHUCHUJIE))
-                    {
-                        count.PopType = orderGoods.PopType;
-                    }
-                }
-
-                //计算最小金额值
-                foreach (var og in goodsCounts.Where(obj => obj.Vendor == count.Vendor && obj.Number == count.Number))
-                {
-                    if (og.Money <= 0 || count.Money <= 0)
-                    {
-                        continue;
-                    }
-
-                    if (og.Money > count.Money)
-                    {
-                        og.Money = count.Money;
-                    }
-                    else
-                    {
-                        count.Money = og.Money;
+                        gc.DeliveryCounts.Add(new DeliveryCount { DeliveryCompany = orderGoods.DeliveryCompany ?? String.Empty, Count = gc.Count });
                     }
                 }
                 //最早时间
-                if (count.FirstPayTime >= orderGoods.FirstPayTime)
+                if (gc.FirstPayTime >= orderGoods.FirstPayTime)
                 {
-                    count.FirstPayTime = orderGoods.FirstPayTime;
+                    gc.FirstPayTime = orderGoods.FirstPayTime;
                 }
-
                 //最晚时间
-                if (count.LastPayTime <= orderGoods.LastPayTime)
+                if (gc.LastPayTime <= orderGoods.LastPayTime)
                 {
-                    count.LastPayTime = orderGoods.LastPayTime;
+                    gc.LastPayTime = orderGoods.LastPayTime;
                 }
             }
 
-            //下载厂家地址
-            Vendor[] vendors = ServiceContainer.GetService<VendorService>().GetByAll("", "", "", "", 0, 0).Datas.ToArray();
-            //分析区号,计算备注
             foreach (var goodsCount in goodsCounts)
             {
-                //计算门牌编号
+                //发货地简写
                 Vendor vendor = vendors.FirstOrDefault(obj => obj.Name.Equals(goodsCount.Vendor));
+                goodsCount.Address = vendor != null ? vendor.MarketAddressShort : "---";
                 goodsCount.Vendor = VendorService.FormatVendorName(goodsCount.Vendor);
-                goodsCount.Address = vendor.MarketAddressShort;
+
                 //计算是否是其它快快递
-                if (string.IsNullOrWhiteSpace(goodsCount.DeliveryCompany) == false)
+                int count = 0;
+                foreach (var vv in goodsCount.DeliveryCounts)
                 {
-                    int count = 0;
-                    foreach (var vv in goodsCount.DeliveryCounts)
+                    var dc = goodsCountMarks.FirstOrDefault(obj => obj.Name == vv.DeliveryCompany);
+                    if (dc != null && dc.PaperMark)
                     {
-                        var dc = goodsCountMarks.FirstOrDefault(obj => obj.Name == vv.DeliveryCompany);
-                        if (dc != null && dc.PaperMark)
-                        {
-                            count += vv.Count;
-                        }
-                    }
-                    if (count > 0)
-                    {
-                        goodsCount.Comment = "☆" + count;
+                        count += vv.Count;
                     }
                 }
+                goodsCount.Comment = count > 0 ? "☆" + count : "";
             }
             return goodsCounts.ToArray();
         }
@@ -138,6 +100,7 @@ namespace ShopErp.Server.Service.Restful
             }
             catch (Exception ex)
             {
+                Log.Logger.Log("GetGoodsCount", ex);
                 throw new WebFaultException<ResponseBase>(new ResponseBase(ex.Message), System.Net.HttpStatusCode.OK);
             }
         }

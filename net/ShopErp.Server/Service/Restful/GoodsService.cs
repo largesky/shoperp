@@ -226,10 +226,12 @@ namespace ShopErp.Server.Service.Restful
             string stock = og.Number.Contains("&") || og.Number.Contains(" ") ? og.Number : og.Vendor + "&" + og.Number;
             string[] stocks = stock.Split(new char[] { '&', ' ' }, StringSplitOptions.RemoveEmptyEntries);
             string rawVendor = null, rawNumber = null;
+
             if (stocks.Length != 2)
             {
                 return null;
             }
+
             rawVendor = stocks[0].Trim();
             rawNumber = stocks[1].Trim();
             var g = ParseGoods(rawVendor, rawNumber).First;
@@ -237,6 +239,7 @@ namespace ShopErp.Server.Service.Restful
             {
                 return null;
             }
+
             og.Number = g.Number;
             og.GoodsId = g.Id;
             og.Image = g.Image;

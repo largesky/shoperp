@@ -15,6 +15,12 @@ namespace ShopErp.App.Service.Restful
 
         static JsonSerializerSettings jsonDatetimeSetting = new JsonSerializerSettings { DateFormatHandling = DateFormatHandling.MicrosoftDateFormat };
 
+        /// <summary>
+        /// 这个API不能外部调用，这是内部专用，会处理和服务端相关的返回数据 ，包括引发错误等
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="json"></param>
+        /// <returns></returns>
         private static T DeserializeObject<T>(string json) where T : ResponseBase
         {
             if (string.IsNullOrWhiteSpace(json))
@@ -33,6 +39,7 @@ namespace ShopErp.App.Service.Restful
             }
             if ("success" != ret.error)
             {
+                Log.Logger.Log("服务端返回失败数据,内容：" + Environment.NewLine, json + Environment.NewLine);
                 throw new Exception(ret.error);
             }
             return ret;

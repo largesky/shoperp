@@ -112,7 +112,7 @@ namespace ShopErp.App.Views.Orders
                     string[] ss = new string[] { shops.FirstOrDefault(obj => obj.Id == v.Source.ShopId).Mark, v.Source.PopPayTime.ToString("yyyy-MM-dd HH:mm:ss"), pair.Value, v.Source.DeliveryNumber, v.Source.PopSellerComment, v.Source.ReceiverName, string.IsNullOrWhiteSpace(v.Source.ReceiverPhone) ? v.Source.ReceiverMobile : v.Source.ReceiverMobile + "," + v.Source.ReceiverPhone, v.Source.ReceiverAddress };
                     if (pair.Key.Source.PopType != ShopErp.Domain.PopType.TMALL)
                     {
-                        ss[4] += "不放合格证，放2元好评卡";
+                        ss[4] += "放拼多多好评卡";
                     }
                     contents.Add(ss);
                 }

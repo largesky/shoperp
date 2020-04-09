@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ShopErp.App.Views.Goods"
         mc:Ignorable="d"
-        Title="鞋盒图生成工具"  SizeToContent="WidthAndHeight" Loaded="Window_Loaded" ResizeMode="CanMinimize" WindowStartupLocation="CenterOwner">
+        Title="鞋盒图生成工具"  SizeToContent="WidthAndHeight" Loaded="Window_Loaded" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
     <StackPanel>
         <TabControl>
             <TabItem Header="鞋盒图">

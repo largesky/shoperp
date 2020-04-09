@@ -160,6 +160,7 @@ namespace ShopErp.Server.Service.Restful
                     {
                         throw new Exception("订单商品状态不能为NONE：" + item.Vendor + " " + item.Number);
                     }
+                    item.GoodsId = 0;
                     item.Vendor = item.Vendor ?? string.Empty;
                     item.Number = item.Number ?? string.Empty;
                     item.Edtion = item.Edtion ?? string.Empty;
