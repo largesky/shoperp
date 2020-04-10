@@ -451,25 +451,25 @@ namespace ShopErp.Server.Service.Restful
                 }
 
                 //合并所有效订单中商品
-                var totalOgs = new List<OrderGoods>();
+                var normalOgs = new List<OrderGoods>();
                 foreach (var or in normalOrders)
                 {
                     if (chkLocalState)
                     {
-                        totalOgs.AddRange(or.OrderGoodss.Where(obj => (int)obj.State >= (int)OrderState.PAYED && (int)obj.State <= (int)OrderState.SUCCESS));
+                        normalOgs.AddRange(or.OrderGoodss.Where(obj => (int)obj.State >= (int)OrderState.PAYED && (int)obj.State <= (int)OrderState.SUCCESS));
                     }
                     else
                     {
-                        totalOgs.AddRange(or.OrderGoodss.Where(obj => obj.State != OrderState.SPILTED));
+                        normalOgs.AddRange(or.OrderGoodss.Where(obj => obj.State != OrderState.SPILTED));
                     }
                 }
-                if (goodsCount != totalOgs.Where(obj => obj.IsPeijian == false).Select(obj => obj.Count).Sum())
+                if (goodsCount != normalOgs.Where(obj => obj.IsPeijian == false).Select(obj => obj.Count).Sum())
                 {
                     throw new Exception("商品数量不匹配");
                 }
-                foreach (var og in totalOgs)
+                foreach (var og in normalOgs)
                 {
-                    if (totalOgs.Any(obj => obj.Shipper.Length > og.Shipper.Length ? obj.Shipper.IndexOf(og.Shipper, StringComparison.OrdinalIgnoreCase) < 0 : og.Shipper.IndexOf(obj.Shipper, StringComparison.OrdinalIgnoreCase) < 0))
+                    if (normalOgs.Any(obj => obj.Shipper.Length > og.Shipper.Length ? obj.Shipper.IndexOf(og.Shipper, StringComparison.OrdinalIgnoreCase) < 0 : og.Shipper.IndexOf(obj.Shipper, StringComparison.OrdinalIgnoreCase) < 0))
                     {
                         throw new Exception("不同仓库不能用一个单号发货");
                     }
@@ -481,8 +481,8 @@ namespace ShopErp.Server.Service.Restful
                 double deliveryMoney = ServiceContainer.GetService<DeliveryTemplateService>().ComputeDeliveryMoneyImplByCount(mainOrder.DeliveryCompany, mainOrder.ReceiverAddress, mainOrder.Type != OrderType.NORMAL, mainOrder.PopPayType, goodsCount);
 
                 //更新订单状态，运费金额信息
-                List<object> objsToUpdate = new List<object>(totalOgs);
-                foreach (OrderGoods og in totalOgs)
+                List<object> objsToUpdate = new List<object>(normalOgs);
+                foreach (OrderGoods og in normalOgs)
                 {
                     og.State = OrderState.SHIPPED;
                 }
@@ -555,7 +555,7 @@ namespace ShopErp.Server.Service.Restful
                     Operator = op,
                     OrderId = string.Join(",", allOrders.Select(obj => obj.Id.ToString())),
                     ERPDeliveryMoney = (float)deliveryMoney,
-                    ERPGoodsMoney = totalOgs.Select(obj => obj.Price * obj.Count).Sum(),
+                    ERPGoodsMoney = normalOgs.Select(obj => obj.Price * obj.Count).Sum(),
                     PopGoodsMoney = normalOrders.Select(obj => obj.PopSellerGetMoney).Sum(),
                     PopDeliveryMoney = 0,
                     PopPayType = mainOrder.PopPayType,
@@ -563,8 +563,8 @@ namespace ShopErp.Server.Service.Restful
                     ShopId = mainOrder.ShopId,
                     Weight = goodsCount,
                     PopCodSevFee = normalOrders.Select(obj => obj.PopCodSevFee).Sum(),
-                    GoodsInfo = string.Join(",", totalOgs.Select(obj => VendorService.FormatVendorName(obj.Vendor) + " " + obj.Number + " " + obj.Edtion + " " + obj.Color + " " + obj.Size + " " + obj.Count)),
-                    Shipper = totalOgs[0].Shipper,
+                    GoodsInfo = string.Join(",", normalOgs.Select(obj => VendorService.FormatVendorName(obj.Vendor) + " " + obj.Number + " " + obj.Edtion + " " + obj.Color + " " + obj.Size + " " + obj.Count)),
+                    Shipper = normalOgs.Count > 0 ? normalOgs[0].Shipper : "",
                 };
                 if (deliveryOut.GoodsInfo.Length > 1000)
                 {
