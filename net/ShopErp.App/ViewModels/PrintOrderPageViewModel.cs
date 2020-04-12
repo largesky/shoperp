@@ -75,6 +75,8 @@ namespace ShopErp.App.ViewModels
 
         private Dictionary<Order, List<PrintOrderViewModel>> orderVmToOrder;
 
+        private string shipper;
+
         public bool IsUserStop { get; set; }
 
         public bool IsRunning { get; set; }
@@ -158,7 +160,7 @@ namespace ShopErp.App.ViewModels
             set { this.SetValue(YOffsetProperty, value); }
         }
 
-        public PrintOrderPageViewModel(PrintOrderViewModel[] orders)
+        public PrintOrderPageViewModel(PrintOrderViewModel[] orders, string shipper)
         {
             this.OrderViewModels = new ObservableCollection<PrintOrderViewModel>();
             this.WuliuBranches = new ObservableCollection<WuliuBranch>();
@@ -178,6 +180,7 @@ namespace ShopErp.App.ViewModels
             this.PrintButtonString = "打印";
             this.XOffset = 0;
             this.YOffset = 0;
+            this.shipper = shipper;
         }
 
         private void OrderViewModels_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -484,9 +487,6 @@ namespace ShopErp.App.ViewModels
                         if (mergedOrders[i].PopPayType != PopPayType.COD)
                             goods_commment.AppendLine(mergedOrders[i].PopSellerComment);
                     }
-                    userDatas[i].Add("payTime", "付款：" + mergedOrders[i].PopPayTime.ToString("yyyy-MM-dd HH:mm:ss"));
-                    userDatas[i].Add("shopMark", allShops.FirstOrDefault(obj => obj.Id == mergedOrders[i].ShopId).Mark);
-                    userDatas[i].Add("goodsCount", mergedOrders[i].OrderGoodss.Select(obj => obj.Count).Sum().ToString());
                     userDatas[i].Add("goodsInfoSellerComment", goods_commment.ToString());
                     userDatas[i].Add("suminfo", string.Format("店:{0},数:{1},付:{2}", allShops.FirstOrDefault(obj => obj.Id == mergedOrders[i].ShopId).Mark, mergedOrders[i].OrderGoodss.Select(obj => obj.Count).Sum().ToString(), mergedOrders[i].PopPayTime.ToString("yyyy-MM-dd HH:mm:ss")));
                 }
@@ -516,11 +516,13 @@ namespace ShopErp.App.ViewModels
                     sfd.DefaultExt = "pdf";
                     sfd.Filter = "*.pdf|PDF 文件";
                     sfd.FileName = "快递单 " + this.WuliuPrintTemplate.DeliveryCompany + " " + DateTime.Now.ToString("MM-dd") + ".pdf";
+                    sfd.InitialDirectory = LocalConfigService.GetValue("PrintFileSaveDir_" + this.shipper, "");
                     if (sfd.ShowDialog().Value == false)
                     {
                         return;
                     }
                     File.WriteAllBytes(sfd.FileName, content);
+                    LocalConfigService.UpdateValue("PrintFileSaveDir_" + this.shipper, new FileInfo(sfd.FileName).DirectoryName);
                 }
                 LocalConfigService.UpdateValue(SystemNames.CONFIG_PRINTER_DELIVERY_HOT, this.Printer);
                 var offsets = LocalConfigService.GetValue(SystemNames.CONFIG_PRINT_OFFSETS, "").Split(new string[] { "###" }, StringSplitOptions.RemoveEmptyEntries).ToList();

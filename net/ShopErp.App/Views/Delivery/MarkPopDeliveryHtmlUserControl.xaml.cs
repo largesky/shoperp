@@ -749,6 +749,10 @@ namespace ShopErp.App.Views.Delivery
                 {
                     return;
                 }
+                if (this.dgvOrders.SelectedCells[0].Column.Header.ToString() != "快递单号")
+                {
+                    return;
+                }
                 var item = this.dgvOrders.SelectedCells[0].Item as OrderViewModel;
                 if (item == null)
                 {
@@ -758,17 +762,20 @@ namespace ShopErp.App.Views.Delivery
                 {
                     throw new Exception("该订单没有平台订单编号");
                 }
-
+                this.wb1.Load("https://wuliu.taobao.com/user/consign.htm?trade_id=" + item.Source.PopOrderId);
+                if (string.IsNullOrWhiteSpace(item.Source.DeliveryNumber))
+                {
+                    Clipboard.Clear();
+                }
+                else
+                {
+                    Clipboard.SetText(item.Source.DeliveryNumber);
+                }
+                this.tbMsg1.Text = "已自动复制:" + item.Source.DeliveryNumber;
                 if ((int)item.Source.State >= (int)(OrderState.RETURNING))
                 {
-                    if (MessageBox.Show("订单状态不正确：" + item.Source.State + " 是否确认要发货？", "警告", MessageBoxButton.YesNo, MessageBoxImage.Error) != MessageBoxResult.Yes)
-                    {
-                        return;
-                    }
+                    MessageBox.Show("订单状态不正确：" + item.Source.State + " 请仔细检查", "警告");
                 }
-                this.wb1.Load("https://wuliu.taobao.com/user/consign.htm?trade_id=" + item.Source.PopOrderId);
-                Clipboard.SetText(item.Source.DeliveryNumber);
-                this.tbMsg1.Text = "已自动复制:" + item.Source.DeliveryNumber;
             }
             catch (Exception ex)
             {

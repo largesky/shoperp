@@ -18,6 +18,8 @@ using System.Windows.Shapes;
 using ShopErp.App.Views.Extenstions;
 using ShopErp.Domain;
 using System.ComponentModel;
+using ShopErp.App.Service;
+using System.IO;
 
 namespace ShopErp.App.Views.Orders
 {
@@ -122,11 +124,13 @@ namespace ShopErp.App.Views.Orders
                 sfd.DefaultExt = "xlsx";
                 sfd.Filter = "*.xlsx|Office 2007 文件";
                 sfd.FileName = "贾勇 " + DateTime.Now.ToString("MM-dd") + ".xlsx";
+                sfd.InitialDirectory = LocalConfigService.GetValue("OrderExportSaveDir_" + this.cbbShippers.Text.Trim(), "");
                 if (sfd.ShowDialog().Value == false)
                 {
                     return;
                 }
                 Service.Excel.ExcelFile.WriteXlsx(sfd.FileName, dicContents);
+                LocalConfigService.UpdateValue("OrderExportSaveDir_" + this.cbbShippers.Text.Trim(), new FileInfo(sfd.FileName).DirectoryName);
             }
             catch (Exception ex)
             {

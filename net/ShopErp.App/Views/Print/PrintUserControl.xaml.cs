@@ -109,7 +109,7 @@ namespace ShopErp.App.Views.Print
             this.printOrderPages.Clear();
             foreach (var g in groups)
             {
-                var p = new PrintOrderPageViewModel(g.ToArray());
+                var p = new PrintOrderPageViewModel(g.ToArray(), this.cbbShippers.Text.Trim());
                 this.printOrderPages.Add(p);
                 p.LoadBarValue();
             }
@@ -148,7 +148,7 @@ namespace ShopErp.App.Views.Print
                     return;
                 }
 
-                var downloadOrders = OrderDownloadWindow.DownloadOrder(payType,this.cbbShippers.Text.Trim());
+                var downloadOrders = OrderDownloadWindow.DownloadOrder(payType, this.cbbShippers.Text.Trim());
                 if (downloadOrders == null || downloadOrders.Count < 1)
                 {
                     this.printOrderPages.Clear();
