@@ -177,9 +177,9 @@ namespace ShopErp.Server.Service.Restful
                     item.Image = item.Image ?? string.Empty;
                     string color = null, edtion = null, size = null;
                     ParseColorSizeEditon(item.Color, item.Size, out color, out edtion, out size);
-                    item.Color = color ?? item.Color;
-                    item.Edtion = (edtion ?? item.Edtion);
-                    item.Size = size ?? item.Size;
+                    item.Color = String.IsNullOrWhiteSpace(color) ? item.Color : color;
+                    item.Edtion = string.IsNullOrWhiteSpace(edtion) ? item.Edtion : edtion;
+                    item.Size = string.IsNullOrWhiteSpace(size) ? item.Size : size;
                     Goods g = ServiceContainer.GetService<GoodsService>().ParsePopOrderGoodsNumber(item);
                     if (g != null)
                     {
