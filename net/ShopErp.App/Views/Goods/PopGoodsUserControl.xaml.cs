@@ -722,6 +722,50 @@ namespace ShopErp.App.Views.Goods
                 MessageBox.Show(ex.Message);
             }
         }
+
+        private void BtnSaveInFile_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (this.popGoodsInfoViewModels.Count < 1)
+                {
+                    MessageBox.Show("没有数据");
+                    return;
+                }
+                string content = Newtonsoft.Json.JsonConvert.SerializeObject(this.popGoodsInfoViewModels);
+                string file = EnvironmentDirHelper.DIR_DATA + "\\" + this.lastShop.Mark + "_export_" + DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss") + ".json";
+                System.IO.File.WriteAllText(file, content);
+                Process.Start(EnvironmentDirHelper.DIR_DATA);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void BtnLoadFromFile_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog { InitialDirectory = EnvironmentDirHelper.DIR_DATA };
+                if (ofd.ShowDialog().Value == false)
+                {
+                    return;
+                }
+                string content = System.IO.File.ReadAllText(ofd.FileName);
+                var arr = Newtonsoft.Json.JsonConvert.DeserializeObject<PopGoodsInfoViewModel[]>(content);
+                this.popGoodsInfoViewModels.Clear();
+                foreach (var v in arr)
+                {
+                    this.popGoodsInfoViewModels.Add(v);
+                }
+                this.lastShop = this.cbbShops.SelectedItem as Shop;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
     }
 
     public class ImageRsp
@@ -1090,7 +1134,7 @@ namespace ShopErp.App.Views.Goods
             }
             string json = htmlContent.Substring(startIndex, end + 3 - startIndex);
             var goodsDetail = Newtonsoft.Json.JsonConvert.DeserializeObject<TaobaoQueryGoodsDetailResponse>(json);
-            var pg = new PopGoods { AddTime = "", CatId = g.catId, Code = goodsDetail.models.formValues.outerId, Id = g.itemId, Images = goodsDetail.models.formValues.images.Select(obj => obj.url.StartsWith("http") ? obj.url : "https:" + obj.url).ToArray(), SaleNum = g.soldQuantity_m, UpdateTime = g.upShelfDate_m.value };
+            var pg = new PopGoods { AddTime = g.upShelfDate_m.value, CatId = g.catId, Code = goodsDetail.models.formValues.outerId, Id = g.itemId, Images = goodsDetail.models.formValues.images.Select(obj => obj.url.StartsWith("http") ? obj.url : "https:" + obj.url).ToArray(), SaleNum = g.soldQuantity_m, UpdateTime = g.upShelfDate_m.value };
 
             //状态 
             pg.State = g.upShelfDate_m.status.text == "出售中" ? PopGoodsState.ONSALE : PopGoodsState.NOTSALE;
@@ -1184,7 +1228,6 @@ namespace ShopErp.App.Views.Goods
             string[] ss = nodes.Select(obj => obj.GetAttributeValue("src", "")).Where(obj => string.IsNullOrWhiteSpace(obj) == false).ToArray();
             return ss;
         }
-
     }
 
 

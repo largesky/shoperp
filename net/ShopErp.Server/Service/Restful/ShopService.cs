@@ -14,6 +14,42 @@ namespace ShopErp.Server.Service.Restful
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Multiple, AddressFilterMode = AddressFilterMode.Exact)]
     public class ShopService : ServiceBase<Shop, ShopDao>
     {
+        private int SortShop(Shop x, Shop y)
+        {
+            if (x == null)
+            {
+                if (y == null)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+
+            if (y == null)
+            {
+                return 1;
+            }
+            if (x.PopType != y.PopType)
+            {
+                return (int)x.PopType - (int)y.PopType;
+            }
+            if (x.Id > y.Id)
+            {
+                return 1;
+            }
+            else if (x.Id == y.Id)
+            {
+                return 0;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/getbyid.html")]
         public DataCollectionResponse<Shop> GetById(long id)
@@ -89,8 +125,9 @@ namespace ShopErp.Server.Service.Restful
         {
             try
             {
-                var ret = this.GetAllInCach().OrderBy(obj => obj.PopType).ToArray();
-                return new DataCollectionResponse<Shop>(ret);
+                this.GetAllInCach().Sort(SortShop);
+                this.GetAllInCach().Sort(SortShop);
+                return new DataCollectionResponse<Shop>(this.GetAllInCach());
             }
             catch (Exception ex)
             {

@@ -657,6 +657,10 @@ namespace ShopErp.App.Views.Delivery
                     WPFHelper.DoEvents();
                     try
                     {
+                        if (string.IsNullOrEmpty(o.DeliveryNumber))
+                        {
+                            throw new Exception("快递单号为空");
+                        }
                         var dc = dcs.FirstOrDefault(obj => obj.Name == o.DeliveryCompany).PopMapTaobao;
                         MarkPopDelivery(o.Source.PopOrderId, dc, o.DeliveryNumber);
                         o.State = "标记成功";

@@ -18,8 +18,9 @@
                 <TextBlock Text="发货仓库：" Margin="3" VerticalAlignment="Center" />
                 <ComboBox Name="cbbShippers" Margin="3" VerticalAlignment="Center" MinWidth="80" IsEditable="True" />
                 <Button Name="btnQuery" Margin="3" VerticalAlignment="Center" Width="60" Content="查询" Click="btnQuery_Click" />
-                <Button Name="btnExport" Margin="3" VerticalAlignment="Center" Width="60" Content="导出" Click="btnExport_Click" />
-                <Button Name="btnCopyAdd" Margin="3" VerticalAlignment="Center" Width="60" Content="复制地址" Click="btnCopyAdd_Click"/>
+                <Button Name="btnExport" Margin="3" VerticalAlignment="Center" Width="80" Content="导出成都格式" Click="btnExport_Click" />
+                <Button Name="btnExportK3" Margin="3" VerticalAlignment="Center" Width="80" Content="导出K3格式" Click="BtnExportK3_Click"/>
+                <Button Name="btnCopyAdd" Margin="3" VerticalAlignment="Center" Width="80" Content="复制地址" Click="btnCopyAdd_Click"/>
                 <Button Name="btnCopyInfo" Margin="3" VerticalAlignment="Center" Width="80" Content="复制发货信息" Click="BtnCopyInfo_Click"/>
                 <TextBlock Name="tbTotal" Margin="3" VerticalAlignment="Center" />
             </StackPanel>

@@ -27,10 +27,9 @@ namespace ShopErp.App.Views.Orders
     public partial class OrderDownloadWindow : Window
     {
         public PopPayType PayType { get; set; }
-
         public string Shipper { get; set; }
-
         public List<Order> Orders { get { return this.allOrders; } }
+        public bool UserStop { get; set; }
 
         private Task task = null;
         private bool hasError = false;
@@ -57,7 +56,7 @@ namespace ShopErp.App.Views.Orders
                 }
                 this.lstShops.ItemsSource = this.shopVms;
                 this.dgvFailOrders.ItemsSource = failOrders;
-                this.Dispatcher.BeginInvoke(new Action(() => this.btnStart_Click(this.btnStart, new RoutedEventArgs())));
+                this.task = Task.Factory.StartNew(DownloadTask);
             }
             catch (Exception ex)
             {
@@ -68,34 +67,18 @@ namespace ShopErp.App.Views.Orders
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (this.task != null && this.task.Status != TaskStatus.RanToCompletion)
+            if (this.task == null)
             {
-                this.task.Wait();
+                return;
             }
-        }
 
-        private void btnStart_Click(object sender, RoutedEventArgs e)
-        {
-            //清空数据
-            this.failOrders.Clear();
-            this.allOrders.Clear();
-            foreach (var paire in shopOrders)
+            if (MessageBox.Show("正在下载中，是否停止?", "提示", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
             {
-                paire.Value.Clear();
+                e.Cancel = true;
+                return;
             }
-            foreach (var v in shopVms)
-            {
-                v.Background = null;
-                v.Message = "";
-                v.Progress = 0;
-            }
-            this.task = Task.Factory.StartNew(DownloadTask);
-        }
-
-        private void btnOk_Click(object sender, RoutedEventArgs e)
-        {
-            if (this.DialogResult == null)
-                this.DialogResult = true;
+            this.UserStop = true;
+            this.task.Wait();
         }
 
         private void DownloadTask()
@@ -103,8 +86,6 @@ namespace ShopErp.App.Views.Orders
             try
             {
                 this.hasError = false;
-                this.Dispatcher.BeginInvoke(new Action(() => this.Title = "订单下载："));
-                this.Dispatcher.BeginInvoke(new Action(() => this.btnStart.IsEnabled = false));
                 Task.WaitAll(shopOrders.Keys.Select(obj => Task.Factory.StartNew(() => DownloadOneShopTask(obj))).ToArray());
             }
             catch (Exception e)
@@ -114,28 +95,15 @@ namespace ShopErp.App.Views.Orders
             }
             finally
             {
+                this.task = null;
                 foreach (var v in shopOrders)
                 {
                     this.allOrders.AddRange(v.Value);
                 }
-                this.Dispatcher.BeginInvoke(new Action(() =>
+                if (this.hasError == false)
                 {
-                    try
-                    {
-                        if (this.DialogResult == null)
-                        {
-                            this.Title = "订单下载：";
-                            this.btnStart.IsEnabled = true;
-                            if (this.hasError == false)
-                            {
-                                this.DialogResult = true;
-                            }
-                        }
-                    }
-                    catch
-                    {
-                    }
-                }));
+                    this.Dispatcher.BeginInvoke(new Action(() => this.Close()));
+                }
             }
         }
 
@@ -165,7 +133,7 @@ namespace ShopErp.App.Views.Orders
             {
                 var os = ServiceContainer.GetService<OrderService>();
 
-                while (true)
+                while (this.UserStop == false)
                 {
                     this.UpdateShopState(shop, false, 0, 0, string.Format("每页{0}条订单，正在下载第{1}页", pageSize, pageIndex + 1), null);
                     var ret = os.GetPopWaitSendOrders(shop, PayType, pageIndex, pageSize);
@@ -214,10 +182,6 @@ namespace ShopErp.App.Views.Orders
                 this.hasError = true;
                 this.UpdateShopState(shop, true, 1, 1, e.Message, Brushes.Red);
             }
-            finally
-            {
-                this.task = null;
-            }
         }
 
         /// <summary>
@@ -243,8 +207,8 @@ namespace ShopErp.App.Views.Orders
             }
 
             OrderDownloadWindow win = new OrderDownloadWindow() { PayType = payType };
-            var ret = win.ShowDialog();
-            if (ret == null || ret.Value == false)
+            win.ShowDialog();
+            if (win.UserStop)
             {
                 return new List<Order>();
             }
