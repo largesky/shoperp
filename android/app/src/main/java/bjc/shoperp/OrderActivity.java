@@ -53,6 +53,10 @@ public class OrderActivity extends AppCompatActivity {
 
     private void query(){
         String phone=((TextView)findViewById(R.id.order_txt_phone)).getText().toString();
+        if(bjc.shoperp.utils.StringUtils.isNullOrEmpty(phone)){
+            Toast.makeText(this,"电话号码不能为空",Toast.LENGTH_LONG).show();
+            return;
+        }
         new DownloadTask(phone,(ListView)findViewById(R.id.order_lst_orders)).execute((Void) null);
     }
 
