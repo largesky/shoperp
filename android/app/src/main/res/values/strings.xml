@@ -207,5 +207,10 @@
     <string name="result_wifi">找到 Wi-Fi 配置</string>
     <string name="sbc_name">Google 图书搜索</string>
     <string name="wifi_changing_network">连接到 Wi-Fi \u2026</string>
+    <string name="title_activity_order">OrderActivity</string>
+    <string name="phone">手机号：</string>
+    <string name="query">查询</string>
+    <string name="order_id">订单编号:</string>
+    <string name="paytime">付款：</string>
 
 </resources>

@@ -87,6 +87,10 @@ public class MainActivity extends AppCompatActivity {
             intent.setClass( MainActivity.this, DeliveryOutHistoryActivity.class );
             startActivity( intent );
         }
+        if(id==R.id.main_menu_order){
+            intent.setClass( MainActivity.this, OrderActivity.class );
+            startActivity( intent );
+        }
         return super.onOptionsItemSelected( item );
     }
 

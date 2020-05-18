@@ -26,7 +26,9 @@ import java.util.Date;
 import bjc.shoperp.domain.GoodsCount;
 import bjc.shoperp.domain.GoodsCountSort;
 import bjc.shoperp.domain.restfulresponse.domainresponse.GoodsCountCollectionResponse;
+import bjc.shoperp.domain.restfulresponse.domainresponse.StringCollectionResponse;
 import bjc.shoperp.service.LocalConfigService;
+import bjc.shoperp.service.restful.GoodsService;
 import bjc.shoperp.service.restful.OrderGoodsService;
 import bjc.shoperp.service.restful.OrderService;
 import bjc.shoperp.service.restful.ServiceContainer;
@@ -35,6 +37,7 @@ import bjc.shoperp.service.restful.SystemConfigService;
 
 public class GoodsCountActivity extends AppCompatActivity {
 
+    private Spinner mSpinnerView;
     private SimpleDateFormat dateFormat = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
 
     @Override
@@ -76,7 +79,7 @@ public class GoodsCountActivity extends AppCompatActivity {
                     for (int i = 0; i < values.length; i++) {
                         values[i] = (int) flags.get( i );
                     }
-                    new UserStartDownloadTask( start, end, values, (ProgressBar) findViewById( R.id.download_progress ), (TextView) findViewById( R.id.goodsdownload_msg ) ).execute();
+                    new UserStartDownloadTask(mSpinnerView.getSelectedItem()==null?"":mSpinnerView.getSelectedItem().toString(), start, end, values, (ProgressBar) findViewById( R.id.download_progress ), (TextView) findViewById( R.id.goodsdownload_msg ) ).execute();
                 } catch (Exception ex) {
                     ((TextView) findViewById( R.id.goodsdownload_msg )).setText( ex.getMessage() );
                 }
@@ -91,14 +94,13 @@ public class GoodsCountActivity extends AppCompatActivity {
         ((Button) findViewById( R.id.goodscount_btn_local )).setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String timeNow = dateFormat.format( new Date( (new Date().getTime() + 3600 * 1000) ) );
-                ((TextView) findViewById( R.id.goods_count_endtime )).setText( timeNow );
+                SetDateTime( v );
             }
         } );
-
+        ((CheckBox) findViewById( R.id.goodscount_flag_green )).setChecked(true);
+        ((CheckBox) findViewById( R.id.goodscount_flag_blue )).setChecked(true);
+        this.mSpinnerView=(Spinner)findViewById(R.id.shipper);
         Date t = new Date( (new Date().getTime()) - 20 * 24 * 3600 * 1000 );
-        String ts = dateFormat.format( t );
-        String tts = dateFormat.format( new Date() );
         ((TextView) findViewById( R.id.goods_count_starttime )).setText( dateFormat.format( t ) );
         new GoodsCountLastOrderInitTask( (Button) findViewById( R.id.goodscount_btn_sys ), (Button) findViewById( R.id.goodscount_btn_local ) ).execute( (Void) null );
     }
@@ -123,6 +125,7 @@ public class GoodsCountActivity extends AppCompatActivity {
     }
 
     public class UserStartDownloadTask extends AsyncTask<Void, Void, Boolean> {
+        private String shipper;
         private Date startTime;
         private Date endTime;
         private int[] flags;
@@ -133,7 +136,8 @@ public class GoodsCountActivity extends AppCompatActivity {
         private int total;
         private ArrayList<GoodsCount> goods = new ArrayList<GoodsCount>();
 
-        public UserStartDownloadTask(Date startTime, Date endTime, int[] flags, ProgressBar progressBar, TextView msgTextView) {
+        public UserStartDownloadTask(String shipper,Date startTime, Date endTime, int[] flags, ProgressBar progressBar, TextView msgTextView) {
+            this.shipper=shipper;
             this.startTime = startTime;
             this.endTime = endTime;
             this.flags = flags;
@@ -155,7 +159,7 @@ public class GoodsCountActivity extends AppCompatActivity {
             try {
                 do {
                     this.setTextMsg( "正在请求网络:" );
-                    GoodsCountCollectionResponse gcs = ServiceContainer.GetService( OrderGoodsService.class ).GetGoodsCount( flags, startTime, endTime, 0, 0 );
+                    GoodsCountCollectionResponse gcs = ServiceContainer.GetService( OrderGoodsService.class ).GetGoodsCount( flags,shipper, startTime, endTime, 0, 0 );
                     this.goods.addAll( gcs.Datas );
                     this.total = gcs.Total;
                     break;
@@ -199,8 +203,7 @@ public class GoodsCountActivity extends AppCompatActivity {
                                 gc = g;
                             }
                         }
-                        String[] objs=new String[]{ dateFormat.format( gc.LastPayTime ), gc.Vendor, gc.Number, gc.Edtion, gc.Color, gc.Size};
-                        String lastInfo = TextUtils.join( " ",objs );
+                        String lastInfo = dateFormat.format( gc.LastPayTime )+","+gc.Vendor+" "+gc.Number+" "+(bjc.shoperp.utils.StringUtils.isNullOrEmpty(gc.Edtion)?"":gc.Edtion)+" "+gc.Color+" "+gc.Size;
                         LocalConfigService.update( GoodsCountActivity.this, LocalConfigService.CONFIG_GOODSCOUNTLASTINFO, lastInfo );
                     }
                 }
@@ -224,6 +227,7 @@ public class GoodsCountActivity extends AppCompatActivity {
         private Button btnLocal;
         private String strSysInfo;
         private String strLocalInfo;
+        StringCollectionResponse shippers;
 
         public GoodsCountLastOrderInitTask(Button btnSys, Button btnLocal) {
             this.btnSys = btnSys;
@@ -241,6 +245,10 @@ public class GoodsCountActivity extends AppCompatActivity {
                 strLocalInfo = LocalConfigService.get( GoodsCountActivity.this, LocalConfigService.CONFIG_GOODSCOUNTLASTINFO, "本地从未统计过 点击填充默认时间" );
             } catch (Exception ex) {
                 strLocalInfo = ex.getMessage();
+            }
+            try{
+                shippers=ServiceContainer.GetService(GoodsService.class).getAllShippers();
+            }catch (Exception ex){
             }
             return true;
         }
@@ -261,6 +269,12 @@ public class GoodsCountActivity extends AppCompatActivity {
             }
             btnSys.setText( "系统:" + strSysInfo );
             btnLocal.setText( "本地:" + strLocalInfo );
+            if(shippers!=null){
+                shippers.Datas.add(0,"");
+                ArrayAdapter aa = new ArrayAdapter(GoodsCountActivity.this, android.R.layout.simple_dropdown_item_1line, shippers.Datas);
+                aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                mSpinnerView.setAdapter(aa);
+            }
             super.onPostExecute( aBoolean );
         }
     }

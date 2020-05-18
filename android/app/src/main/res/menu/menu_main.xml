@@ -18,4 +18,8 @@
         android:id="@+id/main_menu_history"
         android:title="发货记录"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/main_menu_order"
+        android:title="订单查询"
+        app:showAsAction="ifRoom" />
 </menu>

@@ -1,5 +1,6 @@
 package bjc.shoperp.domain;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,6 +16,7 @@ public class Order {
     public String ReceiverAddress;
     public String DeliveryCompany;
     public String DeliveryNumber;
+    public Date PopPayTime;
 
     public List<OrderGoods> OrderGoodss;
 }

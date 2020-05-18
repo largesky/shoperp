@@ -19,5 +19,4 @@
         android:layout_height="wrap_content"
         android:id="@+id/download_msg">
     </TextView>
-
 </LinearLayout>

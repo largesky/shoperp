@@ -3,24 +3,18 @@ package bjc.shoperp;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
 
-import android.content.Loader;
-import android.database.Cursor;
 import android.os.AsyncTask;
 
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import bjc.shoperp.domain.Operator;
 import bjc.shoperp.service.LocalConfigService;
@@ -54,7 +48,7 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+                login();
             }
         });
         String add = LocalConfigService.get(this, LocalConfigService.CONFIG_SERVERADD, DEFAULT_SERVER_ADDRESS);
@@ -80,7 +74,7 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    private void attemptLogin() {
+    private void login() {
         if (mAuthTask != null) {
             return;
         }

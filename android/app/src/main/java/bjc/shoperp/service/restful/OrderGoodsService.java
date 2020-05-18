@@ -13,10 +13,11 @@ import bjc.shoperp.domain.restfulresponse.domainresponse.GoodsCountCollectionRes
 
 public class OrderGoodsService extends ServiceBase<OrderGoods> {
 
-    public GoodsCountCollectionResponse GetGoodsCount(int[] flags, Date startTime, Date endTime, int pageIndex, int pageSize) throws Exception {
+    public GoodsCountCollectionResponse GetGoodsCount(int[] flags,String shipper, Date startTime, Date endTime, int pageIndex, int pageSize) throws Exception {
         HashMap<String, Object> para = new HashMap<>();
         para.put( "flags", flags );
         para.put( "startTime", startTime );
+        para.put( "shipper", shipper );
         para.put( "endTime", endTime );
         para.put( "pageIndex", pageIndex );
         para.put( "pageSize", pageSize );
