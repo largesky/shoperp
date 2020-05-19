@@ -183,9 +183,12 @@ namespace ShopErp.App.Views.Goods
                 }
                 SaveJpg(ptDir + "\\ZT\\XIEHE_" + vendorPingying + "&" + Goods.Number + ".jpg", this.dvXieHe);
                 SaveJpg(ptDir + "\\11.jpg", this.dvDetail);
-                SaveJpg(ptDir + "\\XQT\\XQT_00.jpg", this.dvSay);
-                System.IO.File.WriteAllText(ptDir + "\\店主听闻" + this.Goods.Number + ".txt", this.tbSay.Text);
-                System.IO.File.WriteAllText(ptDir + "\\店主听闻来源" + this.Goods.Number + ".txt", this.tbSaySource.Text);
+                if(string.IsNullOrWhiteSpace(this.tbSay.Text)==false)
+                {
+                    SaveJpg(ptDir + "\\XQT\\XQT_00.jpg", this.dvSay);
+                    System.IO.File.WriteAllText(ptDir + "\\店主听闻" + this.Goods.Number + ".txt", this.tbSay.Text);
+                    System.IO.File.WriteAllText(ptDir + "\\店主听闻来源" + this.Goods.Number + ".txt", this.tbSaySource.Text);
+                }
                 System.IO.Directory.CreateDirectory(fulldir + "\\YT");
                 LocalConfigService.UpdateValue(SystemNames.CONFIG_GOODS_BOX_IMAGE_BRAND, this.tbParaBrand.Text.Trim());
                 MessageBox.Show("保存成功");
