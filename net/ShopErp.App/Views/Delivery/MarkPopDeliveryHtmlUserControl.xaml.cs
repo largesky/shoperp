@@ -231,6 +231,11 @@ namespace ShopErp.App.Views.Delivery
                     ei = comment.IndexOf("</span>", si + "备忘：</span><span>".Length);
                     sellerComment = comment.Substring(si + "备忘：</span><span>".Length, ei - si - "备忘：</span><span>".Length);
                 }
+                //运费显示有三种：运费(快递) 运费(平邮) 运费(EMS)
+                if (contents.FirstOrDefault(obj => obj.data.titleLink.text.Contains("运费(快递)")) == null)
+                {
+                    sellerComment += "[系统自动识别：此件发邮政]";
+                }
 
                 foreach (var vv in orderDetail.orders.list)
                 {
