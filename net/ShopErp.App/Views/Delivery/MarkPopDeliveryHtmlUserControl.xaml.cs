@@ -774,11 +774,11 @@ namespace ShopErp.App.Views.Delivery
                 this.wb1.Load("https://wuliu.taobao.com/user/consign.htm?trade_id=" + item.Source.PopOrderId);
                 if (string.IsNullOrWhiteSpace(item.Source.DeliveryNumber))
                 {
-                    Clipboard.Clear();
+                    System.Windows.Forms.Clipboard.Clear();
                 }
                 else
                 {
-                    Clipboard.SetText(item.Source.DeliveryNumber);
+                    System.Windows.Forms.Clipboard.SetText(item.Source.DeliveryNumber);
                 }
                 this.tbMsg1.Text = "已自动复制:" + item.Source.DeliveryNumber;
                 if ((int)item.Source.State >= (int)(OrderState.RETURNING))

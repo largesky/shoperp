@@ -361,7 +361,7 @@ namespace ShopErp.App.Views.Orders
                     MessageBox.Show("Tag对象不为OrderGoods");
                     return;
                 }
-                Clipboard.SetText(orderGoods.Vendor + " " + orderGoods.Edtion + " " + orderGoods.Number + " " + orderGoods.Color + " " + orderGoods.Size + " " + orderGoods.Count);
+                System.Windows.Forms.Clipboard.SetText(orderGoods.Vendor + " " + orderGoods.Edtion + " " + orderGoods.Number + " " + orderGoods.Color + " " + orderGoods.Size + " " + orderGoods.Count);
             }
             catch (Exception ex)
             {
@@ -445,9 +445,7 @@ namespace ShopErp.App.Views.Orders
                 {
                     throw new Exception("快递单号为空");
                 }
-                //SetText方法有时会抛出异常
-                //Clipboard.SetText(number);
-                Clipboard.SetDataObject(number);
+                System.Windows.Forms.Clipboard.SetText(number);
             }
             catch (Exception ex)
             {

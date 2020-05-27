@@ -753,7 +753,7 @@ namespace ShopErp.App.Views.Goods
                 {
                     throw new Exception("厂家没有配置拼音");
                 }
-                Clipboard.SetText(vendor.PingyingName + "&" + goods.Number);
+                System.Windows.Forms.Clipboard.SetText(vendor.PingyingName + "&" + goods.Number);
             }
             catch (Exception ex)
             {
@@ -767,7 +767,7 @@ namespace ShopErp.App.Views.Goods
             {
                 var goods = this.GetSelctedItem().Source;
                 var vendor = ServiceContainer.GetService<VendorService>().GetById(goods.VendorId);
-                Clipboard.SetText(vendor.Id.ToString("D4") + (goods.Number.Length < 3 ? goods.Number.PadRight(3, '0') : goods.Number.Substring(goods.Number.Length - 3)));
+                System.Windows.Forms.Clipboard.SetText(vendor.Id.ToString("D4") + (goods.Number.Length < 3 ? goods.Number.PadRight(3, '0') : goods.Number.Substring(goods.Number.Length - 3)));
             }
             catch (Exception ex)
             {
@@ -788,7 +788,7 @@ namespace ShopErp.App.Views.Goods
                     throw new Exception("没有配置网络图片路径，请在系统中配置");
                 }
                 string ystDir = System.IO.Path.Combine(webdir, dir) + "\\PT\\YST";
-                Clipboard.SetText(ystDir);
+                System.Windows.Forms.Clipboard.SetText(ystDir);
             }
             catch (Exception ex)
             {

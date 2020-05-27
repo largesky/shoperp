@@ -94,9 +94,9 @@ namespace ShopErp.App.Views.Orders
                     this.cbbType.SelectedItem = EnumUtil.GetEnumValueDescription(OrderReturnType.RETURN);
                 }
 
-                if (Clipboard.ContainsText())
+                if (System.Windows.Forms.Clipboard.ContainsText())
                 {
-                    string txt = Clipboard.GetText().Trim();
+                    string txt = System.Windows.Forms.Clipboard.GetText().Trim();
                     var data = ServiceContainer.GetService<DeliveryInService>().GetByAll("", txt,DateTime.Now.AddDays(-2), DateTime.Now, 0, 0).Datas;
                     if (data.Count > 0)
                     {

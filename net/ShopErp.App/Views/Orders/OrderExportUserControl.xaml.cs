@@ -222,7 +222,7 @@ namespace ShopErp.App.Views.Orders
                     string[] ss = new string[] { pair.Value, v.Source.ReceiverName, string.IsNullOrWhiteSpace(v.Source.ReceiverPhone) ? v.Source.ReceiverMobile : v.Source.ReceiverMobile + "," + v.Source.ReceiverPhone, v.Source.ReceiverAddress };
                     contents.Add(string.Join(" ", ss));
                 }
-                Clipboard.SetText(string.Join(Environment.NewLine, contents));
+                System.Windows.Forms.Clipboard.SetText(string.Join(Environment.NewLine, contents));
             }
             catch (Exception ex)
             {
@@ -334,7 +334,7 @@ namespace ShopErp.App.Views.Orders
                     re.Add(v.Source.ReceiverName + "," + v.Source.ReceiverMobile + "," + v.Source.ReceiverAddress.Replace(",", "").Replace("，", "") + ",");
                 }
                 var res = re.Distinct().ToArray();
-                Clipboard.SetText(string.Join(Environment.NewLine, res));
+                System.Windows.Forms.Clipboard.SetText(string.Join(Environment.NewLine, res));
                 string msg = string.Format("订单总数：{0},合并后共复制收货人信息条数：{1}", items.Count(), res.Length);
                 MessageBox.Show(msg, "复制成功");
             }
