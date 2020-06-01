@@ -32,6 +32,13 @@
                 <DataGridTextColumn Header="店铺名称" Binding="{Binding PopShopName}" />
                 <DataGridTextColumn Header="卖家账号" Binding="{Binding PopSellerId}" />
                 <DataGridTextColumn Header="店铺标记" Binding="{Binding Mark}" />
+                <DataGridHyperlinkColumn Header="更新授权信息"   IsReadOnly="True" Binding="{Binding Mode=OneWay, Source={StaticResource AccessString}}">
+                    <DataGridHyperlinkColumn.ElementStyle>
+                        <Style>
+                            <EventSetter Event="Hyperlink.Click" Handler="OpenUrl_Click2" />
+                        </Style>
+                    </DataGridHyperlinkColumn.ElementStyle>
+                </DataGridHyperlinkColumn>
                 <DataGridTextColumn Header="扣点比例" Binding="{Binding CommissionPer,StringFormat=F3}" />
                 <DataGridTextColumn Header="创建时间" Binding="{Binding CreateTime,Converter={StaticResource datetimeConverter}}" />
                 <DataGridTextColumn Header="更新时间" Binding="{Binding UpdateTime,Converter={StaticResource datetimeConverter}}" />
@@ -42,15 +49,7 @@
                 <DataGridTextColumn Header="第二条物流时限" Binding="{Binding SecondDeliveryHours}" />
                 <DataGridTextColumn Header="是否启用" Binding="{Binding Enabled}" />
                 <DataGridTextColumn Header="接口启用" Binding="{Binding AppEnabled}" />
-                <DataGridHyperlinkColumn Header="更新授权信息"   IsReadOnly="True" Binding="{Binding Mode=OneWay, Source={StaticResource AccessString}}">
-                    <DataGridHyperlinkColumn.ElementStyle>
-                        <Style>
-                            <EventSetter Event="Hyperlink.Click" Handler="OpenUrl_Click2" />
-                        </Style>
-                    </DataGridHyperlinkColumn.ElementStyle>
-                </DataGridHyperlinkColumn>
             </DataGrid.Columns>
         </DataGrid>
-
     </Grid>
 </UserControl>
