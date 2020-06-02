@@ -26,19 +26,23 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="品牌：花儿锦" Margin="3" VerticalAlignment="Center" Grid.ColumnSpan="2" FontSize="40" Name="tbBrand"/>
-                    <TextBlock Grid.Row="0" Grid.Column="2" Text="产地：成都" Margin="3" VerticalAlignment="Center" Grid.ColumnSpan="2" FontSize="40"/>
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="等级：合格品" Margin="3" VerticalAlignment="Center" Grid.ColumnSpan="2" FontSize="40"/>
-                    <TextBlock Grid.Row="1" Grid.Column="2" Text="检验：随机" Margin="3" VerticalAlignment="Center" Grid.ColumnSpan="2" FontSize="40" Name="tbCheck"/>
-                    <TextBlock Grid.Row="2" Grid.Column="2" Text="货号：332-80" Margin="3" VerticalAlignment="Center" Grid.ColumnSpan="2" FontSize="40" Name="tbNumber"/>
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="材质：绒面" Margin="3" VerticalAlignment="Center" Grid.ColumnSpan="2" FontSize="40" Name="tbMeteria"/>
-                    <TextBlock Grid.Row="3" Grid.Column="0" Text="颜色：黑色" Margin="3" VerticalAlignment="Center" Grid.ColumnSpan="2" FontSize="40" Name="tbColor"/>
-                    <TextBlock Grid.Row="3" Grid.Column="2" Text="尺码：随机" Margin="3" VerticalAlignment="Center" Grid.ColumnSpan="2" FontSize="40" Name="tbSize"/>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="品牌：" Margin="3" VerticalAlignment="Center"   FontSize="40"/>
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="产地：" Margin="3" VerticalAlignment="Center"   FontSize="40"/>
+                    <TextBlock Grid.Row="2" Grid.Column="2" Text="货号：" Margin="3" VerticalAlignment="Center"   FontSize="40" />
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="材质：" Margin="3" VerticalAlignment="Center"   FontSize="40" />
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="颜色：" Margin="3" VerticalAlignment="Center"   FontSize="40" />
+                    <TextBlock Grid.Row="3" Grid.Column="2" Text="尺码：" Margin="3" VerticalAlignment="Center"   FontSize="40" />
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Text, ElementName=tbParaBrand}" Margin="3" VerticalAlignment="Center"   FontSize="40"/>
+                    <TextBlock Grid.Row="0" Grid.Column="3" Text="成都" Margin="3" VerticalAlignment="Center"   FontSize="40"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Text, ElementName=cbbParaMateria}" Margin="3" VerticalAlignment="Center"   FontSize="40"/>
+                    <TextBlock Grid.Row="2" Grid.Column="3" Text="332-80" Margin="3" VerticalAlignment="Center"  FontSize="40" Name="tbNumber"/>
+                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Text, ElementName=cbbParaColor}" Margin="3" VerticalAlignment="Center"   FontSize="40" />
+                    <TextBlock Grid.Row="3" Grid.Column="3" Text="37" Margin="3" VerticalAlignment="Center"   FontSize="40" />
                 </Grid>
             </TabItem>
         </TabControl>
         <TabControl>
-            <TabItem Header="详情图">
+            <TabItem Header="详情图单鞋/高跟鞋">
                 <Grid Grid.Row="0" Name="dvDetail"  Background="White" Width="790" >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="30"/>
@@ -67,145 +71,83 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Row="0" Grid.Column="1" Text="鞋面：" Margin="3" VerticalAlignment="Center" FontSize="22"/>
-                    <TextBlock Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="3" Name="tbMeteriaDetail"  Text="PU" Margin="3" VerticalAlignment="Center" FontSize="22"/>
+                    <TextBlock Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="3"   Text="{Binding Text, ElementName=cbbParaMateria}" Margin="3" VerticalAlignment="Center" FontSize="22"/>
                     <TextBlock Grid.Row="0" Grid.Column="5" Text="鞋底：" Margin="3" VerticalAlignment="Center" FontSize="22"/>
-                    <TextBlock Grid.Row="0" Grid.Column="6" Grid.ColumnSpan="4" Name="tbMeteriaDetailButom"  Text="橡胶底" Margin="3" VerticalAlignment="Center" FontSize="22"/>
+                    <TextBlock Grid.Row="0" Grid.Column="6" Grid.ColumnSpan="4" Text="{Binding Text, ElementName=cbbParaMeteriaButom}" Margin="3" VerticalAlignment="Center" FontSize="22"/>
                     <TextBlock Grid.Row="1" Grid.Column="1" Text="跟高：" Margin="3" VerticalAlignment="Center" FontSize="22"/>
-                    <TextBlock Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="3" Name="tbHeight"  Text="7厘米" Margin="3" VerticalAlignment="Center" FontSize="22"/>
+                    <TextBlock Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="3"   Text="{Binding Text, ElementName=tbParaHeight}" Margin="3" VerticalAlignment="Center" FontSize="22"/>
                     <TextBlock Grid.Row="1" Grid.Column="5" Text="防水台：" Margin="3" VerticalAlignment="Center" FontSize="20"/>
-                    <TextBlock Grid.Row="1" Grid.Column="6" Grid.ColumnSpan="3" Name="tbHeightFront"  Text="-厘米" Margin="3" VerticalAlignment="Center" FontSize="22"/>
-                    <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Text="尺码对照表/SIZE" FontSize="24" Margin="5" VerticalAlignment="Center"/>
-                    <TextBlock Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="2" Text="此款标准尺码"  FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Left" Background="LightGray"/>
+                    <TextBlock Grid.Row="1" Grid.Column="6" Grid.ColumnSpan="3" Text="{Binding Text, ElementName=tbParaHeightFront}" Margin="3" VerticalAlignment="Center" FontSize="22"/>
+                    <CheckBox x:Name="checkBox" Grid.Row="1" Grid.Column="9" Content="" VerticalAlignment="Center" IsChecked="False"/>
 
-                    <Border Grid.Row="3" Grid.Column="1" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
-                        <TextBlock Grid.Row="3" Grid.Column="1" Text="标准码" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" Width="{Binding }"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Text="尺码对照表/SIZE" FontSize="24" Margin="5" VerticalAlignment="Center" Visibility="{Binding IsChecked, Converter={StaticResource BoolToVisibilityConverter}, ElementName=checkBox}"/>
+                    <TextBlock Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="2" Text="此款标准尺码"  FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Left" Background="LightGray" Visibility="{Binding IsChecked, ElementName=checkBox, Mode=OneWay,Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                    <Border Grid.Row="3" Grid.Column="1" BorderBrush="#FFF0F0F0" BorderThickness="2" Visibility="{Binding IsChecked, ElementName=checkBox,Converter={StaticResource BoolToVisibilityConverter}}" >
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="标准码" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" />
                     </Border>
-                    <Border Grid.Row="3" Grid.Column="2" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                    <Border Grid.Row="3" Grid.Column="2" BorderBrush="#FFF0F0F0" BorderThickness="2"  Visibility="{Binding IsChecked, ElementName=checkBox,Converter={StaticResource BoolToVisibilityConverter}}">
                         <TextBlock Grid.Row="3" Grid.Column="2" Text="33" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
                     </Border>
-                    <Border Grid.Row="3" Grid.Column="3" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                    <Border Grid.Row="3" Grid.Column="3" BorderBrush="#FFF0F0F0" BorderThickness="2"  Visibility="{Binding IsChecked, ElementName=checkBox, Converter={StaticResource BoolToVisibilityConverter}}">
                         <TextBlock Grid.Row="3" Grid.Column="3" Text="34" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
                     </Border>
-                    <Border Grid.Row="3" Grid.Column="4" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                    <Border Grid.Row="3" Grid.Column="4" BorderBrush="#FFF0F0F0" BorderThickness="2"  Visibility="{Binding IsChecked, ElementName=checkBox, Converter={StaticResource BoolToVisibilityConverter}}">
                         <TextBlock Grid.Row="3" Grid.Column="4" Text="35" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
                     </Border>
-                    <Border Grid.Row="3" Grid.Column="5" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                    <Border Grid.Row="3" Grid.Column="5" BorderBrush="#FFF0F0F0" BorderThickness="2"  Visibility="{Binding IsChecked, ElementName=checkBox,Converter={StaticResource BoolToVisibilityConverter}}">
                         <TextBlock Grid.Row="3" Grid.Column="5" Text="36" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
                     </Border>
-                    <Border Grid.Row="3" Grid.Column="6" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                    <Border Grid.Row="3" Grid.Column="6" BorderBrush="#FFF0F0F0" BorderThickness="2"  Visibility="{Binding IsChecked, ElementName=checkBox, Converter={StaticResource BoolToVisibilityConverter}}">
                         <TextBlock Grid.Row="3" Grid.Column="6" Text="37" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
                     </Border>
-                    <Border Grid.Row="3" Grid.Column="7" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                    <Border Grid.Row="3" Grid.Column="7" BorderBrush="#FFF0F0F0" BorderThickness="2"  Visibility="{Binding IsChecked, ElementName=checkBox, Converter={StaticResource BoolToVisibilityConverter}}">
                         <TextBlock Grid.Row="3" Grid.Column="7" Text="38" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
                     </Border>
-                    <Border Grid.Row="3" Grid.Column="8" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                    <Border Grid.Row="3" Grid.Column="8" BorderBrush="#FFF0F0F0" BorderThickness="2"  Visibility="{Binding IsChecked, ElementName=checkBox, Converter={StaticResource BoolToVisibilityConverter}}">
                         <TextBlock Grid.Row="3" Grid.Column="8" Text="39" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
                     </Border>
-                    <Border Grid.Row="3" Grid.Column="9" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                    <Border Grid.Row="3" Grid.Column="9" BorderBrush="#FFF0F0F0" BorderThickness="2"  Visibility="{Binding IsChecked, ElementName=checkBox, Converter={StaticResource BoolToVisibilityConverter}}">
                         <TextBlock Grid.Row="3" Grid.Column="9" Text="40" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
                     </Border>
-                    <Border Grid.Row="4" Grid.Column="1" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                    <Border Grid.Row="4" Grid.Column="1" BorderBrush="#FFF0F0F0" BorderThickness="2"  Visibility="{Binding IsChecked, ElementName=checkBox, Converter={StaticResource BoolToVisibilityConverter}}">
                         <TextBlock Grid.Row="4" Grid.Column="1" Text="内长CM" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
                     </Border>
-                    <Border Grid.Row="4" Grid.Column="2" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                    <Border Grid.Row="4" Grid.Column="2" BorderBrush="#FFF0F0F0" BorderThickness="2"  Visibility="{Binding IsChecked, ElementName=checkBox, Converter={StaticResource BoolToVisibilityConverter}}">
                         <TextBlock Grid.Row="4" Grid.Column="2" Text="21.5" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
                     </Border>
-                    <Border Grid.Row="4" Grid.Column="3" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                    <Border Grid.Row="4" Grid.Column="3" BorderBrush="#FFF0F0F0" BorderThickness="2"  Visibility="{Binding IsChecked, ElementName=checkBox, Converter={StaticResource BoolToVisibilityConverter}}">
                         <TextBlock Grid.Row="4" Grid.Column="3" Text="22" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
                     </Border>
-                    <Border Grid.Row="4" Grid.Column="4" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                    <Border Grid.Row="4" Grid.Column="4" BorderBrush="#FFF0F0F0" BorderThickness="2"  Visibility="{Binding IsChecked, ElementName=checkBox, Converter={StaticResource BoolToVisibilityConverter}}">
                         <TextBlock Grid.Row="4" Grid.Column="4" Text="22.5" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
                     </Border>
-                    <Border Grid.Row="4" Grid.Column="5" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                    <Border Grid.Row="4" Grid.Column="5" BorderBrush="#FFF0F0F0" BorderThickness="2"  Visibility="{Binding IsChecked, ElementName=checkBox, Converter={StaticResource BoolToVisibilityConverter}}">
                         <TextBlock Grid.Row="4" Grid.Column="5" Text="23" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
                     </Border>
-                    <Border Grid.Row="4" Grid.Column="6" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                    <Border Grid.Row="4" Grid.Column="6" BorderBrush="#FFF0F0F0" BorderThickness="2"  Visibility="{Binding IsChecked, ElementName=checkBox, Converter={StaticResource BoolToVisibilityConverter}}">
                         <TextBlock Grid.Row="4" Grid.Column="6" Text="23.5" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
                     </Border>
-                    <Border Grid.Row="4" Grid.Column="7" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                    <Border Grid.Row="4" Grid.Column="7" BorderBrush="#FFF0F0F0" BorderThickness="2"  Visibility="{Binding IsChecked, ElementName=checkBox, Converter={StaticResource BoolToVisibilityConverter}}">
                         <TextBlock Grid.Row="4" Grid.Column="7" Text="24" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
                     </Border>
-                    <Border Grid.Row="4" Grid.Column="8" BorderBrush="#FFF0F0F0" BorderThickness="2"  >
+                    <Border Grid.Row="4" Grid.Column="8" BorderBrush="#FFF0F0F0" BorderThickness="2"  Visibility="{Binding IsChecked, ElementName=checkBox, Converter={StaticResource BoolToVisibilityConverter}}">
                         <TextBlock Grid.Row="4" Grid.Column="8" Text="24.5" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
                     </Border>
-                    <Border Grid.Row="4" Grid.Column="9" BorderBrush="#FFF0F0F0" BorderThickness="2">
+                    <Border Grid.Row="4" Grid.Column="9" BorderBrush="#FFF0F0F0" BorderThickness="2" Visibility="{Binding IsChecked, ElementName=checkBox, Converter={StaticResource BoolToVisibilityConverter}}">
                         <TextBlock Text="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
                     </Border>
-                    <TextBlock Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" Text="温馨提示：" FontSize="20" Background="LightGray"></TextBlock>
-                    <TextBlock Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="9" Margin="5" Text="1:您的左右脚大小可能会有差异，上午与下午可能会有差异，应以较大的为准。" FontSize="16" TextWrapping="Wrap"></TextBlock>
-                    <TextBlock Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="10" Margin="5" Text="2:每个人的实际情况受脚的胖宽瘦、异形影响会所有差异，您应充分结合平时穿的同类鞋标准尺码选购。" FontSize="16" TextWrapping="Wrap"></TextBlock>
-                </Grid>
-            </TabItem>
-        </TabControl>
-        <TabControl>
-            <TabItem Header="掌柜说">
-                <Grid Grid.Row="0" Name="dvSay"  Background="White" Width="790">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0" Margin="5" VerticalAlignment="Center" FontSize="26"  TextWrapping="Wrap"  FontFamily="方正行楷简体" Text="为什么您可以选择我们？">
-                        <TextBlock.TextDecorations>
-                            <TextDecoration/>
-                        </TextBlock.TextDecorations>
-                        <TextBlock.Effect>
-                            <DropShadowEffect Direction="120" Opacity="0.75" RenderingBias="Quality" BlurRadius="19"/>
-                        </TextBlock.Effect>
-                    </TextBlock>
-                    <TextBlock Grid.Row="1" Margin="20,5,5,5" VerticalAlignment="Center" FontSize="20"  TextWrapping="Wrap"  FontFamily="方正行楷简体" Text="A1:优惠的价格，我们省去高额的直通车费用，以工厂价形式直接让利各位消费者。一些店铺一年广告费用可高达数百万甚至千万，而这些高价实际上都将由消费者买单。" >
-                        <TextBlock.TextDecorations>
-                            <TextDecoration/>
-                        </TextBlock.TextDecorations>
-                    </TextBlock>
-                    <TextBlock Grid.Row="2" Margin="20,5,5,5" VerticalAlignment="Center" FontSize="20"  TextWrapping="Wrap"  FontFamily="方正行楷简体" Text="A2:所有商品保质保量，且享受超长售后服务。30天内脱胶可免费换新，120天内断底可免费换新。敢承诺这么久，是因为信得过自己的产品。">
-                        <TextBlock.TextDecorations>
-                            <TextDecoration/>
-                        </TextBlock.TextDecorations>
-                    </TextBlock>
-                    <TextBlock Grid.Row="3" Margin="20,5,5,5" VerticalAlignment="Center" FontSize="20"  TextWrapping="Wrap" FontFamily="方正行楷简体"  Text="A3:赠送运费险，退换无忧。运费险具体情况可以在订单详情里查询。">
-                        <TextBlock.TextDecorations>
-                            <TextDecoration/>
-                        </TextBlock.TextDecorations>
-                    </TextBlock>
-                    <TextBlock Grid.Row="8" Margin="5,10,5,5"  Text="店主听闻：" FontSize="26"   FontFamily="方正行楷简体">
-                        <TextBlock.Effect>
-                            <DropShadowEffect Direction="120" Opacity="0.75" RenderingBias="Quality" BlurRadius="19"/>
-                        </TextBlock.Effect>
-                        <TextBlock.TextDecorations>
-                            <TextDecoration/>
-                        </TextBlock.TextDecorations>
-                    </TextBlock>
-                    <TextBox Grid.Row="9" Margin="20,5,5,5" Name="tbSay" VerticalAlignment="Center" Background="White"  FontSize="20" Text="" TextWrapping="Wrap"  FontFamily="方正行楷简体" BorderBrush="White" BorderThickness="0" AcceptsReturn="True" >
-                        <TextBox.TextDecorations>
-                            <TextDecoration/>
-                        </TextBox.TextDecorations>
-                    </TextBox>
-                    <TextBox Grid.Row="10" Margin="20,5,5,5" Name="tbSaySource" VerticalAlignment="Center" HorizontalAlignment="Right" Background="White"  FontSize="20" Text="来源：       "   FontFamily="方正行楷简体"  BorderBrush="White" BorderThickness="0" >
-                        <TextBox.TextDecorations>
-                            <TextDecoration/>
-                        </TextBox.TextDecorations>
-                    </TextBox>
+                    <TextBlock Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" Text="温馨提示：" FontSize="20" Background="LightGray" Visibility="{Binding IsChecked, ElementName=checkBox, Converter={StaticResource BoolToVisibilityConverter}}"></TextBlock>
+                    <TextBlock Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="9" Margin="5" Text="1:您的左右脚大小可能会有差异，上午与下午可能会有差异，应以较大的为准。" FontSize="16" TextWrapping="Wrap" Visibility="{Binding IsChecked, ElementName=checkBox, Converter={StaticResource BoolToVisibilityConverter}}"></TextBlock>
+                    <TextBlock Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="10" Margin="5" Text="2:每个人的实际情况受脚的胖宽瘦、异形影响会所有差异，您应充分结合平时穿的同类鞋标准尺码选购。" FontSize="16" TextWrapping="Wrap" Visibility="{Binding IsChecked, ElementName=checkBox, Converter={StaticResource BoolToVisibilityConverter}}"></TextBlock>
                 </Grid>
             </TabItem>
         </TabControl>
         <StackPanel Grid.Row="2" Orientation="Horizontal" >
             <TextBlock Text="品牌：" Margin="3" VerticalAlignment="Center"/>
-            <TextBox Name="tbParaBrand" Margin="3" VerticalAlignment="Center" Text="花儿锦" Width="60" TextChanged="UI_TextChanged"/>
+            <TextBox Name="tbParaBrand" Margin="3" VerticalAlignment="Center" Text="花儿锦" Width="60"/>
             <TextBlock Margin="3" VerticalAlignment="Center" Text="材质："/>
-            <ComboBox Margin="3" VerticalAlignment="Center" Name="cbbParaMateria" IsEditable="True" Width="80" TextBoxBase.TextChanged="UI_TextChanged" >
+            <ComboBox Margin="3" VerticalAlignment="Center" Name="cbbParaMateria" IsEditable="True" Width="80">
                 <ComboBoxItem>PU</ComboBoxItem>
                 <ComboBoxItem>磨砂</ComboBoxItem>
                 <ComboBoxItem>绒面</ComboBoxItem>
@@ -214,9 +156,10 @@
                 <ComboBoxItem>头层牛皮</ComboBoxItem>
                 <ComboBoxItem>二层牛皮</ComboBoxItem>
                 <ComboBoxItem>没有类型请手动输入</ComboBoxItem>
+                <ComboBox.SelectedIndex>0</ComboBox.SelectedIndex>
             </ComboBox>
             <TextBlock Margin="3" VerticalAlignment="Center" Text="颜色："/>
-            <ComboBox Margin="3" VerticalAlignment="Center" Name="cbbParaColor" IsEditable="True" Width="80" TextBoxBase.TextChanged="UI_TextChanged" >
+            <ComboBox Margin="3" VerticalAlignment="Center" Name="cbbParaColor" IsEditable="True" Width="80" >
                 <ComboBoxItem>黑色</ComboBoxItem>
                 <ComboBoxItem>白色</ComboBoxItem>
                 <ComboBoxItem>红色</ComboBoxItem>
@@ -229,15 +172,15 @@
                 <ComboBoxItem>没有类型请手动输入</ComboBoxItem>
             </ComboBox>
             <TextBlock Text="鞋底：" Margin="3" VerticalAlignment="Center"/>
-            <ComboBox Name="cbbParaMeteriaButom" Margin="3" VerticalAlignment="Center" Width="70" TextBoxBase.TextChanged="UI_TextChanged" IsEditable="True">
+            <ComboBox Name="cbbParaMeteriaButom" Margin="3" VerticalAlignment="Center" Width="70"  IsEditable="True">
                 <ComboBoxItem>橡胶底</ComboBoxItem>
                 <ComboBoxItem>牛津底</ComboBoxItem>
                 <ComboBox.SelectedIndex>0</ComboBox.SelectedIndex>
             </ComboBox>
             <TextBlock Text="跟高：" Margin="3" VerticalAlignment="Center"/>
-            <TextBox Name="tbParaHeight" Text="--" Margin="3" VerticalAlignment="Center" Width="60" TextChanged="UI_TextChanged"/>
+            <TextBox Name="tbParaHeight" Text="--厘米" Margin="3" VerticalAlignment="Center" Width="60" />
             <TextBlock Text="防水台：" Margin="3" VerticalAlignment="Center"/>
-            <TextBox Name="tbParaHeightFront" Text="--" Margin="3" VerticalAlignment="Center" Width="60" TextChanged="UI_TextChanged"/>
+            <TextBox Name="tbParaHeightFront" Text="--厘米" Margin="3" VerticalAlignment="Center" Width="60"/>
             <Button Name="btnCreate" Margin="3" VerticalAlignment="Center" Content="创建" Width="60" Click="btnCreate_Click"/>
         </StackPanel>
     </StackPanel>

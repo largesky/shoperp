@@ -36,19 +36,13 @@ namespace ShopErp.App.Views.Goods
             try
             {
                 Random r = new Random(DateTime.Now.Millisecond);
-                //检验
-                this.tbCheck.Text = "检验：" + Service.Restful.OperatorService.LoginOperator.Number.Substring(2);
                 //货号
                 ShopErp.Domain.Vendor vendor = ServiceContainer.GetService<VendorService>().GetById(Goods.VendorId);
                 if (vendor == null)
                 {
                     throw new Exception("厂家获取为空，不能生成图片");
                 }
-                this.tbNumber.Text = "货号：" + vendor.Id.ToString("D4") + (Goods.Number.Length < 3 ? Goods.Number.PadRight(3, '0') : Goods.Number);
-
-                //尺码
-                this.tbSize.Text = "尺码：" + r.Next(34, 39).ToString();
-
+                this.tbNumber.Text = vendor.Id.ToString("D4") + (Goods.Number.Length < 3 ? Goods.Number.PadRight(3, '0') : Goods.Number);
                 //材质
                 this.cbbParaMateria.Text = Goods.Material;
 
@@ -63,44 +57,13 @@ namespace ShopErp.App.Views.Goods
                     this.cbbParaColor.Text = "";
                 }
                 this.tbParaBrand.Text = LocalConfigService.GetValue(SystemNames.CONFIG_GOODS_BOX_IMAGE_BRAND, "花儿锦");
-                string dir = this.Goods.ImageDir;
-                string webdir = LocalConfigService.GetValue(ShopErp.Domain.SystemNames.CONFIG_WEB_IMAGE_DIR);
-                if (string.IsNullOrWhiteSpace(webdir))
-                {
-                    throw new Exception("没有配置网络图片路径，请在系统中配置");
-                }
-                string file = System.IO.Path.Combine(webdir, dir) + "\\PT\\店主听闻" + this.Goods.Number + ".txt";
-                if (File.Exists(file))
-                {
-                    this.tbSay.Text = File.ReadAllText(file);
-                }
-                string fileSource = System.IO.Path.Combine(webdir, dir) + "\\PT\\店主听闻来源" + this.Goods.Number + ".txt";
-                if (File.Exists(fileSource))
-                {
-                    this.tbSaySource.Text = File.ReadAllText(fileSource);
-                }
+                this.checkBox.IsChecked = !(Goods.Type == GoodsType.GOODS_SHOES_FANBUXIE || Goods.Type == GoodsType.GOODS_SHOES_GAOBANGXIE || Goods.Type == GoodsType.GOODS_SHOES_TUOXIE || Goods.Type == GoodsType.GOODS_SHOES_YUNDONGXIE);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
 
-        }
-
-        private void UI_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (this.IsLoaded == false)
-            {
-                return;
-            }
-
-            this.tbBrand.Text = "品牌：" + this.tbParaBrand.Text.Trim();
-            this.tbMeteria.Text = "材质：" + this.cbbParaMateria.Text.Trim();
-            this.tbColor.Text = "颜色：" + this.cbbParaColor.Text.Trim();
-            this.tbMeteriaDetail.Text = this.cbbParaMateria.Text.Trim();
-            this.tbMeteriaDetailButom.Text = this.cbbParaMeteriaButom.Text.Trim();
-            this.tbHeight.Text = this.tbParaHeight.Text.Trim() + "厘米";
-            this.tbHeightFront.Text = this.tbParaHeightFront.Text.Trim() + "厘米";
         }
 
         private void SaveJpg(string path, Grid grid)
@@ -148,7 +111,7 @@ namespace ShopErp.App.Views.Goods
                     throw new Exception("鞋底信息为空");
                 }
 
-                if (string.IsNullOrWhiteSpace(this.tbHeight.Text.Trim()))
+                if (string.IsNullOrWhiteSpace(this.tbParaHeight.Text.Trim()))
                 {
                     throw new Exception("跟高信息为空");
                 }
@@ -183,12 +146,6 @@ namespace ShopErp.App.Views.Goods
                 }
                 SaveJpg(ptDir + "\\ZT\\XIEHE_" + vendorPingying + "&" + Goods.Number + ".jpg", this.dvXieHe);
                 SaveJpg(ptDir + "\\11.jpg", this.dvDetail);
-                if(string.IsNullOrWhiteSpace(this.tbSay.Text)==false)
-                {
-                    SaveJpg(ptDir + "\\XQT\\XQT_00.jpg", this.dvSay);
-                    System.IO.File.WriteAllText(ptDir + "\\店主听闻" + this.Goods.Number + ".txt", this.tbSay.Text);
-                    System.IO.File.WriteAllText(ptDir + "\\店主听闻来源" + this.Goods.Number + ".txt", this.tbSaySource.Text);
-                }
                 System.IO.Directory.CreateDirectory(fulldir + "\\YT");
                 LocalConfigService.UpdateValue(SystemNames.CONFIG_GOODS_BOX_IMAGE_BRAND, this.tbParaBrand.Text.Trim());
                 MessageBox.Show("保存成功");

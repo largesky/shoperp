@@ -134,6 +134,7 @@
     <Compile Include="CefSharpUtils\BrowserProcessHandler.cs" />
     <Compile Include="CefSharpUtils\CefCookieVisitor.cs" />
     <Compile Include="Converters\BoolConverter.cs" />
+    <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\DateTimeConverter.cs" />
     <Compile Include="Converters\EnumConverter.cs" />
     <Compile Include="Converters\IntConverter.cs" />

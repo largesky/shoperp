@@ -22,7 +22,7 @@
             <converters:VideoTypeConverter x:Key="VideoTypeConverter"/>
             <converters:WuliuTemplateConverter x:Key="WuliuTemplateConverter"/>
             <converters:PopImageConverter x:Key="PopImageConverter"/>
-
+            <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
             <Style x:Key="ImageButton" TargetType="Button">
                 <Setter Property="Template">
                     <Setter.Value>
