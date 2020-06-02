@@ -65,6 +65,12 @@ namespace ShopErp.App.Views.Goods
             }
         }
 
+        private string[] GetImageFile(string dir)
+        {
+            var files = System.IO.Directory.GetFiles(dir);
+            return files.Where(obj => obj.EndsWith("jpg", StringComparison.OrdinalIgnoreCase) || obj.EndsWith("bmp", StringComparison.OrdinalIgnoreCase) || obj.EndsWith("png", StringComparison.OrdinalIgnoreCase) || obj.EndsWith("jpeg", StringComparison.OrdinalIgnoreCase)).ToArray();
+        }
+
         private void btnQuery_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -315,7 +321,7 @@ namespace ShopErp.App.Views.Goods
                         }
                         else
                         {
-                            var files = System.IO.Directory.GetFiles(zt);
+                            var files = GetImageFile(zt);
                             foreach (var file in files)
                             {
                                 int lastSlashIndex = file.LastIndexOf('\\');
@@ -345,7 +351,7 @@ namespace ShopErp.App.Views.Goods
                         }
                         else
                         {
-                            var files = System.IO.Directory.GetFiles(yst);
+                            var files = GetImageFile(yst);
                             foreach (var file in files)
                             {
                                 Size size = GetImageFileSize(file);
@@ -369,7 +375,7 @@ namespace ShopErp.App.Views.Goods
                         }
                         else
                         {
-                            var files = System.IO.Directory.GetFiles(xqt);
+                            var files = GetImageFile(xqt);
                             foreach (var file in files)
                             {
                                 Size size = GetImageFileSize(file);

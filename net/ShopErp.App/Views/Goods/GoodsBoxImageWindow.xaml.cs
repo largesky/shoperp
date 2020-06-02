@@ -82,6 +82,7 @@ namespace ShopErp.App.Views.Goods
         {
             try
             {
+                this.checkBox.Visibility = Visibility.Collapsed;
                 string dir = this.Goods.ImageDir;
                 string webdir = LocalConfigService.GetValue(ShopErp.Domain.SystemNames.CONFIG_WEB_IMAGE_DIR);
                 var vendorPingying = ServiceContainer.GetService<VendorService>().GetVendorPingyingName(this.Goods.VendorId);
@@ -154,6 +155,10 @@ namespace ShopErp.App.Views.Goods
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                this.checkBox.Visibility = Visibility.Visible;
             }
         }
     }
