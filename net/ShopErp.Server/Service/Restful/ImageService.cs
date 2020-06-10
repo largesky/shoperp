@@ -34,7 +34,7 @@ namespace ShopErp.Server.Service.Restful
             try
             {
                 WebOperationContext.Current.OutgoingResponse.ContentType = "image/jpg";
-                return File.OpenRead(path);
+                return new MemoryStream(File.ReadAllBytes(path));
             }
             catch (Exception ex)
             {
@@ -43,7 +43,7 @@ namespace ShopErp.Server.Service.Restful
         }
 
         [OperationContract]
-        [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/saveimage.html?imagePath={imagePath}")]
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/saveimage.html?imagePath={imagePath}")]
         public ResponseBase SaveImage(string imagePath, Stream image)
         {
             try

@@ -510,7 +510,7 @@ namespace ShopErp.App.ViewModels
                 if (string.IsNullOrWhiteSpace(file) == false && file.StartsWith("http"))
                 {
                     //下载文件
-                    byte[] content = MsHttpRestful.GetUrlEncodeBodyReturnBytes(file, null);
+                    byte[] content = MsHttpRestful.GetReturnBytes(file);
                     Microsoft.Win32.SaveFileDialog sfd = new Microsoft.Win32.SaveFileDialog();
                     sfd.AddExtension = true;
                     sfd.DefaultExt = "pdf";

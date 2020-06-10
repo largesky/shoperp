@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using ShopErp.App.Service;
 using ShopErp.App.Service.Restful;
 using ShopErp.App.Views.Config;
+using ShopErp.App.Views.Delivery;
 
 namespace ShopErp.App
 {
@@ -27,11 +28,14 @@ namespace ShopErp.App
         private UserControl lastUserControl = null;
         private Dictionary<Type, UserControl> controls = new Dictionary<Type, UserControl>();
 
+        public static MainWindow ProgramMainWindow { get; private set; }
+
         public MainWindow()
         {
             try
             {
                 InitializeComponent();
+                ProgramMainWindow = this;
             }
             catch (Exception ex)
             {
@@ -69,7 +73,6 @@ namespace ShopErp.App
                     mcs.Add(configBar);
                 }
                 this.tb.ItemsSource = mcs;
-                //this.FontSize = LocalConfigService.GetValueDouble("FontSize", 12);
             }
             catch (Exception ex)
             {
@@ -140,6 +143,24 @@ namespace ShopErp.App
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        public T QueryUserControlInstance<T>() where T : UserControl
+        {
+            if (this.controls.ContainsKey(typeof(T)))
+            {
+                return (T)(this.controls[typeof(T)]);
+            }
+            MenuConfig mc = null;
+            foreach (var v in MenuConfig.Menus)
+            {
+                mc = v.SubItems.FirstOrDefault(obj => obj.Type == typeof(T));
+                if (mc != null)
+                {
+                    throw new Exception("窗口不存在，需要先打开:" + v.Header + " 下面的 " + mc.Header);
+                }
+            }
+            throw new Exception("窗口不存在，并且在所有菜单项中找不到:");
         }
     }
 }

@@ -39,7 +39,6 @@ namespace ShopErp.App.Domain.TaobaoHtml.Goods
         [JsonConverter(typeof(ValueTextArrayConverter))]
         public ValueTextArray[] catProp;
 
-
         /// <summary>
         /// 销售属性，储存是颜色，尺码信息
         /// </summary>
@@ -52,10 +51,11 @@ namespace ShopErp.App.Domain.TaobaoHtml.Goods
         /// </summary>
         public string desc;
 
-
         /// <summary>
         /// 商品PC端描述,天猫
         /// </summary>
         public TaobaoQueryGoodsDetailResponseModelFormValuesModularDesc[] modularDesc;
+
+        public TaobaoQueryGoodsDetailResponseModelFormValuesTitle title;
     }
 }

@@ -34,10 +34,6 @@
             <EventSetter Event="Click" Handler="btnDeliveryNumber_Click" />
         </Style>
 
-        <Style x:Key="CopyDeliveryNumberButton" TargetType="Button" BasedOn="{StaticResource TextButton}">
-            <EventSetter Event="Click" Handler="btnCopyDelivery_Click" />
-        </Style>
-
         <Style x:Key="SpilteOrderButton" TargetType="Button" BasedOn="{StaticResource TextButton}">
             <EventSetter Event="Click" Handler="btnSpilteOrder_Click" />
         </Style>
@@ -508,11 +504,6 @@
                                                     <Button Content="{Binding Source.DeliveryNumber}"
                                                             Style="{StaticResource QueryDeliveryButton}"
                                                             Tag="{Binding}" Foreground="Green"
-                                                            HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                                    <Button Content="复"
-                                                            Style="{StaticResource CopyDeliveryNumberButton}"
-                                                            Margin="0,3,0,3" Name="btnCopyDelivery"
-                                                            Tag="{Binding Source.DeliveryNumber}"
                                                             HorizontalAlignment="Center" VerticalAlignment="Center" />
                                                 </StackPanel>
                                                 <Button Name="btnModifyDeliveryInfo" Margin="3" Content="修改快递"

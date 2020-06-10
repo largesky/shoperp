@@ -27,9 +27,7 @@ namespace ShopErp.App.Views.Goods
     public partial class GoodUpdateWindow : Window
     {
         private GoodsService shoesService = ServiceContainer.GetService<GoodsService>();
-
-        private System.Collections.ObjectModel.ObservableCollection<GoodUpdateViewModel> shoes =
-            new System.Collections.ObjectModel.ObservableCollection<GoodUpdateViewModel>();
+        private System.Collections.ObjectModel.ObservableCollection<GoodUpdateViewModel> shoes = new System.Collections.ObjectModel.ObservableCollection<GoodUpdateViewModel>();
 
         private int current = 0;
         private bool isStop = false;

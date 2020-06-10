@@ -100,7 +100,6 @@ namespace ShopErp.App.Views.Goods
                     {
                         v.Source.Star = star;
                         ServiceContainer.GetService<GoodsService>().Update(v.Source);
-                        v.UpdateStarViewModel(star);
                     }
                 }
             }

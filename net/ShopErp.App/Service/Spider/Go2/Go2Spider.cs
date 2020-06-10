@@ -14,7 +14,7 @@ namespace ShopErp.App.Service.Spider.Go2
 
         private HtmlAgilityPack.HtmlDocument GetHtmlDocWithRetry(string url)
         {
-            string html = MsHttpRestful.GetUrlEncodeBodyReturnString(url, null);
+            string html = MsHttpRestful.GetReturnString(url, null);
             HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(html);
             return doc;

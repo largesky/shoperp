@@ -1,4 +1,5 @@
-﻿using ShopErp.App.Views.Config;
+﻿using ShopErp.App.Views.AttachUI;
+using ShopErp.App.Views.Config;
 using ShopErp.App.Views.DataCenter;
 using ShopErp.App.Views.Delivery;
 using ShopErp.App.Views.Finance;
@@ -90,8 +91,6 @@ namespace ShopErp.App
 
             mc = new MenuConfig("财务", null);
             mc.Add("好评返现", typeof(ReturnCashUserControl));
-            //mc.Add("日常记账", typeof(FinanceUserControl));
-            //mc.Add("账户管理", typeof(FinanceAccountUserControl));
             mcs.Add(mc);
 
 
@@ -104,6 +103,9 @@ namespace ShopErp.App
             mc.Add("工具栏配置", typeof(MenuItemConfigUserControl));
             mcs.Add(mc);
 
+            mc = new MenuConfig("外接窗口", null);
+            mc.Add("淘宝登录", typeof(TaobaoUserControl));
+            mcs.Add(mc);
             Menus = mcs.ToArray();
         }
 

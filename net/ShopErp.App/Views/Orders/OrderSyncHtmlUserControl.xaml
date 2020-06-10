@@ -12,7 +12,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Grid.ColumnSpan="2">
@@ -24,15 +23,10 @@
             <TextBlock  Text="结束时间:" Margin="3" VerticalAlignment="Center" />
             <xctk:DateTimePicker xctk:Format="Custom" xctk:TimeFormatString="yyyy-MM-dd HH:mm:ss"
                                   Name="dpEnd" Margin="3" VerticalAlignment="Center" MinWidth="140" />
-            <Button Name="btnGoToTaobao" Margin="3" Content="打开淘宝" VerticalAlignment="Center" Width="80"
-                    Click="btnGoToTaobao_Click" />
             <Button Name="btnUpdate" Margin="3" Content="开始同步" VerticalAlignment="Center" Width="80"
                     Click="btnSync_Click" />
         </StackPanel>
         <TextBox Grid.Row="1" Margin="3" Name="tbMessage" HorizontalScrollBarVisibility="Auto"
                  VerticalScrollBarVisibility="Auto" Grid.ColumnSpan="2" />
-        <WindowsFormsHost Grid.Row="2" Name="wfh" >
-            <cefwf:ChromiumWebBrowser x:Name="wb1"></cefwf:ChromiumWebBrowser>
-        </WindowsFormsHost>
     </Grid>
 </UserControl>

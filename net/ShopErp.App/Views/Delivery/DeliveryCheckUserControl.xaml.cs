@@ -15,7 +15,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using ShopErp.App.Service.Delivery;
 using ShopErp.App.Service.Restful;
 using ShopErp.Domain;
 using ShopErp.App.Service.Excel;
@@ -64,10 +63,6 @@ namespace ShopErp.App.Views.Delivery
                     }
                     this.dgvOrders.ItemsSource = this.orders;
                     this.tbTotal.Text = "当前共 : " + orders.Length + " 条记录";
-                    if (this.chkAutoLoadDelivery.IsChecked.Value)
-                    {
-                        Task.Factory.StartNew(GetDeliveryInfo);
-                    }
                 }
             }
             catch (Exception ex)
@@ -118,164 +113,6 @@ namespace ShopErp.App.Views.Delivery
             }
         }
 
-        private void GetDeliveryInfo()
-        {
-            this.isRunning = true;
-            this.isStop = false;
-
-            try
-            {
-                this.Dispatcher.BeginInvoke(new Action(() => this.btnRefresh.Content = "停止"));
-                int threadCount = this.orders.Count >= 10 ? 10 : this.orders.Count;
-                int eachThreadCount = this.orders.Count / threadCount;
-                List<DeliveryCheckViewModel>[] gvms = new List<DeliveryCheckViewModel>[threadCount];
-
-                for (int i = 0; i < gvms.Count(); i++)
-                {
-                    gvms[i] = new List<DeliveryCheckViewModel>();
-                    for (int j = 0; j < eachThreadCount; j++)
-                    {
-                        gvms[i].Add(this.orders[i * eachThreadCount + j]);
-                    }
-                }
-
-                if (this.orders.Count % threadCount != 0)
-                {
-                    for (int j = 0; j < threadCount && eachThreadCount * threadCount + j < this.orders.Count; j++)
-                    {
-                        gvms[j].Add(this.orders[eachThreadCount * threadCount + j]);
-                    }
-                }
-                this.isStop = false;
-                this.isRunning = true;
-                this.current = 0;
-                Task.WaitAll(gvms.Select(obj => Task.Factory.StartNew(new Action(() => GetDeliveryInfo(obj.ToArray()))))
-                    .ToArray());
-                MessageBox.Show("已完成");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            finally
-            {
-                this.isStop = true;
-                this.isRunning = false;
-                this.Dispatcher.BeginInvoke(new Action(() => this.btnRefresh.Content = "刷新"));
-            }
-        }
-
-        private DeliveryTransationItem[] Query(string company, string deliveryNumber)
-        {
-            try
-            {
-                var dd = DeliveryService.Query(company, deliveryNumber);
-                if (dd != null)
-                {
-                    return dd.Items.ToArray();
-                }
-                return null;
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        private void GetDeliveryInfo(DeliveryCheckViewModel[] dvms)
-        {
-            foreach (var dvm in dvms)
-            {
-                string message = "";
-                Brush br = null;
-                bool isChecked = false;
-                if (this.isStop)
-                {
-                    break;
-                }
-                try
-                {
-                    var shop = this.shops.FirstOrDefault(obj => obj.Id == dvm.Source.ShopId);
-                    if (shop == null)
-                    {
-                        message = "店铺不存在";
-                        br = Brushes.Red;
-                        continue;
-                    }
-                    var dd = Query(dvm.Source.DeliveryCompany, dvm.Source.DeliveryNumber);
-                    //没有物流，则检查发货后，第一条物流时间
-                    if (dd == null || dd.Length < 1)
-                    {
-                        var time = DateTime.Now.Subtract(dvm.Source.PopDeliveryTime).TotalHours;
-                        var sTime = shops.FirstOrDefault(obj => obj.Id == dvm.Source.ShopId).FirstDeliveryHours;
-                        if (time >= sTime || time - sTime >= -1)
-                        {
-                            isChecked = true;
-                            message = "没有第一条物流";
-                            br = Brushes.Red;
-                        }
-                        else
-                        {
-                            message = "正常";
-                        }
-                        continue;
-                    }
-
-                    //只有一条物流，则检测第二条物流是否到期
-                    if (dd.Length == 1)
-                    {
-                        var time = DateTime.Now.Subtract(dd[0].Time).TotalHours;
-                        var sTime = shops.FirstOrDefault(obj => obj.Id == dvm.Source.ShopId).SecondDeliveryHours;
-                        if (time >= sTime || time - sTime >= -1)
-                        {
-                            isChecked = true;
-                            message = "第二条物流超时";
-                            br = Brushes.Red;
-                        }
-                        else
-                        {
-                            message = "正常";
-                        }
-
-
-                        this.Dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            dvm.FirstDeliveryInfo = dd[0].Time.ToString("yyyy-MM-dd HH:mm:ss") + ":" +
-                                                    dd[0].Description;
-                        }));
-
-                        continue;
-                    }
-                    this.Dispatcher.BeginInvoke(new Action(() =>
-                    {
-                        dvm.FirstDeliveryInfo = dd[0].Time.ToString("yyyy-MM-dd HH:mm:ss") + ":" + dd[0].Description;
-                        dvm.SecondDeliveryInfo = dd[1].Time.ToString("yyyy-MM-dd HH:mm:ss") + ":" + dd[1].Description;
-                    }));
-                    //其它情况不用管，因为如果超时就已经超了
-                    message = "读取成功";
-                    br = null;
-                }
-                catch (Exception ex)
-                {
-                    message = ex.Message;
-                    br = Brushes.Red;
-                }
-                finally
-                {
-                    lock (this.orders)
-                    {
-                        current++;
-                    }
-                    this.Dispatcher.BeginInvoke(new Action(() =>
-                    {
-                        dvm.State = message;
-                        dvm.Background = br;
-                        dvm.IsChecked = isChecked;
-                        this.tbProgress.Text = "正在读取:" + current + "/" + this.orders.Count;
-                    }));
-                }
-            }
-        }
 
         #region 前选 后选 编辑地址
 

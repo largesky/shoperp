@@ -6,11 +6,10 @@
              mc:Ignorable="d"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:cefwf="clr-namespace:CefSharp.WinForms;assembly=CefSharp.WinForms"
-             d:DesignHeight="300" d:DesignWidth="1000" Loaded="UserControl_Loaded">
+             d:DesignHeight="300" d:DesignWidth="1000">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -19,7 +18,6 @@
             <TextBlock Text="已超时订单" Margin="3" VerticalAlignment="Center" />
             <Ellipse Width="20" Height="20" Fill="Yellow" Margin="3" />
             <TextBlock Text="1小时内超时订单" Margin="3" VerticalAlignment="Center" />
-            <Button Name="btnGoToTaobao" Margin="3" Content="打开淘宝" VerticalAlignment="Center" Width="60" Click="btnGoToTaobao_Click" />
             <Button Name="btnRefresh" Margin="3" VerticalAlignment="Center" Width="60" Content="刷新" Click="btnRefresh_Click" />
             <Button Name="btnMarkDelivery" Margin="3" VerticalAlignment="Center" Width="60" Content="标记发货" Click="btnMarkDelivery_Click"/>
             <TextBlock Name="tbTotal" Margin="3" VerticalAlignment="Center" />
@@ -51,8 +49,5 @@
                 <DataGridTextColumn Header="收件人地址" Binding="{Binding Source.ReceiverAddress}" Width="Auto" IsReadOnly="True"/>
             </DataGrid.Columns>
         </DataGrid>
-        <WindowsFormsHost Grid.Row="2" Name="wfh" >
-            <cefwf:ChromiumWebBrowser x:Name="wb1" LoadingStateChanged="wb1_LoadingStateChanged" />
-        </WindowsFormsHost>
     </Grid>
 </UserControl>

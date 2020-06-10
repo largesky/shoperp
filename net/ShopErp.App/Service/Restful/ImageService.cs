@@ -18,7 +18,7 @@ namespace ShopErp.App.Service.Restful
         {
             Console.WriteLine("GetImage:" + image);
             string url = ServiceContainer.ServerAddress + "/image/getimage.html?image=" + image;
-            return MsHttpRestful.GetUrlEncodeBodyReturnBytes(url, null);
+            return MsHttpRestful.GetReturnBytes(url);
         }
 
         public void SaveImage(string image, byte[] imBytes)

@@ -144,19 +144,6 @@ namespace ShopErp.App.Views.Orders
         {
             try
             {
-                Button btn = sender as Button;
-                if (btn == null || btn.DataContext == null || btn.DataContext is OrderReturnViewModel == false)
-                {
-                    return;
-                }
-                var order = btn.DataContext as OrderReturnViewModel;
-                Delivery.DeliveryQueryWindow window =
-                    new Delivery.DeliveryQueryWindow
-                    {
-                        DeliveryCompany = order.Source.DeliveryCompany,
-                        DeliveryNumber = order.Source.DeliveryNumber
-                    };
-                window.ShowDialog();
             }
             catch (Exception ex)
             {

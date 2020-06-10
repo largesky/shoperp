@@ -18,6 +18,7 @@ using ShopErp.App.Service.Restful;
 using ShopErp.App.Utils;
 using ShopErp.Domain;
 using ShopErp.Domain.Pop;
+using System.Threading;
 
 namespace ShopErp.App.Views.Orders
 {
@@ -87,6 +88,8 @@ namespace ShopErp.App.Views.Orders
             {
                 this.hasError = false;
                 Task.WaitAll(shopOrders.Keys.Select(obj => Task.Factory.StartNew(() => DownloadOneShopTask(obj))).ToArray());
+                //有时候没有订单下载，执行太快，给人没人执行的感觉
+                Thread.Sleep(2000);
             }
             catch (Exception e)
             {

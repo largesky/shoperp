@@ -64,7 +64,7 @@ namespace ShopErp.App.Service.Restful
                 headers = new Dictionary<string, string>();
             }
             headers["session"] = ServiceContainer.AccessToken;
-            string json = MsHttpRestful.PostJsonBodyReturnString(ServiceContainer.ServerAddress + "/" + url, para, Encoding.UTF8, headers);
+            string json = MsHttpRestful.PostJsonBodyReturnString(ServiceContainer.ServerAddress + "/" + url, para, headers);
             return DeserializeObject<T>(json);
         }
 
@@ -76,7 +76,7 @@ namespace ShopErp.App.Service.Restful
             }
             headers["session"] = ServiceContainer.AccessToken;
             string param = string.Join("&", para.Select(obj => obj.Key + "=" + MsHttpRestful.UrlEncode(obj.Value, Encoding.UTF8)));
-            string json = MsHttpRestful.PostBytesBodyReturnString(ServiceContainer.ServerAddress + "/" + url + "?" + param, file, Encoding.UTF8, headers);
+            string json = MsHttpRestful.PostBytesBodyReturnString(ServiceContainer.ServerAddress + "/" + url + "?" + param, file, headers);
             return DeserializeObject<T>(json);
         }
 

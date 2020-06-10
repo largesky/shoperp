@@ -37,7 +37,6 @@ namespace ShopErp.App.CefSharpUtils
             //查找某个指定的COOKIE
             if (string.IsNullOrWhiteSpace(Name) == false)
             {
-                Debug.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(cookie));
                 if (Domain.IndexOf(cookie.Domain, StringComparison.OrdinalIgnoreCase) >= 0 && cookie.Name == this.Name)
                 {
                     this.Cookies.Add(Name, cookie.Value);
@@ -73,13 +72,45 @@ namespace ShopErp.App.CefSharpUtils
             throw new Exception("等待读取COOKIE超时10分钟");
         }
 
-        public static string GetCookieValues(string domain, string name)
+        /// <summary>
+        /// 获取单个DOMAIN下的指定NAME的值
+        /// </summary>
+        /// <param name="domain"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static string GetSignleCookieValue(string domain, string name)
         {
+            if (string.IsNullOrWhiteSpace(domain) || string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException("domain或者name为空");
+            }
             CefCookieVisitor cefCookieVisitor = new CefCookieVisitor(domain, name);
             //VisitAllCookies 是一个异步方法，方法内部会使用其它线程执行
             Cef.GetGlobalCookieManager().VisitAllCookies(cefCookieVisitor);
             var dic = cefCookieVisitor.WaitValue();
-            return string.Join(";", dic.Select(obj => obj.Key + "=" + obj.Value));
+            if (dic.Count < 1)
+            {
+                throw new Exception(string.Format("未找到域名:{0}下名为:{1}的cookie", domain, name));
+            }
+            return dic.First().Value;
         }
+
+        /// <summary>
+        /// 获取某个域下的所有COOKIE，保存形式为 Dictionary["Cookie"]=所有cookie的值，可以直接用于HTTP层的HEADER，无须其它处理
+        /// </summary>
+        /// <param name="domain"></param>
+        /// <returns></returns>
+        public static Dictionary<string, string> GetCookieValue(string domain)
+        {
+            CefCookieVisitor cefCookieVisitor = new CefCookieVisitor(domain, null);
+            //VisitAllCookies 是一个异步方法，方法内部会使用其它线程执行
+            Cef.GetGlobalCookieManager().VisitAllCookies(cefCookieVisitor);
+            var dic = cefCookieVisitor.WaitValue();
+            string cookie = string.Join(";", dic.Select(obj => obj.Key + "=" + obj.Value));
+            Dictionary<string, string> dd = new Dictionary<string, string>();
+            dd["Cookie"] = cookie;
+            return dd;
+        }
+
     }
 }

@@ -166,6 +166,7 @@
     <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelFormValuesModularDesc.cs" />
     <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelFormValuesSaleProp.cs" />
     <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelFormValuesSalePropColorItem.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelFormValuesTitle.cs" />
     <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelGlobal.cs" />
     <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelGlobalLocation.cs" />
     <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsDetailResponseModelPropDataSource.cs" />
@@ -187,6 +188,15 @@
     <Compile Include="Domain\TaobaoHtml\Goods\ValueTextArray.cs" />
     <Compile Include="Domain\TaobaoHtml\Goods\ValueTextArrayConverter.cs" />
     <Compile Include="Domain\TaobaoHtml\Goods\ValueTextArrayEntry.cs" />
+    <Compile Include="Domain\TaobaoHtml\Image\ImageAddDirRsp.cs" />
+    <Compile Include="Domain\TaobaoHtml\Image\ImageAddDirRspJsonData.cs" />
+    <Compile Include="Domain\TaobaoHtml\Image\ImageAddFileRsp.cs" />
+    <Compile Include="Domain\TaobaoHtml\Image\ImageDirRsp.cs" />
+    <Compile Include="Domain\TaobaoHtml\Image\ImageDirRspModule.cs" />
+    <Compile Include="Domain\TaobaoHtml\Image\ImageDirRspModuleDir.cs" />
+    <Compile Include="Domain\TaobaoHtml\Image\ImageFileRsp.cs" />
+    <Compile Include="Domain\TaobaoHtml\Image\ImageFileRspModule.cs" />
+    <Compile Include="Domain\TaobaoHtml\Image\ImageFileRspModuleFile.cs" />
     <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponse.cs" />
     <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseOperationsGuide.cs" />
     <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseOperationsGuideLine.cs" />
@@ -225,11 +235,6 @@
     <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\TaobaoCainiao\CainiaoPrintDocumentResponse.cs" />
     <Compile Include="Service\Print\PrintDocument\DeliveryPrintDocument\TaobaoCainiao\CainiaoPrintDocumentResponsePrint.cs" />
     <Compile Include="Log\Logger.cs" />
-    <Compile Include="Service\Delivery\DeliveryService.cs" />
-    <Compile Include="Service\Delivery\DeliveryTransation.cs" />
-    <Compile Include="Service\Delivery\DeliveryTransationItem.cs" />
-    <Compile Include="Service\Delivery\Kuaidi100DeliveryItem.cs" />
-    <Compile Include="Service\Delivery\Kuaidi100DeliveryResult.cs" />
     <Compile Include="Service\LocalConfigService.cs" />
     <Compile Include="Service\Net\Message.cs" />
     <Compile Include="Service\Net\MessageArrviedEventArgs.cs" />
@@ -298,7 +303,6 @@
     <Compile Include="Service\Restful\VendorService.cs" />
     <Compile Include="Service\Restful\WuliuNumberService.cs" />
     <Compile Include="Service\Restful\WuliuPrintTemplateService.cs" />
-    <Compile Include="Service\ScriptManager.cs" />
     <Compile Include="Service\Speaker.cs" />
     <Compile Include="Service\Spider\Go2\Go2Spider.cs" />
     <Compile Include="Service\Spider\K3\K3Spider.cs" />
@@ -337,6 +341,9 @@
     <Compile Include="ViewModels\PrintTemplateItemViewModelForRandom.cs" />
     <Compile Include="ViewModels\PrintTemplateItemViewModelForText.cs" />
     <Compile Include="ViewModels\ShopDownloadViewModel.cs" />
+    <Compile Include="Views\AttachUI\TaobaoUserControl.xaml.cs">
+      <DependentUpon>TaobaoUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Config\ConfigUserControl.xaml.cs">
       <DependentUpon>ConfigUserControl.xaml</DependentUpon>
     </Compile>
@@ -400,9 +407,6 @@
     </Compile>
     <Compile Include="Views\Delivery\DeliveryOutQueryUserControl.xaml.cs">
       <DependentUpon>DeliveryOutQueryUserControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Delivery\DeliveryQueryWindow.xaml.cs">
-      <DependentUpon>DeliveryQueryWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Delivery\DeliveryOutScanUserControl.xaml.cs">
       <DependentUpon>DeliveryOutScanUserControl.xaml</DependentUpon>
@@ -654,6 +658,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\AttachUI\TaobaoUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Config\ConfigUserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -727,10 +735,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Delivery\DeliveryOutQueryUserControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Delivery\DeliveryQueryWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1034,9 +1038,6 @@
     <Resource Include="Resources\Images\EMPTYIMAGE.jpg" />
     <Resource Include="Resources\Images\READIMAGEERROR.jpg" />
     <Resource Include="Resources\Images\DISABLEIMAGE.jpg" />
-    <None Include="Resources\TAOBAOJS.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\VideoIcon.png" />
@@ -1048,10 +1049,10 @@
   <ItemGroup>
     <Resource Include="Resources\Images\pay_h.png" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy $(ProjectDir)Resources\\TAOBAOJS.js $(TargetDir)DATA\\TAOBAOJS.js</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

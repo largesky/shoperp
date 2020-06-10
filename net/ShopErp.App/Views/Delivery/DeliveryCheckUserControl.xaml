@@ -16,7 +16,6 @@
                 <TextBlock Text="已超时订单" Margin="3" VerticalAlignment="Center" />
                 <Ellipse Width="20" Height="20" Fill="Yellow" Margin="3" />
                 <TextBlock Text="1小时内超时订单" Margin="3" VerticalAlignment="Center" />
-                <CheckBox Name="chkAutoLoadDelivery" Content="加载完成后读取物流" Margin="3" VerticalAlignment="Center" IsChecked="False" FlowDirection="RightToLeft"/>
                 <Button Name="btnRefresh" Margin="3" VerticalAlignment="Center" Width="60" Content="刷新"
                         Click="btnRefresh_Click" />
                 <Button Name="btnExport" Margin="3,0,3,3" VerticalAlignment="Bottom" Width="60" Content="导出"

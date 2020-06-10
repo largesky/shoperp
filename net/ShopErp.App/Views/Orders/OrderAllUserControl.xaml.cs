@@ -96,7 +96,6 @@ namespace ShopErp.App.Views.Orders
             }
         }
 
-
         private void btnSearch_Click(object sender, RoutedEventArgs e)
         {
             this.pbBar.Parameters.Clear();
@@ -144,7 +143,6 @@ namespace ShopErp.App.Views.Orders
             }
         }
 
-        [HandleProcessCorruptedStateExceptions]
         private void pbBar_PageChanging(object sender, PageChangeEventArgs e)
         {
             try
@@ -212,19 +210,18 @@ namespace ShopErp.App.Views.Orders
         {
             try
             {
-                var order = GetCurrentOrderViewModel(sender);
-                if (string.IsNullOrWhiteSpace(order.Source.DeliveryCompany) ||
-                    string.IsNullOrWhiteSpace(order.Source.DeliveryNumber))
+                FrameworkElement fe = sender as FrameworkElement;
+                if (fe == null)
                 {
-                    return;
+                    throw new Exception("事件源不是 FrameworkElement");
                 }
-                Delivery.DeliveryQueryWindow window =
-                    new Delivery.DeliveryQueryWindow
-                    {
-                        DeliveryCompany = order.Source.DeliveryCompany,
-                        DeliveryNumber = order.Source.DeliveryNumber
-                    };
-                window.ShowDialog();
+
+                var ov = fe.Tag as OrderViewModel;
+                if (string.IsNullOrWhiteSpace(ov.DeliveryNumber))
+                {
+                    throw new Exception("快递单号为空");
+                }
+                System.Windows.Forms.Clipboard.SetText(ov.DeliveryNumber);
             }
             catch (Exception ex)
             {
@@ -430,28 +427,6 @@ namespace ShopErp.App.Views.Orders
             this.lstItems.ItemsSource = items;
         }
 
-        private void btnCopyDelivery_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                FrameworkElement fe = sender as FrameworkElement;
-                if (fe == null)
-                {
-                    throw new Exception("事件源不是 FrameworkElement");
-                }
-
-                string number = fe.Tag as string;
-                if (string.IsNullOrWhiteSpace(number))
-                {
-                    throw new Exception("快递单号为空");
-                }
-                System.Windows.Forms.Clipboard.SetText(number);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
 
         private void btnSpilteOrder_Click(object sender, RoutedEventArgs e)
         {

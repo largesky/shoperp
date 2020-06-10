@@ -14,7 +14,7 @@ namespace ShopErp.App.Service.Spider.K3
         public override Goods GetGoodsInfoByUrl(string url, ref string vendorHomePage, ref string videoUrl, bool raiseExceptionOnGoodsNotSale)
         {
             Goods g = new Goods { Comment = "", CreateTime = DateTime.Now, Image = "", Number = "", Price = 0, Type = 0, UpdateEnabled = true, UpdateTime = DateTime.Now, Url = url, VendorId = 0, Weight = 0, Id = 0, Colors = "", CreateOperator = "", Flag = ColorFlag.UN_LABEL, IgnoreEdtion = false, ImageDir = "", Material = "", Shops = new List<GoodsShop>(), Star = 0, VideoType = GoodsVideoType.NONE, Shipper = "WL" };
-            string html = MsHttpRestful.GetUrlEncodeBodyReturnString(url, null);
+            string html = MsHttpRestful.GetReturnString(url, null);
             HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(html);
 
@@ -99,7 +99,7 @@ namespace ShopErp.App.Service.Spider.K3
         public override Vendor GetVendorInfoByUrl(string url)
         {
             var vendor = new Vendor { Alias = "", AveragePrice = 0, Comment = "", Count = 0, CreateTime = DateTime.Now, HomePage = "", Id = 0, MarketAddress = "", MarketAddressShort = "", Name = "", PingyingName = "", Watch = false };
-            string html = MsHttpRestful.GetUrlEncodeBodyReturnString(url, null);
+            string html = MsHttpRestful.GetReturnString(url, null);
             HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(html);
 

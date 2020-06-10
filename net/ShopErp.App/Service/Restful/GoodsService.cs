@@ -27,7 +27,7 @@ namespace ShopErp.App.Service.Restful
 
             if (image.StartsWith("http", StringComparison.OrdinalIgnoreCase) || image.StartsWith("ftp", StringComparison.OrdinalIgnoreCase))
             {
-                return MsHttpRestful.GetUrlEncodeBodyReturnBytes(image, null);
+                return MsHttpRestful.GetReturnBytes(image);
             }
 
             throw new Exception("无法处理的图片网址：" + image);

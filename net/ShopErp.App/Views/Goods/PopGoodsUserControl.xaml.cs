@@ -12,6 +12,7 @@ using System.Windows.Input;
 using CefSharp;
 using ShopErp.App.CefSharpUtils;
 using ShopErp.App.Domain.TaobaoHtml.Goods;
+using ShopErp.App.Domain.TaobaoHtml.Image;
 using ShopErp.App.Service;
 using ShopErp.App.Service.Net;
 using ShopErp.App.Service.Restful;
@@ -29,7 +30,6 @@ namespace ShopErp.App.Views.Goods
     /// </summary>
     public partial class PopGoodsUserControl : UserControl
     {
-        string jspath = System.IO.Path.Combine(EnvironmentDirHelper.DIR_DATA + "\\TAOBAOJS.js");
         private GoodsDownloadWorker goodsDownloadWorker = null;
         private bool myLoaded = false;
         private Shop lastShop = null;
@@ -203,10 +203,10 @@ namespace ShopErp.App.Views.Goods
                     }
                     if (this.lastShop.AppEnabled == false)
                     {
-                        string htmlRet = this.wb1.GetTextAsync().Result;
-                        if (htmlRet.Contains(this.lastShop.PopSellerId) == false)
+                        var ss = MainWindow.ProgramMainWindow.QueryUserControlInstance<AttachUI.TaobaoUserControl>().GetLoginShop();
+                        if (ss.Id != lastShop.Id)
                         {
-                            throw new Exception("选择店铺与当前登录店铺不一致");
+                            throw new Exception("当前选择店铺与登录店铺不一样");
                         }
                     }
                     goodsDownloadWorker = new GoodsDownloadWorker(this.lastShop, title, code, stockCode, state);
@@ -452,35 +452,6 @@ namespace ShopErp.App.Views.Goods
             }
         }
 
-        private void CbbShops_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            try
-            {
-                var shop = this.cbbShops.SelectedItem as ShopErp.Domain.Shop;
-                if (shop == null)
-                {
-                    return;
-                }
-                string url = "";
-                if (shop.PopType == PopType.TAOBAO)
-                {
-                    url = "https://item.publish.taobao.com/taobao/manager/render.htm?tab=all";
-                }
-                else if (shop.PopType == PopType.TMALL)
-                {
-                    url = "https://item.manager.tmall.com/tmall/manager/render.htm";
-                }
-                if (string.IsNullOrWhiteSpace(url) == false)
-                {
-                    this.wb1.Load(url);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             try
@@ -656,15 +627,7 @@ namespace ShopErp.App.Views.Goods
                 {
                     throw new Exception("只有淘宝天猫可以进行匹配");
                 }
-                string tadgetDomainCookies = CefCookieVisitor.GetCookieValues("tadget.taobao.com", null);
-                string tbToken = CefCookieVisitor.GetCookieValues("tadget.taobao.com", "_tb_token_");
-                if (string.IsNullOrWhiteSpace(tbToken))
-                {
-                    throw new Exception("获取_tb_token cookie 为空");
-                }
-                var url = new Uri("https://tadget.taobao.com/redaction/redaction/json.json?cmd=json_dirTree_query&count=true&_input_charset=utf-8&_tb_token_=" + tbToken.Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries)[1]);
-                string json = MsHttpRestful.SendTbData(System.Net.Http.HttpMethod.Get, url, null, tadgetDomainCookies, null);
-                var rsp = Newtonsoft.Json.JsonConvert.DeserializeObject<ImageRsp>(json);
+                var rsp = MainWindow.ProgramMainWindow.QueryUserControlInstance<AttachUI.TaobaoUserControl>().GetImageDirRsp();
                 var imageDirs = rsp.module.dirs.children.FirstOrDefault(obj => obj.name == "商品图片").children.Select(obj => obj.name).ToArray();
                 var allGoods = ServiceContainer.GetService<GoodsService>().GetByAll((this.cbbShops.SelectedItem as Shop).Id, GoodsState.UPLOADED, 0, DateTime.MinValue, DateTime.MinValue, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", "", "", 0, 0).Datas.OrderBy(obj => obj.VendorId).ToList();
                 var vendors = ServiceContainer.GetService<VendorService>().GetByAll("", "", "", "", 0, 0).Datas.ToList();
@@ -766,28 +729,6 @@ namespace ShopErp.App.Views.Goods
                 MessageBox.Show(ex.Message);
             }
         }
-    }
-
-    public class ImageRsp
-    {
-        public ImageRspModule module;
-    }
-
-    public class ImageRspModule
-    {
-        public ImageRspModuleDir dirs;
-    }
-
-    public class ImageRspModuleDir
-    {
-        public ImageRspModuleDirChildren[] children;
-    }
-
-    public class ImageRspModuleDirChildren
-    {
-        public string name;
-
-        public ImageRspModuleDirChildren[] children;
     }
 
 
@@ -1001,23 +942,22 @@ namespace ShopErp.App.Views.Goods
             string goodsEditPageDomain = shop.PopType == PopType.TMALL ? "item.upload.tmall.com" : "item.publish.taobao.com";
             string goodsEditPageUrlBase = shop.PopType == PopType.TMALL ? "https://item.upload.tmall.com/tmall/publish.htm?id=" : "https://item.publish.taobao.com/sell/publish.htm?itemId=";
 
-            var goodsListPageXsrfCookieValue = CefCookieVisitor.GetCookieValues(goodsListPageUri.Host, "XSRF-TOKEN");
+            var goodsListPageXsrfCookieValue = CefCookieVisitor.GetSignleCookieValue(goodsListPageUri.Host, "XSRF-TOKEN");
             if (string.IsNullOrWhiteSpace(goodsListPageXsrfCookieValue))
             {
                 throw new Exception("没有找到相应XSRF-TOKEN,刷新页面重新登录");
             }
-            var goodsListPageDomainCookie = CefCookieVisitor.GetCookieValues(goodsListPageUri.Host, null);
-            if (string.IsNullOrWhiteSpace(goodsListPageDomainCookie))
+            var goodsListPageDomainCookie = CefCookieVisitor.GetCookieValue(goodsListPageUri.Host);
+            if (string.IsNullOrWhiteSpace(goodsListPageDomainCookie.First().Value))
             {
                 throw new Exception("未找到域:" + goodsListPageUri.Host + " 的任何COOKIE ,刷新页面重新登录");
             }
-            var goodsEditPageCookie = CefCookieVisitor.GetCookieValues(goodsEditPageDomain, null);
+            var goodsEditPageCookie = CefCookieVisitor.GetCookieValue(goodsEditPageDomain);
             string goodsState = state == PopGoodsState.NONE ? "all" : (state == PopGoodsState.ONSALE ? "on_sale" : "in_stock");
-            var xhrdata = "jsonBody=" + MsHttpRestful.UrlEncode("{\"filter\":{},\"pagination\":{\"current\":" + pageIndex + ",\"pageSize\":20},\"table\":{\"sort\":{}},\"tab\":\"" + goodsState + "\"}", Encoding.UTF8);
-            var header = new Dictionary<string, string>();
-            header.Add("X-XSRF-TOKEN", goodsListPageXsrfCookieValue.Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries)[1]);
-
-            var content = MsHttpRestful.SendTbData(System.Net.Http.HttpMethod.Post, goodsListPageUri, header, goodsListPageDomainCookie, xhrdata);
+            Dictionary<string, string> values = new Dictionary<string, string>();
+            values["jsonBody"] = "{\"filter\":{},\"pagination\":{\"current\":" + pageIndex + ",\"pageSize\":20},\"table\":{\"sort\":{}},\"tab\":\"" + goodsState + "\"}";
+            goodsListPageDomainCookie.Add("X-XSRF-TOKEN", goodsListPageXsrfCookieValue);
+            var content = MsHttpRestful.PostUrlEncodeBodyReturnString(goodsListPageUri.OriginalString, values, goodsListPageDomainCookie);
             var resp = Newtonsoft.Json.JsonConvert.DeserializeObject<TaobaoQueryGoodsListResponse>(content);
             List<PopGoods> goods = new List<PopGoods>();
             if (resp == null || resp.success == false)
@@ -1067,10 +1007,9 @@ namespace ShopErp.App.Views.Goods
             return goods;
         }
 
-        private bool QueryHtmlGoods(TaobaoQueryGoodsListResponseDataTableDataSource g, string url, string cookie, ref PopGoods popGoods)
+        private bool QueryHtmlGoods(TaobaoQueryGoodsListResponseDataTableDataSource g, string url, Dictionary<string, string> headers, ref PopGoods popGoods)
         {
-            string htmlContent = MsHttpRestful.SendTbData(System.Net.Http.HttpMethod.Get, new Uri(url), null, cookie, null);
-
+            string htmlContent = MsHttpRestful.GetReturnString(url, headers);
             if (string.IsNullOrWhiteSpace(htmlContent))
             {
                 throw new Exception("读取商品详情返回为空：" + g.itemId);
@@ -1138,7 +1077,7 @@ namespace ShopErp.App.Views.Goods
 
             //状态 
             pg.State = g.upShelfDate_m.status.text == "出售中" ? PopGoodsState.ONSALE : PopGoodsState.NOTSALE;
-            pg.Title = g.itemDesc.desc.FirstOrDefault(obj => string.IsNullOrWhiteSpace(obj.href) == false).text.Trim();
+            pg.Title = goodsDetail.models.formValues.title.title[0];
 
             //SKU
             foreach (var vSku in goodsDetail.models.formValues.sku)

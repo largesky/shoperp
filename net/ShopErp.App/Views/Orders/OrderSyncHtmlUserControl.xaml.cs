@@ -20,6 +20,8 @@ using ShopErp.App.Utils;
 using ShopErp.Domain;
 using ShopErp.Domain.Pop;
 using System.Text.RegularExpressions;
+using ShopErp.App.CefSharpUtils;
+using ShopErp.App.Service.Net;
 
 namespace ShopErp.App.Views.Orders
 {
@@ -74,9 +76,7 @@ namespace ShopErp.App.Views.Orders
                 }
                 this.isRunning = true;
                 this.Dispatcher.BeginInvoke(new Action(() => this.btnUpdate.Content = "停止"));
-                string htmlRet = this.wb1.GetTextAsync().Result;
-                var allShops = ServiceContainer.GetService<ShopService>().GetByAll().Datas;
-                var shop = allShops.FirstOrDefault(obj => htmlRet.Contains(obj.PopSellerId));
+                var shop = MainWindow.ProgramMainWindow.QueryUserControlInstance<AttachUI.TaobaoUserControl>().GetLoginShop();
                 var ors = ServiceContainer.GetService<OrderUpdateService>().GetByAll(new long[] { shop.Id }, popOrderId, startTime, endTime, 0, 0);
                 var orders = ors.Datas.Where(obj => string.IsNullOrWhiteSpace(obj.PopOrderId) == false).ToArray();
                 if (orders.Length < 1)
@@ -165,14 +165,7 @@ namespace ShopErp.App.Views.Orders
             };
 
             //订单信息
-            var js = ScriptManager.GetBody(jspath, "//TAOBAO_GET_ORDER").Replace("###bizOrderId", popOrderId);
-            var task = wb1.GetBrowser().MainFrame.EvaluateScriptAsync(js, "", 1, new TimeSpan(0, 0, 30));
-            var ret = task.Result;
-            if (ret.Success == false || (ret.Result != null && ret.Result.ToString().StartsWith("ERROR")))
-            {
-                throw new Exception("执行操作失败：" + ret.Message);
-            }
-            var content = ret.Result.ToString();
+            var content = MsHttpRestful.GetReturnString("https://trade.taobao.com/detail/orderDetail.htm?bizOrderId=" + popOrderId, CefCookieVisitor.GetCookieValue("trade.taobao.com"));
             string title = shop.PopType == PopType.TMALL ? "var detailData" : "var data = JSON";
 
             int si = content.IndexOf(title);
@@ -211,11 +204,6 @@ namespace ShopErp.App.Views.Orders
             pos.State = ConveretState(pos.PopOrderStateValue);
 
             return pos;
-        }
-
-        private void btnGoToTaobao_Click(object sender, RoutedEventArgs e)
-        {
-            this.wb1.Load("https://trade.taobao.com/trade/itemlist/list_sold_items.htm");
         }
     }
 }

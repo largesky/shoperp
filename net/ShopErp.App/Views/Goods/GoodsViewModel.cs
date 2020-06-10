@@ -16,9 +16,8 @@ namespace ShopErp.App.Views.Goods
 
         public static readonly DependencyProperty CommentProperty = DependencyProperty.Register("Comment", typeof(string), typeof(GoodsViewModel));
 
-        public static readonly DependencyProperty StarStringProperty = DependencyProperty.Register("StarString", typeof(string), typeof(GoodsViewModel));
+        public static readonly DependencyProperty UploadStateProperty = DependencyProperty.Register("UploadState", typeof(string), typeof(GoodsViewModel));
 
-        public static readonly DependencyProperty StarImageProperty = DependencyProperty.Register("StarImage", typeof(BitmapSource), typeof(GoodsViewModel));
 
         public ShopErp.Domain.Goods Source { get; set; }
 
@@ -34,14 +33,10 @@ namespace ShopErp.App.Views.Goods
             set { this.SetValue(FlagProperty, value); }
         }
 
-        public string StarString
+        public string UploadState
         {
-            get { return (string)this.GetValue(StarStringProperty); }
-        }
-
-        public BitmapSource StarImage
-        {
-            get { return (BitmapSource)this.GetValue(StarImageProperty); }
+            get { return (string)this.GetValue(UploadStateProperty); }
+            set { this.SetValue(UploadStateProperty, value); }
         }
 
         public string TargetShops
@@ -86,22 +81,10 @@ namespace ShopErp.App.Views.Goods
             return "(ERR)";
         }
 
-        public void UpdateStarViewModel(int star)
-        {
-            if (this.Source == null)
-            {
-                this.SetValue(StarStringProperty, "");
-                return;
-            }
-            this.Source.Star = star;
-            this.SetValue(StarStringProperty, star <= 0 ? "" : star.ToString());
-        }
-
         public GoodsViewModel(ShopErp.Domain.Goods source)
         {
             this.Source = source;
             this.Comment = source.Comment;
-            this.UpdateStarViewModel(source.Star);
             this.Flag = source.Flag;
         }
     }

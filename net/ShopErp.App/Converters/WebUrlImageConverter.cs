@@ -48,11 +48,9 @@ namespace ShopErp.App.Converters
 
         public static object ConvertWeb(string value)
         {
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para["image"] = value;
             BitmapImage image = new BitmapImage();
             image.BeginInit();
-            image.StreamSource = new MemoryStream(MsHttpRestful.GetUrlEncodeBodyReturnBytes(ServiceContainer.ServerAddress + "//image/getimage.html", para));
+            image.StreamSource = new MemoryStream(MsHttpRestful.GetReturnBytes(ServiceContainer.ServerAddress + "//image/getimage.html?image="+value));
             image.EndInit();
             return image;
         }
@@ -81,7 +79,7 @@ namespace ShopErp.App.Converters
                 {
                     BitmapImage image = new BitmapImage();
                     image.BeginInit();
-                    image.StreamSource = new MemoryStream(MsHttpRestful.GetUrlEncodeBodyReturnBytes(img, null));
+                    image.StreamSource = new MemoryStream(MsHttpRestful.GetReturnBytes(img));
                     image.EndInit();
                     return image;
                 }

@@ -35,7 +35,6 @@ namespace ShopErp.App.Views.Delivery
     /// </summary>
     public partial class MarkPopDeliveryHtmlUserControl : UserControl
     {
-        private bool myLoaded = false;
         string jspath = System.IO.Path.Combine(EnvironmentDirHelper.DIR_DATA + "\\TAOBAOJS.js");
         private bool isRunning = false;
         private ObservableCollection<OrderViewModel> orders = new ObservableCollection<OrderViewModel>();
@@ -43,22 +42,6 @@ namespace ShopErp.App.Views.Delivery
         public MarkPopDeliveryHtmlUserControl()
         {
             InitializeComponent();
-        }
-
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                if (this.myLoaded)
-                {
-                    return;
-                }
-                this.myLoaded = true;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
         }
 
         private ColorFlag ConvertFlag(int flag)
@@ -123,18 +106,8 @@ namespace ShopErp.App.Views.Delivery
         private ShopErp.Domain.Order ParseOrder(TaobaoQueryOrderListResponseOrder orderShort, Shop shop)
         {
             var dbMineTime = ServiceContainer.GetService<OrderService>().GetDBMinTime();
-
-
             //订单信息
-            var js = ScriptManager.GetBody(jspath, "//TAOBAO_GET_ORDER").Replace("###bizOrderId", orderShort.id);
-            var task = wb1.GetBrowser().MainFrame.EvaluateScriptAsync(js, "", 1, new TimeSpan(0, 0, 30));
-            var ret = task.Result;
-            if (ret.Success == false || (ret.Result != null && ret.Result.ToString().StartsWith("ERROR")))
-            {
-                throw new Exception("执行操作失败：" + ret.Message);
-            }
-
-            var content = ret.Result.ToString();
+            var content = MsHttpRestful.GetReturnString("https://trade.taobao.com/detail/orderDetail.htm?bizOrderId=" + orderShort.id, CefCookieVisitor.GetCookieValue("trade.taobao.com"));
             string title = shop.PopType == PopType.TMALL ? "var detailData" : "var data = JSON";
 
             int si = content.IndexOf(title);
@@ -414,26 +387,25 @@ namespace ShopErp.App.Views.Delivery
 
             int totalCount = 0, currentCount = 0;
             int totalPage = 0, currentPage = 1;
-            string htmlRet = this.wb1.GetTextAsync().Result;
             var allShops = ServiceContainer.GetService<ShopService>().GetByAll().Datas;
-            var shop = allShops.FirstOrDefault(obj => htmlRet.Contains(obj.PopSellerId));
-
+            var shop = MainWindow.ProgramMainWindow.QueryUserControlInstance<AttachUI.TaobaoUserControl>().GetLoginShop();
             if (shop == null)
             {
                 throw new Exception("系统中没有找到相应店铺");
             }
-
+            Dictionary<string, string> param = new Dictionary<string, string>();
+            param["action"] = "itemlist/SoldQueryAction";
+            param["auctionType"] = "0";
+            param["orderStatus"] = "PAID";
+            param["tabCode"] = "waitSend";
+            param["pageSize"] = "15";
             while (this.isRunning)
             {
-                string script = ScriptManager.GetBody(jspath, "//TAOBAO_SEARCH_ORDER").Replace("###prePageNo", (currentPage - 1 >= 0 ? currentPage - 1 : 1).ToString()).Replace("###pageNum", currentPage.ToString());
-                var task = wb1.GetBrowser().MainFrame.EvaluateScriptAsync(script, "", 1, new TimeSpan(0, 0, 30));
-                var ret = task.Result;
-
-                if (ret.Success == false || (ret.Result != null && ret.Result.ToString().StartsWith("ERROR")))
-                {
-                    throw new Exception("执行操作失败：" + ret.Message);
-                }
-                var or = Newtonsoft.Json.JsonConvert.DeserializeObject<TaobaoQueryOrderListResponse>(ret.Result.ToString());
+                param["prePageNo"] = (currentPage - 1 >= 0 ? currentPage - 1 : 1).ToString();
+                param["pageNum"] = currentPage.ToString();
+                var header = CefCookieVisitor.GetCookieValue("trade.taobao.com");
+                string ret = MsHttpRestful.PostUrlEncodeBodyReturnString("https://trade.taobao.com/trade/itemlist/asyncSold.htm?event_submit_do_query=1&_input_charset=utf8", param, header, null, "https://trade.taobao.com/trade/itemlist/list_sold_items.htm");
+                var or = Newtonsoft.Json.JsonConvert.DeserializeObject<TaobaoQueryOrderListResponse>(ret);
                 if (or.page == null)
                 {
                     throw new Exception("执行操作失败：返回数据格式无法识别");
@@ -519,11 +491,7 @@ namespace ShopErp.App.Views.Delivery
                 }
                 this.btnRefresh.Content = "停止";
                 this.isRunning = true;
-
                 this.orders.Clear();
-                string htmlRet = this.wb1.GetTextAsync().Result;
-                var shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas;
-                var shop = shops.FirstOrDefault(obj => htmlRet.Contains(obj.PopSellerId));
                 var downloadOrders = GetOrders();
                 if (downloadOrders == null || downloadOrders.Count < 1)
                 {
@@ -566,10 +534,10 @@ namespace ShopErp.App.Views.Delivery
         {
             string formId = "//form[@id = 'orderForm']";
             string inputMark = "input";
-            //第一步读取页面信息
+            //第一步读取页面信息,需要从该页面中提取要发送的数据
             var uri = new Uri("https://wuliu.taobao.com/user/consign.htm?trade_id=" + popOrderId);
-            string cookies = CefCookieVisitor.GetCookieValues(uri.Host, null);
-            string html = MsHttpRestful.SendTbData(System.Net.Http.HttpMethod.Get, uri, null, cookies, null);
+            Dictionary<string, string> headers = CefCookieVisitor.GetCookieValue(uri.Host);
+            string html = MsHttpRestful.GetReturnString(uri.OriginalString, headers);
 
             //第二步 提取数据
             Dictionary<string, string> paras = new Dictionary<string, string>();
@@ -621,11 +589,8 @@ namespace ShopErp.App.Views.Delivery
 
             paras["mailNo"] = deliveryNumber;
             paras["companyCode"] = deliveryCompany;
-
-            //生成数据，该页面使用GBK编码
-            List<string> ss = paras.Select(obj => obj.Key + "=" + MsHttpRestful.UrlEncode(obj.Value, Encoding.GetEncoding("GBK"))).ToList();
-            string urlEncodeData = string.Join("&", ss);
-            string ret = MsHttpRestful.SendTbData(System.Net.Http.HttpMethod.Post, uri, null, cookies, urlEncodeData);
+            //页面使用的什么编码，发送数据就要使用什么编码，否则对面无法接收
+            string ret = MsHttpRestful.PostUrlEncodeBodyReturnString(uri.OriginalString, paras, headers, doc.DeclaredEncoding??doc.Encoding);
             if (ret.Contains("恭喜您，操作成功"))
             {
                 return;
@@ -683,11 +648,6 @@ namespace ShopErp.App.Views.Delivery
             {
                 MessageBox.Show(ex.Message);
             }
-        }
-
-        private void btnGoToTaobao_Click(object sender, RoutedEventArgs e)
-        {
-            this.wb1.Load("https://trade.taobao.com/trade/itemlist/list_sold_items.htm");
         }
 
         #region 前选 后选 
@@ -771,7 +731,6 @@ namespace ShopErp.App.Views.Delivery
                 {
                     throw new Exception("该订单没有平台订单编号");
                 }
-                this.wb1.Load("https://wuliu.taobao.com/user/consign.htm?trade_id=" + item.Source.PopOrderId);
                 if (string.IsNullOrWhiteSpace(item.Source.DeliveryNumber))
                 {
                     System.Windows.Forms.Clipboard.Clear();
@@ -785,85 +744,6 @@ namespace ShopErp.App.Views.Delivery
                 {
                     MessageBox.Show("订单状态不正确：" + item.Source.State + " 请仔细检查", "警告");
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        private void wb1_LoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
-        {
-            try
-            {
-                if (e.IsLoading)
-                {
-                    return;
-                }
-
-                string url = e.Browser.MainFrame.Url;
-                if (url.Contains("https://wuliu.taobao.com/user/order_detail_old.htm") == false)
-                {
-                    return;
-                }
-
-                this.Dispatcher.BeginInvoke(new Action(ParseResult));
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        private string FindNumbers(string ss, string mark)
-        {
-            int index = ss.IndexOf(mark);
-            if (index < 0)
-            {
-                return "";
-            }
-            int iStart = index + mark.Length;
-            while ((Char.IsDigit(ss[iStart]) == false && Char.IsUpper(ss[iStart]) == false) && iStart < ss.Length) iStart++;
-            if (iStart == ss.Length)
-            {
-                MessageBox.Show("标记发货失败，返回数据中未找到运单号码：");
-                return "";
-            }
-            int iEnd = iStart + 1;
-            while ((Char.IsDigit(ss[iEnd]) || char.IsUpper(ss[iEnd])) && iEnd < ss.Length) iEnd++;
-            string dn = ss.Substring(iStart, iEnd - iStart);
-            return dn.Trim();
-        }
-
-        private void ParseResult()
-        {
-            try
-            {
-                string ss = this.wb1.GetMainFrame().GetTextAsync().Result.ToUpper();
-                string dn = FindNumbers(ss, "运单号码：");
-                string oid = FindNumbers(ss, "订单编号：");
-
-                //搜索订单编号与运单号是否匹配
-                var order = this.orders.FirstOrDefault(obj => obj.Source.PopOrderId.Equals(oid, StringComparison.OrdinalIgnoreCase));
-                if (order == null)
-                {
-                    MessageBox.Show("标记发货失败，返回数据订单编号找不到订单：" + oid, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                if (order.DeliveryNumber.Equals(dn, StringComparison.OrdinalIgnoreCase) == false)
-                {
-                    MessageBox.Show("标记发货失败，返回的快递单号与指定的订单快递单号不一致" + oid, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-                if (ss.Contains(order.DeliveryCompany) == false)
-                {
-                    MessageBox.Show("标记发货失败，返回的快递公司与指定的快递公司不一致" + oid, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-                var os = ServiceContainer.GetService<OrderService>();
-                os.MarkPopDelivery(order.Source.Id, os.FormatTime(DateTime.Now));
-                order.State = "已标记";
             }
             catch (Exception ex)
             {

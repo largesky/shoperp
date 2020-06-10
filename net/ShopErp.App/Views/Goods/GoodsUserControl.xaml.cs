@@ -18,6 +18,11 @@ using System.Security.Permissions;
 using ShopErp.App.Service;
 using ShopErp.App.Service.Restful;
 using ShopErp.Domain;
+using System.Threading.Tasks;
+using WebSocketSharp.Frame;
+using ShopErp.App.Views.AttachUI;
+using ShopErp.App.Domain.TaobaoHtml.Image;
+using NPOI.SS.Formula.Functions;
 
 namespace ShopErp.App.Views.Goods
 {
@@ -28,14 +33,14 @@ namespace ShopErp.App.Views.Goods
     {
         private bool myLoaded = false;
         System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog();
-        private List<GoodsViewModel> models = new List<GoodsViewModel>();
+        private List<GoodsViewModel> goodsViewModels = new List<GoodsViewModel>();
+        private Task uploadImageTask = null;
+        private bool isStop;
 
         public GoodsUserControl()
         {
             InitializeComponent();
         }
-
-        [PermissionSetAttribute(SecurityAction.InheritanceDemand, Name = "FullTrust")]
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             try
@@ -69,6 +74,78 @@ namespace ShopErp.App.Views.Goods
         {
             var files = System.IO.Directory.GetFiles(dir);
             return files.Where(obj => obj.EndsWith("jpg", StringComparison.OrdinalIgnoreCase) || obj.EndsWith("bmp", StringComparison.OrdinalIgnoreCase) || obj.EndsWith("png", StringComparison.OrdinalIgnoreCase) || obj.EndsWith("jpeg", StringComparison.OrdinalIgnoreCase)).ToArray();
+        }
+
+        private void CheckPt(GoodsViewModel goodsViewModel)
+        {
+            string webDir = LocalConfigService.GetValue(SystemNames.CONFIG_WEB_IMAGE_DIR, "");
+            string pt = webDir + "\\" + goodsViewModel.Source.ImageDir + "\\PT";
+            if (System.IO.Directory.Exists(pt) == false)
+            {
+                throw new Exception(goodsViewModel.Source.Number + " PT 文件夹不存在");
+            }
+            string zt = pt + "\\ZT";
+            if (System.IO.Directory.Exists(zt) == false)
+            {
+                throw new Exception(goodsViewModel.Source.Number + " ZT 文件夹不存在");
+            }
+            var files = GetImageFile(zt);
+            if (files.Length < 1)
+            {
+                throw new Exception(goodsViewModel.Source.Number + " ZT 下面没有图片文件");
+            }
+            foreach (var file in files)
+            {
+                int lastSlashIndex = file.LastIndexOf('\\');
+                int lastDotIndex = file.LastIndexOf('.');
+                string name = file.Substring(lastSlashIndex + 1, lastDotIndex - lastSlashIndex - 1);
+                if (name.All(c => Char.IsDigit(c)))
+                {
+                    Size size = GetImageFileSize(file);
+                    if (size.Width != size.Height || size.Width > 800 || (new FileInfo(file)).Length > 500 * 1024)
+                    {
+                        throw new Exception(file + "长宽不相等，或者长宽超过800，或者大小超过500KB是否继续");
+                    }
+                }
+            }
+
+            string yst = pt + "\\YST";
+            if (System.IO.Directory.Exists(yst) == false)
+            {
+                throw new Exception(goodsViewModel.Source.Number + " YST 文件夹不存在");
+            }
+            files = GetImageFile(yst);
+            if (files.Length < 1)
+            {
+                throw new Exception(goodsViewModel.Source.Number + " YST下面没有颜色图");
+            }
+            foreach (var file in files)
+            {
+                Size size = GetImageFileSize(file);
+                if (size.Width != size.Height || size.Width > 800 || (new FileInfo(file)).Length > 500 * 1024)
+                {
+                    throw new Exception(file + "长宽不相等，或者长宽超过800，或者大小超过500KB");
+                }
+            }
+
+            string xqt = pt + "\\XQT";
+            if (System.IO.Directory.Exists(yst) == false)
+            {
+                throw new Exception(goodsViewModel.Source.Number + " XQT 文件夹不存在");
+            }
+            files = GetImageFile(xqt);
+            if (files.Length < 1)
+            {
+                throw new Exception(goodsViewModel.Source.Number + "XQT下面没有详情图");
+            }
+            foreach (var file in files)
+            {
+                Size size = GetImageFileSize(file);
+                if (size.Width > 790 || size.Height > 1500)
+                {
+                    throw new Exception(file + "宽超过790 或者高超过1500");
+                }
+            }
         }
 
         private void btnQuery_Click(object sender, RoutedEventArgs e)
@@ -120,12 +197,12 @@ namespace ShopErp.App.Views.Goods
                     e.PageSize);
                 this.pb1.Total = data.Total;
                 this.pb1.CurrentCount = data.Datas.Count;
-                this.models.Clear();
-                this.models.AddRange(data.Datas.Select(obj => new GoodsViewModel(obj)));
+                this.goodsViewModels.Clear();
+                this.goodsViewModels.AddRange(data.Datas.Select(obj => new GoodsViewModel(obj)));
                 this.dgvGoods.ItemsSource = null;
-                this.dgvGoods.ItemsSource = this.models;
+                this.dgvGoods.ItemsSource = this.goodsViewModels;
                 this.lstGoods.ItemsSource = null;
-                this.lstGoods.ItemsSource = this.models;
+                this.lstGoods.ItemsSource = this.goodsViewModels;
             }
             catch (Exception ex)
             {
@@ -299,98 +376,8 @@ namespace ShopErp.App.Views.Goods
                             }
                         }
                     }
-
-                    //PT
-                    string pt = webDir + "\\" + gu.Source.ImageDir + "\\PT";
-                    if (System.IO.Directory.Exists(pt) == false)
-                    {
-                        if (MessageBox.Show("PT 文件夹不存，是否继续", "错误", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
-                        {
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        string zt = pt + "\\ZT";
-                        if (System.IO.Directory.Exists(zt) == false)
-                        {
-                            if (MessageBox.Show("ZT 文件夹不存，是否继续", "错误", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
-                            {
-                                return;
-                            }
-                        }
-                        else
-                        {
-                            var files = GetImageFile(zt);
-                            foreach (var file in files)
-                            {
-                                int lastSlashIndex = file.LastIndexOf('\\');
-                                int lastDotIndex = file.LastIndexOf('.');
-                                string name = file.Substring(lastSlashIndex + 1, lastDotIndex - lastSlashIndex - 1);
-                                if (name.All(c => Char.IsDigit(c)))
-                                {
-                                    Size size = GetImageFileSize(file);
-                                    if (size.Width != size.Height || size.Width > 800 || (new FileInfo(file)).Length > 500 * 1024)
-                                    {
-                                        if (MessageBox.Show(file + "长宽不相等，或者长宽超过800，或者大小超过500KB是否继续", "错误", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
-                                        {
-                                            return;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        string yst = pt + "\\YST";
-                        if (System.IO.Directory.Exists(yst) == false)
-                        {
-                            if (MessageBox.Show("YST 文件夹不存，是否继续", "错误", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
-                            {
-                                return;
-                            }
-                        }
-                        else
-                        {
-                            var files = GetImageFile(yst);
-                            foreach (var file in files)
-                            {
-                                Size size = GetImageFileSize(file);
-                                if (size.Width != size.Height || size.Width > 800 || (new FileInfo(file)).Length > 500 * 1024)
-                                {
-                                    if (MessageBox.Show(file + "长宽不相等，或者长宽超过800，或者大小超过500KB是否继续", "错误", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
-                                    {
-                                        return;
-                                    }
-                                }
-                            }
-                        }
-
-                        string xqt = pt + "\\XQT";
-                        if (System.IO.Directory.Exists(yst) == false)
-                        {
-                            if (MessageBox.Show("xqt 文件夹不存，是否继续", "错误", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
-                            {
-                                return;
-                            }
-                        }
-                        else
-                        {
-                            var files = GetImageFile(xqt);
-                            foreach (var file in files)
-                            {
-                                Size size = GetImageFileSize(file);
-                                if (size.Width > 790 || size.Height > 1500)
-                                {
-                                    if (MessageBox.Show(file + "宽超过790 或者高超过1500", "错误", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
-                                    {
-                                        return;
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    CheckPt(gu);
                 }
-
 
                 var win = new GoodsShopSelectWindow
                 {
@@ -511,23 +498,6 @@ namespace ShopErp.App.Views.Goods
             }
         }
 
-        private void star_Clicked(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var gu = this.GetSelctedItem();
-                var mi = sender as MenuItem;
-                int star = int.Parse(mi.Tag.ToString());
-                gu.Source.Star = star;
-                ServiceContainer.GetService<GoodsService>().Update(gu.Source);
-                gu.UpdateStarViewModel(star);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
         private void btnCreatePrivate_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -545,7 +515,7 @@ namespace ShopErp.App.Views.Goods
         {
             try
             {
-                GoodsPatchEditWindow win = new GoodsPatchEditWindow { Goods = this.models.ToArray(), Shop = this.cbbShops.SelectedItem as Shop };
+                GoodsPatchEditWindow win = new GoodsPatchEditWindow { Goods = this.goodsViewModels.ToArray(), Shop = this.cbbShops.SelectedItem as Shop };
                 win.ShowDialog();
             }
             catch (Exception ex)
@@ -568,7 +538,6 @@ namespace ShopErp.App.Views.Goods
                 if (ret != null && ret.Value)
                 {
                     gu.Comment = gu.Source.Comment;
-                    gu.UpdateStarViewModel(gu.Source.Star);
                 }
             }
             catch (Exception ex)
@@ -801,5 +770,147 @@ namespace ShopErp.App.Views.Goods
                 MessageBox.Show(ex.Message);
             }
         }
+
+        private void btnUploadImage_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (this.uploadImageTask != null)
+                {
+                    this.isStop = true;
+                    return;
+                }
+                if (this.goodsViewModels.Count < 1)
+                {
+                    MessageBox.Show("没有需要上传图片的商品");
+                    return;
+                }
+
+                foreach (var v in this.goodsViewModels)
+                {
+                    CheckPt(v);
+                }
+                var tu = MainWindow.ProgramMainWindow.QueryUserControlInstance<TaobaoUserControl>();
+                var shop = tu.GetLoginShop();
+                if (shop == null)
+                {
+                    MessageBox.Show("未登录店铺，请打开-外接窗口-淘宝登录，进行登录");
+                    return;
+                }
+                if (MessageBox.Show("是否要上传到店铺：" + shop.PopShopName, "提示", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                {
+                    return;
+                }
+                this.uploadImageTask = Task.Factory.StartNew(new Action(() => UploadImage(shop)));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void UploadImage(Shop shop)
+        {
+            try
+            {
+                var tu = MainWindow.ProgramMainWindow.QueryUserControlInstance<TaobaoUserControl>();
+                string webDir = LocalConfigService.GetValue(SystemNames.CONFIG_WEB_IMAGE_DIR);
+                this.Dispatcher.BeginInvoke(new Action(() => this.btnUploadImage.Content = "停止传图"));
+                this.isStop = false;
+
+                //获取商品图片文件夹信息
+                var goodsImageDir = tu.GetImageDirRsp().module.dirs.children.FirstOrDefault(obj => obj.name == "商品图片");
+                if (goodsImageDir == null)
+                {
+                    throw new Exception("没有找到名称为 商品图片 的文件夹，请检查创建");
+                }
+
+                foreach (var gv in this.goodsViewModels)
+                {
+                    if (this.isStop)
+                    {
+                        break;
+                    }
+                    string dirId = "";
+                    string dirName = ServiceContainer.GetService<VendorService>().GetVendorPingyingName(gv.Source.VendorId) + "&" + gv.Source.Number;
+                    var dir = goodsImageDir.children.FirstOrDefault(obj => obj.name.Equals(dirName, StringComparison.OrdinalIgnoreCase));
+                    ImageFileRspModuleFile[] existFiles = null;
+                    if (dir != null)
+                    {
+                        //检查下面是否有文件
+                        var filesRsp = tu.GetImageFileRsp(dir.id.ToString());
+                        existFiles = filesRsp.module.file_module;
+                        dirId = dir.id;
+                    }
+                    else
+                    {
+                        var rsp = tu.AddDir(goodsImageDir.id.ToString(), dirName);
+                        if (rsp.jsonData == null || string.IsNullOrWhiteSpace(rsp.jsonData.id))
+                        {
+                            this.Dispatcher.BeginInvoke(new Action(() => gv.UploadState = "创建文件夹失败:" + rsp.message));
+                            continue;
+                        }
+                        dirId = rsp.jsonData.id;
+                    }
+                    List<string> files = new List<string>();
+                    List<FileInfo> fileToUpload = new List<FileInfo>();
+                    string pt = webDir + "\\" + gv.Source.ImageDir + "\\PT";
+                    files.AddRange(GetImageFile(pt + "\\zt"));
+                    if (shop.PopType != PopType.TMALL)
+                        files.AddRange(GetImageFile(pt + "\\yst"));
+                    files.AddRange(GetImageFile(pt + "\\xqt"));
+
+                    string matchInfo = "";
+                    foreach (var f in files)
+                    {
+                        FileInfo fi = new FileInfo(f);
+                        var ef = existFiles == null ? null : existFiles.FirstOrDefault(obj => obj.name.Equals(fi.Name, StringComparison.OrdinalIgnoreCase));
+                        if (ef != null)
+                        {
+                            if (fi.Length != ef.sizes)
+                                matchInfo += fi.Name + "本地图片与空间图片大小不匹配，未上传，请手动处理";
+                        }
+                        else
+                        {
+                            fileToUpload.Add(fi);
+                        }
+                    }
+                    if (string.IsNullOrWhiteSpace(matchInfo) == false)
+                    {
+                        this.Dispatcher.BeginInvoke(new Action(() => gv.UploadState = "创建文件夹失败:" + matchInfo));
+                        continue;
+                    }
+                    if (fileToUpload.Count < 1)
+                    {
+                        this.Dispatcher.BeginInvoke(new Action(() => gv.UploadState = "所有文件与网站上大小一致没有上传"));
+                        continue;
+                    }
+
+                    foreach (var fi in fileToUpload)
+                    {
+                        var rsp = tu.AddFile(dirId, fi);
+                        if (rsp.success == false)
+                        {
+                            throw new Exception("上传图片失败:" + fi.FullName + rsp.message);
+                        }
+                        this.Dispatcher.BeginInvoke(new Action(() => gv.UploadState = "已上传:" + fi.Name));
+                    }
+                    this.Dispatcher.BeginInvoke(new Action(() => gv.UploadState = "上传成功"));
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                this.uploadImageTask = null;
+                this.isStop = true;
+                this.Dispatcher.BeginInvoke(new Action(() => this.btnUploadImage.Content = "批量传图"));
+            }
+        }
+
+
+
     }
 }

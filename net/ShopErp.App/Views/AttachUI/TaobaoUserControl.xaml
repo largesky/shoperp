@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="ShopErp.App.Views.AttachUI.TaobaoUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ShopErp.App.Views.AttachUI"
+             mc:Ignorable="d" 
+             xmlns:cefwf="clr-namespace:CefSharp.WinForms;assembly=CefSharp.WinForms"
+             d:DesignHeight="450" d:DesignWidth="1280">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <TextBlock Text="选择网址："/>
+            <ComboBox Name="cbbUrls" VerticalAlignment="Center" SelectionChanged="cbbUrls_SelectionChanged" Width="600">
+                <ComboBoxItem>订单管理--https://trade.taobao.com/trade/itemlist/list_sold_items.htm</ComboBoxItem>
+                <ComboBoxItem>图片空间--https://sucai.wangpu.taobao.com/</ComboBoxItem>
+                <ComboBoxItem>商品天猫--https://item.manager.tmall.com/tmall/manager/render.htm</ComboBoxItem>
+                <ComboBoxItem>商品淘宝--https://item.manager.taobao.com/taobao/manager/render.htm</ComboBoxItem>
+            </ComboBox>
+            <Button x:Name="btnGetUserNumberId" Content="获取用户数字编号" Width="120" VerticalAlignment="Center" Click="btnGetUserNumberId_Click"/>
+            <Button x:Name="btnTest" Content="测试" Width="60" Click="btnTest_Click"/>
+        </StackPanel>
+
+        <WindowsFormsHost Grid.Row="2" Name="wfh" >
+            <cefwf:ChromiumWebBrowser x:Name="wb1" />
+        </WindowsFormsHost>
+    </Grid>
+
+
+</UserControl>

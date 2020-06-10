@@ -89,10 +89,10 @@ namespace ShopErp.Server.Service.Pop.Pdd
             string[] urls = new string[images.Length];
             for (int i = 0; i < images.Length; i++)
             {
-                byte[] bytes = MsHttpRestful.DoWithRetry(() => MsHttpRestful.GetUrlEncodeBodyReturnBytes(images[i], null));
+                byte[] bytes = MsHttpRestful.GetReturnBytes(images[i], null);
                 string base64 = Convert.ToBase64String(bytes, Base64FormattingOptions.None);
                 param["image"] = "data:image/jpeg;base64," + base64;
-                PddRspUploadImg ret = MsHttpRestful.DoWithRetry(() => Invoke<PddRspUploadImg>(shop, "pdd.goods.image.upload", param));
+                PddRspUploadImg ret = Invoke<PddRspUploadImg>(shop, "pdd.goods.image.upload", param);
                 urls[i] = ret.image_url;
             }
             return urls;
@@ -462,11 +462,13 @@ namespace ShopErp.Server.Service.Pop.Pdd
             {
                 throw new Exception("拼多多调用失败：" + t.error_code + "," + t.error_msg);
             }
-
+            if (t.owner_name.Equals(shop.PopSellerId, StringComparison.OrdinalIgnoreCase) == false)
+            {
+                throw new Exception("系统店铺:" + shop.PopSellerId + "返回授权店铺:" + t.owner_name + " 不匹配");
+            }
             shop.AppAccessToken = t.access_token;
             shop.AppRefreshToken = t.refresh_token;
             shop.PopSellerNumberId = t.owner_id;
-
             return shop;
         }
 
