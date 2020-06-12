@@ -91,6 +91,22 @@ namespace ShopErp.App.Views.AttachUI
             }
         }
 
+        private void btnRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (this.wb1.IsBrowserInitialized == false)
+                {
+                    throw new Exception("浏览器还没有初始化，请先登录");
+                }
+                this.wb1.Refresh();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
         private string GetUid()
         {
             if (this.wb1.IsBrowserInitialized == false)
@@ -209,11 +225,11 @@ namespace ShopErp.App.Views.AttachUI
             Debug.WriteLine("File:" + fi.FullName + ", UA:" + param["ua"]);
             files["file"] = fi;
             var url = new Uri("https://stream-upload.taobao.com/api/upload.api?appkey=tu&folderId=" + catId + "&watermark=false&autoCompress=false&_input_charset=utf-8");
-            string json = MsHttpRestful.PostMultipartFormDataBodyReturnString(url.OriginalString, param,files, headers);
+            string json = MsHttpRestful.PostMultipartFormDataBodyReturnString(url.OriginalString, param, files, headers);
             var rsp = Newtonsoft.Json.JsonConvert.DeserializeObject<ImageAddFileRsp>(json);
             return rsp;
         }
 
-      
+
     }
 }

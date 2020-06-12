@@ -32,7 +32,6 @@ namespace ShopErp.App.Views.Orders
     {
         private bool isRunning = false;
         private bool myLoaded = false;
-        string jspath = System.IO.Path.Combine(EnvironmentDirHelper.DIR_DATA + "\\TAOBAOJS.js");
 
         public OrderSyncHtmlUserControl()
         {

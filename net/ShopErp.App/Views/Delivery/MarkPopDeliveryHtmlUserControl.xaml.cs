@@ -35,7 +35,6 @@ namespace ShopErp.App.Views.Delivery
     /// </summary>
     public partial class MarkPopDeliveryHtmlUserControl : UserControl
     {
-        string jspath = System.IO.Path.Combine(EnvironmentDirHelper.DIR_DATA + "\\TAOBAOJS.js");
         private bool isRunning = false;
         private ObservableCollection<OrderViewModel> orders = new ObservableCollection<OrderViewModel>();
 

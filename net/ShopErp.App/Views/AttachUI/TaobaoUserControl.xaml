@@ -15,15 +15,16 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal">
-            <TextBlock Text="选择网址："/>
+            <TextBlock Text="选择网址：" VerticalAlignment="Center"/>
             <ComboBox Name="cbbUrls" VerticalAlignment="Center" SelectionChanged="cbbUrls_SelectionChanged" Width="600">
                 <ComboBoxItem>订单管理--https://trade.taobao.com/trade/itemlist/list_sold_items.htm</ComboBoxItem>
                 <ComboBoxItem>图片空间--https://sucai.wangpu.taobao.com/</ComboBoxItem>
                 <ComboBoxItem>商品天猫--https://item.manager.tmall.com/tmall/manager/render.htm</ComboBoxItem>
                 <ComboBoxItem>商品淘宝--https://item.manager.taobao.com/taobao/manager/render.htm</ComboBoxItem>
             </ComboBox>
-            <Button x:Name="btnGetUserNumberId" Content="获取用户数字编号" Width="120" VerticalAlignment="Center" Click="btnGetUserNumberId_Click"/>
-            <Button x:Name="btnTest" Content="测试" Width="60" Click="btnTest_Click"/>
+            <Button x:Name="btnGetUserNumberId" Content="获取用户数字编号" Width="120" VerticalAlignment="Center" Click="btnGetUserNumberId_Click" Margin="3"/>
+            <Button x:Name="btnRefresh" Content="刷新" Width="60" Click="btnRefresh_Click" Margin="3"/>
+            <Button x:Name="btnTest" Content="测试JS" Width="60" Click="btnTest_Click" Margin="3"/>
         </StackPanel>
 
         <WindowsFormsHost Grid.Row="2" Name="wfh" >
