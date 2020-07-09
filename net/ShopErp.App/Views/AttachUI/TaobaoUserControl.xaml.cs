@@ -99,7 +99,7 @@ namespace ShopErp.App.Views.AttachUI
                 {
                     throw new Exception("浏览器还没有初始化，请先登录");
                 }
-                this.wb1.Refresh();
+                this.wb1.Reload(true);
             }
             catch (Exception ex)
             {

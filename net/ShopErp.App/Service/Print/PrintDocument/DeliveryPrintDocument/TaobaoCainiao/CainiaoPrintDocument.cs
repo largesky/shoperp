@@ -32,7 +32,7 @@ namespace ShopErp.App.Service.Print.PrintDocument.DeliveryPrintDocument.TaobaoCa
             var req = new CainiaoPrintDocumentRequestPrint();
             req.requestID = r.Next(100000).ToString();
             req.task = new CainiaoPrintDocumentRequestPrintTask();
-            req.task.preview = printer.ToLower().Contains("xps") || printer.ToLower().Contains("pdf");
+            req.task.preview = this.CloudPrintTemplate.SourceType != WuliuPrintTemplateSourceType.PINDUODUO ? printer.ToLower().Contains("xps") || printer.ToLower().Contains("pdf") : false;
             req.task.previewType = "pdf";
             req.task.printer = printer;
             req.task.firstDocumentNumber = 1;

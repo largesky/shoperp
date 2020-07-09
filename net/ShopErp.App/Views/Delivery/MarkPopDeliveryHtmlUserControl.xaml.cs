@@ -105,8 +105,9 @@ namespace ShopErp.App.Views.Delivery
         private ShopErp.Domain.Order ParseOrder(TaobaoQueryOrderListResponseOrder orderShort, Shop shop)
         {
             var dbMineTime = ServiceContainer.GetService<OrderService>().GetDBMinTime();
+            string url = shop.PopType == PopType.TMALL ? "https://trade.tmall.com/detail/orderDetail.htm?bizOrderId=" : "https://trade.taobao.com/detail/orderDetail.htm?bizOrderId=";
             //订单信息
-            var content = MsHttpRestful.GetReturnString("https://trade.taobao.com/detail/orderDetail.htm?bizOrderId=" + orderShort.id, CefCookieVisitor.GetCookieValue("trade.taobao.com"));
+            var content = MsHttpRestful.GetReturnString(url + orderShort.id, CefCookieVisitor.GetCookieValue(shop.PopType == PopType.TMALL ? "trade.tmall.com" : "trade.taobao.com"));
             string title = shop.PopType == PopType.TMALL ? "var detailData" : "var data = JSON";
 
             int si = content.IndexOf(title);
@@ -514,7 +515,7 @@ namespace ShopErp.App.Views.Delivery
                 var error = downloadOrders.Where(obj => obj.Error != null).Select(obj => obj.Error).ToArray();
                 if (error.Length > 0)
                 {
-                    string msg = string.Format("下载失败订单列表：{0}", string.Join(",", error.Select(obj => obj.PopOrderId)));
+                    string msg = string.Format("下载失败订单列表：\r\n{0}", string.Join(Environment.NewLine, error.Select(obj => obj.PopOrderId + ":" + obj.Error)));
                     MessageBox.Show(msg, "警告", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
@@ -589,7 +590,7 @@ namespace ShopErp.App.Views.Delivery
             paras["mailNo"] = deliveryNumber;
             paras["companyCode"] = deliveryCompany;
             //页面使用的什么编码，发送数据就要使用什么编码，否则对面无法接收
-            string ret = MsHttpRestful.PostUrlEncodeBodyReturnString(uri.OriginalString, paras, headers, doc.DeclaredEncoding??doc.Encoding);
+            string ret = MsHttpRestful.PostUrlEncodeBodyReturnString(uri.OriginalString, paras, headers, doc.DeclaredEncoding ?? doc.Encoding);
             if (ret.Contains("恭喜您，操作成功"))
             {
                 return;
