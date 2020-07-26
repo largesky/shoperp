@@ -27,6 +27,7 @@ namespace ShopErp.App.Views.Orders
     /// </summary>
     public partial class OrderDownloadWindow : Window
     {
+        private int orderDownloadDay = 3;
         public PopPayType PayType { get; set; }
         public string Shipper { get; set; }
         public List<Order> Orders { get { return this.allOrders; } }
@@ -49,7 +50,6 @@ namespace ShopErp.App.Views.Orders
             try
             {
                 var shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas.Where(obj => obj.Enabled && obj.AppEnabled).ToArray();
-
                 foreach (var shop in shops)
                 {
                     shopVms.Add(new ShopDownloadViewModel(shop));
@@ -57,6 +57,7 @@ namespace ShopErp.App.Views.Orders
                 }
                 this.lstShops.ItemsSource = this.shopVms;
                 this.dgvFailOrders.ItemsSource = failOrders;
+                this.orderDownloadDay = LocalConfigService.GetValueInt(SystemNames.CONFIG_ORDER_DOWNLOAD_DAY, 3);
                 this.task = Task.Factory.StartNew(DownloadTask);
             }
             catch (Exception ex)
@@ -130,44 +131,50 @@ namespace ShopErp.App.Views.Orders
         private void DownloadOneShopTask(Shop shop)
         {
             int pageIndex = 0, pageSize = 20;
+            DateTime start = DateTime.Now;
             try
             {
                 var os = ServiceContainer.GetService<OrderService>();
-
-                while (this.UserStop == false)
+                for (int myDay = -orderDownloadDay; myDay <= -1 && this.UserStop == false; myDay++)
                 {
-                    this.UpdateShopState(shop, false, 0, 0, string.Format("每页{0}条订单，正在下载第{1}页", pageSize, pageIndex + 1), null);
-                    var ret = os.GetPopWaitSendOrders(shop, PayType, pageIndex, pageSize);
-                    if (ret.Datas == null || ret.Datas.Count < 1)
+                    DateTime currentTime = start.AddDays(myDay);
+                    pageIndex = 0;
+                    //下载每一天的
+                    while (this.UserStop == false)
                     {
-                        break;
-                    }
-                    //添加下载结果
-                    foreach (var v in ret.Datas)
-                    {
-                        if (v.Error != null)
+                        this.UpdateShopState(shop, false, 0, 0, string.Format("每页{0}条订单，正在下载:{1} 第{2}页", pageSize, currentTime.Day, pageIndex + 1), null);
+                        var ret = os.GetPopWaitSendOrders(shop, PayType, currentTime, pageIndex, pageSize);
+                        if (ret.Datas == null || ret.Datas.Count < 1)
                         {
-                            this.Dispatcher.BeginInvoke(new Action(() =>
-                            {
-                                failOrders.Add(v.Error);
-                            }));
+                            break;
                         }
-                        else if (v.Order != null)
+                        //添加下载结果
+                        foreach (var v in ret.Datas)
                         {
-                            if (this.shopOrders[shop].FirstOrDefault(obj => obj.PopOrderId == v.Order.PopOrderId) == null)
+                            if (v.Error != null)
                             {
-                                this.shopOrders[shop].Add(v.Order);
+                                this.Dispatcher.BeginInvoke(new Action(() =>
+                                {
+                                    failOrders.Add(v.Error);
+                                }));
+                            }
+                            else if (v.Order != null)
+                            {
+                                if (this.shopOrders[shop].FirstOrDefault(obj => obj.PopOrderId == v.Order.PopOrderId) == null)
+                                {
+                                    this.shopOrders[shop].Add(v.Order);
+                                }
+                            }
+                            else
+                            {
+                                throw new Exception("服务端返回有Error和Order都为空的对象");
                             }
                         }
-                        else
-                        {
-                            throw new Exception("服务端返回有Error和Order都为空的对象");
-                        }
-                    }
 
-                    this.hasError = this.hasError ? true : ret.Datas.Any(obj => obj.Error != null);
-                    this.UpdateShopState(shop, ret.IsTotalValid, ret.Total, this.shopOrders[shop].Count, string.Format("每页{0}条订单，已下载第{1}页", pageSize, pageIndex + 1), null);
-                    pageIndex++;
+                        this.hasError = this.hasError ? true : ret.Datas.Any(obj => obj.Error != null);
+                        this.UpdateShopState(shop, ret.IsTotalValid, ret.Total, this.shopOrders[shop].Count, string.Format("每页{0}条订单，已下载第{1}页", pageSize, pageIndex + 1), null);
+                        pageIndex++;
+                    }
                 }
                 if (this.shopOrders[shop].Count == 0)
                 {

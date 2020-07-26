@@ -18,8 +18,6 @@ namespace ShopErp.Server.Service.Pop.Taobao
         private const string API_SERVER_URL = "https://eco.taobao.com/router/rest";
         private const string API_SERVER_URL_SANDBOX = "http://gw.api.tbsandbox.com/router/rest";
 
-        public override PopOrderGetFunction OrderGetFunctionType { get { return PopOrderGetFunction.ALWAYS; } }
-
         private static ITopClient GetTopClient(string appKey, string appSecret)
         {
             var client = new DefaultTopClient(API_SERVER_URL, appKey, appSecret);
@@ -696,12 +694,7 @@ namespace ShopErp.Server.Service.Pop.Taobao
 
         #region 订单商品功能未实现
 
-        public override OrderDownloadCollectionResponse GetOrders(Shop shop, string state, int pageIndex, int pageSize)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override OrderDownload GetOrder(Shop shop, string popOrderId)
+        public override OrderDownloadCollectionResponse GetOrders(Shop shop, string state, DateTime dateTime, int pageIndex, int pageSize)
         {
             throw new NotImplementedException();
         }

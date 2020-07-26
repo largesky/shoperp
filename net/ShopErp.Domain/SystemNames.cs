@@ -28,6 +28,7 @@ namespace ShopErp.Domain
 
 
         public const string CONFIG_ORDER_DOWNLOAD_MODE = "ORDER_DOWNLOAD_MODE";
+        public const string CONFIG_ORDER_DOWNLOAD_DAY = "ORDER_DOWNLOAD_DAY";
         public const string CONFIG_GOODS_TEMPLATE = "GOODS_TEMPLATE";
         public const string CONFIG_SYSTEM_RIGHTS = "SYSTEM_RIGHTS";
 

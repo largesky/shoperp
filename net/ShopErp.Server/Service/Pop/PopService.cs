@@ -69,16 +69,6 @@ namespace ShopErp.Server.Service.Pop
             }
         }
 
-        public PopOrderGetFunction GetOrderGetFunction(PopType popType)
-        {
-            var first = this.pops.FirstOrDefault(obj => obj.Accept(popType));
-            if (first == null)
-            {
-                throw new Exception("未找到支持的平台:" + popType);
-            }
-            return first.OrderGetFunctionType;
-        }
-
         private T InvokeWithRefreshAccessToken<T>(Shop shop, Func<T> func)
         {
             try
@@ -107,22 +97,13 @@ namespace ShopErp.Server.Service.Pop
             }
         }
 
-        public OrderDownload GetOrder(Shop shop, string popOrderId)
+        public OrderDownloadCollectionResponse GetOrders(Shop shop, string state, DateTime time, int pageIndex, int pageSize)
         {
             if (shop.AppEnabled == false)
             {
                 throw new Exception("店铺订单发货接口已禁用，无法调用相应接口操作");
             }
-            return this.InvokeWithRefreshAccessToken<OrderDownload>(shop, () => this.GetPop(shop.PopType).GetOrder(shop, popOrderId));
-        }
-
-        public OrderDownloadCollectionResponse GetOrders(Shop shop, string state, int pageIndex, int pageSize)
-        {
-            if (shop.AppEnabled == false)
-            {
-                throw new Exception("店铺订单发货接口已禁用，无法调用相应接口操作");
-            }
-            return this.InvokeWithRefreshAccessToken<OrderDownloadCollectionResponse>(shop, () => GetPop(shop.PopType).GetOrders(shop, state, pageIndex, pageSize));
+            return this.InvokeWithRefreshAccessToken<OrderDownloadCollectionResponse>(shop, () => GetPop(shop.PopType).GetOrders(shop, state, time, pageIndex, pageSize));
         }
 
         public PopOrderState GetOrderState(Shop shop, string popOrderId)

@@ -75,6 +75,7 @@ namespace ShopErp.App.Views.Config
                 this.tbNetworkMaxTimeOut.Text = LocalConfigService.GetValue(SystemNames.CONFIG_NETWORK_MAX_TIMEOUT, "10");
                 this.tbGoodsCountName.Text = ServiceContainer.GetService<SystemConfigService>().Get(-1, "GOODS_NAME", "贾勇");
                 this.tbGoodsCountPhone.Text = ServiceContainer.GetService<SystemConfigService>().Get(-1, "GOODS_PHONE", "19950350106");
+                this.tbOrderDownloadDay.Text = LocalConfigService.GetValue(SystemNames.CONFIG_ORDER_DOWNLOAD_DAY, "3");
             }
             catch (Exception ex)
             {
@@ -108,6 +109,7 @@ namespace ShopErp.App.Views.Config
                 LocalConfigService.UpdateValue(SystemNames.CONFIG_NETWORK_MAX_TIMEOUT, int.Parse(this.tbNetworkMaxTimeOut.Text.Trim()).ToString());
                 ServiceContainer.GetService<SystemConfigService>().SaveOrUpdate(-1, "GOODS_PHONE", this.tbGoodsCountPhone.Text.Trim());
                 ServiceContainer.GetService<SystemConfigService>().SaveOrUpdate(-1, "GOODS_NAME", this.tbGoodsCountName.Text.Trim());
+                LocalConfigService.UpdateValue(SystemNames.CONFIG_ORDER_DOWNLOAD_DAY, this.tbOrderDownloadDay.Text.Trim());
                 MessageBox.Show("保存成功");
             }
             catch (Exception ex)

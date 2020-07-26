@@ -125,7 +125,6 @@
     <Compile Include="Pop\PopGoods.cs" />
     <Compile Include="Pop\PopGoodsSku.cs" />
     <Compile Include="Pop\PopGoodsState.cs" />
-    <Compile Include="Pop\PopOrderGetFunction.cs" />
     <Compile Include="Pop\PopOrderState.cs" />
     <Compile Include="PrintHistory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">

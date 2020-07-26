@@ -1003,11 +1003,11 @@ namespace ShopErp.Server.Service.Restful
         /// <returns></returns>
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, RequestFormat = WebMessageFormat.Json, UriTemplate = "/getpopwaitsendorders.html")]
-        public OrderDownloadCollectionResponse GetPopWaitSendOrders(Shop shop, PopPayType payType, int pageIndex, int pageSize)
+        public OrderDownloadCollectionResponse GetPopWaitSendOrders(Shop shop, PopPayType payType, DateTime dateTime, int pageIndex, int pageSize)
         {
             try
             {
-                var ret = this.ps.GetOrders(shop, payType == PopPayType.COD ? PopService.QUERY_STATE_WAITSHIP_COD : PopService.QUERY_STATE_WAITSHIP, pageIndex, pageSize);
+                var ret = this.ps.GetOrders(shop, payType == PopPayType.COD ? PopService.QUERY_STATE_WAITSHIP_COD : PopService.QUERY_STATE_WAITSHIP, dateTime, pageIndex, pageSize);
                 var ret1 = SaveOrUpdateOrdersByPopOrderId(shop, ret.Datas);
                 ret1.Total = ret.Total;
                 ret1.IsTotalValid = ret.IsTotalValid;
@@ -1080,7 +1080,7 @@ namespace ShopErp.Server.Service.Restful
                         else
                         {
                             //本地已经有的需要更新，像退款的这些订单，也可能不需要更新但本地已经关闭，所以需要读取本地的
-                            string upRet = UpdateOrderStateWithGoods(or.Order, null, shop).data;
+                            string upRet = UpdateOrderState(or.Order.PopOrderId, or.Order.State, null, shop).data;
                             or.Order = GetByPopOrderId(or.Order.PopOrderId).First;
                         }
                     }
@@ -1218,178 +1218,10 @@ namespace ShopErp.Server.Service.Restful
             }
         }
 
-        /// <summary>
-        /// 更新订单状态
-        /// </summary>
-        /// <param name="orderOnline">网络上下载的最新订单</param>
-        /// <param name="orderInDb">本地订单,如果传入空值，则从数据库读取</param>
-        /// <returns></returns>
-        [OperationContract]
-        [WebInvoke(ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, RequestFormat = WebMessageFormat.Json, UriTemplate = "/updateorderstatewithgoods.html")]
-        public StringResponse UpdateOrderStateWithGoods(Order orderOnline, OrderUpdate orderInDb, Shop shop)
-        {
-            try
-            {
-                OrderUpdateService ous = ServiceContainer.GetService<OrderUpdateService>();
-                if (orderInDb == null)
-                {
-                    //检测数据库是否存在
-                    var ret = ous.GetByAll(null, orderOnline.PopOrderId, DateTime.MinValue, DateTime.Now.AddDays(1), 0, 0);
-                    if (ret == null || ret.Datas.Count < 1)
-                    {
-                        return new StringResponse(UPDATE_RET_NOEXIST);
-                    }
-                    orderInDb = ret.Datas[0];
-                }
-
-                //本地订单已经关闭，则不允许更新
-                if (orderInDb.State == OrderState.CLOSED || orderInDb.State == OrderState.CANCLED)
-                {
-                    return new StringResponse(UPDATE_RET_NOUPDATED);
-                }
-
-                //(orderOnline.OrderGoodss == null || orderOnline.OrderGoodss.Count == 1) 表示订单有商品表不为1，多个有可能在退款中，则必须要更新
-                if (orderOnline.State == orderInDb.State && orderOnline.PopState == orderInDb.PopState && (orderOnline.OrderGoodss == null || orderOnline.OrderGoodss.Count == 1) &&
-                    Math.Abs(orderOnline.PopOrderTotalMoney - orderInDb.PopOrderTotalMoney) < 0.001F &&
-                    Math.Abs(orderOnline.PopCodSevFee - orderInDb.PopCodSevFee) < 0.001F)
-                {
-                    return new StringResponse(UPDATE_RET_NOUPDATED);
-                }
-
-                orderInDb.PopState = orderOnline.PopState;
-                orderInDb.PopCodNumber = orderOnline.PopCodNumber;
-                orderInDb.PopPayTime = orderOnline.PopPayTime;
-                orderInDb.PopOrderTotalMoney = orderOnline.PopOrderTotalMoney;
-                orderInDb.PopCodSevFee = orderOnline.PopCodSevFee;
-                var onlineState = orderOnline.State;
-                OrderState targetState = orderInDb.State, dbState = orderInDb.State;
-
-                if (onlineState == OrderState.WAITPAY)
-                {
-                    //待付款，不需要更新状态
-                }
-                else if (onlineState == OrderState.PAYED)
-                {
-                    if (orderInDb.State == OrderState.WAITPAY)
-                    {
-                        targetState = OrderState.PAYED;
-                    }
-                    else if ((orderInDb.State == OrderState.RETURNING) && ous.IsDbMinTime(orderInDb.DeliveryTime))
-                    {
-                        if (ous.IsDbMinTime(orderInDb.PrintTime) == false)
-                        {
-                            targetState = OrderState.PRINTED;
-                        }
-                        else
-                        {
-                            targetState = onlineState;
-                        }
-                    }
-                }
-                else if (onlineState == OrderState.SHIPPED)
-                {
-                    //如果在退款中，则标记为已发货
-                    if (orderInDb.State == OrderState.RETURNING)
-                    {
-                        if (IsDbMinTime(orderInDb.DeliveryTime))
-                        {
-                            targetState = OrderState.PRINTED;
-                        }
-                        else
-                        {
-                            targetState = onlineState;
-                        }
-                    }
-
-                    //已发货,且系统中的打印时间，则说明该订单不是系统打印的，需要更新状态，且同步物流
-                    if (ous.IsDbMinTime(orderInDb.PrintTime))
-                    {
-                        targetState = onlineState;
-                    }
-                }
-                else if (onlineState == OrderState.SUCCESS)
-                {
-                    //非本地打印
-                    if (ous.IsDbMinTime(orderInDb.PrintTime))
-                    {
-                        targetState = onlineState;
-                    }
-                    else
-                    {
-                        //本地已经发货，则标记为，已完成，防止用户误确认收到，导致系统无法统计发货
-                        if (ous.IsDbMinTime(orderInDb.DeliveryTime) == false)
-                        {
-                            targetState = onlineState;
-                        }
-                    }
-                }
-                else if (onlineState == OrderState.RETURNING || onlineState == OrderState.CANCLED || onlineState == OrderState.CLOSED)
-                {
-                    targetState = onlineState;
-                }
-                else
-                {
-                    Logger.Log("更新订单失败未知状态[" + onlineState + "]");
-                    return new StringResponse("更新订单失败未知状态[" + onlineState + "]");
-                }
-
-                if (targetState == OrderState.NONE)
-                {
-                    throw new Exception("要更新成的订单状态不能为:" + targetState);
-                }
-
-                //由于多数订单中只有一个商品，所以采取不同试更新，理提供更新速度
-                //多个订单
-                if (orderOnline.OrderGoodss != null && orderOnline.OrderGoodss.Count > 1)
-                {
-                    var ogsInDb = ServiceContainer.GetService<OrderGoodsService>().GetByOrderId(orderInDb.Id).Datas.Where(obj => obj.State != OrderState.CANCLED && obj.State != OrderState.CLOSED && obj.State != OrderState.SPILTED).ToArray();
-                    foreach (var og in ogsInDb)
-                    {
-                        var ogNewState = og.State;
-                        if (string.IsNullOrWhiteSpace(og.PopOrderSubId))
-                        {
-                            //没有子订单编号，则更新订单状态
-                            if (targetState != OrderState.PAYED && targetState != OrderState.PRINTED)
-                            {
-                                ogNewState = targetState;
-                            }
-                        }
-                        else
-                        {
-                            var ogsOnLine = orderOnline.OrderGoodss.FirstOrDefault(obj => obj.PopOrderSubId == og.PopOrderSubId);
-                            if (ogsOnLine == null)
-                            {
-                                throw new Exception(string.Format("更新失败：系统中子订单未在平台上找到,订单编号;{0},子订单编号;{1}", orderOnline.PopOrderId, og.PopOrderSubId));
-                            }
-                            if ((ogsOnLine.State != OrderState.PAYED && ogsOnLine.State != OrderState.PRINTED) || og.State == OrderState.RETURNING)
-                            {
-                                ogNewState = ogsOnLine.State;
-                            }
-                        }
-                        if (ogNewState != og.State)
-                            ous.UpdateOrderGoodsState(og.Id, ogNewState);
-                    }
-                }
-                else
-                {
-                    if (targetState != orderInDb.State)
-                    {
-                        ous.UpdateOrderGoodsStateByOrderId(orderInDb.Id, targetState);
-                    }
-                }
-                orderInDb.State = targetState;
-                ous.UpdateEx(orderInDb, true);
-                return new StringResponse(UPDATE_RET_UPDATED);
-            }
-            catch (Exception e)
-            {
-                throw new WebFaultException<ResponseBase>(new ResponseBase(e.Message), HttpStatusCode.OK);
-            }
-        }
 
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, RequestFormat = WebMessageFormat.Json, UriTemplate = "/updateorderstate.html")]
-        public StringResponse UpdateOrderState(PopOrderState orderStateOnline, OrderUpdate orderInDb, Shop shop)
+        public StringResponse UpdateOrderState(string popOrderid, OrderState onlineOrderState, OrderUpdate orderInDb, Shop shop)
         {
             try
             {
@@ -1397,28 +1229,25 @@ namespace ShopErp.Server.Service.Restful
                 if (orderInDb == null)
                 {
                     //检测数据库是否存在
-                    var ret = ous.GetByAll(null, orderStateOnline.PopOrderId, DateTime.MinValue, DateTime.Now.AddDays(1), 0, 0);
+                    var ret = ous.GetByAll(null, popOrderid, DateTime.MinValue, DateTime.Now.AddDays(1), 0, 0);
                     if (ret == null || ret.Datas == null || ret.Datas.Count < 1)
                     {
                         return new StringResponse(UPDATE_RET_NOEXIST);
                     }
                     orderInDb = ret.Datas[0];
                 }
-
-                if (orderStateOnline.State == orderInDb.State && orderStateOnline.PopOrderStateValue == orderInDb.PopState)
+                if (onlineOrderState == orderInDb.State)
                 {
                     return new StringResponse(UPDATE_RET_NOUPDATED);
                 }
 
-                orderInDb.PopState = orderStateOnline.PopOrderStateValue;
-                var onlineState = orderStateOnline.State;
                 OrderState targetState = orderInDb.State, dbState = orderInDb.State;
 
-                if (onlineState == OrderState.WAITPAY)
+                if (onlineOrderState == OrderState.WAITPAY)
                 {
                     //待付款，不需要更新状态
                 }
-                else if (onlineState == OrderState.PAYED)
+                else if (onlineOrderState == OrderState.PAYED)
                 {
                     if (orderInDb.State == OrderState.WAITPAY)
                     {
@@ -1432,11 +1261,11 @@ namespace ShopErp.Server.Service.Restful
                         }
                         else
                         {
-                            targetState = onlineState;
+                            targetState = onlineOrderState;
                         }
                     }
                 }
-                else if (onlineState == OrderState.SHIPPED)
+                else if (onlineOrderState == OrderState.SHIPPED)
                 {
                     //如果在退款中，则标记为已发货
                     if (orderInDb.State == OrderState.RETURNING)
@@ -1447,42 +1276,39 @@ namespace ShopErp.Server.Service.Restful
                         }
                         else
                         {
-                            targetState = onlineState;
+                            targetState = onlineOrderState;
                         }
                     }
 
                     //已发货,且系统中的打印时间，则说明该订单不是系统打印的，需要更新状态，且同步物流
                     if (ous.IsDbMinTime(orderInDb.PrintTime))
                     {
-                        targetState = onlineState;
+                        targetState = onlineOrderState;
                     }
                 }
-                else if (onlineState == OrderState.SUCCESS)
+                else if (onlineOrderState == OrderState.SUCCESS)
                 {
                     //非本地打印
                     if (ous.IsDbMinTime(orderInDb.PrintTime))
                     {
-                        targetState = onlineState;
+                        targetState = onlineOrderState;
                     }
                     else
                     {
-                        //本地已经发货，则标记为，已完成，防止用户误确认收到，导致系统无法统计发货
-                        //如果打印时间超过15天没有发货一般不可能的，有可能是没有扫描到发货，这种也可以更新
-                        //春节怎么办，时间上是超过15天的或者20天的？
-                        if (ous.IsDbMinTime(orderInDb.DeliveryTime) == false || DateTime.Now.Subtract(orderInDb.PopPayTime).TotalDays >= 30)
+                        if (ous.IsDbMinTime(orderInDb.DeliveryTime) == false)
                         {
-                            targetState = onlineState;
+                            targetState = onlineOrderState;
                         }
                     }
                 }
-                else if ((int)onlineState > (int)OrderState.SHIPPED)
+                else if ((int)onlineOrderState > (int)OrderState.SHIPPED)
                 {
-                    targetState = onlineState;
+                    targetState = onlineOrderState;
                 }
                 else
                 {
-                    Logger.Log("更新订单失败未知状态[" + onlineState + "]");
-                    return new StringResponse("更新订单失败未知状态[" + onlineState + "]");
+                    Logger.Log("更新订单失败未知状态[" + onlineOrderState + "]");
+                    return new StringResponse("更新订单失败未知状态[" + onlineOrderState + "]");
                 }
 
                 if (targetState == OrderState.NONE)

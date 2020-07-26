@@ -99,7 +99,7 @@ namespace ShopErp.App.Views.Orders
                         this.tbMessage.ScrollToEnd();
                     }));
                     var pos = this.ParseOrderState(shop, o.PopOrderId);
-                    string ret = ServiceContainer.GetService<OrderService>().UpdateOrderState(pos, o, shop).data;
+                    string ret = ServiceContainer.GetService<OrderService>().UpdateOrderState(pos.PopOrderId, pos.State, o, shop).data;
                     this.Dispatcher.BeginInvoke(new Action(() =>
                     {
                         if (this.tbMessage.LineCount > 10000)

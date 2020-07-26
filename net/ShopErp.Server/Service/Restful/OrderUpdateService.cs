@@ -37,19 +37,8 @@ namespace ShopErp.Server.Service.Restful
             try
             {
                 var shop = ServiceContainer.GetService<ShopService>().GetById(orderUpdate.ShopId).First;
-                var functionType = popService.GetOrderGetFunction(shop.PopType);
-                StringResponse ret = null;
-                if (functionType == PopOrderGetFunction.PAYED)
-                {
-                    var nor = popService.GetOrderState(shop, orderUpdate.PopOrderId);
-                    ret = ServiceContainer.GetService<OrderService>().UpdateOrderState(nor, orderUpdate, shop);
-                }
-                else
-                {
-                    var nor = popService.GetOrder(shop, orderUpdate.PopOrderId);
-                    ret = ServiceContainer.GetService<OrderService>().UpdateOrderStateWithGoods(nor.Order, orderUpdate, shop);
-                }
-                return ret;
+                var nor = popService.GetOrderState(shop, orderUpdate.PopOrderId);
+                return ServiceContainer.GetService<OrderService>().UpdateOrderState(nor.PopOrderId, nor.State, orderUpdate, shop);
             }
             catch (WebFaultException)
             {
@@ -59,11 +48,6 @@ namespace ShopErp.Server.Service.Restful
             {
                 throw new WebFaultException<ResponseBase>(new ResponseBase(e.Message), HttpStatusCode.OK);
             }
-        }
-
-        public void UpdateOrderGoodsState(long orderGoodsId, OrderState state)
-        {
-            this.dao.UpdateOrderGoodsState(orderGoodsId, state);
         }
 
         public void UpdateOrderGoodsStateByOrderId(long orderId, OrderState state)

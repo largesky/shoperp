@@ -184,11 +184,12 @@ namespace ShopErp.App.Service.Restful
             return DoPost<ResponseBase>(para);
         }
 
-        public OrderDownloadCollectionResponse GetPopWaitSendOrders(Shop shop, PopPayType payType, int pageIndex, int pageSize)
+        public OrderDownloadCollectionResponse GetPopWaitSendOrders(Shop shop, PopPayType payType, DateTime dateTime, int pageIndex, int pageSize)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
             para["shop"] = shop;
             para["payType"] = payType;
+            para["dateTime"] = dateTime;
             para["pageIndex"] = pageIndex;
             para["pageSize"] = pageSize;
             return DoPost<OrderDownloadCollectionResponse>(para);
@@ -202,15 +203,6 @@ namespace ShopErp.App.Service.Restful
             return DoPost<OrderDownloadCollectionResponse>(para);
         }
 
-        public StringResponse UpdateOrderStateWithGoods(Order orderOnline, OrderUpdate orderInDb, Shop shop)
-        {
-            Dictionary<string, object> para = new Dictionary<string, object>();
-            para["orderOnline"] = orderOnline;
-            para["orderInDb"] = orderInDb;
-            para["shop"] = shop;
-            return DoPost<StringResponse>(para);
-        }
-
         public ResponseBase UpdateOrderGoodsState(long orderId, long orderGoodsId, OrderState state, string stockComment)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
@@ -221,10 +213,11 @@ namespace ShopErp.App.Service.Restful
             return DoPost<ResponseBase>(para);
         }
 
-        public StringResponse UpdateOrderState(PopOrderState orderStateOnline, OrderUpdate orderInDb, Shop shop)
+        public StringResponse UpdateOrderState(string popOrderid, OrderState onlineOrderState, OrderUpdate orderInDb, Shop shop)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
-            para["orderStateOnline"] = orderStateOnline;
+            para["popOrderid"] = popOrderid;
+            para["onlineOrderState"] = onlineOrderState;
             para["orderInDb"] = orderInDb;
             para["shop"] = shop;
             return DoPost<StringResponse>(para);

@@ -14,13 +14,9 @@ namespace ShopErp.Server.Service.Pop
         protected static readonly Random random = new Random((int)DateTime.Now.Ticks);
         protected static readonly char[] SPILTE_CHAR = new char[] { '(', '（', '[', '【' };
 
-        public abstract PopOrderGetFunction OrderGetFunctionType { get; }
-
         public abstract bool Accept(PopType popType);
 
-        public abstract OrderDownloadCollectionResponse GetOrders(Shop shop, string state, int pageIndex, int pageSize);
-
-        public abstract OrderDownload GetOrder(Shop shop, string popOrderId);
+        public abstract OrderDownloadCollectionResponse GetOrders(Shop shop, string state, DateTime time, int pageIndex, int pageSize);
 
         public abstract PopOrderState GetOrderState(Shop shop, string popOrderId);
 
@@ -46,7 +42,7 @@ namespace ShopErp.Server.Service.Pop
 
         public abstract void UpdateWuliuNumber(Shop shop, WuliuPrintTemplate wuliuTemplate, Order order, WuliuNumber wuliuNumber);
 
-        public abstract string AddGoods(Shop shop, PopGoods  popGoods, float buyInPrice);
+        public abstract string AddGoods(Shop shop, PopGoods popGoods, float buyInPrice);
 
         public abstract XDocument GetAddress(Shop shop);
     }
