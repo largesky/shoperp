@@ -140,6 +140,7 @@
     <Compile Include="Service\Pop\Pdd\PddRspCloudprintStdtemplatesResult.cs" />
     <Compile Include="Service\Pop\Pdd\PddRspCloudprintStdtemplatesResultData.cs" />
     <Compile Include="Service\Pop\Pdd\PddRspCloudprintStdtemplatesResultDataStandardTemplates.cs" />
+    <Compile Include="Service\Pop\Pdd\PddRspOrderListOrderGoods.cs" />
     <Compile Include="Service\Pop\Pdd\PddRspLogisticsAddressGet.cs" />
     <Compile Include="Service\Pop\Pdd\PddRspLogisticsAddressGetAddress.cs" />
     <Compile Include="Service\Pop\Pdd\PddRspWaybillGet.cs" />
@@ -176,8 +177,8 @@
     <Compile Include="Service\Pop\Pdd\PddRspGoods.cs" />
     <Compile Include="Service\Pop\Pdd\PddRspGoodsItem.cs" />
     <Compile Include="Service\Pop\Pdd\PddRspGoodsItemSku.cs" />
-    <Compile Include="Service\Pop\Pdd\PddRspOrder.cs" />
-    <Compile Include="Service\Pop\Pdd\PddRspOrderSN.cs" />
+    <Compile Include="Service\Pop\Pdd\PddRspOrderList.cs" />
+    <Compile Include="Service\Pop\Pdd\PddRspOrderListOrder.cs" />
     <Compile Include="Service\Pop\Pdd\PddPop.cs" />
     <Compile Include="Service\Pop\Pdd\PddRspBase.cs" />
     <Compile Include="Service\Pop\Pdd\PddRspShipping.cs" />

@@ -433,12 +433,11 @@ namespace ShopErp.App.Views.Delivery
                             od.Order = odInDb.First;
                             var state = ConvertState(v.statusInfo.text);
 
-                            //未发货订单，即使有退款商品，整个订单状态也是待发货不是退款中
+                            //未发货订单，即使有退款商品，整个订单状态也是待发货不是退款中,需要检测对应商品显示的信息，如果某个商品退款成功，但还有其它商品也会在发货中
                             if (state == OrderState.PAYED && v.subOrders.All(obj => obj.operations != null && (obj.operations.FirstOrDefault(op => op.text.Trim() == "退款成功" || op.text.Trim() == "请卖家处理" || op.text.Trim() == "请退款") != null)))
                             {
                                 state = OrderState.RETURNING;
                             }
-
                             if (od.Order.State == state || od.Order.State == OrderState.CLOSED || od.Order.State == OrderState.CANCLED)
                             {
                                 continue;

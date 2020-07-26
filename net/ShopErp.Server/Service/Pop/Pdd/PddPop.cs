@@ -286,34 +286,142 @@ namespace ShopErp.Server.Service.Pop.Pdd
             return od;
         }
 
+        public OrderDownload ConvertOrderDownload(Domain.Shop shop, PddRspOrderListOrder pddRspOrderListOrder)
+        {
+            OrderDownload od = new OrderDownload();
+            try
+            {
+                var o = pddRspOrderListOrder;
+                DateTime minTime = new DateTime(1970, 01, 01);
+                var order = new Domain.Order
+                {
+                    CloseOperator = "",
+                    CloseTime = minTime,
+                    CreateOperator = "",
+                    CreateTime = DateTime.Parse(o.created_time),
+                    CreateType = Domain.OrderCreateType.DOWNLOAD,
+                    DeliveryCompany = GetDeliveryCompany(o.logistics_id),
+                    DeliveryNumber = o.tracking_number,
+                    DeliveryOperator = "",
+                    DeliveryTime = minTime,
+                    DeliveryMoney = 0,
+                    Id = 0,
+                    PopDeliveryTime = DateTime.MinValue,
+                    OrderGoodss = new List<Domain.OrderGoods>(),
+                    ParseResult = false,
+                    PopBuyerComment = "",
+                    PopBuyerId = "",
+                    PopBuyerPayMoney = float.Parse(o.pay_amount),
+                    PopCodNumber = "",
+                    PopCodSevFee = 0,
+                    PopFlag = Domain.ColorFlag.UN_LABEL,
+                    PopOrderId = o.order_sn,
+                    PopOrderTotalMoney = float.Parse(o.goods_amount) + float.Parse(o.postage ?? "0"),
+                    PopPayTime = DateTime.Parse(o.confirm_time ?? "1970-01-01 00:00:01"),
+                    PopPayType = Domain.PopPayType.ONLINE,
+                    PopSellerComment = o.remark,
+                    PopSellerGetMoney = float.Parse(o.goods_amount) + float.Parse(o.postage ?? "") - float.Parse(o.seller_discount ?? "0") - float.Parse(o.capital_free_discount ?? "0"),
+                    PopState = "",
+                    PopType = Domain.PopType.PINGDUODUO,
+                    PrintOperator = "",
+                    PrintTime = minTime,
+                    ReceiverAddress = o.address,
+                    ReceiverMobile = o.receiver_phone,
+                    ReceiverName = o.receiver_name,
+                    ReceiverPhone = "",
+                    ShopId = shop.Id,
+                    State = Domain.OrderState.NONE,
+                    Type = Domain.OrderType.NORMAL,
+                    Weight = 0,
+                };
+
+                //解析商品
+                if (o.item_list != null)
+                {
+                    foreach (var goods in o.item_list)
+                    {
+                        var orderGoods = new Domain.OrderGoods
+                        {
+                            CloseOperator = "",
+                            CloseTime = DateTime.MinValue,
+                            Color = "",
+                            Comment = "",
+                            Count = goods.goods_count,
+                            Edtion = "",
+                            GetedCount = 0,
+                            Id = 0,
+                            Image = goods.goods_img,
+                            Number = goods.outer_id,
+                            GoodsId = 0,
+                            OrderId = 0,
+                            PopInfo = goods.outer_id + " " + goods.goods_spec,
+                            PopOrderSubId = "",
+                            PopPrice = goods.goods_price,
+                            PopUrl = goods.goods_id,
+                            Price = 0,
+                            Size = "",
+                            State = Domain.OrderState.NONE,
+                            StockOperator = "",
+                            StockTime = DateTime.MinValue,
+                            Vendor = "",
+                            Weight = 0,
+                            Shipper = ""
+                        };
+                        //拼多以 ‘，’号分开，前面为颜色，后面为尺码
+                        string[] stocks = goods.goods_spec.Split(new char[] { ',', '，' }, StringSplitOptions.RemoveEmptyEntries);
+                        if (stocks.Length == 2)
+                        {
+                            orderGoods.Color = stocks[0];
+                            orderGoods.Size = stocks[1];
+                        }
+                        order.OrderGoodss.Add(orderGoods);
+                    }
+                }
+                //获取订单状态
+                var os = ConvertToOrderState(pddRspOrderListOrder.order_sn, new PddRspGetOrderStateOrder { orderSn = pddRspOrderListOrder.order_sn, order_status = o.order_status, refund_status = o.refund_status });
+                order.State = os;
+                order.OrderGoodss[0].State = os;
+                od.Order = order;
+            }
+            catch (Exception e)
+            {
+                od.Error = new OrderDownloadError(shop.Id, pddRspOrderListOrder.order_sn, "", e.Message, e.StackTrace);
+            }
+            return od;
+        }
+
         public override OrderDownloadCollectionResponse GetOrders(Shop shop, string state, int pageIndex, int pageSize)
         {
             SortedDictionary<string, string> para = new SortedDictionary<string, string>();
             var ret = new OrderDownloadCollectionResponse { IsTotalValid = false };
-
             if (state == PopService.QUERY_STATE_WAITSHIP_COD)
             {
                 return ret;
             }
             para["order_status"] = "1";
-
+            para["refund_status"] = "1";
             para["page"] = (pageIndex + 1).ToString();
             para["page_size"] = pageSize.ToString();
-            var resp = this.Invoke<PddRspOrder>(shop, "pdd.order.number.list.get", para);
-
-            if (resp.order_sn_list == null || resp.order_sn_list.Length < 1)
+            long now = (long)DateTime.Now.Subtract(UNIX_START_TIME).TotalSeconds;
+            for (int day = -15; day <= -1; day++)
             {
-                return ret;
+                para["start_confirm_at"] = (now + day * 86400L).ToString();
+                para["end_confirm_at"] = (now + (day + 1) * 86400L).ToString();
+                var resp = this.Invoke<PddRspOrderList>(shop, "pdd.order.list.get", para);
+                if (resp.order_list != null && resp.order_list.Length > 0)
+                {
+
+                    ret.Total = resp.total_count;
+                    foreach (var or in resp.order_list)
+                    {
+                        if (ret.Datas.Any(obj => obj.Order != null && obj.Order.PopOrderId == or.order_sn) == false)
+                        {
+                            var e = this.ConvertOrderDownload(shop, or);
+                            ret.Datas.Add(e);
+                        }
+                    }
+                }
             }
-
-            ret.Total = resp.total_count;
-
-            foreach (var or in resp.order_sn_list)
-            {
-                var e = this.GetOrder(shop, or.order_sn);
-                ret.Datas.Add(e);
-            }
-
             return ret;
         }
 

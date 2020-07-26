@@ -88,10 +88,12 @@ namespace ShopErp.App.Service.Sync
                 this.updateTotalCount = orders.Count;
                 if (orders.Count < 1)
                 {
-                    throw new Exception("没有查询到任何订单");
+                    this.OnSync(new SyncEventArgs { Message = "没有查询到任何订单" });
                 }
-                var gvms = Utils.CollectionsSpilteUtil.Spilte(orders.ToArray(), 10);
-                Task.WaitAll(gvms.Select(obj => Task.Factory.StartNew(new Action(() => SyncOrders(obj)))).ToArray());
+                else
+                {
+                    SyncOrders(orders.ToArray());
+                }
             }
             catch (Exception ex)
             {
