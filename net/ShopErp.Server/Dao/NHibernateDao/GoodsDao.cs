@@ -8,7 +8,7 @@ namespace ShopErp.Server.Dao.NHibernateDao
 {
     public class GoodsDao : NHibernateDaoBase<Goods>
     {
-        static readonly string[] TIME_TYPES = { "CreateTime", "ProcessImageTime", "UploadTime" };
+        static readonly string[] TIME_TYPES = { "CreateTime", "ProcessImageTime", "UploadTime", "UpdateTime" };
 
         public DataCollectionResponse<Goods> GetByAll(long shopId, GoodsState state, int timeType, DateTime start, DateTime end, string vendor, string number, GoodsType type, string comment, ColorFlag flag, GoodsVideoType videoType, string order, string vendorAdd, string shipper, int pageIndex, int pageSize)
         {

@@ -12,35 +12,24 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <TextBlock Name="tbPBMessage" Margin="3" VerticalAlignment="Center"
-                   Text="{Binding Path=TitleMessage, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PageBarUserControl}}}" />
+        <TextBlock Name="tbPBMessage" Margin="3" VerticalAlignment="Center" Text="{Binding Path=TitleMessage, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PageBarUserControl}}}" />
         <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
             <TextBlock Text="记录条数:" VerticalAlignment="Center" />
-            <TextBlock
-                Text="{Binding Path=Total, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PageBarUserControl}}}"
-                Width="50" VerticalAlignment="Center" />
+            <TextBlock Text="{Binding Path=Total, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PageBarUserControl}}}" Width="50" VerticalAlignment="Center" />
             <TextBlock Text="当前页条数:" VerticalAlignment="Center" />
-            <TextBlock
-                Text="{Binding Path=CurrentCount, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PageBarUserControl}}}"
-                Width="50" VerticalAlignment="Center" />
+            <TextBlock Text="{Binding Path=CurrentCount, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PageBarUserControl}}}" Width="50" VerticalAlignment="Center" />
             <TextBlock Text="分页信息:" VerticalAlignment="Center" />
-            <TextBlock
-                Text="{Binding Path=CurrentPage, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PageBarUserControl}}}"
-                VerticalAlignment="Center" />
+            <TextBlock Text="{Binding Path=CurrentPage, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PageBarUserControl}}}" VerticalAlignment="Center" />
             <TextBlock Text="/" VerticalAlignment="Center" />
-            <TextBlock
-                Text="{Binding Path=TotalPage, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PageBarUserControl}}}"
-                VerticalAlignment="Center" />
-            <TextBlock Text="  每页记录:" VerticalAlignment="Center" />
-            <TextBox
-                Text="{Binding Path=PageSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PageBarUserControl}}}"
-                VerticalAlignment="Center" Width="40" />
-            <Button Content="|&lt;" VerticalAlignment="Center" Width="30" Name="btnFirst" Click="btnFirst_Click" />
-            <Button Content="&lt;" VerticalAlignment="Center" Width="30" Name="btnPre" Click="btnPre_Click" />
-            <Button Content="&gt;" VerticalAlignment="Center" Width="30" Name="btnNext" Click="btnNext_Click" />
-            <Button Content="&gt;|" VerticalAlignment="Center" Width="30" Name="btnLast" Click="btnLast_Click" />
-            <TextBox x:Name="tbGoToPgae" Width="50" VerticalAlignment="Center" />
-            <Button Content="前往" VerticalAlignment="Center" Width="50" Name="btnGoTo" Click="btnGoTo_Click" />
+            <TextBlock Text="{Binding Path=TotalPage, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PageBarUserControl}}}" VerticalAlignment="Center" />
+            <TextBlock Text="  每页记录:" VerticalAlignment="Center" Margin="3"/>
+            <TextBox Text="{Binding Path=PageSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PageBarUserControl}}}" VerticalAlignment="Center" Width="40" />
+            <Button Content="|&lt;" VerticalAlignment="Center" Width="30" Name="btnFirst" Click="btnFirst_Click" Margin="3,3,0,3"/>
+            <Button Content="&lt;" VerticalAlignment="Center" Width="30" Name="btnPre" Click="btnPre_Click" Margin="0,3,0,3"/>
+            <Button Content="&gt;" VerticalAlignment="Center" Width="30" Name="btnNext" Click="btnNext_Click" Margin="0,3,0,3" />
+            <Button Content="&gt;|" VerticalAlignment="Center" Width="30" Name="btnLast" Click="btnLast_Click" Margin="0,3,0,3"/>
+            <TextBox x:Name="tbGoToPgae" Width="50" VerticalAlignment="Center" Margin="0,3,0,3"/>
+            <Button Content="前往" VerticalAlignment="Center" Width="50" Name="btnGoTo" Click="btnGoTo_Click" Margin="0,3,0,3" />
         </StackPanel>
 
     </Grid>

@@ -12,7 +12,7 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal">
-            <CheckBox Name="isRefused" Content="扫描拒签" Margin="3" VerticalAlignment="Center" IsChecked="False" />
+            <CheckBox Name="isRefused" Content="扫描拒签" Margin="3" VerticalAlignment="Center" IsChecked="False" FlowDirection="RightToLeft" />
             <TextBlock Text="物流公司:" Margin="3" VerticalAlignment="Center" />
             <ComboBox Name="cbbDeliveryCompanies" VerticalAlignment="Center" Width="120" />
             <TextBlock Text="物流单号:" Margin="3" VerticalAlignment="Center" />

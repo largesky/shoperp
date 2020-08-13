@@ -5,9 +5,7 @@ using System.Linq;
 
 namespace ShopErp.Server.Service.Restful
 {
-    public abstract class ServiceBase<E, D>
-        where D : Dao.IDao<E>, new()
-        where E : class, new()
+    public abstract class ServiceBase<E, D> where D : Dao.IDao<E>, new() where E : class, new()
     {
         protected D dao = new D();
 

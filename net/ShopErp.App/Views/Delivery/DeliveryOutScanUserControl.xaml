@@ -16,8 +16,8 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal">
             <TextBlock Text="发货检查：" Margin="3" VerticalAlignment="Center"/>
-            <CheckBox Name="chkPopState" Margin="3" VerticalAlignment="Center" Content="平台状态" IsChecked="True" />
-            <CheckBox Name="chkLocalState" Margin="3" VerticalAlignment="Center" Content="本地状态" IsChecked="True" />
+            <CheckBox Name="chkPopState" Margin="3" VerticalAlignment="Center" Content="平台状态" IsChecked="True" FlowDirection="RightToLeft"/>
+            <CheckBox Name="chkLocalState" Margin="3" VerticalAlignment="Center" Content="本地状态" IsChecked="True" FlowDirection="RightToLeft"/>
             <TextBlock  Margin="30,3,3,3" Text="商品数量：" VerticalAlignment="Center" />
             <TextBox Name="tbGoodsCount"  Margin="3" VerticalAlignment="Center" Width="40" Text="1"/>
             <TextBlock Text="物流单号:" Margin="3" VerticalAlignment="Center" />

@@ -28,9 +28,6 @@ namespace ShopErp.App.Views.Delivery
     {
         private System.Collections.ObjectModel.ObservableCollection<DeliveryCheckViewModel> orders = new ObservableCollection<DeliveryCheckViewModel>();
 
-        private int current = 0;
-        private bool isRunning = false;
-        private bool isStop = false;
         private Shop[] shops = null;
 
         public DeliveryCheckUserControl()
@@ -42,28 +39,21 @@ namespace ShopErp.App.Views.Delivery
         {
             try
             {
-                if (this.isRunning)
+                this.orders.Clear();
+                this.shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas.ToArray();
+                var os = ServiceContainer.GetService<OrderService>().GetByAll("", "", "", "", DateTime.Now.AddDays(-90), DateTime.MinValue, "", "", OrderState.PRINTED, PopPayType.None, "", "", "", null, -1, "", 0, OrderCreateType.NONE, OrderType.NONE, "", 0, 0).Datas;
+                var orders = os.Select(obj => new DeliveryCheckViewModel(obj) { State = "" }).OrderBy(obj => obj.Source.PopPayTime).ToArray();
+                if (orders.Length < 1)
                 {
-                    this.isStop = true;
+                    MessageBox.Show("没有任何订单");
+                    return;
                 }
-                else
+                foreach (var o in orders)
                 {
-                    this.orders.Clear();
-                    this.shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas.ToArray();
-                    var os = ServiceContainer.GetService<OrderService>().GetByAll("", "", "", "", DateTime.Now.AddDays(-90), DateTime.MinValue, "", "", OrderState.PRINTED, PopPayType.None, "", "", "", null, -1, "", 0, OrderCreateType.NONE, OrderType.NONE, "", 0, 0).Datas;
-                    var orders = os.Select(obj => new DeliveryCheckViewModel(obj) { State = "" }).OrderBy(obj => obj.Source.PopPayTime).ToArray();
-                    if (orders.Length < 1)
-                    {
-                        MessageBox.Show("没有任何订单");
-                        return;
-                    }
-                    foreach (var o in orders)
-                    {
-                        this.orders.Add(o);
-                    }
-                    this.dgvOrders.ItemsSource = this.orders;
-                    this.tbTotal.Text = "当前共 : " + orders.Length + " 条记录";
+                    this.orders.Add(o);
                 }
+                this.dgvOrders.ItemsSource = this.orders;
+                this.tbTotal.Text = "当前共 : " + orders.Length + " 条记录";
             }
             catch (Exception ex)
             {
@@ -112,8 +102,6 @@ namespace ShopErp.App.Views.Delivery
                 MessageBox.Show(ex.Message);
             }
         }
-
-
         #region 前选 后选 编辑地址
 
         private DeliveryCheckViewModel GetMIOrder(object sender)

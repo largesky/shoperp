@@ -113,7 +113,7 @@ namespace ShopErp.App.Views.Delivery
             int si = content.IndexOf(title);
             if (si <= 0)
             {
-                throw new Exception("未找到订单详情数据开始标识" + title);
+                throw new Exception("未找到订单详情数据开始标识" + title + " 请点击订单详情进行验证");
             }
             si = content.IndexOf('{', si);
             if (si <= 0)
@@ -408,7 +408,7 @@ namespace ShopErp.App.Views.Delivery
                 var or = Newtonsoft.Json.JsonConvert.DeserializeObject<TaobaoQueryOrderListResponse>(ret);
                 if (or.page == null)
                 {
-                    throw new Exception("执行操作失败：返回数据格式无法识别");
+                    throw new Exception("执行操作失败：返回数据格式无法识别,请点击订单下一页或者上一页进行验证");
                 }
                 if (or.mainOrders == null || or.mainOrders.Length < 1)
                 {
@@ -708,47 +708,6 @@ namespace ShopErp.App.Views.Delivery
             }
         }
         #endregion
-
-        private void dgvOrders_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
-        {
-            try
-            {
-                if (this.dgvOrders.SelectedCells.Count < 1)
-                {
-                    return;
-                }
-                if (this.dgvOrders.SelectedCells[0].Column.Header.ToString() != "快递单号")
-                {
-                    return;
-                }
-                var item = this.dgvOrders.SelectedCells[0].Item as OrderViewModel;
-                if (item == null)
-                {
-                    throw new Exception("对象数据类型不为：" + typeof(OrderViewModel).FullName);
-                }
-                if (string.IsNullOrWhiteSpace(item.Source.PopOrderId))
-                {
-                    throw new Exception("该订单没有平台订单编号");
-                }
-                if (string.IsNullOrWhiteSpace(item.Source.DeliveryNumber))
-                {
-                    System.Windows.Forms.Clipboard.Clear();
-                }
-                else
-                {
-                    System.Windows.Forms.Clipboard.SetText(item.Source.DeliveryNumber);
-                }
-                this.tbMsg1.Text = "已自动复制:" + item.Source.DeliveryNumber;
-                if ((int)item.Source.State >= (int)(OrderState.RETURNING))
-                {
-                    MessageBox.Show("订单状态不正确：" + item.Source.State + " 请仔细检查", "警告");
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
 
         private void DgvOrders_Sorting(object sender, DataGridSortingEventArgs e)
         {

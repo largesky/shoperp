@@ -104,7 +104,6 @@
                 <Button Name="btnCreatePrivate" Margin="3" Content="新建" VerticalAlignment="Center" Width="40" Click="btnCreatePrivate_Click" />
                 <Button Name="btnPatchEdit" Margin="3" VerticalAlignment="Center" Content="批量编辑" Width="60" Click="btnPatchEdit_Click" />
                 <Button x:Name="btnUploadImage" Margin="3" VerticalAlignment="Center" Content="批量传图" Width="60" Click="btnUploadImage_Click"/>
-                <Button Name="btnUpdate" Margin="3" VerticalAlignment="Bottom" Content="检查下架" Width="60" Click="btnUpdate_Click"/>
             </StackPanel>
         </Grid>
 

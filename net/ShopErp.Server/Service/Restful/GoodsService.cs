@@ -262,6 +262,5 @@ namespace ShopErp.Server.Service.Restful
             }
             return null;
         }
-
     }
 }

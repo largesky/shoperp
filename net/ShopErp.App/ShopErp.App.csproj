@@ -465,8 +465,8 @@
     </Compile>
     <Compile Include="Views\Goods\GoodsViewModel.cs" />
     <Compile Include="Views\Goods\GoodUpdateViewModel.cs" />
-    <Compile Include="Views\Goods\GoodUpdateWindow.xaml.cs">
-      <DependentUpon>GoodUpdateWindow.xaml</DependentUpon>
+    <Compile Include="Views\Goods\GoodUpdateUserControl.xaml.cs">
+      <DependentUpon>GoodUpdateUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Goods\PopGoodsInfoViewModel.cs" />
     <Compile Include="Views\Goods\PopGoodsUserControl.xaml.cs">
@@ -810,7 +810,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Goods\GoodUpdateWindow.xaml">
+    <Page Include="Views\Goods\GoodUpdateUserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

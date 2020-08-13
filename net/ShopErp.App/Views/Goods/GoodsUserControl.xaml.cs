@@ -265,19 +265,6 @@ namespace ShopErp.App.Views.Goods
             }
         }
 
-        private void btnUpdate_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var w = new GoodUpdateWindow();
-                w.Show();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
         private void miDelete_Click(object sender, RoutedEventArgs e)
         {
             try

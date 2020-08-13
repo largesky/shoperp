@@ -19,69 +19,59 @@ namespace ShopErp.App.Views.PageBar
     /// </summary>
     public partial class PageBarUserControl : UserControl
     {
-        public static readonly DependencyProperty TotalProperty =
-            DependencyProperty.Register("Total", typeof(int), typeof(PageBarUserControl), new PropertyMetadata(0));
+        public static readonly DependencyProperty TotalProperty = DependencyProperty.Register("Total", typeof(int), typeof(PageBarUserControl), new PropertyMetadata(0));
 
-        public static readonly DependencyProperty CurrentPageProperty =
-            DependencyProperty.Register("CurrentPage", typeof(int), typeof(PageBarUserControl),
-                new PropertyMetadata(0));
+        public static readonly DependencyProperty CurrentPageProperty = DependencyProperty.Register("CurrentPage", typeof(int), typeof(PageBarUserControl), new PropertyMetadata(0));
 
-        public static readonly DependencyProperty TotalPageProperty =
-            DependencyProperty.Register("TotalPage", typeof(int), typeof(PageBarUserControl), new PropertyMetadata(0));
+        public static readonly DependencyProperty TotalPageProperty = DependencyProperty.Register("TotalPage", typeof(int), typeof(PageBarUserControl), new PropertyMetadata(0));
 
-        public static readonly DependencyProperty PageSizeProperty =
-            DependencyProperty.Register("PageSize", typeof(int), typeof(PageBarUserControl), new PropertyMetadata(20));
+        public static readonly DependencyProperty PageSizeProperty = DependencyProperty.Register("PageSize", typeof(int), typeof(PageBarUserControl), new PropertyMetadata(20));
 
-        public static readonly DependencyProperty CurrentCountProperty =
-            DependencyProperty.Register("CurrentCount", typeof(int), typeof(PageBarUserControl),
-                new PropertyMetadata(0));
+        public static readonly DependencyProperty CurrentCountProperty = DependencyProperty.Register("CurrentCount", typeof(int), typeof(PageBarUserControl), new PropertyMetadata(0));
 
-        public static readonly DependencyProperty TitleMessageProperty =
-            DependencyProperty.Register("TitleMessage", typeof(string), typeof(PageBarUserControl),
-                new PropertyMetadata(""));
+        public static readonly DependencyProperty TitleMessageProperty = DependencyProperty.Register("TitleMessage", typeof(string), typeof(PageBarUserControl), new PropertyMetadata(""));
 
         private bool hasPaged = false;
 
         public int Total
         {
-            get { return (int) this.GetValue(TotalProperty); }
+            get { return (int)this.GetValue(TotalProperty); }
             set { this.SetValue(TotalProperty, value); }
         }
 
         public int CurrentPage
         {
-            get { return (int) this.GetValue(CurrentPageProperty); }
+            get { return (int)this.GetValue(CurrentPageProperty); }
             set { this.SetValue(CurrentPageProperty, value); }
         }
 
         public int TotalPage
         {
-            get { return (int) this.GetValue(TotalPageProperty); }
+            get { return (int)this.GetValue(TotalPageProperty); }
             set { this.SetValue(TotalPageProperty, value); }
         }
 
         public int PageSize
         {
-            get { return (int) this.GetValue(PageSizeProperty); }
+            get { return (int)this.GetValue(PageSizeProperty); }
             set { this.SetValue(PageSizeProperty, value); }
         }
 
         public int CurrentCount
         {
-            get { return (int) this.GetValue(CurrentCountProperty); }
+            get { return (int)this.GetValue(CurrentCountProperty); }
             set { this.SetValue(CurrentCountProperty, value); }
         }
 
         public string TitleMessage
         {
-            get { return (string) this.GetValue(TitleMessageProperty); }
+            get { return (string)this.GetValue(TitleMessageProperty); }
             set { this.SetValue(TitleMessageProperty, value); }
         }
 
         public IDictionary<string, Object> Parameters { get; private set; }
 
         public event EventHandler<PageChangeEventArgs> PageChanging;
-
 
         public PageBarUserControl()
         {

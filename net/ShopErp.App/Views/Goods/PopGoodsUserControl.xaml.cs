@@ -553,10 +553,15 @@ namespace ShopErp.App.Views.Goods
                     foreach (var code in skus)
                     {
                         string[] nn = code.Split('&');
+                        if (nn.Length < 2)
+                        {
+                            continue;
+                        }
                         var g = allGoods.FirstOrDefault(obj => obj.Number.Equals(nn[1], StringComparison.OrdinalIgnoreCase) && vendors.FirstOrDefault(o => o.Id == obj.VendorId).PingyingName.Equals(nn[0], StringComparison.OrdinalIgnoreCase));
                         if (g == null)
                         {
-                            unMatchPopGoods.Add(pg);
+                            if (ServiceContainer.GetService<GoodsService>().ParseGoods(nn[0], nn[1]).First == null)
+                                unMatchPopGoods.Add(pg);
                         }
                     }
                 }
@@ -623,7 +628,7 @@ namespace ShopErp.App.Views.Goods
             try
             {
                 var shop = this.cbbShops.SelectedItem as ShopErp.Domain.Shop;
-                if (shop == null)
+                if (shop == null || (shop.PopType != PopType.TAOBAO && shop.PopType != PopType.TMALL))
                 {
                     throw new Exception("只有淘宝天猫可以进行匹配");
                 }
@@ -660,6 +665,10 @@ namespace ShopErp.App.Views.Goods
                     foreach (var code in skus)
                     {
                         string[] nn = code.Split('&');
+                        if (nn.Length < 2)
+                        {
+                            continue;
+                        }
                         var g = allGoods.FirstOrDefault(obj => obj.Number.Equals(nn[1], StringComparison.OrdinalIgnoreCase) && vendors.FirstOrDefault(o => o.Id == obj.VendorId).PingyingName.Equals(nn[0], StringComparison.OrdinalIgnoreCase));
                         if (g == null)
                         {
