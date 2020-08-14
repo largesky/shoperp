@@ -164,7 +164,8 @@ namespace ShopErp.App.Views.Orders
             };
 
             //订单信息
-            var content = MsHttpRestful.GetReturnString("https://trade.taobao.com/detail/orderDetail.htm?bizOrderId=" + popOrderId, CefCookieVisitor.GetCookieValue("trade.taobao.com"));
+            string url = shop.PopType == PopType.TMALL ? "https://trade.tmall.com/detail/orderDetail.htm?bizOrderId=" : "https://trade.taobao.com/detail/orderDetail.htm?bizOrderId=";
+            var content = MsHttpRestful.GetReturnString(url + popOrderId, CefCookieVisitor.GetCookieValue(shop.PopType == PopType.TMALL ? "trade.tmall.com" : "trade.taobao.com"));
             string title = shop.PopType == PopType.TMALL ? "var detailData" : "var data = JSON";
 
             int si = content.IndexOf(title);
