@@ -58,6 +58,7 @@ namespace ShopErp.App.Views.Goods
                 }
                 this.tbParaBrand.Text = LocalConfigService.GetValue(SystemNames.CONFIG_GOODS_BOX_IMAGE_BRAND, "花儿锦");
                 this.checkBox.IsChecked = !(Goods.Type == GoodsType.GOODS_SHOES_FANBUXIE || Goods.Type == GoodsType.GOODS_SHOES_GAOBANGXIE || Goods.Type == GoodsType.GOODS_SHOES_TUOXIE || Goods.Type == GoodsType.GOODS_SHOES_YUNDONGXIE);
+                this.tbInsideLabel.Visibility = this.tbInside.Visibility = (Goods.Type == GoodsType.GOODS_SHOES_XUEZI) ? Visibility.Visible : Visibility.Collapsed;
             }
             catch (Exception ex)
             {
@@ -127,6 +128,8 @@ namespace ShopErp.App.Views.Goods
                     throw new Exception("厂家未配置拼单名称");
                 }
 
+                this.Goods.Material = this.cbbParaMateria.Text.Trim();
+                ServiceContainer.GetService<GoodsService>().Update(this.Goods);
                 string ptDir = fulldir + "\\PT";
                 System.IO.Directory.CreateDirectory(ptDir);
                 System.IO.Directory.CreateDirectory(ptDir + "\\ZT");

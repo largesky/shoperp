@@ -67,7 +67,7 @@ namespace ShopErp.App.Views.Goods
             {
                 string vendorAdd = this.tbVendorAddress.Text.Trim();
                 this.waitSeconds = int.Parse(this.tbWaitSeconds.Text.Trim());
-                var shoes = this.shoesService.GetByAll(0, GoodsState.NONE, 0, this.shoesService.GetDBMinTime(), this.shoesService.GetDBMinTime(), "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "Id ASC", vendorAdd, "", 0, 0).Datas.Where(obj => obj.UpdateEnabled && string.IsNullOrWhiteSpace(obj.Url) == false).ToArray();
+                var shoes = this.shoesService.GetByAll(0, GoodsState.NONE, 0, this.shoesService.GetDBMinTime(), this.dpEnd.Value == null ? this.shoesService.GetDBMinTime() : this.dpEnd.Value.Value, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "Id ASC", vendorAdd, "", 0, 0).Datas.Where(obj => obj.UpdateEnabled && string.IsNullOrWhiteSpace(obj.Url) == false).ToArray();
                 if (this.chkFullUpate.IsChecked.Value == false)
                 {
                     DateTime max = shoes.Select(obj => obj.UpdateTime).Max();

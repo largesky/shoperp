@@ -43,6 +43,11 @@ namespace ShopErp.App.Views.Goods
             }
         }
 
+        public int TitleLength
+        {
+            get { return this.PopGoodsInfo.Title.Select(c => char.IsLower(c) || char.IsUpper(c) || char.IsDigit(c) ? 1 : 2).Sum(); }
+        }
+
         public string EditStr
         {
             get { return "前往编辑"; }

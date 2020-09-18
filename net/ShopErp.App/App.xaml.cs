@@ -36,6 +36,7 @@ namespace ShopErp.App
 
         protected override void OnStartup(StartupEventArgs e)
         {
+
             try
             {
                 var settings = new CefSettings() { LogSeverity = LogSeverity.Warning, LogFile = EnvironmentDirHelper.DIR_LOG + "\\CEF.txt", MultiThreadedMessageLoop = true };

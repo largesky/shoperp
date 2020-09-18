@@ -24,6 +24,7 @@
             <ComboBox Name="cbbStatus" Margin="3" VerticalAlignment="Center" />
             <Button Name="btnQuery" Content="查询" Width="60" Margin="3" VerticalAlignment="Center" Click="btnQuery_Click" />
             <Button Name="btnStop" Content="停止" Width="60" Margin="3" VerticalAlignment="Center" Click="BtnStop_Click" />
+            <Button x:Name="btnFilter" Content="当前页面过滤" Width="85" Margin="3" VerticalAlignment="Center" Click="btnFilter_Click"/>
             <TextBlock Text="重置所有备注为:" Margin="3" VerticalAlignment="Center" />
             <TextBox Name="tbComment" Margin="3" VerticalAlignment="Center" Width="100" />
             <Button Name="btnClear" Content="重置" Width="60" Margin="3" VerticalAlignment="Center" Click="btnClear_Click" />
@@ -62,13 +63,14 @@
                     <DataGridTextColumn Header="库存编码" Binding="{Binding Path=SkuCodesInfo}" IsReadOnly="True" MinWidth="60" />
                     <DataGridTextColumn Header="备注" Binding="{Binding Path=GoodsTask.Comment}" IsReadOnly="False" MinWidth="60" />
                     <DataGridTextColumn Header="状态" Binding="{Binding Path=State}" IsReadOnly="False" MinWidth="60" />
-                    <DataGridHyperlinkColumn Header="查看连接(按住Ctrl打开Go2连接)" Binding="{Binding PopGoodsInfo.Title}" IsReadOnly="True">
+                    <DataGridHyperlinkColumn Header="查看连接(按住Ctrl打开Go2连接)" Binding="{Binding PopGoodsInfo.Title}">
                         <DataGridHyperlinkColumn.ElementStyle>
                             <Style>
                                 <EventSetter Event="Hyperlink.Click" Handler="OpenUrl_Click" />
                             </Style>
                         </DataGridHyperlinkColumn.ElementStyle>
                     </DataGridHyperlinkColumn>
+                    <DataGridTextColumn Header="标题长度" Binding="{Binding TitleLength}" IsReadOnly="True"/>
                     <DataGridHyperlinkColumn Header="编辑连接" Binding="{Binding EditStr}" IsReadOnly="True">
                         <DataGridHyperlinkColumn.ElementStyle>
                             <Style>

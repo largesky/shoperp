@@ -724,14 +724,58 @@ namespace ShopErp.App.Views.Goods
                 {
                     return;
                 }
+                this.lastShop = this.cbbShops.SelectedItem as Shop;
+                var item = ServiceContainer.GetService<GoodsTaskService>().GetByAll(lastShop.Id, 0, 0).Datas;
                 string content = System.IO.File.ReadAllText(ofd.FileName);
                 var arr = Newtonsoft.Json.JsonConvert.DeserializeObject<PopGoodsInfoViewModel[]>(content);
                 this.popGoodsInfoViewModels.Clear();
                 foreach (var v in arr)
                 {
+                    v.GoodsTask = item.FirstOrDefault(obj => obj.GoodsId == v.PopGoodsInfo.Id);
                     this.popGoodsInfoViewModels.Add(v);
                 }
-                this.lastShop = this.cbbShops.SelectedItem as Shop;
+                this.dgvGoods.ItemsSource = this.popGoodsInfoViewModels;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void btnFilter_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string[] titles = this.tbTitle.Text.Trim().Split(' ');
+                string code = this.tbCode.Text.Trim();
+                string stockCode = this.tbStockCode.Text.Trim();
+                PopGoodsState state = this.cbbStatus.GetSelectedEnum<PopGoodsState>();
+                List<PopGoodsInfoViewModel> goods = new List<PopGoodsInfoViewModel>();
+                //第一步过滤
+                foreach (var v in this.popGoodsInfoViewModels)
+                {
+                    if (string.IsNullOrWhiteSpace(code) == false && v.PopGoodsInfo.Code != code)
+                    {
+                        continue;
+                    }
+                    if (string.IsNullOrWhiteSpace(stockCode) == false && v.PopGoodsInfo.Skus != null && v.PopGoodsInfo.Skus.Any(obj => obj.Code.IndexOf(stockCode, StringComparison.OrdinalIgnoreCase) >= 0) == false)
+                    {
+                        continue;
+                    }
+                    if (titles.Length > 0)
+                    {
+                        if (titles.All(o => v.PopGoodsInfo.Title != null && v.PopGoodsInfo.Title.Contains(o)) == false)
+                        {
+                            continue;
+                        }
+                    }
+                    if (state != PopGoodsState.NONE && v.PopGoodsInfo.State != state)
+                    {
+                        continue;
+                    }
+                    goods.Add(v);
+                }
+                this.dgvGoods.ItemsSource = goods;
             }
             catch (Exception ex)
             {

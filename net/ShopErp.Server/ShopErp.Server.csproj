@@ -124,6 +124,7 @@
     </Compile>
     <Compile Include="Service\AddressService.cs" />
     <Compile Include="Service\Net\MsHttpRestful.cs" />
+    <Compile Include="Service\Pop\Pdd\PddGoodsPropertyMapItem.cs" />
     <Compile Include="Service\Pop\Pdd\PddReqWaybillGet.cs" />
     <Compile Include="Service\Pop\Pdd\PddReqWaybillGetSender.cs" />
     <Compile Include="Service\Pop\Pdd\PddReqWaybillGetSenderAddress.cs" />

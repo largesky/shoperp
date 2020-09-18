@@ -673,13 +673,13 @@ namespace ShopErp.Server.Service.Pop.Pdd
             }
             PddRspTemplateItem t = null;
             var tt = lotemplates.logistics_template_list.Where(obj => obj.city_id == an.id.ToString()).ToArray();
-            if (tt.Length < 2)
+            if (tt.Length == 1)
             {
                 t = tt.First();
             }
             else
             {
-                t = tt.FirstOrDefault(obj => obj.template_name == "默认运费模板");
+                t = tt.FirstOrDefault(obj => obj.template_name.Contains("默认"));
             }
             if (t == null)
             {
@@ -715,6 +715,10 @@ namespace ShopErp.Server.Service.Pop.Pdd
                 {
                     throw new Exception("拼多多上没有找到第三级目录 " + popGoods.Type + " 类目");
                 }
+                if (popGoods.Type == "靴子")
+                {
+                    leve3Cat = cats.goods_cats_list.FirstOrDefault(obj => obj.cat_name.Contains("皮靴"));
+                }
                 catIdCaches[popGoods.Type] = leve3Cat.cat_id;
             }
 
@@ -748,43 +752,73 @@ namespace ShopErp.Server.Service.Pop.Pdd
             List<PddReqGoodsProperty> properties = new List<PddReqGoodsProperty>();
             foreach (var ctp in catTemplatesCaches[level3CatId])
             {
-                //根据淘宝天猫的属性名称，找到对应拼多多名称
-                string taobaoName = PddGoodsPropertyMap.GetMapPropertyNameByKey(popGoods.PopType, popGoods.Type, ctp.name_alias);
-                if (string.IsNullOrWhiteSpace(taobaoName))
-                {
-                    id += ctp.name_alias + " 未找到对应的淘宝属性，";
-                    continue;
-                }
-
-                if (ctp.name_alias == "品牌" && ctp.required)
-                {
-                    if (shop.PopShopName.Contains("旗舰店"))
-                    {
-                        properties.Add(new PddReqGoodsProperty { template_pid = ctp.id, vid = 128029, value = shop.PopShopName.Replace("旗舰店", "") });
-                    }
-                    continue;
-                }
-
-                var taobaoProperty = popGoods.Properties.FirstOrDefault(obj => obj.Key == taobaoName);
-                if (taobaoProperty == null)
+                string propertyValue = "";
+                //根据拼多多的属性名称，找到对应映射关系
+                PddGoodsPropertyMapItem pddGoodsPropertyMapItem = PddGoodsPropertyMap.GetMapPropertyByKey(popGoods.PopType, popGoods.Type, ctp.name_alias);
+                if (pddGoodsPropertyMapItem == null)
                 {
                     if (ctp.required)
-                        throw new Exception("拼多多属性：" + ctp.name_alias + " 是必须项，但没有在淘宝找到对应属性");
-                    else
-                        id += "属性：" + ctp.name_alias + " 未匹配";
+                    {
+                        throw new Exception("拼多多属性：" + ctp.name_alias + " 是必须项，但没有在映射配置中找到对应项，请添加映射关系");
+                    }
+                    id += "拼多多属性：" + ctp.name_alias + " 没有在映射配置中找到对应项，请添加映射关系";
                     continue;
                 }
-                string[] values = taobaoProperty.Value.Split(new string[] { "@#@" }, StringSplitOptions.RemoveEmptyEntries);
+
+                if (ctp.name_alias == "品牌")
+                {
+                    if (ctp.required == false)
+                    {
+                        continue;
+                    }
+                    if (shop.PopShopName.Contains("旗舰店") == false && shop.PopShopName.Contains("专卖店") == false)
+                    {
+                        throw new Exception("属性 品牌 是必须值 但 店铺名称不包含旗舰店：" + shop.PopShopName);
+                    }
+                    propertyValue = shop.PopShopName.Replace("旗舰店", "").Replace("专卖店", "").Replace("官方", "");
+                }
+                else if (ctp.name_alias == "上市时节")
+                {
+                    propertyValue = DateTime.Now.Year + "年" + ((DateTime.Now.Month <= 6) ? "春季" : "夏季");
+                }
+                else
+                {
+                    var otherPopProperty = popGoods.Properties.FirstOrDefault(obj => obj.Key == pddGoodsPropertyMapItem.OtherPopName);
+                    if (otherPopProperty == null && string.IsNullOrWhiteSpace(pddGoodsPropertyMapItem.DefaultValue))
+                    {
+                        if (ctp.required)
+                        {
+                            throw new Exception("拼多多属性：" + ctp.name_alias + " 是必须项，但没有在淘宝找到对应属性");
+                        }
+                        else
+                        {
+                            id += "属性：" + ctp.name_alias + " 没有在淘宝找到对应属性项";
+                        }
+                        continue;
+                    }
+                    propertyValue = otherPopProperty == null ? pddGoodsPropertyMapItem.DefaultValue : otherPopProperty.Value;
+                    if (string.IsNullOrWhiteSpace(propertyValue))
+                    {
+                        if (ctp.required)
+                        {
+                            throw new Exception("拼多多属性：" + ctp.name_alias + " 是必须项，但没有在淘宝找到对应属性中没有相应值");
+                        }
+                        continue;
+                    }
+                }
+
+                string[] values = propertyValue.Split(new string[] { "@#@" }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var vv in values)
                 {
-                    var v = ctp.values.FirstOrDefault(obj => MatchValue(obj.value, vv));
+                    var v = ctp.values.FirstOrDefault(obj => MatchValue(obj.value.Trim(), vv.Trim()));
+                    if (v == null)
+                    {
+                        var pddvv = pddGoodsPropertyMapItem.SubValuesMap.ContainsKey(vv) ? pddGoodsPropertyMapItem.SubValuesMap[vv] : "";
+                        v = ctp.values.FirstOrDefault(obj => MatchValue(obj.value.Trim(), pddvv.Trim()));
+                    }
                     if (v != null)
                     {
                         properties.Add(new PddReqGoodsProperty { template_pid = ctp.id, vid = long.Parse(v.vid), value = v.value });
-                        if (ctp.choose_max_num <= 1)
-                        {
-                            break;
-                        }
                     }
                     else
                     {
@@ -803,13 +837,15 @@ namespace ShopErp.Server.Service.Pop.Pdd
             string[] images = UploadImage(shop, popGoods.Images);
             string[] descImages = UploadImage(shop, popGoods.DescImages);
             string[] skuImages = UploadImage(shop, skuSourceImages);
-            //拼多多图片张数达到8张，商品分值会高些
-            if (images.Length < 8)
+            //拼多多图片张数达到10张，商品分值会高些
+            if (images.Length < 10)
             {
-                var im = new string[8];
-                Array.Copy(images, im, images.Length);
-                Array.Copy(images, 0, im, images.Length, 8 - images.Length);
-                images = im;
+                var im = new List<string>();
+                while (im.Count < 10)
+                {
+                    im.AddRange(images);
+                }
+                images = im.GetRange(0, 10).ToArray();
             }
 
             //生成颜色尺码规格
@@ -850,7 +886,7 @@ namespace ShopErp.Server.Service.Pop.Pdd
             para["goods_properties"] = Newtonsoft.Json.JsonConvert.SerializeObject(properties);
             para["goods_name"] = popGoods.Title.Trim();
             para["goods_type"] = "1";
-            para["goods_desc"] = "商品跟高，面料，尺码情况请往下滑动查看详情页面";
+            para["goods_desc"] = "商品跟高，材质，尺码，内里，请往下滑，详情中均有说明";
             para["cat_id"] = level3CatId;
             para["country_id"] = "0";
             para["market_price"] = (((int)(buyInPrice * 3)) * 100).ToString();
@@ -871,6 +907,12 @@ namespace ShopErp.Server.Service.Pop.Pdd
             return id;
         }
 
+        /// <summary>
+        /// 会删除括号及里面的内容进行比较
+        /// </summary>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
+        /// <returns></returns>
         private bool MatchValue(string value1, string value2)
         {
             int i1 = value1.IndexOfAny(LEFT_S);
@@ -878,11 +920,11 @@ namespace ShopErp.Server.Service.Pop.Pdd
 
             if (i1 > 0)
             {
-                value1 = value1.Substring(0, i1);
+                value1 = value1.Substring(0, i1).Trim();
             }
             if (i2 > 0)
             {
-                value2 = value2.Substring(0, i2);
+                value2 = value2.Substring(0, i2).Trim();
             }
             return value1.Equals(value2, StringComparison.OrdinalIgnoreCase);
         }

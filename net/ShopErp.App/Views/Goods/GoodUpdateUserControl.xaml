@@ -14,6 +14,8 @@
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="厂家地址：" Margin="3" VerticalAlignment="Center"/>
             <TextBox x:Name="tbVendorAddress" Margin="3" VerticalAlignment="Center" Width="100"/>
+            <TextBlock Text="添加时间：" Margin="3" VerticalAlignment="Center"/>
+            <xctk:DateTimePicker Grid.Row="1"  Grid.Column="3" xctk:Format="Custom" xctk:TimeFormatString="yyyy-MM-dd HH:mm:ss" Name="dpEnd" Margin="3" VerticalAlignment="Center" MinWidth="140" />
             <CheckBox x:Name="chkFullUpate" Margin="3" Content="：全量更新" IsChecked="False" VerticalAlignment="Center" FlowDirection="RightToLeft"/>
             <TextBlock Text="时间间隔(秒):" Margin="3" VerticalAlignment="Center"/>
             <TextBox x:Name="tbWaitSeconds" Margin="3" VerticalAlignment="Center" Width="50" Text="10"/>
