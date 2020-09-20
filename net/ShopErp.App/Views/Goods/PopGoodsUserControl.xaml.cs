@@ -72,35 +72,9 @@ namespace ShopErp.App.Views.Goods
             }));
         }
 
-        private void AppendDataToUi(List<PopGoods> goods, Shop shop, string title, string code, string stockCode, PopGoodsState state)
+        private void AppendDataToUi(List<PopGoods> goods, Shop shop)
         {
-            List<PopGoods> toAdd = new List<PopGoods>();
-            string[] titles = title.Split(' ');
-
-            //第一步过滤
-            foreach (var v in goods)
-            {
-                if (this.popGoodsInfoViewModels.Any(obj => obj.PopGoodsInfo.Id == v.Id))
-                {
-                    continue;
-                }
-                if (string.IsNullOrWhiteSpace(code) == false && v.Code != code)
-                {
-                    continue;
-                }
-                if (string.IsNullOrWhiteSpace(stockCode) == false && v.Skus != null && v.Skus.Any(obj => obj.Code.IndexOf(stockCode, StringComparison.OrdinalIgnoreCase) >= 0) == false)
-                {
-                    continue;
-                }
-                if (title != null && title.Length > 0)
-                {
-                    if (titles.All(o => v.Title != null && v.Title.Contains(o)) == false)
-                    {
-                        continue;
-                    }
-                }
-                toAdd.Add(v);
-            }
+            List<PopGoods> toAdd = goods.Where(obj => this.popGoodsInfoViewModels.Any(c => c.PopGoodsInfo.Id == obj.Id) == false).ToList();
             //生成VM
             PopGoodsInfoViewModel[] vms = new PopGoodsInfoViewModel[toAdd.Count];
             var goodsTasks = ServiceContainer.GetService<GoodsTaskService>().GetByAll(shop.Id, 0, 0).Datas;
@@ -130,10 +104,8 @@ namespace ShopErp.App.Views.Goods
             {
                 this.popGoodsInfoViewModels.Add(v);
             }
-            this.dgvGoods.ItemsSource = popGoodsInfoViewModels;
-            for (int i = 0; i < this.popGoodsInfoViewModels.Count; i++)
+            foreach (var v in this.popGoodsInfoViewModels)
             {
-                var v = this.popGoodsInfoViewModels[i];
                 if (v.PopGoodsInfo.Skus.Any(o => string.IsNullOrWhiteSpace(o.Code)))
                 {
                     v.State = "有SKU库存编码为空";
@@ -192,9 +164,6 @@ namespace ShopErp.App.Views.Goods
                 else
                 {
                     //创建新线程开始
-                    string title = this.tbTitle.Text.Trim();
-                    string code = this.tbCode.Text.Trim();
-                    string stockCode = this.tbStockCode.Text.Trim();
                     PopGoodsState state = this.cbbStatus.GetSelectedEnum<PopGoodsState>();
                     this.lastShop = this.cbbShops.SelectedItem as Shop;
                     if (this.lastShop == null)
@@ -209,7 +178,7 @@ namespace ShopErp.App.Views.Goods
                             throw new Exception("当前选择店铺与登录店铺不一样");
                         }
                     }
-                    goodsDownloadWorker = new GoodsDownloadWorker(this.lastShop, title, code, stockCode, state);
+                    goodsDownloadWorker = new GoodsDownloadWorker(this.lastShop, state);
                     this.popGoodsInfoViewModels.Clear();
                     goodsDownloadWorker.Download += GoodsDownloadWorker_Download;
                     goodsDownloadWorker.DownloadData += GoodsDownloadWorker_DownloadData;
@@ -244,14 +213,12 @@ namespace ShopErp.App.Views.Goods
 
         private void GoodsDownloadWorker_DownloadData(object sender, GoodsDownloadDataEventArgs e)
         {
-            Debug.WriteLine("GoodsDownloadWorker_DownloadData");
             GoodsDownloadWorker worker = sender as GoodsDownloadWorker;
-            this.Dispatcher.BeginInvoke(new Action(() => AppendDataToUi(e.Goods, worker.shop, worker.title, worker.code, worker.stockCode, worker.state)));
+            this.Dispatcher.BeginInvoke(new Action(() => AppendDataToUi(e.Goods, worker.shop)));
         }
 
         private void GoodsDownloadWorker_Download(object sender, GoodsDownloadWorkerEventArgs e)
         {
-            Debug.WriteLine("GoodsDownloadWorker_Download");
             GoodsDownloadWorkerEventArgs le = e;
             this.Dispatcher.BeginInvoke(new Action(() =>
             {
@@ -281,6 +248,7 @@ namespace ShopErp.App.Views.Goods
                         MessageBox.Show("下载完成");
                     }
                     this.goodsDownloadWorker = null;
+                    this.dgvGoods.ItemsSource = this.popGoodsInfoViewModels.ToArray();
                 }
             }));
         }
@@ -433,18 +401,19 @@ namespace ShopErp.App.Views.Goods
                 {
                     return;
                 }
-                var goods = popGoodsInfoViewModels.ToArray();
-                if (goods == null || goods.Length < 1)
+                var items = this.dgvGoods.ItemsSource as PopGoodsInfoViewModel[];
+                if (items == null || items.Length < 1)
                 {
-                    throw new Exception("没有需要重置的数据");
+                    MessageBox.Show("没有选择数据");
+                    return;
                 }
-                foreach (var g in goods)
+                foreach (var g in items)
                 {
                     g.GoodsTask.Comment = this.tbComment.Text.Trim();
                     ServiceContainer.GetService<GoodsTaskService>().Update(g.GoodsTask);
                 }
                 this.dgvGoods.ItemsSource = null;
-                this.dgvGoods.ItemsSource = goods;
+                this.dgvGoods.ItemsSource = items;
             }
             catch (Exception ex)
             {
@@ -461,7 +430,12 @@ namespace ShopErp.App.Views.Goods
                 {
                     throw new Exception("程序错误需要改程序");
                 }
-                foreach (var g in this.popGoodsInfoViewModels)
+                var items = this.dgvGoods.ItemsSource as PopGoodsInfoViewModel[];
+                if (items == null || items.Length < 1)
+                {
+                    return;
+                }
+                foreach (var g in items)
                 {
                     g.IsChecked = cb.IsChecked.Value;
                 }
@@ -482,8 +456,15 @@ namespace ShopErp.App.Views.Goods
                     this.task.Wait();
                     return;
                 }
+                var items = this.dgvGoods.ItemsSource as PopGoodsInfoViewModel[];
+                if (items == null || items.Length < 1)
+                {
+                    MessageBox.Show("没有选择数据");
+                    return;
+                }
+
                 this.isStop = false;
-                var pgs = this.popGoodsInfoViewModels.Where(obj => obj.IsChecked).ToArray();
+                var pgs = items.Where(obj => obj.IsChecked).ToArray();
                 if (pgs.Length < 1)
                 {
                     MessageBox.Show("没有选择数据");
@@ -699,12 +680,13 @@ namespace ShopErp.App.Views.Goods
         {
             try
             {
-                if (this.popGoodsInfoViewModels.Count < 1)
+                var items = this.dgvGoods.ItemsSource as PopGoodsInfoViewModel[];
+                if (items == null || items.Length < 1)
                 {
                     MessageBox.Show("没有数据");
                     return;
                 }
-                string content = Newtonsoft.Json.JsonConvert.SerializeObject(this.popGoodsInfoViewModels);
+                string content = Newtonsoft.Json.JsonConvert.SerializeObject(items);
                 string file = EnvironmentDirHelper.DIR_DATA + "\\" + this.lastShop.Mark + "_export_" + DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss") + ".json";
                 System.IO.File.WriteAllText(file, content);
                 Process.Start(EnvironmentDirHelper.DIR_DATA);
@@ -734,7 +716,7 @@ namespace ShopErp.App.Views.Goods
                     v.GoodsTask = item.FirstOrDefault(obj => obj.GoodsId == v.PopGoodsInfo.Id);
                     this.popGoodsInfoViewModels.Add(v);
                 }
-                this.dgvGoods.ItemsSource = this.popGoodsInfoViewModels;
+                this.dgvGoods.ItemsSource = this.popGoodsInfoViewModels.ToArray();
             }
             catch (Exception ex)
             {
@@ -775,7 +757,7 @@ namespace ShopErp.App.Views.Goods
                     }
                     goods.Add(v);
                 }
-                this.dgvGoods.ItemsSource = goods;
+                this.dgvGoods.ItemsSource = goods.ToArray();
             }
             catch (Exception ex)
             {
@@ -822,12 +804,6 @@ namespace ShopErp.App.Views.Goods
     {
         public Shop shop;
 
-        public string title;
-
-        public string code;
-
-        public string stockCode;
-
         public PopGoodsState state;
 
         private AutoResetEvent waiterLock = new AutoResetEvent(false);
@@ -868,12 +844,9 @@ namespace ShopErp.App.Views.Goods
             }
         }
 
-        public GoodsDownloadWorker(Shop shop, string title, string code, string stockCode, PopGoodsState state)
+        public GoodsDownloadWorker(Shop shop, PopGoodsState state)
         {
             this.shop = shop;
-            this.title = title;
-            this.code = code;
-            this.stockCode = stockCode;
             this.state = state;
             this.WorkerState = WorkerState.INIT;
         }

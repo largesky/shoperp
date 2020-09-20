@@ -779,7 +779,7 @@ namespace ShopErp.Server.Service.Pop.Pdd
                 }
                 else if (ctp.name_alias == "上市时节")
                 {
-                    propertyValue = DateTime.Now.Year + "年" + ((DateTime.Now.Month <= 6) ? "春季" : "夏季");
+                    propertyValue = DateTime.Now.Year + "年" + ((DateTime.Now.Month <= 6) ? "春季" : "冬季");
                 }
                 else
                 {
