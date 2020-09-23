@@ -197,6 +197,7 @@
     <Compile Include="Domain\TaobaoHtml\Image\ImageFileRsp.cs" />
     <Compile Include="Domain\TaobaoHtml\Image\ImageFileRspModule.cs" />
     <Compile Include="Domain\TaobaoHtml\Image\ImageFileRspModuleFile.cs" />
+    <Compile Include="Domain\TaobaoHtml\Order\TaobaoOrderSellerCommentResponse.cs" />
     <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponse.cs" />
     <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseOperationsGuide.cs" />
     <Compile Include="Domain\TaobaoHtml\Order\TaobaoQueryOrderDetailResponseOperationsGuideLine.cs" />
@@ -341,6 +342,9 @@
     <Compile Include="ViewModels\PrintTemplateItemViewModelForRandom.cs" />
     <Compile Include="ViewModels\PrintTemplateItemViewModelForText.cs" />
     <Compile Include="ViewModels\ShopDownloadViewModel.cs" />
+    <Compile Include="Views\AttachUI\IAttachUI.cs" />
+    <Compile Include="Views\AttachUI\AttachUiOrderDownloadEventArgs.cs" />
+    <Compile Include="Views\AttachUI\AttachUIOrderPreviewDownloadEventArgs.cs" />
     <Compile Include="Views\AttachUI\TaobaoUserControl.xaml.cs">
       <DependentUpon>TaobaoUserControl.xaml</DependentUpon>
     </Compile>
