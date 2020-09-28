@@ -37,7 +37,7 @@ namespace ShopErp.App.Views.Delivery
     {
         private bool isRunning = false;
         private ObservableCollection<OrderViewModel> orders = new ObservableCollection<OrderViewModel>();
-        private List<OrderDownload> orderDownloads = null;
+        private List<OrderDownloadError> orderDownloadErrors = null;
 
         public MarkPopDeliveryHtmlUserControl()
         {
@@ -59,18 +59,18 @@ namespace ShopErp.App.Views.Delivery
                 taobaoUserControl.OrderDownload += TaobaoUserControl_OrderDownload;
                 taobaoUserControl.OrderPreviewDownload += TaobaoUserControl_OrderPreviewDownload;
 
+                this.dgvOrders.ItemsSource = this.orders;
                 this.btnRefresh.Content = "停止";
                 this.isRunning = true;
                 this.orders.Clear();
-                this.orderDownloads = new List<OrderDownload>();
+                this.orderDownloadErrors = new List<OrderDownloadError>();
                 taobaoUserControl.DownloadOrders();
-                if (this.orderDownloads == null || this.orderDownloads.Count < 1)
+                if (this.orderDownloadErrors == null || this.orderDownloadErrors.Count < 1)
                 {
                     MessageBox.Show("没有找到待发货的订单");
                     return;
                 }
-                var os = ServiceContainer.GetService<OrderService>();
-                var orders = orderDownloads.Where(obj => obj.Order != null).Select(obj => obj.Order).Where(obj => string.IsNullOrWhiteSpace(obj.PopOrderId) == false && Utils.DateTimeUtil.IsDbMinTime(obj.PopDeliveryTime)).Select(obj => new OrderViewModel(obj)).OrderBy(obj => obj.Source.PopPayTime).ToArray();
+
                 //分析
                 foreach (var order in orders)
                 {
@@ -80,13 +80,10 @@ namespace ShopErp.App.Views.Delivery
                     }
                     this.orders.Add(order);
                 }
-                this.dgvOrders.ItemsSource = this.orders;
-                this.tbTotal.Text = "当前共 : " + orders.Length + " 条记录";
-
-                var error = orderDownloads.Where(obj => obj.Error != null).Select(obj => obj.Error).ToArray();
-                if (error.Length > 0)
+                this.tbTotal.Text = "当前共 : " + this.orders.Count + " 条记录";
+                if (this.orderDownloadErrors.Count > 0)
                 {
-                    string msg = string.Format("下载失败订单列表：\r\n{0}", string.Join(Environment.NewLine, error.Select(obj => obj.PopOrderId + ":" + obj.Error)));
+                    string msg = string.Format("下载失败订单列表：\r\n{0}", string.Join(Environment.NewLine, this.orderDownloadErrors.Select(obj => obj.PopOrderId + ":" + obj.Error)));
                     MessageBox.Show(msg, "警告", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
@@ -117,45 +114,60 @@ namespace ShopErp.App.Views.Delivery
                 return;
             }
 
-            var odInDb = ServiceContainer.GetService<OrderService>().GetByPopOrderId(e.PopOrderId);
-            if (odInDb.Total < 1)
+            if (this.orders.Any(obj => obj.Source.PopOrderId == e.PopOrderId) || this.orderDownloadErrors.Any(obj => obj.PopOrderId == e.PopOrderId))
             {
+                e.Skip = true;
                 return;
-            }
-            e.Skip = true;
-            if (odInDb.First.PopFlag != e.PopFlag)
-            {
-                odInDb.First.PopSellerComment = (sender as AttachUI.IAttachUI).GetSellerComment(e.PopOrderId);
-                odInDb.First.PopFlag = e.PopFlag;
-                ServiceContainer.GetService<OrderService>().Update(odInDb.First);
             }
 
-            OrderDownload od = new OrderDownload { Order = odInDb.First };
-            this.orderDownloads.Add(od);
-            var state = e.State;
-            if (od.Order.State == state || od.Order.State == OrderState.CLOSED || od.Order.State == OrderState.CANCLED)
+            var odInDb = ServiceContainer.GetService<OrderService>().GetByPopOrderId(e.PopOrderId).First;
+            if (odInDb == null)
             {
+                e.Skip = false;
                 return;
             }
-            if (state == OrderState.RETURNING || state == OrderState.CLOSED || state == OrderState.CANCLED)
+
+            e.Skip = true;
+            if (odInDb.PopFlag != e.PopFlag)
             {
-                od.Order.State = state;
-                ServiceContainer.GetService<OrderService>().Update(od.Order);
+                odInDb.PopSellerComment = (sender as AttachUI.IAttachUI).GetSellerComment(e.PopOrderId);
+                odInDb.PopFlag = e.PopFlag;
+                ServiceContainer.GetService<OrderService>().Update(odInDb);
             }
+
+            var state = e.State;
+            if (odInDb.State == state || odInDb.State == OrderState.CLOSED || odInDb.State == OrderState.CANCLED)
+            {
+
+            }
+            else if (state == OrderState.RETURNING || state == OrderState.CLOSED || state == OrderState.CANCLED)
+            {
+                odInDb.State = state;
+                ServiceContainer.GetService<OrderService>().Update(odInDb);
+            }
+            this.Dispatcher.BeginInvoke(new Action(() => this.orders.Insert(0, new OrderViewModel(odInDb))));
         }
 
         private void TaobaoUserControl_OrderDownload(object sender, AttachUI.AttachUiOrderDownloadEventArgs e)
         {
+            var error = e.OrderDownload.Error;
             if (e.OrderDownload.Order != null)
             {
                 List<OrderDownload> downloads = new List<OrderDownload>();
                 downloads.Add(e.OrderDownload);
                 var ret = ServiceContainer.GetService<OrderService>().SaveOrUpdateOrdersByPopOrderId(ServiceContainer.GetService<ShopService>().GetById(e.OrderDownload.Order.ShopId), downloads);
-                this.orderDownloads.AddRange(ret.Datas);
+                if (ret.First.Order != null)
+                {
+                    this.Dispatcher.BeginInvoke(new Action(() => this.orders.Insert(0, new OrderViewModel(ret.First.Order))));
+                }
+                else
+                {
+                    error = ret.First.Error;
+                }
             }
-            else
+            if (error != null)
             {
-                this.orderDownloads.Add(e.OrderDownload);
+                this.orderDownloadErrors.Add(error);
             }
         }
 

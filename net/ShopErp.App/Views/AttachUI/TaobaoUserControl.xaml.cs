@@ -604,7 +604,7 @@ namespace ShopErp.App.Views.AttachUI
         {
             List<OrderDownload> allOrders = new List<OrderDownload>();
 
-            int totalCount = 0, currentCount = 1;
+            int totalCount = 0, currentCount = 0;
             int totalPage = 0, currentPage = 1;
             var allShops = ServiceContainer.GetService<ShopService>().GetByAll().Datas;
             var shop = GetLoginShop();
@@ -638,6 +638,7 @@ namespace ShopErp.App.Views.AttachUI
 
                 foreach (var v in or.mainOrders)
                 {
+                    currentCount++;
                     //先检查是否需要下载
                     var state = ConvertState(v.statusInfo.text);
                     if (state == OrderState.PAYED && v.subOrders.All(obj => obj.operations != null && (obj.operations.FirstOrDefault(op => op.text.Trim() == "退款成功" || op.text.Trim() == "请卖家处理" || op.text.Trim() == "请退款") != null)))
@@ -666,7 +667,6 @@ namespace ShopErp.App.Views.AttachUI
                     }
                     finally
                     {
-                        currentCount++;
                         this.OnOrderDownload(od);
                     }
                 }
