@@ -64,7 +64,7 @@ namespace ShopErp.Server.Service.Restful
             {
                 System.Console.WriteLine(string.Format("{0}, 订单:{1},正在取号模版：{2}", DateTime.Now.ToString(), order.Id, wuliuTemplate.StandTemplateUrl));
                 string wuliuId = string.Join(",", wuliuIds);
-                var wuliuNumber = this.dao.GetByAll(wuliuId, wuliuTemplate.DeliveryCompany, "", packageId, DateTime.MinValue, DateTime.MinValue, 0, 0).Datas.FirstOrDefault(obj => obj.SourceType == wuliuTemplate.SourceType);
+                var wuliuNumber = this.dao.GetByAll(wuliuId, wuliuTemplate.DeliveryCompany, "", packageId, Utils.DateTimeUtil.DbMinTime, Utils.DateTimeUtil.DbMinTime, 0, 0).Datas.FirstOrDefault(obj => obj.SourceType == wuliuTemplate.SourceType);
 
                 //如果已拉取过快递单号，且订单没有变，只是收货人信息变了，则需要更新物流信息
                 if (wuliuNumber != null && wuliuId == wuliuNumber.WuliuIds && (wuliuNumber.ReceiverAddress != order.ReceiverAddress || wuliuNumber.ReceiverName != order.ReceiverName || wuliuNumber.ReceiverPhone != wuliuNumber.ReceiverPhone || wuliuNumber.ReceiverMobile != wuliuNumber.ReceiverMobile))

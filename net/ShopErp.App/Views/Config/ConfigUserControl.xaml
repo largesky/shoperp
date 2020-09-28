@@ -143,6 +143,8 @@
                 <TextBox Grid.Row="3" Grid.Column="1" x:Name="tbGoodsCountName" Margin="3" VerticalAlignment="Center" />
                 <TextBlock Grid.Row="4" Grid.Column="0" Text="拿货人电话:" Margin="3" VerticalAlignment="Center" />
                 <TextBox Grid.Row="4" Grid.Column="1" x:Name="tbGoodsCountPhone" Margin="3" VerticalAlignment="Center" />
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="代发货费用:" Margin="3" VerticalAlignment="Center" />
+                <TextBox Grid.Row="5" Grid.Column="1" x:Name="tbShippMoney" Margin="3" VerticalAlignment="Center" />
             </Grid>
         </GroupBox>
 

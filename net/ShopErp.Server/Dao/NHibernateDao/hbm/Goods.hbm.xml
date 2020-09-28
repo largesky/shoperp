@@ -37,8 +37,8 @@
     <property name="Material">
       <column name="Material" sql-type="string" not-null="true" />
     </property>
-    <property name="Star">
-      <column name="Star" sql-type="int" not-null="true" />
+    <property name="JiamaoAddPrice">
+      <column name="JiamaoAddPrice" sql-type="int" not-null="true" />
     </property>
     <property name="IgnoreEdtion">
       <column name="IgnoreEdtion" sql-type="boolean" not-null="true" />

@@ -78,7 +78,7 @@ namespace ShopErp.App.Views.Goods
                 }
                 else
                 {
-                    this.Goods = new ShopErp.Domain.Goods { Colors = "", Comment = "", CreateOperator = OperatorService.LoginOperator.Number, CreateTime = DateTime.Now, Flag = ColorFlag.UN_LABEL, Id = 0, IgnoreEdtion = false, Image = "", ImageDir = "", Material = "", Number = "", Price = 0, Shops = new List<GoodsShop>(), Star = 0, Type = GoodsType.GOODS_SHOES_NONE, UpdateEnabled = true, UpdateTime = DateTime.Now, Url = "", VendorId = 0, VideoType = GoodsVideoType.NONE, Weight = 0, Shipper = "" };
+                    this.Goods = new ShopErp.Domain.Goods { Colors = "", Comment = "", CreateOperator = OperatorService.LoginOperator.Number, CreateTime = DateTime.Now, Flag = ColorFlag.UN_LABEL, Id = 0, IgnoreEdtion = false, Image = "", ImageDir = "", Material = "", Number = "", Price = 0, Shops = new List<GoodsShop>(), JiamaoAddPrice = 0, Type = GoodsType.GOODS_SHOES_NONE, UpdateEnabled = true, UpdateTime = DateTime.Now, Url = "", VendorId = 0, VideoType = GoodsVideoType.NONE, Weight = 0, Shipper = "" };
                 }
             }
             catch (Exception ex)
@@ -163,7 +163,6 @@ namespace ShopErp.App.Views.Goods
         {
             try
             {
-                var minTime = this.goodsService.GetDBMinTime();
                 var newVendor = this.tbVendor.Text.Trim();
                 string newNumber = this.tbNumber.Text.Trim();
 
@@ -295,8 +294,8 @@ namespace ShopErp.App.Views.Goods
                             PopGoodsId = "",
                             ProcessImageOperator = "",
                             UploadOperator = "",
-                            ProcessImageTime = minTime,
-                            UploadTime = minTime
+                            ProcessImageTime = Utils.DateTimeUtil.DbMinTime,
+                            UploadTime = Utils.DateTimeUtil.DbMinTime
                         };
                         gu.Id = ServiceContainer.GetService<GoodsShopService>().Save(gu);
                         this.Goods.Shops.Add(gu);

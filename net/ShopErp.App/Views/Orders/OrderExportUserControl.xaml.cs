@@ -56,88 +56,6 @@ namespace ShopErp.App.Views.Orders
 
         }
 
-        private void btnExport_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var items = this.dgOrders.ItemsSource as OrderViewModel[];
-                if (items == null || items.Length < 1)
-                {
-                    MessageBox.Show("没有任何数据");
-                    return;
-                }
-
-                //进行检查，以防止有些订单没有标记到。根据收货人电话号码进行检查,先检查手机号，手机号为空的检查座机
-                List<string> failPhones = new List<string>();
-                failPhones.AddRange(CheckOrder(items.Where(obj => string.IsNullOrWhiteSpace(obj.Source.ReceiverMobile) == false).ToArray(), true));
-                failPhones.AddRange(CheckOrder(items.Where(obj => string.IsNullOrWhiteSpace(obj.Source.ReceiverMobile)).ToArray(), false));
-                if (failPhones.Count > 0)
-                {
-                    string msg = "检查订单失败，有相同电话信息但订单类型不一致：" + Environment.NewLine + string.Join(",", failPhones) + Environment.NewLine + "是否继续导出？";
-                    if (MessageBox.Show(msg, "是否继续导出？", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
-                    {
-                        return;
-                    }
-                }
-
-                items = items.Where(obj => obj.IsChecked).ToArray();
-                if (items == null || items.Length < 1)
-                {
-                    MessageBox.Show("没有选择任何数据");
-                    return;
-                }
-
-                var shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas;
-                string[] columnsHeader = new string[] { "店铺", "付款时间", "商品信息", "快递单号", "备注", "姓名", "手机", "地址" };
-                Dictionary<string, string[][]> dicContents = new Dictionary<string, string[][]>();
-                List<string[]> contents = new List<string[]>();
-                contents.Add(columnsHeader);
-                //合并订单
-                var normalOrders = items.Where(obj => obj.Source.Type == ShopErp.Domain.OrderType.NORMAL).OrderBy(obj => obj.Source.PopType).ToArray();
-                Dictionary<OrderViewModel, string> cc = new Dictionary<OrderViewModel, string>();
-                foreach (var o in normalOrders)
-                {
-                    var key = cc.Keys.FirstOrDefault(obj => obj.Source.ShopId == o.Source.ShopId && obj.Source.ReceiverName == o.Source.ReceiverName && obj.Source.ReceiverPhone == o.Source.ReceiverPhone && obj.Source.ReceiverMobile == o.Source.ReceiverMobile && obj.Source.ReceiverAddress == o.Source.ReceiverAddress && (string.IsNullOrWhiteSpace(obj.Source.PopBuyerId) ? true : obj.Source.PopBuyerId == o.Source.PopBuyerId));
-                    if (key == null)
-                    {
-                        cc[o] = o.GoodsInfoCanbeCount;
-                    }
-                    else
-                    {
-                        cc[key] = cc[key] + "," + Environment.NewLine + o.GoodsInfoCanbeCount;
-                    }
-                }
-
-                foreach (var pair in cc)
-                {
-                    var v = pair.Key;
-                    string[] ss = new string[] { shops.FirstOrDefault(obj => obj.Id == v.Source.ShopId).Mark, v.Source.PopPayTime.ToString("yyyy-MM-dd HH:mm:ss"), pair.Value, v.Source.DeliveryNumber, v.Source.PopSellerComment, v.Source.ReceiverName, string.IsNullOrWhiteSpace(v.Source.ReceiverPhone) ? v.Source.ReceiverMobile : v.Source.ReceiverMobile + "," + v.Source.ReceiverPhone, v.Source.ReceiverAddress };
-                    if (pair.Key.Source.PopType != ShopErp.Domain.PopType.TMALL)
-                    {
-                        ss[4] += "放拼多多好评卡";
-                    }
-                    contents.Add(ss);
-                }
-                dicContents.Add("订单", contents.ToArray());
-                Microsoft.Win32.SaveFileDialog sfd = new Microsoft.Win32.SaveFileDialog();
-                sfd.AddExtension = true;
-                sfd.DefaultExt = "xlsx";
-                sfd.Filter = "*.xlsx|Office 2007 文件";
-                sfd.FileName = "贾勇 " + DateTime.Now.ToString("MM-dd") + ".xlsx";
-                sfd.InitialDirectory = LocalConfigService.GetValue("OrderExportSaveDir_" + this.cbbShippers.Text.Trim(), "");
-                if (sfd.ShowDialog().Value == false)
-                {
-                    return;
-                }
-                Service.Excel.ExcelFile.WriteXlsx(sfd.FileName, dicContents);
-                LocalConfigService.UpdateValue("OrderExportSaveDir_" + this.cbbShippers.Text.Trim(), new FileInfo(sfd.FileName).DirectoryName);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
         private void btnQuery_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -160,6 +78,75 @@ namespace ShopErp.App.Views.Orders
                     order.IsChecked = order.Source.Type == ShopErp.Domain.OrderType.SHUA ? false : string.IsNullOrWhiteSpace(order.DeliveryCompany) || dcs.Any(obj => obj.PaperMark && obj.Name == order.DeliveryCompany);
                 }
                 this.dgOrders.ItemsSource = orders;
+                List<string> failPhones = new List<string>();
+                var group = orders.GroupBy(obj => obj.Source.ReceiverMobile);
+                foreach (var v in group)
+                {
+                    if (v.Select(obj => obj.Source.Type).Distinct().Count() != 1)
+                    {
+                        failPhones.Add(v.Key);
+                    }
+                }
+                if (failPhones.Count > 0)
+                {
+                    string msg = "检查订单失败，有相同电话信息但订单类型不一致：" + Environment.NewLine + string.Join(",", failPhones) + Environment.NewLine;
+                    MessageBox.Show(msg, "警告", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void btnExportCd_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var orders = this.GetSelectedOrdersAndMerge();
+                if (orders == null || orders.Length < 1)
+                {
+                    return;
+                }
+                double shippMoney = LocalConfigService.GetValueDouble(SystemNames.CONFIG_SHIPP_MONEY, 2.5);
+                var shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas;
+                var allGoods = ServiceContainer.GetService<GoodsService>().GetByAll(0, GoodsState.NONE, 0, DateTimeUtil.DbMinTime, DateTimeUtil.DbMinTime, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", "", "", 0, 0).Datas;
+                List<string[]> contents = new List<string[]>();
+                contents.Add(new string[] { "店铺", "付款时间", "商品信息", "快递单号", "备注", "姓名", "手机", "商品价格", "发货费" });
+                foreach (var order in orders)
+                {
+                    var ogs = OrderService.FilterOrderGoodsCanbeSend(order);
+                    int goodsCount = OrderService.CountGoodsCanbeSend(order);
+                    int goodsMoney = 0;
+                    foreach (var og in ogs.Where(obj => obj.GoodsId > 0))
+                    {
+                        var g = allGoods.FirstOrDefault(obj => obj.Id == og.GoodsId);
+                        if (g != null)
+                        {
+                            goodsMoney += (int)g.Price + ((og.Edtion.Contains("加毛") || og.Edtion.Contains("厚毛") || og.Edtion.Contains("绒里")) ? g.JiamaoAddPrice : 0);
+                        }
+                    }
+                    string[] ss = new string[] { shops.FirstOrDefault(obj => obj.Id == order.ShopId).Mark, DateTimeUtil.FormatDateTime(order.PopPayTime), OrderService.FormatGoodsInfoCanbeSend(order), order.DeliveryNumber, order.PopSellerComment, order.ReceiverName, order.ReceiverMobile, goodsMoney.ToString(), (shippMoney * goodsCount).ToString("F1") };
+                    if (order.PopType != ShopErp.Domain.PopType.TMALL)
+                    {
+                        ss[4] += "放拼多多好评卡";
+                    }
+                    contents.Add(ss);
+                }
+                Dictionary<string, string[][]> dicContents = new Dictionary<string, string[][]>();
+                dicContents.Add("订单", contents.ToArray());
+                Microsoft.Win32.SaveFileDialog sfd = new Microsoft.Win32.SaveFileDialog();
+                sfd.AddExtension = true;
+                sfd.DefaultExt = "xlsx";
+                sfd.Filter = "*.xlsx|Office 2007 文件";
+                sfd.FileName = "贾勇 " + DateTime.Now.ToString("MM-dd") + ".xlsx";
+                sfd.InitialDirectory = LocalConfigService.GetValue("OrderExportSaveDir_" + this.cbbShippers.Text.Trim(), "");
+                if (sfd.ShowDialog().Value == false)
+                {
+                    return;
+                }
+                Service.Excel.ExcelFile.WriteXlsx(sfd.FileName, dicContents);
+                LocalConfigService.UpdateValue("OrderExportSaveDir_" + this.cbbShippers.Text.Trim(), new FileInfo(sfd.FileName).DirectoryName);
             }
             catch (Exception ex)
             {
@@ -171,55 +158,16 @@ namespace ShopErp.App.Views.Orders
         {
             try
             {
-                var items = this.dgOrders.ItemsSource as OrderViewModel[];
-                if (items == null || items.Length < 1)
+                var orders = this.GetSelectedOrdersAndMerge();
+                if (orders == null || orders.Length < 1)
                 {
-                    MessageBox.Show("没有任何数据");
                     return;
                 }
-
-                //进行检查，以防止有些订单没有标记到。根据收货人电话号码进行检查,先检查手机号，手机号为空的检查座机
-                List<string> failPhones = new List<string>();
-                failPhones.AddRange(CheckOrder(items.Where(obj => string.IsNullOrWhiteSpace(obj.Source.ReceiverMobile) == false).ToArray(), true));
-                failPhones.AddRange(CheckOrder(items.Where(obj => string.IsNullOrWhiteSpace(obj.Source.ReceiverMobile)).ToArray(), false));
-                if (failPhones.Count > 0)
-                {
-                    string msg = "检查订单失败，有相同电话信息但订单类型不一致：" + Environment.NewLine + string.Join(",", failPhones) + Environment.NewLine + "是否继续复制？";
-                    if (MessageBox.Show(msg, "是否继续复制？", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
-                    {
-                        return;
-                    }
-                }
-
-                items = items.Where(obj => obj.IsChecked).ToArray();
-                if (items == null || items.Length < 1)
-                {
-                    MessageBox.Show("没有选择任何数据");
-                    return;
-                }
-
-                var shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas;
                 List<string> contents = new List<string>();
                 //合并订单
-                var normalOrders = items.Where(obj => obj.Source.Type == ShopErp.Domain.OrderType.NORMAL).OrderBy(obj => obj.Source.PopType).ToArray();
-                Dictionary<OrderViewModel, string> recieverAndGoods = new Dictionary<OrderViewModel, string>();
-                foreach (var o in normalOrders)
+                foreach (var order in orders)
                 {
-                    var key = recieverAndGoods.Keys.FirstOrDefault(obj => obj.Source.ShopId == o.Source.ShopId && obj.Source.ReceiverName == o.Source.ReceiverName && obj.Source.ReceiverPhone == o.Source.ReceiverPhone && obj.Source.ReceiverMobile == o.Source.ReceiverMobile && obj.Source.ReceiverAddress == o.Source.ReceiverAddress && (string.IsNullOrWhiteSpace(obj.Source.PopBuyerId) ? true : obj.Source.PopBuyerId == o.Source.PopBuyerId));
-                    if (key == null)
-                    {
-                        recieverAndGoods[o] = o.GoodsInfoCanbeCount;
-                    }
-                    else
-                    {
-                        recieverAndGoods[key] = recieverAndGoods[key] + "," + Environment.NewLine + o.GoodsInfoCanbeCount;
-                    }
-                }
-
-                foreach (var pair in recieverAndGoods)
-                {
-                    var v = pair.Key;
-                    string[] ss = new string[] { pair.Value, v.Source.ReceiverName, string.IsNullOrWhiteSpace(v.Source.ReceiverPhone) ? v.Source.ReceiverMobile : v.Source.ReceiverMobile + "," + v.Source.ReceiverPhone, v.Source.ReceiverAddress };
+                    string[] ss = new string[] { OrderService.FormatGoodsInfoCanbeSend(order), order.ReceiverName, string.Join(",", order.ReceiverMobile, order.ReceiverPhone), order.ReceiverAddress };
                     contents.Add(string.Join(" ", ss));
                 }
                 System.Windows.Forms.Clipboard.SetText(string.Join(Environment.NewLine, contents));
@@ -234,77 +182,7 @@ namespace ShopErp.App.Views.Orders
         {
             try
             {
-                var items = this.dgOrders.ItemsSource as OrderViewModel[];
-                if (items == null || items.Length < 1)
-                {
-                    MessageBox.Show("没有任何数据");
-                    return;
-                }
-
-                //进行检查，以防止有些订单没有标记到。根据收货人电话号码进行检查,先检查手机号，手机号为空的检查座机
-                List<string> failPhones = new List<string>();
-                failPhones.AddRange(CheckOrder(items.Where(obj => string.IsNullOrWhiteSpace(obj.Source.ReceiverMobile) == false).ToArray(), true));
-                failPhones.AddRange(CheckOrder(items.Where(obj => string.IsNullOrWhiteSpace(obj.Source.ReceiverMobile)).ToArray(), false));
-                if (failPhones.Count > 0)
-                {
-                    string msg = "检查订单失败，有相同电话信息但订单类型不一致：" + Environment.NewLine + string.Join(",", failPhones) + Environment.NewLine + "是否继续导出？";
-                    if (MessageBox.Show(msg, "是否继续导出？", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
-                    {
-                        return;
-                    }
-                }
-
-                items = items.Where(obj => obj.IsChecked).ToArray();
-                if (items == null || items.Length < 1)
-                {
-                    MessageBox.Show("没有选择任何数据");
-                    return;
-                }
-
-                var shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas;
-                string[] columnsHeader = new string[] { "店铺", "付款时间", "商品信息", "快递单号", "备注", "姓名", "手机", "地址" };
-                Dictionary<string, string[][]> dicContents = new Dictionary<string, string[][]>();
-                List<string[]> contents = new List<string[]>();
-                contents.Add(columnsHeader);
-                //合并订单
-                var normalOrders = items.Where(obj => obj.Source.Type == ShopErp.Domain.OrderType.NORMAL).OrderBy(obj => obj.Source.PopType).ToArray();
-                Dictionary<OrderViewModel, string> cc = new Dictionary<OrderViewModel, string>();
-                foreach (var o in normalOrders)
-                {
-                    var key = cc.Keys.FirstOrDefault(obj => obj.Source.ShopId == o.Source.ShopId && obj.Source.ReceiverName == o.Source.ReceiverName && obj.Source.ReceiverPhone == o.Source.ReceiverPhone && obj.Source.ReceiverMobile == o.Source.ReceiverMobile && obj.Source.ReceiverAddress == o.Source.ReceiverAddress && (string.IsNullOrWhiteSpace(obj.Source.PopBuyerId) ? true : obj.Source.PopBuyerId == o.Source.PopBuyerId));
-                    if (key == null)
-                    {
-                        cc[o] = o.GoodsInfoCanbeCount;
-                    }
-                    else
-                    {
-                        cc[key] = cc[key] + "," + Environment.NewLine + o.GoodsInfoCanbeCount;
-                    }
-                }
-
-                foreach (var pair in cc)
-                {
-                    var v = pair.Key;
-                    string[] ss = new string[] { shops.FirstOrDefault(obj => obj.Id == v.Source.ShopId).Mark, v.Source.PopPayTime.ToString("yyyy-MM-dd HH:mm:ss"), pair.Value, v.Source.DeliveryNumber, v.Source.PopSellerComment, v.Source.ReceiverName, string.IsNullOrWhiteSpace(v.Source.ReceiverPhone) ? v.Source.ReceiverMobile : v.Source.ReceiverMobile + "," + v.Source.ReceiverPhone, v.Source.ReceiverAddress };
-                    if (pair.Key.Source.PopType != ShopErp.Domain.PopType.TMALL)
-                    {
-                        ss[4] += "放拼多多好评卡";
-                    }
-                    contents.Add(ss);
-                }
-                dicContents.Add("订单", contents.ToArray());
-                Microsoft.Win32.SaveFileDialog sfd = new Microsoft.Win32.SaveFileDialog();
-                sfd.AddExtension = true;
-                sfd.DefaultExt = "xlsx";
-                sfd.Filter = "*.xlsx|Office 2007 文件";
-                sfd.FileName = "贾勇 " + DateTime.Now.ToString("MM-dd") + ".xlsx";
-                sfd.InitialDirectory = LocalConfigService.GetValue("OrderExportSaveDir_" + this.cbbShippers.Text.Trim(), "");
-                if (sfd.ShowDialog().Value == false)
-                {
-                    return;
-                }
-                Service.Excel.ExcelFile.WriteXlsx(sfd.FileName, dicContents);
-                LocalConfigService.UpdateValue("OrderExportSaveDir_" + this.cbbShippers.Text.Trim(), new FileInfo(sfd.FileName).DirectoryName);
+                throw new Exception("导出K3方法没有实现");
             }
             catch (Exception ex)
             {
@@ -344,23 +222,18 @@ namespace ShopErp.App.Views.Orders
             }
         }
 
-        private List<string> CheckOrder(OrderViewModel[] orders, bool isMobile)
+        private Order[] GetSelectedOrdersAndMerge()
         {
-            List<string> failPhones = new List<string>();
-            var group = orders.GroupBy(obj => isMobile ? obj.Source.ReceiverMobile : obj.Source.ReceiverPhone);
-            foreach (var v in group)
+            Order[] selectedOrders = (this.dgOrders.ItemsSource as OrderViewModel[] == null) ? null : (this.dgOrders.ItemsSource as OrderViewModel[]).Where(obj => obj.IsChecked).Select(obj => obj.Source).ToArray();
+            if (selectedOrders == null || selectedOrders.Length < 1)
             {
-                if (v.Select(obj => obj.Source.Type).Distinct().Count() != 1)
-                {
-                    failPhones.Add(v.Key);
-                }
+                MessageBox.Show("没有数据");
+                return null;
             }
-            return failPhones;
+            return OrderService.MergeOrders(selectedOrders);
         }
 
-        #region 前选 后选 编辑地址
-
-        private OrderViewModel GetMIOrder(object sender)
+        private OrderViewModel GetCurrentSelectedItem(object sender)
         {
             MenuItem mi = sender as MenuItem;
             var dg = ((ContextMenu)mi.Parent).PlacementTarget as DataGrid;
@@ -382,7 +255,7 @@ namespace ShopErp.App.Views.Orders
         {
             try
             {
-                var item = this.GetMIOrder(sender);
+                var item = this.GetCurrentSelectedItem(sender);
                 MenuItem mi = sender as MenuItem;
                 var orders = (this.dgOrders.ItemsSource as OrderViewModel[]).ToList();
                 int index = orders.IndexOf(item);
@@ -402,7 +275,7 @@ namespace ShopErp.App.Views.Orders
         {
             try
             {
-                var item = this.GetMIOrder(sender);
+                var item = this.GetCurrentSelectedItem(sender);
                 MenuItem mi = sender as MenuItem;
                 var orders = (this.dgOrders.ItemsSource as OrderViewModel[]).ToList();
                 int index = orders.IndexOf(item);
@@ -422,7 +295,7 @@ namespace ShopErp.App.Views.Orders
         {
             try
             {
-                var item = this.GetMIOrder(sender);
+                var item = this.GetCurrentSelectedItem(sender);
                 var w = new Orders.OrderModifyReciverInfoWindow { Order = item.Source };
                 bool? ret = w.ShowDialog();
                 if (ret.Value)
@@ -493,7 +366,7 @@ namespace ShopErp.App.Views.Orders
         {
             try
             {
-                var item = this.GetMIOrder(sender);
+                var item = this.GetCurrentSelectedItem(sender);
                 MenuItem mi = sender as MenuItem;
                 var orders = (((ContextMenu)mi.Parent).PlacementTarget as DataGrid).ItemsSource as OrderViewModel[];
                 if (item.Source.OrderGoodss == null || item.Source.OrderGoodss.Count > 1)
@@ -520,7 +393,7 @@ namespace ShopErp.App.Views.Orders
         {
             try
             {
-                var item = this.GetMIOrder(sender);
+                var item = this.GetCurrentSelectedItem(sender);
                 MenuItem mi = sender as MenuItem;
                 var orders = (((ContextMenu)mi.Parent).PlacementTarget as DataGrid).ItemsSource as OrderViewModel[];
                 if (item.Source.OrderGoodss == null || item.Source.OrderGoodss.Count > 1)
@@ -567,8 +440,6 @@ namespace ShopErp.App.Views.Orders
         {
             SelectGoods(sender, (o1, o2) => o1.GoodsId == o2.GoodsId && o1.Edtion == o1.Edtion && o1.Color == o2.Color && o1.Size == o2.Size);
         }
-
-        #endregion
 
     }
 }

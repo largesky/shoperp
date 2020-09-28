@@ -156,8 +156,8 @@ namespace ShopErp.App.Views.Goods
                 this.pb1.Parameters.Add("ShopId", (this.cbbShops.SelectedItem as Shop).Id);
                 this.pb1.Parameters.Add("State", this.cbbStates.GetSelectedEnum<GoodsState>());
                 this.pb1.Parameters.Add("TimeType", this.cbbTimeType.SelectedIndex);
-                this.pb1.Parameters.Add("Start", this.dpStart.Value == null ? DateTime.MinValue : this.dpStart.Value.Value);
-                this.pb1.Parameters.Add("End", this.dpEnd.Value == null ? DateTime.MinValue : this.dpEnd.Value.Value);
+                this.pb1.Parameters.Add("Start", this.dpStart.Value == null ? Utils.DateTimeUtil.DbMinTime : this.dpStart.Value.Value);
+                this.pb1.Parameters.Add("End", this.dpEnd.Value == null ? Utils.DateTimeUtil.DbMinTime : this.dpEnd.Value.Value);
                 this.pb1.Parameters.Add("Vendor", this.tbVendor.Text.Trim());
                 this.pb1.Parameters.Add("Number", this.tbNumber.Text.Trim());
                 this.pb1.Parameters.Add("Type", this.cbbTypes.GetSelectedEnum<GoodsType>());
@@ -405,12 +405,12 @@ namespace ShopErp.App.Views.Goods
                         v.State = from;
                         if (v.State == GoodsState.WAITREVIEW)
                         {
-                            v.UploadTime = ServiceContainer.GetService<GoodsService>().GetDBMinTime();
+                            v.UploadTime = Utils.DateTimeUtil.DbMinTime;
                             v.UploadOperator = "";
                         }
                         if (v.State == GoodsState.WAITPROCESSIMAGE)
                         {
-                            v.ProcessImageTime = ServiceContainer.GetService<GoodsService>().GetDBMinTime();
+                            v.ProcessImageTime = Utils.DateTimeUtil.DbMinTime;
                             v.ProcessImageOperator = "";
                         }
                         afCount++;

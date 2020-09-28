@@ -17,7 +17,7 @@ namespace ShopErp.Domain
         public string Url { get; set; }
         public float Weight { get; set; }
         public string Material { get; set; }
-        public int Star { get; set; }
+        public int JiamaoAddPrice { get; set; }
         public bool IgnoreEdtion { get; set; }
         public bool UpdateEnabled { get; set; }
         public ColorFlag Flag { get; set; }

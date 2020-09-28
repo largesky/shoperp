@@ -60,8 +60,8 @@ namespace ShopErp.App.Views.Delivery
             {
                 string deliveryCompany = this.cbbDeliveryCompany.Text.Trim();
                 string deliveryNumber = this.tbDeliveryNumber.Text.Trim();
-                DateTime start = this.dpStart.Value == null ? DateTime.MinValue : this.dpStart.Value.Value;
-                DateTime end = this.dpEnd.Value == null ? DateTime.MinValue : this.dpEnd.Value.Value;
+                DateTime start = this.dpStart.Value == null ? Utils.DateTimeUtil.DbMinTime : this.dpStart.Value.Value;
+                DateTime end = this.dpEnd.Value == null ? Utils.DateTimeUtil.DbMinTime : this.dpEnd.Value.Value;
                 string vendor = this.tbVendor.Text.Trim();
                 string number = this.tbNumber.Text.Trim();
                 var data = ServiceContainer.GetService<DeliveryOutService>().GetByAll(this.cbbPayTypes.GetSelectedEnum<PopPayType>(), (this.cbbShops.SelectedItem as Shop).Id, deliveryCompany, deliveryNumber, vendor, number, this.cbbShippers.Text.Trim(), start, end, 0, 0);

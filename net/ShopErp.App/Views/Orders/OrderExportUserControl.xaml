@@ -18,7 +18,7 @@
                 <TextBlock Text="发货仓库：" Margin="3" VerticalAlignment="Center" />
                 <ComboBox Name="cbbShippers" Margin="3" VerticalAlignment="Center" MinWidth="80" IsEditable="True" />
                 <Button Name="btnQuery" Margin="3" VerticalAlignment="Center" Width="60" Content="查询" Click="btnQuery_Click" />
-                <Button Name="btnExport" Margin="3" VerticalAlignment="Center" Width="80" Content="导出成都格式" Click="btnExport_Click" />
+                <Button Name="btnExport" Margin="3" VerticalAlignment="Center" Width="80" Content="导出成都格式" Click="btnExportCd_Click" />
                 <Button Name="btnExportK3" Margin="3" VerticalAlignment="Center" Width="80" Content="导出K3格式" Click="BtnExportK3_Click"/>
                 <Button Name="btnCopyAdd" Margin="3" VerticalAlignment="Center" Width="80" Content="复制地址" Click="btnCopyAdd_Click"/>
                 <Button Name="btnCopyInfo" Margin="3" VerticalAlignment="Center" Width="80" Content="复制发货信息" Click="BtnCopyInfo_Click"/>
@@ -50,7 +50,7 @@
                 <DataGridTextColumn Header="订单编号" Binding="{Binding Source.Id}" Width="Auto" IsReadOnly="True"/>
                 <DataGridTextColumn Header="买家账号" Binding="{Binding Source.PopBuyerId}" Width="Auto" IsReadOnly="True"/>
                 <DataGridTextColumn Header="付款时间" Binding="{Binding Source.PopPayTime, Converter={StaticResource datetimeConverter}}" Width="Auto" IsReadOnly="True"/>
-                <DataGridTextColumn Header="商品信息" Binding="{Binding GoodsInfoCanbeCount}" Width="250" IsReadOnly="True"/>
+                <DataGridTextColumn Header="商品信息" Binding="{Binding GoodsInfo}" Width="250" IsReadOnly="True"/>
                 <DataGridTextColumn Header="快递单号" Binding="{Binding Source.DeliveryNumber}" Width="Auto" IsReadOnly="True"/>
                 <DataGridTextColumn Header="卖家备注" Binding="{Binding Source.PopSellerComment}" Width="Auto" IsReadOnly="True"/>
                 <DataGridTextColumn Header="买家备注" Binding="{Binding Source.PopBuyerComment}" Width="250"   IsReadOnly="True"/>

@@ -8,7 +8,7 @@ namespace ShopErp.Server.Dao.NHibernateDao
     {
         public DataCollectionResponse<OrderUpdate> GetByAll(long[] shopIds, string popOrderId, DateTime popPayTimeStart, DateTime popPayTimeEnd, int pageIndex, int pageSize)
         {
-            string hsql = "from " + this.GetEntiyName() + " where PopPayTime>='" + this.FormatDateTime(popPayTimeStart) + "' and PopPayTime<='" + this.FormatDateTime(popPayTimeEnd) + "' and ";
+            string hsql = "from " + this.GetEntiyName() + " where PopPayTime>='" + Utils.DateTimeUtil.FormatDateTime(popPayTimeStart) + "' and PopPayTime<='" + Utils.DateTimeUtil.FormatDateTime(popPayTimeEnd) + "' and ";
             if (shopIds != null && shopIds.Length > 0)
             {
                 hsql += " ShopId in (" + string.Join(",", shopIds) + " ) and ";
@@ -67,7 +67,7 @@ namespace ShopErp.Server.Dao.NHibernateDao
             }
 
             string sql = string.Format("update `Order` set PopCodSevFee={0},PopOrderTotalMoney={1},PopState='{2}',PopCodNumber='{3}',PopPayTime='{4}'",
-                ou.PopCodSevFee.ToString("F2"), ou.PopOrderTotalMoney.ToString("F2"), ou.PopState, ou.PopCodNumber, this.FormatDateTime(ou.PopPayTime));
+                ou.PopCodSevFee.ToString("F2"), ou.PopOrderTotalMoney.ToString("F2"), ou.PopState, ou.PopCodNumber, Utils.DateTimeUtil.FormatDateTime(ou.PopPayTime));
             if (updateState)
                 sql += ",State=" + (int)ou.State;
             sql += " where Id=" + ou.Id;

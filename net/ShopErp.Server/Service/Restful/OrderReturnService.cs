@@ -116,7 +116,7 @@ namespace ShopErp.Server.Service.Restful
                 string op = ServiceContainer.GetCurrentLoginInfo().op.Number;
                 var ors = this.GetByOrderIdAndOrderGoodsId(orderId, orderGoodsId);
                 OrderReturn or = null;
-                DateTime minTime = this.GetDbMinTime();
+                DateTime minTime = Utils.DateTimeUtil.DbMinTime;
 
                 if (ors != null && ors.Datas.Count > 0)
                 {
@@ -184,7 +184,7 @@ namespace ShopErp.Server.Service.Restful
             try
             {
                 string op = ServiceContainer.GetCurrentLoginInfo().op.Number;
-                DateTime minTime = this.GetDbMinTime();
+                DateTime minTime = Utils.DateTimeUtil.DbMinTime;
                 var or = new OrderReturn
                 {
                     Comment = "",

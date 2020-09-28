@@ -13,7 +13,7 @@ namespace ShopErp.App.Converters
             {
                 return "";
             }
-            DateTime dt = DateTime.MinValue;
+            DateTime dt = Utils.DateTimeUtil.DbMinTime;
 
             if (value.GetType() == typeof(DateTime?))
             {

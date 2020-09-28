@@ -78,11 +78,11 @@ namespace ShopErp.App.Views.Taobao
                     throw new Exception("没有选择数据");
                 }
                 string number = se.Number.Trim();
-                DateTime start = this.dpStart.Value == null ? DateTime.MinValue : this.dpStart.Value.Value;
-                DateTime end = this.dpEnd.Value == null ? DateTime.MinValue : this.dpEnd.Value.Value;
+                DateTime start = this.dpStart.Value == null ? Utils.DateTimeUtil.DbMinTime : this.dpStart.Value.Value;
+                DateTime end = this.dpEnd.Value == null ? Utils.DateTimeUtil.DbMinTime : this.dpEnd.Value.Value;
 
                 var s = ServiceContainer.GetService<SystemConfigService>();
-                if (string.IsNullOrWhiteSpace(number) || (s.IsDBMinTime(start) && s.IsDBMinTime(end)))
+                if (string.IsNullOrWhiteSpace(number) || (Utils.DateTimeUtil.IsDbMinTime(start) && Utils.DateTimeUtil.IsDbMinTime(end)))
                 {
                     throw new Exception("查询货号不能空，必须有起始时间");
                 }

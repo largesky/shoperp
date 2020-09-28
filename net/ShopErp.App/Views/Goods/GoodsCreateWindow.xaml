@@ -92,8 +92,8 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <TextBlock Grid.Row="12" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="星级:" />
-            <TextBox Grid.Row="12" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbStar" Text="{Binding Goods.Star,ElementName=window}"/>
+            <TextBlock Grid.Row="12" Grid.Column="0" Margin="3" VerticalAlignment="Center" Text="加毛差价:" />
+            <TextBox Grid.Row="12" Grid.Column="1" Margin="3" VerticalAlignment="Center" Name="tbStar" Text="{Binding Goods.JiamaoAddPrice,ElementName=window}"/>
 
             <TextBlock Grid.Row="13" Grid.Column="0" Text="备注(可换行):" Margin="3" VerticalAlignment="Center" />
             <TextBox Grid.Row="13" Grid.Column="1" Name="tbComment" Margin="3" VerticalAlignment="Center" Height="60" AcceptsReturn="True" Text="{Binding Goods.Comment,ElementName=window}"/>

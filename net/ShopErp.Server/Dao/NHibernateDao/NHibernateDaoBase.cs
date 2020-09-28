@@ -9,7 +9,7 @@ namespace ShopErp.Server.Dao.NHibernateDao
 {
     public class NHibernateDaoBase<E> : IDao<E> where E : class
     {
-        private DateTime dbMinDateTime = new DateTime(1970, 01, 01);
+
         private readonly char LEFT_TABLE_CHAR = '`';
         private readonly char RIGHT_TABLE_CHAR = '`';
 
@@ -417,17 +417,17 @@ namespace ShopErp.Server.Dao.NHibernateDao
 
         public string MakeQuery(string name, DateTime value, bool isOver)
         {
-            if (this.IsLessDBMinDate(value))
+            if (Utils.DateTimeUtil.IsDbMinTime(value))
             {
                 return string.Empty;
             }
 
             if (isOver)
             {
-                return name + ">='" + this.FormatDateTime(value) + "' and ";
+                return name + ">='" + Utils.DateTimeUtil.FormatDateTime(value) + "' and ";
             }
 
-            return name + "<='" + this.FormatDateTime(value) + "' and ";
+            return name + "<='" + Utils.DateTimeUtil.FormatDateTime(value) + "' and ";
         }
 
         public string MakeQuery(string name, double value, double defalutValue = 0)
@@ -448,21 +448,6 @@ namespace ShopErp.Server.Dao.NHibernateDao
             }
 
             return name + "=" + (value == true ? "1" : "0") + " and ";
-        }
-
-        public string FormatDateTime(DateTime time)
-        {
-            return time.ToString("yyyy-MM-dd HH:mm:ss");
-        }
-
-        public DateTime GetDBMinDateTime()
-        {
-            return this.dbMinDateTime;
-        }
-
-        public bool IsLessDBMinDate(DateTime dt)
-        {
-            return this.dbMinDateTime.AddYears(10) >= dt;
         }
 
         public int ExcuteSqlUpdate(string sql)

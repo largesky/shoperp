@@ -34,11 +34,13 @@ namespace ShopErp.Domain
 
         public const string CONFIG_GOODS_BOX_IMAGE_SAVE_MODE = "GOODS_BOX_IMAGE_SAVE_MODE";
 
-        public const string CONFIG_GOODS_BOX_IMAGE_BRAND= "GOODS_BOX_IMAGE_BRAND";
+        public const string CONFIG_GOODS_BOX_IMAGE_BRAND = "GOODS_BOX_IMAGE_BRAND";
 
         public const string CONFIG_NETWORK_MAX_TIMEOUT = "NETWORK_MAX_TIMEOUT";
 
         public const string CONFIG_PRINT_OFFSETS = "PRINT_OFFSETS";
+
+        public const string CONFIG_SHIPP_MONEY = "SHIPP_MONEY";
 
     }
 }

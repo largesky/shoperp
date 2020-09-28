@@ -50,9 +50,9 @@ namespace ShopErp.App.Views.Delivery
                 this.pgBar.Parameters.Add("deliveryCompany", this.cbbDeliveryCompany.Text);
                 this.pgBar.Parameters.Add("deliveryNumber", this.tbDeliveryNumber.Text.Trim());
                 this.pgBar.Parameters.Add("startTime",
-                    this.tbStart.Value == null ? DateTime.MinValue : this.tbStart.Value.Value);
+                    this.tbStart.Value == null ? Utils.DateTimeUtil.DbMinTime : this.tbStart.Value.Value);
                 this.pgBar.Parameters.Add("endTime",
-                    this.tbEnd.Value == null ? DateTime.MinValue : this.tbEnd.Value.Value);
+                    this.tbEnd.Value == null ? Utils.DateTimeUtil.DbMinTime : this.tbEnd.Value.Value);
                 this.pgBar.StartPage();
             }
             catch (Exception ex)

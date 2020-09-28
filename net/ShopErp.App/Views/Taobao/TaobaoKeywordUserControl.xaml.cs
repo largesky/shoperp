@@ -51,8 +51,7 @@ namespace ShopErp.App.Views.Taobao
         {
             try
             {
-                var minTime = ServiceContainer.GetService<TaobaoKeywordService>().GetDBMinTime();
-                this.keywords.Add(new TaobaoKeyword { Number = "", Words = "", Start = minTime, End = minTime });
+                this.keywords.Add(new TaobaoKeyword { Number = "", Words = "", Start = Utils.DateTimeUtil.DbMinTime, End = Utils.DateTimeUtil.DbMinTime });
             }
             catch (Exception ex)
             {

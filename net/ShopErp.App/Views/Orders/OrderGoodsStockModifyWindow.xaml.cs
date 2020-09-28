@@ -13,8 +13,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using ShopErp.App.Service.Restful;
+using ShopErp.App.Utils;
 using ShopErp.Domain;
-
+using ShopErp.App.Views.Extenstions;
 namespace ShopErp.App.Views.Orders
 {
     /// <summary>
@@ -31,15 +32,10 @@ namespace ShopErp.App.Views.Orders
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (this.OrderGoods.State == OrderState.GETED)
-            {
-                this.cbbStates.SelectedIndex = 0;
-            }
-            else if (this.OrderGoods.State == OrderState.CHECKFAIL)
-            {
-                this.cbbStates.SelectedIndex = 1;
-            }
-            else
+            string des = EnumUtil.GetEnumValueDescription(this.OrderGoods.State);
+            var ss = this.cbbStates.ItemsSource.OfType<ComboBoxItem>().Select(obj => obj.Content.ToString().Trim()).ToList();
+            this.cbbStates.SelectedIndex = ss.IndexOf(des);
+            if (this.cbbStates.SelectedIndex < 0)
             {
                 this.cbbStates.SelectedIndex = 0;
             }
@@ -49,15 +45,7 @@ namespace ShopErp.App.Views.Orders
         {
             try
             {
-                OrderState state = OrderState.NONE;
-                if (this.cbbStates.SelectedIndex == 0)
-                {
-                    state = OrderState.GETED;
-                }
-                else if (this.cbbStates.SelectedIndex == 1)
-                {
-                    state = OrderState.CHECKFAIL;
-                }
+                OrderState state = (OrderState)EnumUtil.GetEnumValueByDesc(typeof(OrderState), this.cbbStates.Text.Trim());
                 var ser = ServiceContainer.GetService<OrderService>();
                 ser.UpdateOrderGoodsState(this.OrderGoods.OrderId, this.OrderGoods.Id, state, this.cbbComment.Text.Trim());
                 this.DialogResult = true;

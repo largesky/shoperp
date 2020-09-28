@@ -196,7 +196,7 @@ namespace ShopErp.Server.Service.Pop.Pdd
                     DeliveryTime = minTime,
                     DeliveryMoney = 0,
                     Id = 0,
-                    PopDeliveryTime = DateTime.MinValue,
+                    PopDeliveryTime = Utils.DateTimeUtil.DbMinTime,
                     OrderGoodss = new List<Domain.OrderGoods>(),
                     ParseResult = false,
                     PopBuyerComment = "",
@@ -233,7 +233,7 @@ namespace ShopErp.Server.Service.Pop.Pdd
                         var orderGoods = new Domain.OrderGoods
                         {
                             CloseOperator = "",
-                            CloseTime = DateTime.MinValue,
+                            CloseTime = Utils.DateTimeUtil.DbMinTime,
                             Color = "",
                             Comment = "",
                             Count = goods.goods_count,
@@ -252,7 +252,7 @@ namespace ShopErp.Server.Service.Pop.Pdd
                             Size = "",
                             State = Domain.OrderState.NONE,
                             StockOperator = "",
-                            StockTime = DateTime.MinValue,
+                            StockTime = Utils.DateTimeUtil.DbMinTime,
                             Vendor = "",
                             Weight = 0,
                             Shipper = ""

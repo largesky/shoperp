@@ -118,7 +118,7 @@ namespace ShopErp.App.Views.Orders
                 this.pbBar.Parameters.Add("ReceiverAddress", this.tbReceiverAddress.Text.Trim());
 
                 this.pbBar.Parameters.Add("StartTime", this.dpStart.Value == null ? DateTime.Now.AddDays(-45) : this.dpStart.Value.Value);
-                this.pbBar.Parameters.Add("EndTime", this.dpEnd.Value == null ? DateTime.MinValue : this.dpEnd.Value.Value);
+                this.pbBar.Parameters.Add("EndTime", this.dpEnd.Value == null ? Utils.DateTimeUtil.DbMinTime : this.dpEnd.Value.Value);
                 this.pbBar.Parameters.Add("DeliveryCompany", this.cbbDeliveryCompany.Text.Trim());
                 this.pbBar.Parameters.Add("DeliveryNumber", this.tbDeliveryNumber.Text.Trim());
 
@@ -619,7 +619,7 @@ namespace ShopErp.App.Views.Orders
                     throw new Exception("网店订单编号为空不能创建");
                 }
 
-                if (this.orderService.IsDBMinTime(or.Source.PopPayTime))
+                if (Utils.DateTimeUtil.IsDbMinTime(or.Source.PopPayTime))
                 {
                     throw new Exception("订单未付过款不能创建");
                 }

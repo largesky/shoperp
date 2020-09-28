@@ -125,9 +125,9 @@ namespace ShopErp.App.Views.Orders
                 var dc = e.AddedItems[0] as string;
                 //从收件历史中读取 
                 var deliveryIn = ServiceContainer.GetService<DeliveryInService>().GetByAll(dc,
-                    "", DateTime.Now.AddHours(-16), DateTime.MinValue, 0, 0).Datas;
+                    "", DateTime.Now.AddHours(-16), Utils.DateTimeUtil.DbMinTime, 0, 0).Datas;
                 var ors = ServiceContainer.GetService<OrderReturnService>().GetByAll(0, 0L, "", "", "",
-                        OrderReturnState.NONE, OrderReturnType.NONE, 0, DateTime.Now.AddHours(-16), DateTime.MinValue,
+                        OrderReturnState.NONE, OrderReturnType.NONE, 0, DateTime.Now.AddHours(-16), Utils.DateTimeUtil.DbMinTime,
                         0, 0)
                     .Datas;
                 var dds = ors.Select(obj => obj.DeliveryNumber).ToArray();

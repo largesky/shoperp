@@ -195,21 +195,6 @@ namespace ShopErp.App.ViewModels
             this.Title = title + "(" + this.OrderViewModels.Count + ")";
         }
 
-        private static bool HasSameReceiverInfo(Order o1, Order o2)
-        {
-            if (o1 == null || o2 == null)
-            {
-                throw new ArgumentNullException("HasSameReceiverInfo");
-            }
-
-            return o1.ShopId == o2.ShopId &&
-                   o1.PopBuyerId.Trim() == o2.PopBuyerId.Trim() &&
-                   o1.ReceiverName.Trim() == o2.ReceiverName.Trim() &&
-                   o1.ReceiverPhone.Trim() == o2.ReceiverPhone.Trim() &&
-                   o1.ReceiverMobile.Trim() == o2.ReceiverMobile.Trim() &&
-                   o1.ReceiverAddress.Trim() == o2.ReceiverAddress.Trim();
-        }
-
         private string[] GetMatchOrderViewModelsWuliuId(Order order)
         {
             var orders = this.orderVmToOrder[order].OrderBy(obj => obj.Source.Id).ToArray();
@@ -395,7 +380,7 @@ namespace ShopErp.App.ViewModels
                             throw new Exception("用户已停止打印");
                         }
                         WPFHelper.DoEvents();
-                        var first = mergedOrders.FirstOrDefault(obj => HasSameReceiverInfo(or, obj));
+                        var first = mergedOrders.FirstOrDefault(obj => OrderService.CanbeMerge(or, obj));
                         if (first == null)
                         {
                             mergedOrders.Add(or);
@@ -567,7 +552,7 @@ namespace ShopErp.App.ViewModels
                     }
                     PrintHistory ph = new PrintHistory
                     {
-                        UploadTime = this.orderService.GetDBMinTime(),
+                        UploadTime = Utils.DateTimeUtil.DbMinTime,
                         DeliveryCompany = vm.DeliveryCompany,
                         DeliveryNumber = vm.DeliveryNumber,
                         DeliveryTemplate = this.WuliuPrintTemplate.Name,

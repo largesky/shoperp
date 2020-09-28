@@ -14,14 +14,14 @@
         [EnumDescription("已打印")]
         PRINTED = 30,
 
-        [EnumDescription("已拿货")]
-        GETED = 40,
-
         [EnumDescription("检查未过")]
-        CHECKFAIL,
+        CHECKFAIL = 40,
 
-        //[EnumDescription("下架")]
-        //NOTSALE,
+        [EnumDescription("已拿货")]
+        GETED,
+
+        [EnumDescription("下架")]
+        NOTSALE,
 
         [EnumDescription("已发货")]
         SHIPPED = 50,

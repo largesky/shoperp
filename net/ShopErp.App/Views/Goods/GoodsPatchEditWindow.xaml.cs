@@ -96,9 +96,9 @@ namespace ShopErp.App.Views.Goods
                 var goods = this.GetGoodss();
                 foreach (var v in goods)
                 {
-                    if (v.Source.Star != star)
+                    if (v.Source.JiamaoAddPrice != star)
                     {
-                        v.Source.Star = star;
+                        v.Source.JiamaoAddPrice = star;
                         ServiceContainer.GetService<GoodsService>().Update(v.Source);
                     }
                 }
@@ -116,7 +116,7 @@ namespace ShopErp.App.Views.Goods
                 return this.Goods;
             }
 
-            var data = ServiceContainer.GetService<GoodsService>().GetByAll(0, GoodsState.NONE, 0, DateTime.MinValue, DateTime.MinValue, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", "", "", 0, 0).Datas;
+            var data = ServiceContainer.GetService<GoodsService>().GetByAll(0, GoodsState.NONE, 0, Utils.DateTimeUtil.DbMinTime, Utils.DateTimeUtil.DbMinTime, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", "", "", 0, 0).Datas;
             return data.Select(obj => new GoodsViewModel(obj)).ToArray();
         }
 
@@ -188,7 +188,6 @@ namespace ShopErp.App.Views.Goods
                     return;
                 }
 
-                var dbMinTime = ServiceContainer.GetService<GoodsShopService>().GetDBMinTime();
                 var goods = this.GetGoodss().Select(obj => obj.Source).ToArray();
                 var ss = ServiceContainer.GetService<GoodsShopService>();
                 foreach (var g in goods)
@@ -203,9 +202,9 @@ namespace ShopErp.App.Views.Goods
                             State = GoodsState.WAITPROCESSIMAGE,
                             PopGoodsId = "",
                             ProcessImageOperator = "",
-                            ProcessImageTime = dbMinTime,
+                            ProcessImageTime = Utils.DateTimeUtil.DbMinTime,
                             UploadOperator = "",
-                            UploadTime = dbMinTime
+                            UploadTime = Utils.DateTimeUtil.DbMinTime
                         };
                         g.Shops.Add(gus);
                         ss.Save(gus);

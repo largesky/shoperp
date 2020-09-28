@@ -35,10 +35,5 @@ namespace ShopErp.Server.Dao
 
         long GetAllCount(string tableName);
 
-        string FormatDateTime(DateTime time);
-
-        DateTime GetDBMinDateTime();
-
-        bool IsLessDBMinDate(DateTime dt);
     }
 }

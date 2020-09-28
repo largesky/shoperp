@@ -141,12 +141,12 @@ namespace ShopErp.Server.Service.Restful
             order.PopState = order.PopState ?? String.Empty;
             order.DeliveryCompany = order.DeliveryCompany ?? string.Empty;
             order.DeliveryNumber = order.DeliveryNumber ?? string.Empty;
-            order.PopPayTime = this.IsDbMinTime(order.PopPayTime) ? DateTime.Now : order.PopPayTime;
-            order.PopDeliveryTime = this.IsDbMinTime(order.PopDeliveryTime) ? this.GetDbMinTime() : order.PopDeliveryTime;
-            order.CreateTime = this.IsDbMinTime(order.CreateTime) ? DateTime.Now : order.CreateTime;
-            order.PrintTime = this.IsDbMinTime(order.PrintTime) ? this.GetDbMinTime() : order.PrintTime;
-            order.DeliveryTime = this.IsDbMinTime(order.DeliveryTime) ? this.GetDbMinTime() : order.DeliveryTime;
-            order.CloseTime = this.IsDbMinTime(order.CloseTime) ? this.GetDbMinTime() : order.CloseTime;
+            order.PopPayTime = Utils.DateTimeUtil.IsDbMinTime(order.PopPayTime) ? DateTime.Now : order.PopPayTime;
+            order.PopDeliveryTime = Utils.DateTimeUtil.IsDbMinTime(order.PopDeliveryTime) ? Utils.DateTimeUtil.DbMinTime : order.PopDeliveryTime;
+            order.CreateTime = Utils.DateTimeUtil.IsDbMinTime(order.CreateTime) ? DateTime.Now : order.CreateTime;
+            order.PrintTime = Utils.DateTimeUtil.IsDbMinTime(order.PrintTime) ? Utils.DateTimeUtil.DbMinTime : order.PrintTime;
+            order.DeliveryTime = Utils.DateTimeUtil.IsDbMinTime(order.DeliveryTime) ? Utils.DateTimeUtil.DbMinTime : order.DeliveryTime;
+            order.CloseTime = Utils.DateTimeUtil.IsDbMinTime(order.CloseTime) ? Utils.DateTimeUtil.DbMinTime : order.CloseTime;
             order.CreateOperator = ServiceContainer.GetCurrentLoginInfo().op.Number;
             order.PrintOperator = order.PrintOperator ?? string.Empty;
             order.DeliveryOperator = order.DeliveryOperator ?? string.Empty;
@@ -169,10 +169,10 @@ namespace ShopErp.Server.Service.Restful
                     item.PopUrl = item.PopUrl ?? String.Empty;
                     item.PopInfo = item.PopInfo ?? string.Empty;
                     item.PopOrderSubId = item.PopOrderSubId ?? string.Empty;
-                    item.CloseTime = this.IsDbMinTime(item.CloseTime) ? this.GetDbMinTime() : item.CloseTime;
+                    item.CloseTime = Utils.DateTimeUtil.IsDbMinTime(item.CloseTime) ? Utils.DateTimeUtil.DbMinTime : item.CloseTime;
                     item.CloseOperator = item.CloseOperator ?? string.Empty;
                     item.Comment = item.Comment ?? string.Empty;
-                    item.StockTime = this.IsDbMinTime(item.StockTime) ? this.GetDbMinTime() : item.StockTime;
+                    item.StockTime = Utils.DateTimeUtil.IsDbMinTime(item.StockTime) ? Utils.DateTimeUtil.DbMinTime : item.StockTime;
                     item.StockOperator = item.StockOperator ?? string.Empty;
                     item.Image = item.Image ?? string.Empty;
                     string color = null, edtion = null, size = null;
@@ -360,7 +360,7 @@ namespace ShopErp.Server.Service.Restful
                     {
                         or.State = OrderState.PAYED;
                     }
-                    or.PrintTime = this.GetDbMinTime();
+                    or.PrintTime = Utils.DateTimeUtil.DbMinTime;
                     or.PrintOperator = op;
                     this.dao.Update(or);
                 }
@@ -368,13 +368,13 @@ namespace ShopErp.Server.Service.Restful
                 {
                     foreach (var og in or.OrderGoodss)
                     {
-                        if (og.State == OrderState.PAYED || (this.IsDbMinTime(or.DeliveryTime) && or.State == OrderState.RETURNING))
+                        if (og.State == OrderState.PAYED || (Utils.DateTimeUtil.IsDbMinTime(or.DeliveryTime) && or.State == OrderState.RETURNING))
                         {
                             og.State = OrderState.PRINTED;
                             this.dao.Update(og);
                         }
                     }
-                    if (or.State == OrderState.PAYED || (this.IsDbMinTime(or.DeliveryTime) && or.State == OrderState.RETURNING))
+                    if (or.State == OrderState.PAYED || (Utils.DateTimeUtil.IsDbMinTime(or.DeliveryTime) && or.State == OrderState.RETURNING))
                     {
                         or.State = OrderState.PRINTED;
                     }
@@ -531,7 +531,7 @@ namespace ShopErp.Server.Service.Restful
                         }
 
                         this.ps.MarkDelivery(s, order.PopOrderId, order.PopPayType, order.DeliveryCompany, order.DeliveryNumber);
-                        if (order.PopPayType == PopPayType.ONLINE && order.PopDeliveryTime <= GetDbMinTime())//在线支付才更新
+                        if (order.PopPayType == PopPayType.ONLINE && order.PopDeliveryTime <= Utils.DateTimeUtil.DbMinTime)//在线支付才更新
                         {
                             order.PopDeliveryTime = DateTime.Now;
                         }
@@ -623,9 +623,9 @@ namespace ShopErp.Server.Service.Restful
                         }
 
                         this.ps.MarkDelivery(s, or.PopOrderId, or.PopPayType, or.DeliveryCompany, or.DeliveryNumber);
-                        if (this.dao.IsLessDBMinDate(or.PopDeliveryTime))
+                        if (Utils.DateTimeUtil.IsDbMinTime(or.PopDeliveryTime))
                         {
-                            ret = this.dao.ExcuteSqlUpdate("update `Order` set PopDeliveryTime='" + this.FormatTime(DateTime.Now) + "' where Id=" + id);
+                            ret = this.dao.ExcuteSqlUpdate("update `Order` set PopDeliveryTime='" + Utils.DateTimeUtil.FormatDateTime(DateTime.Now) + "' where Id=" + id);
                         }
                     }
                     else
@@ -765,12 +765,12 @@ namespace ShopErp.Server.Service.Restful
                     or.State = OrderState.CLOSED;
                     or.CloseTime = DateTime.Now;
                     or.CloseOperator = op;
-                    if (this.IsDbMinTime(or.DeliveryTime) == false)
+                    if (Utils.DateTimeUtil.IsDbMinTime(or.DeliveryTime) == false)
                     {
                         //删除发货记录
                         ServiceContainer.GetService<DeliveryOutService>().DeleteOrderDeliveryOut(or.DeliveryNumber);
                     }
-                    or.DeliveryTime = this.GetDbMinTime();
+                    or.DeliveryTime = Utils.DateTimeUtil.DbMinTime;
                     or.DeliveryOperator = "";
                     this.dao.Update(or);
                 }
@@ -825,15 +825,15 @@ namespace ShopErp.Server.Service.Restful
                 {
                     PopBuyerComment = or.PopBuyerComment,
                     CloseOperator = "",
-                    CloseTime = this.GetDbMinTime(),
+                    CloseTime = Utils.DateTimeUtil.DbMinTime,
                     State = OrderState.PAYED,
-                    PrintTime = this.GetDbMinTime(),
+                    PrintTime = Utils.DateTimeUtil.DbMinTime,
                     ParseResult = true,
                     CreateTime = DateTime.Now,
                     DeliveryCompany = "",
                     DeliveryNumber = "",
                     DeliveryOperator = "",
-                    DeliveryTime = this.GetDbMinTime(),
+                    DeliveryTime = Utils.DateTimeUtil.DbMinTime,
                     DeliveryMoney = 0,
                     PopDeliveryTime = or.PopDeliveryTime,
                     PopPayTime = or.PopPayTime,
@@ -873,7 +873,7 @@ namespace ShopErp.Server.Service.Restful
                         GetedCount = 0,
                         Price = og.Price,
                         CloseOperator = "",
-                        CloseTime = this.GetDbMinTime(),
+                        CloseTime = Utils.DateTimeUtil.DbMinTime,
                         StockOperator = og.StockOperator,
                         StockTime = og.StockTime,
                         Comment = og.Comment,
@@ -951,7 +951,7 @@ namespace ShopErp.Server.Service.Restful
         public ResponseBase ResetPrintState(long orderId)
         {
             var or = this.GetByIdWithException(orderId);
-            this.UpdateDelivery(orderId, -1, "", "", this.GetDbMinTime());
+            this.UpdateDelivery(orderId, -1, "", "", Utils.DateTimeUtil.DbMinTime);
             return ResponseBase.SUCCESS;
         }
 
@@ -1118,51 +1118,21 @@ namespace ShopErp.Server.Service.Restful
         {
             try
             {
-                string op = ServiceContainer.GetCurrentLoginInfo().op.Number;
                 Order order = this.GetByIdWithException(orderId);
-
-                if (state != OrderState.GETED && state != OrderState.CHECKFAIL)
+                if ((int)order.State < (int)OrderState.PAYED || (int)order.State >= (int)OrderState.SHIPPED)
                 {
-                    throw new Exception("订单商品只能修改成已拿货或者检查未过");
+                    throw new Exception("未付款或者已发货的订单不能修改状态");
                 }
-
-                if ((int)order.State < (int)OrderState.PAYED)
-                {
-                    throw new Exception("未付款订单不能更改");
-                }
-
-                if ((int)order.State >= (int)OrderState.SHIPPED)
-                {
-                    throw new Exception("已经发货，不能更改");
-                }
-
                 OrderGoods og = order.OrderGoodss.FirstOrDefault(obj => obj.Id == orderGoodsId);
                 if (og == null)
                 {
                     throw new Exception("订单商品不存在");
                 }
-                if ((int)og.State >= (int)OrderState.SHIPPED)
-                {
-                    throw new Exception("订单商品状态不允许修改");
-                }
                 og.State = state;
                 og.Comment = stockComment;
                 og.StockTime = DateTime.Now;
-                og.StockOperator = op;
-
-                if (state == OrderState.GETED)
-                {
-                    int val = int.Parse(stockComment.Replace("已拿", "").Replace("双", ""));
-                    if (val > og.Count)
-                    {
-                        throw new Exception("拿货数量不能比总数量大");
-                    }
-                    og.GetedCount = val;
-                }
-                else
-                {
-                    og.GetedCount = 0;
-                }
+                og.StockOperator = ServiceContainer.GetCurrentLoginInfo().op.Number;
+                og.GetedCount = state == OrderState.GETED ? int.Parse(stockComment.Replace("已拿", "").Replace("双", "")) : 0;
                 this.dao.Update(og);
                 return ResponseBase.SUCCESS;
             }
@@ -1229,7 +1199,7 @@ namespace ShopErp.Server.Service.Restful
                 if (orderInDb == null)
                 {
                     //检测数据库是否存在
-                    var ret = ous.GetByAll(null, popOrderid, DateTime.MinValue, DateTime.Now.AddDays(1), 0, 0);
+                    var ret = ous.GetByAll(null, popOrderid, Utils.DateTimeUtil.DbMinTime, DateTime.Now.AddDays(1), 0, 0);
                     if (ret == null || ret.Datas == null || ret.Datas.Count < 1)
                     {
                         return new StringResponse(UPDATE_RET_NOEXIST);
@@ -1253,9 +1223,9 @@ namespace ShopErp.Server.Service.Restful
                     {
                         targetState = OrderState.PAYED;
                     }
-                    else if ((orderInDb.State == OrderState.RETURNING) && ous.IsDbMinTime(orderInDb.DeliveryTime))
+                    else if ((orderInDb.State == OrderState.RETURNING) && Utils.DateTimeUtil.IsDbMinTime(orderInDb.DeliveryTime))
                     {
-                        if (ous.IsDbMinTime(orderInDb.PrintTime) == false)
+                        if (Utils.DateTimeUtil.IsDbMinTime(orderInDb.PrintTime) == false)
                         {
                             targetState = OrderState.PRINTED;
                         }
@@ -1270,7 +1240,7 @@ namespace ShopErp.Server.Service.Restful
                     //如果在退款中，则标记为已发货
                     if (orderInDb.State == OrderState.RETURNING)
                     {
-                        if (IsDbMinTime(orderInDb.DeliveryTime))
+                        if (Utils.DateTimeUtil.IsDbMinTime(orderInDb.DeliveryTime))
                         {
                             targetState = OrderState.PRINTED;
                         }
@@ -1281,7 +1251,7 @@ namespace ShopErp.Server.Service.Restful
                     }
 
                     //已发货,且系统中的打印时间，则说明该订单不是系统打印的，需要更新状态，且同步物流
-                    if (ous.IsDbMinTime(orderInDb.PrintTime))
+                    if (Utils.DateTimeUtil.IsDbMinTime(orderInDb.PrintTime))
                     {
                         targetState = onlineOrderState;
                     }
@@ -1289,13 +1259,13 @@ namespace ShopErp.Server.Service.Restful
                 else if (onlineOrderState == OrderState.SUCCESS)
                 {
                     //非本地打印
-                    if (ous.IsDbMinTime(orderInDb.PrintTime))
+                    if (Utils.DateTimeUtil.IsDbMinTime(orderInDb.PrintTime))
                     {
                         targetState = onlineOrderState;
                     }
                     else
                     {
-                        if (ous.IsDbMinTime(orderInDb.DeliveryTime) == false)
+                        if (Utils.DateTimeUtil.IsDbMinTime(orderInDb.DeliveryTime) == false)
                         {
                             targetState = onlineOrderState;
                         }

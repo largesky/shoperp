@@ -323,7 +323,7 @@ namespace ShopErp.App.Views.AttachUI
 
         private ShopErp.Domain.Order ParseOrder(TaobaoQueryOrderListResponseOrder orderShort, Shop shop)
         {
-            var dbMineTime = ServiceContainer.GetService<OrderService>().GetDBMinTime();
+            var dbMineTime = Utils.DateTimeUtil.DbMinTime;
             string url = shop.PopType == PopType.TMALL ? "https://trade.tmall.com/detail/orderDetail.htm?bizOrderId=" : "https://trade.taobao.com/detail/orderDetail.htm?bizOrderId=";
             //订单信息
             var content = MsHttpRestful.GetReturnString(url + orderShort.id, CefCookieVisitor.GetCookieValue(shop.PopType == PopType.TMALL ? "trade.tmall.com" : "trade.taobao.com"));

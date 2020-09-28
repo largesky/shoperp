@@ -18,7 +18,7 @@ namespace ShopErp.Server.Dao.NHibernateDao
             string hsql = "from " + this.GetEntiyName() + " as O0 left join O0.OrderGoodss as OG0 where ";
             List<object> objs = new List<object>();
 
-            if (this.IsLessDBMinDate(startTime))
+            if (Utils.DateTimeUtil.IsDbMinTime(startTime))
             {
                 startTime = DateTime.Now.AddDays(-30);
             }

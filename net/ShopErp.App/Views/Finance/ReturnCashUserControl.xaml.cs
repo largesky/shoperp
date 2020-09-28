@@ -32,7 +32,7 @@ namespace ShopErp.App.Views.Finance
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             var shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas.Where(obj => obj.Enabled).ToList();
-            shops.Insert(0, new Shop {Id = 0, Mark = "  "});
+            shops.Insert(0, new Shop { Id = 0, Mark = "  " });
             this.cbbShops.ItemsSource = shops;
             this.cbbShops.SelectedIndex = 0;
             this.cbbStates.Bind<ReturnCashState>();
@@ -63,14 +63,12 @@ namespace ShopErp.App.Views.Finance
         {
             try
             {
-                var minTime = ServiceContainer.GetService<ShopService>().GetDBMinTime();
                 this.pb1.Parameters.Clear();
                 this.pb1.Parameters.Add("ShopId", (this.cbbShops.SelectedItem as Shop).Id);
                 this.pb1.Parameters.Add("State", this.cbbStates.GetSelectedEnum<ReturnCashState>());
                 this.pb1.Parameters.Add("TimeType", this.cbbTimeTypes.SelectedIndex);
-                this.pb1.Parameters.Add("StartTime",
-                    this.dpStartTime.Value == null ? minTime : this.dpStartTime.Value.Value);
-                this.pb1.Parameters.Add("EndTime", this.dpEndTime.Value == null ? minTime : this.dpEndTime.Value.Value);
+                this.pb1.Parameters.Add("StartTime", this.dpStartTime.Value == null ? Utils.DateTimeUtil.DbMinTime : this.dpStartTime.Value.Value);
+                this.pb1.Parameters.Add("EndTime", this.dpEndTime.Value == null ? Utils.DateTimeUtil.DbMinTime : this.dpEndTime.Value.Value);
                 this.pb1.Parameters.Add("PopOrderId", this.tbPopOrderId.Text.Trim());
                 this.pb1.Parameters.Add("Type", this.cbbTypes.Text.Trim());
                 this.pb1.StartPage();
@@ -105,7 +103,7 @@ namespace ShopErp.App.Views.Finance
                 {
                     throw new Exception("好评返现已完成不能再处理");
                 }
-                ReturnCashCompleteWindow wi = new ReturnCashCompleteWindow {ReturnCash = rc};
+                ReturnCashCompleteWindow wi = new ReturnCashCompleteWindow { ReturnCash = rc };
                 wi.ShowDialog();
             }
             catch (Exception ex)

@@ -77,10 +77,10 @@ namespace ShopErp.App.Views.Print
             {
                 string sId = this.tbOrderId.Text.Trim();
                 string deliveryNumber = this.tbDeliveryNumber.Text.Trim();
-                DateTime startTime = this.dpStart.Value == null ? DateTime.MinValue : this.dpStart.Value.Value;
-                DateTime endTime = this.dpEnd.Value == null ? DateTime.MinValue : this.dpEnd.Value.Value;
+                DateTime startTime = this.dpStart.Value == null ? Utils.DateTimeUtil.DbMinTime : this.dpStart.Value.Value;
+                DateTime endTime = this.dpEnd.Value == null ? Utils.DateTimeUtil.DbMinTime : this.dpEnd.Value.Value;
                 long lId = string.IsNullOrWhiteSpace(sId) ? 0 : long.Parse(sId);
-                if (lId < 1 && String.IsNullOrWhiteSpace(deliveryNumber) && startTime == DateTime.MinValue)
+                if (lId < 1 && String.IsNullOrWhiteSpace(deliveryNumber) && startTime == Utils.DateTimeUtil.DbMinTime)
                 {
                     MessageBox.Show("查询信息不能全为空");
                     return;

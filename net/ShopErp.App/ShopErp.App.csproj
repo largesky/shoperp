@@ -312,6 +312,7 @@
     <Compile Include="Service\Sync\SyncEventArgs.cs" />
     <Compile Include="Utils\CollectionsSpilteUtil.cs" />
     <Compile Include="Utils\CSV.cs" />
+    <Compile Include="Utils\DateTimeUtil.cs" />
     <Compile Include="Utils\EnumerableKeySelector.cs" />
     <Compile Include="Utils\EnumUtil.cs" />
     <Compile Include="Utils\EnvironmentDirHelper.cs" />

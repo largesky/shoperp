@@ -42,19 +42,18 @@ namespace ShopErp.App.Views.Orders
                 }
                 if (Order == null)
                 {
-                    var minTime = ServiceContainer.GetService<OrderService>().GetDBMinTime();
                     //生成订单
                     this.Order = new Order
                     {
                         CloseOperator = "",
-                        CloseTime = minTime,
+                        CloseTime = Utils.DateTimeUtil.DbMinTime,
                         CreateTime = DateTime.Now,
                         DeliveryCompany = "",
                         DeliveryNumber = "",
                         DeliveryOperator = "",
-                        DeliveryTime = minTime,
+                        DeliveryTime = Utils.DateTimeUtil.DbMinTime,
                         DeliveryMoney = 0,
-                        PopDeliveryTime = minTime,
+                        PopDeliveryTime = Utils.DateTimeUtil.DbMinTime,
                         OrderGoodss = new List<OrderGoods>(),
                         ParseResult = true,
                         PopPayTime = DateTime.Now,
@@ -69,7 +68,7 @@ namespace ShopErp.App.Views.Orders
                         PopState = "",
                         PopType = PopType.None,
                         PrintOperator = "",
-                        PrintTime = minTime,
+                        PrintTime = Utils.DateTimeUtil.DbMinTime,
                         ReceiverAddress = "",
                         ReceiverMobile = "",
                         ReceiverName = "",
@@ -81,7 +80,7 @@ namespace ShopErp.App.Views.Orders
                         CreateOperator = OperatorService.LoginOperator.Number,
                         PopCodSevFee = 0,
                         CreateType = OrderCreateType.MANUAL,
-                        Type = OrderType.NORMAL,
+                        Type = OrderType.NORMAL, 
                     };
                 }
 
@@ -165,7 +164,6 @@ namespace ShopErp.App.Views.Orders
             try
             {
                 var os = ServiceContainer.GetService<OrderService>();
-                DateTime minTime = os.GetDBMinTime();
                 DateTime payTime = dpPayTime.Value ?? DateTime.Now;
                 //检测订单基础信息
                 var shop = this.cbbShops.SelectedItem as Shop;

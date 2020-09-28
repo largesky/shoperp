@@ -61,7 +61,7 @@ namespace ShopErp.App.Views.Orders
             DateTime startTime = this.dpStartTime.Value == null
                 ? DateTime.Now.AddDays(-30)
                 : this.dpStartTime.Value.Value;
-            DateTime endTime = this.dpEndTime.Value == null ? DateTime.MinValue : this.dpEndTime.Value.Value;
+            DateTime endTime = this.dpEndTime.Value == null ? Utils.DateTimeUtil.DbMinTime : this.dpEndTime.Value.Value;
             string number = this.tbNumber.Text.Trim();
             string vendor = this.tbVendor.Text.Trim();
 

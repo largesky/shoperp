@@ -36,8 +36,8 @@ namespace ShopErp.App.Views.Print
                 string wuliuIds = this.tbOrderId.Text.Trim();
                 string dc = this.cbbDeliveryCompany.Text.Trim();
                 string deliveryNumber = this.tbDeliveryNumber.Text.Trim();
-                DateTime start = this.dpStart.Value == null ? DateTime.MinValue : this.dpStart.Value.Value;
-                DateTime end = this.dpEnd.Value == null ? DateTime.MinValue : this.dpEnd.Value.Value;
+                DateTime start = this.dpStart.Value == null ? Utils.DateTimeUtil.DbMinTime : this.dpStart.Value.Value;
+                DateTime end = this.dpEnd.Value == null ? Utils.DateTimeUtil.DbMinTime : this.dpEnd.Value.Value;
                 var items = ServiceContainer.GetService<WuliuNumberService>().GetByAll(wuliuIds, dc, deliveryNumber, start, end, 0, 0).Datas;
                 this.dgvItems.ItemsSource = items;
             }

@@ -13,7 +13,7 @@ namespace ShopErp.App.Service.Spider.K3
     {
         public override Goods GetGoodsInfoByUrl(string url, ref string vendorHomePage, ref string videoUrl, bool raiseExceptionOnGoodsNotSale)
         {
-            Goods g = new Goods { Comment = "", CreateTime = DateTime.Now, Image = "", Number = "", Price = 0, Type = 0, UpdateEnabled = true, UpdateTime = DateTime.Now, Url = url, VendorId = 0, Weight = 0, Id = 0, Colors = "", CreateOperator = "", Flag = ColorFlag.UN_LABEL, IgnoreEdtion = false, ImageDir = "", Material = "", Shops = new List<GoodsShop>(), Star = 0, VideoType = GoodsVideoType.NONE, Shipper = "WL" };
+            Goods g = new Goods { Comment = "", CreateTime = DateTime.Now, Image = "", Number = "", Price = 0, Type = 0, UpdateEnabled = true, UpdateTime = DateTime.Now, Url = url, VendorId = 0, Weight = 0, Id = 0, Colors = "", CreateOperator = "", Flag = ColorFlag.UN_LABEL, IgnoreEdtion = false, ImageDir = "", Material = "", Shops = new List<GoodsShop>(), JiamaoAddPrice = 0, VideoType = GoodsVideoType.NONE, Shipper = "WL" };
             string html = MsHttpRestful.GetReturnString(url, null);
             HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(html);

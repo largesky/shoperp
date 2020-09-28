@@ -17,7 +17,7 @@ namespace ShopErp.Server.Dao.NHibernateDao
             {
                 String contenthsql = "select order.Id,orderGoods.Id,orderGoods.Image,orderGoods.Count,orderGoods.PopPrice,order.PopSellerGetMoney, orderGoods.Price,order.DeliveryMoney,orderGoods.Vendor,orderGoods.Number,orderGoods.GoodsId,order.PopPayTime,order.DeliveryTime,order.State,order.ShopId,orderGoods.Color,orderGoods.Size,orderGoods.Edtion ";
                 String hsqlWhere = String.Format(" from Order order,OrderGoods orderGoods where order.Id=orderGoods.OrderId and order.CreateType=1 ");
-                hsqlWhere += string.Format(" and order.{0} >='{1}' and order.{0} <='{2}'", (timeType == 0) ? "PopPayTime" : "DeliveryTime", this.FormatDateTime(startTime), this.FormatDateTime(endTime));
+                hsqlWhere += string.Format(" and order.{0} >='{1}' and order.{0} <='{2}'", (timeType == 0) ? "PopPayTime" : "DeliveryTime", Utils.DateTimeUtil.FormatDateTime(startTime), Utils.DateTimeUtil.FormatDateTime(endTime));
 
                 if (shopId > 0)
                 {
@@ -88,7 +88,7 @@ namespace ShopErp.Server.Dao.NHibernateDao
                     f = " and " + "(" + f + ")";
                 }
 
-                String hsqlWhere = String.Format("from Order order,OrderGoods orderGoods where order.Id=orderGoods.OrderId and order.Type<>2 and order.PopPayTime>='{0}' and order.PopPayTime<='{1}' and orderGoods.GetedCount<orderGoods.Count and (PopPayType=1 or (PopPayType=2 {2})) and order.State>={3} and order.State<{4} ", this.FormatDateTime(startTime), this.FormatDateTime(endTime), f, (int)OrderState.PAYED, (int)OrderState.SHIPPED);
+                String hsqlWhere = String.Format("from Order order,OrderGoods orderGoods where order.Id=orderGoods.OrderId and order.Type<>2 and order.PopPayTime>='{0}' and order.PopPayTime<='{1}' and orderGoods.GetedCount<orderGoods.Count and (PopPayType=1 or (PopPayType=2 {2})) and order.State>={3} and order.State<{4} ", Utils.DateTimeUtil.FormatDateTime(startTime), Utils.DateTimeUtil.FormatDateTime(endTime), f, (int)OrderState.PAYED, (int)OrderState.SHIPPED);
 
                 if (string.IsNullOrWhiteSpace(shipper) == false)
                 {

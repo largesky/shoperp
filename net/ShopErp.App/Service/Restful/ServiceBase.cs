@@ -115,20 +115,5 @@ namespace ShopErp.App.Service.Restful
             DoPost<ResponseBase>(para);
         }
 
-        public virtual DateTime GetDBMinTime()
-        {
-            return dbMinTime;
-        }
-
-        public bool IsDBMinTime(DateTime cancelTime)
-        {
-            return cancelTime.Subtract(dbMinTime).TotalDays < 300;
-        }
-
-        public string FormatTime(DateTime time)
-        {
-            return time.ToString("yyyy-MM-dd HH:mm:ss");
-        }
-
     }
 }

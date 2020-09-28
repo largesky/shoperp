@@ -180,11 +180,11 @@ namespace ShopErp.App.Views.Print
                     MessageBox.Show("选择支付类型");
                     return;
                 }
-                var orders = this.orderService.GetByAll("", "", "", "", DateTime.Now.AddDays(-90), DateTime.MinValue, "", "", OrderState.RETURNING, payType, "", "", "", selectFlags.ToArray(), -1, "", 0, OrderCreateType.NONE, OrderType.NONE, this.cbbShippers.Text.Trim(), 0, 0).Datas.ToArray();
+                var orders = this.orderService.GetByAll("", "", "", "", DateTime.Now.AddDays(-90), Utils.DateTimeUtil.DbMinTime, "", "", OrderState.RETURNING, payType, "", "", "", selectFlags.ToArray(), -1, "", 0, OrderCreateType.NONE, OrderType.NONE, this.cbbShippers.Text.Trim(), 0, 0).Datas.ToArray();
                 List<Order> os = new List<Order>();
                 foreach (var o in orders)
                 {
-                    if (string.IsNullOrWhiteSpace(o.DeliveryNumber) && this.orderService.IsDBMinTime(o.DeliveryTime))
+                    if (string.IsNullOrWhiteSpace(o.DeliveryNumber) && DateTimeUtil.IsDbMinTime(o.DeliveryTime))
                     {
                         os.Add(o);
                         o.State = OrderState.PAYED;

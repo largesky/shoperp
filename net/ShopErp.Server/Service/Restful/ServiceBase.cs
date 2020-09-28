@@ -67,36 +67,6 @@ namespace ShopErp.Server.Service.Restful
             this.LoadCachIfEmpty();
             return this.scs;
         }
-
-        public DateTime GetDbMinTime()
-        {
-            return this.dao.GetDBMinDateTime();
-        }
-
-        public bool IsDbMinTime(DateTime time)
-        {
-            return this.dao.IsLessDBMinDate(time);
-        }
-
-        public DateTime FormatToDbTime(DateTime time)
-        {
-            if (Math.Abs(time.Subtract(DateTime.MinValue).TotalDays) < 100)
-            {
-                return this.GetDbMinTime();
-            }
-
-            if (Math.Abs(time.Subtract(this.GetDbMinTime()).TotalDays) < 100)
-            {
-                return this.GetDbMinTime();
-            }
-            return time;
-        }
-
-        public string FormatTime(DateTime time)
-        {
-            return time.ToString("yyyy-MM-dd HH:mm:ss");
-        }
-
         public List<T> GetColumnValueBySqlQuery<T>(string query)
         {
             return this.dao.GetColumnValueBySqlQuery<T>(query);

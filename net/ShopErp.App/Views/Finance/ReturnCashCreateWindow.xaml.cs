@@ -62,7 +62,7 @@ namespace ShopErp.App.Views.Finance
                     OrderId = this.Order.Id,
                     PopOrderId = this.Order.PopOrderId,
                     ProcessOperator = "",
-                    ProcessTime = ServiceContainer.GetService<ReturnCashService>().GetDBMinTime(),
+                    ProcessTime = Utils.DateTimeUtil.DbMinTime,
                     ShopId = this.Order.ShopId,
                     State = ReturnCashState.WAIT_PROCESS,
                     Type = type,

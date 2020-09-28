@@ -70,7 +70,7 @@ namespace ShopErp.App.Views.Delivery
                     return;
                 }
                 var os = ServiceContainer.GetService<OrderService>();
-                var orders = orderDownloads.Where(obj => obj.Order != null).Select(obj => obj.Order).Where(obj => string.IsNullOrWhiteSpace(obj.PopOrderId) == false && os.IsDBMinTime(obj.PopDeliveryTime)).Select(obj => new OrderViewModel(obj)).OrderBy(obj => obj.Source.PopPayTime).ToArray();
+                var orders = orderDownloads.Where(obj => obj.Order != null).Select(obj => obj.Order).Where(obj => string.IsNullOrWhiteSpace(obj.PopOrderId) == false && Utils.DateTimeUtil.IsDbMinTime(obj.PopDeliveryTime)).Select(obj => new OrderViewModel(obj)).OrderBy(obj => obj.Source.PopPayTime).ToArray();
                 //分析
                 foreach (var order in orders)
                 {

@@ -101,7 +101,7 @@ namespace ShopErp.Server.Service.Restful
         {
             try
             {
-                string sql1 = "update " + this.dao.GetEntiyName() + " set Start='" + this.FormatTime(this.GetDbMinTime()) + "',End='" + this.FormatTime(this.GetDbMinTime()) + "'";
+                string sql1 = "update " + this.dao.GetEntiyName() + " set Start='" + Utils.DateTimeUtil.FormatDateTime(Utils.DateTimeUtil.DbMinTime)+"',End='" + Utils.DateTimeUtil.FormatDateTime(Utils.DateTimeUtil.DbMinTime) + "'";
                 string sql2 = "update " + this.dao.GetEntiyName() + " set Start=(select Min(CreateTime) from TaobaoKeywordDetail where " + this.dao.GetEntiyName() + ".Number=Number) where (select Count(Id) from TaobaoKeywordDetail where TaobaoKeyword.Number=Number)>0";
                 string sql3 = "update " + this.dao.GetEntiyName() + " set End=(select Max(CreateTime) from TaobaoKeywordDetail where " + this.dao.GetEntiyName() + ".Number=Number) where (select Count(Id) from TaobaoKeywordDetail where TaobaoKeyword.Number=Number)>0";
                 this.dao.ExcuteSqlUpdate(sql1);

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using ShopErp.Domain;
 using ShopErp.Domain.Pop;
 using ShopErp.Domain.RestfulResponse;
@@ -228,6 +229,98 @@ namespace ShopErp.App.Service.Restful
             Dictionary<string, object> para = new Dictionary<string, object>();
             para["orderId"] = orderId;
             return DoPost<ResponseBase>(para);
+        }
+
+        /// <summary>
+        /// 是否可以合并
+        /// </summary>
+        /// <param name="o1"></param>
+        /// <param name="o2"></param>
+        /// <returns></returns>
+        public static bool CanbeMerge(Order o1, Order o2)
+        {
+            if (o1 == null || o2 == null)
+            {
+                throw new ArgumentNullException("CanbeMerge");
+            }
+
+            return o1.ShopId == o2.ShopId &&
+                   o1.PopBuyerId.Trim() == o2.PopBuyerId.Trim() &&
+                   o1.ReceiverName.Trim() == o2.ReceiverName.Trim() &&
+                   o1.ReceiverPhone.Trim() == o2.ReceiverPhone.Trim() &&
+                   o1.ReceiverMobile.Trim() == o2.ReceiverMobile.Trim() &&
+                   o1.ReceiverAddress.Trim() == o2.ReceiverAddress.Trim();
+        }
+
+        /// <summary>
+        /// 复制生成新订单，然后合并
+        /// </summary>
+        /// <param name="orders"></param>
+        /// <returns></returns>
+        public static Order[] MergeOrders(Order[] orders)
+        {
+            if (orders == null)
+            {
+                throw new ArgumentNullException("orders");
+            }
+
+            List<Order> mergedOrders = new List<Order>();
+            Order[] nOrders = Newtonsoft.Json.JsonConvert.DeserializeObject<Order[]>(Newtonsoft.Json.JsonConvert.SerializeObject(orders));
+
+            foreach (var or in nOrders)
+            {
+                var first = mergedOrders.FirstOrDefault(obj => CanbeMerge(or, obj));
+                if (first == null)
+                {
+                    mergedOrders.Add(or);
+                    continue;
+                }
+                if (or.OrderGoodss == null || or.OrderGoodss.Count < 1)
+                {
+                    continue;
+                }
+                //合并过的，不再合并
+                foreach (var og in or.OrderGoodss)
+                {
+                    if (first.OrderGoodss.Any(obj => obj.Id == og.Id) == false)
+                    {
+                        first.OrderGoodss.Add(og);
+                    }
+                }
+            }
+            return mergedOrders.ToArray();
+        }
+
+        public static OrderGoods[] FilterOrderGoodsCanbeSend(Order order)
+        {
+            if (order == null || order.OrderGoodss == null || order.OrderGoodss.Count < 1)
+            {
+                return new OrderGoods[0];
+            }
+
+            return order.OrderGoodss.Where(obj => obj.State == OrderState.PAYED || obj.State == OrderState.PRINTED || obj.State == OrderState.CHECKFAIL || obj.State == OrderState.GETED).ToArray();
+        }
+
+
+        /// <summary>
+        /// 格式化订单下载可以发货的商品信息，不包包含关闭，这些的
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns></returns>
+        public static string FormatGoodsInfoCanbeSend(Order order)
+        {
+            var orderGoods = FilterOrderGoodsCanbeSend(order);
+            StringBuilder sb = new StringBuilder();
+            foreach (var goods in order.OrderGoodss)
+            {
+                sb.Append(VendorService.FormatVendorName(goods.Vendor) + " " + goods.Number + goods.Edtion + goods.Color + goods.Size + " (" + goods.Count + ") ");
+            }
+            return sb.ToString();
+        }
+
+        public static int CountGoodsCanbeSend(Order order)
+        {
+            return FilterOrderGoodsCanbeSend(order).Select(obj => obj.Count).Sum();
         }
     }
 }

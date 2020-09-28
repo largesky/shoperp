@@ -89,31 +89,6 @@ namespace ShopErp.App.ViewModels
             }
         }
 
-        /// <summary>
-        /// 可以发货的商品信息
-        /// </summary>
-        public string GoodsInfoCanbeCount
-        {
-            get
-            {
-                if (this.Source.OrderGoodss == null || this.Source.OrderGoodss.Count < 1)
-                {
-                    return "";
-                }
-
-                StringBuilder sb = new StringBuilder();
-                if (this.Source.OrderGoodss != null && this.Source.OrderGoodss.Count > 0)
-                {
-                    foreach (var goods in this.Source.OrderGoodss)
-                    {
-                        if ((int)goods.State >= (int)OrderState.PAYED && (int)goods.State < (int)OrderState.SHIPPED)
-                            sb.Append(VendorService.FormatVendorName(goods.Vendor) + " " + goods.Number + goods.Edtion + goods.Color + goods.Size + " (" + goods.Count + ") ");
-                    }
-                }
-                return sb.ToString();
-            }
-        }
-
         public string Phone
         {
             get
