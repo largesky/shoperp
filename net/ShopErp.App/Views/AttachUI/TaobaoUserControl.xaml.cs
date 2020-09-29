@@ -38,9 +38,21 @@ namespace ShopErp.App.Views.AttachUI
 
         public event EventHandler<AttachUIOrderPreviewDownloadEventArgs> OrderPreviewDownload;
 
+        public event EventHandler Start;
+
+        public event EventHandler End;
+
         public TaobaoUserControl()
         {
             InitializeComponent();
+        }
+
+        private void OnStart()
+        {
+            if (this.Start != null)
+            {
+                this.Start(this, new EventArgs());
+            }
         }
 
         private void OnOrderDownload(OrderDownload orderDownload)
@@ -59,6 +71,13 @@ namespace ShopErp.App.Views.AttachUI
             }
         }
 
+        private void OnEnd()
+        {
+            if (this.End != null)
+            {
+                this.End(this, new EventArgs());
+            }
+        }
 
         private void cbbUrls_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -602,8 +621,7 @@ namespace ShopErp.App.Views.AttachUI
 
         public void DownloadOrders()
         {
-            List<OrderDownload> allOrders = new List<OrderDownload>();
-
+            this.OnStart();
             int totalCount = 0, currentCount = 0;
             int totalPage = 0, currentPage = 1;
             var allShops = ServiceContainer.GetService<ShopService>().GetByAll().Datas;
@@ -672,6 +690,7 @@ namespace ShopErp.App.Views.AttachUI
                 }
                 currentPage++;
             }
+            this.OnEnd();
         }
 
         public void MarkPopDelivery(string popOrderId, string deliveryCompany, string deliveryNumber)

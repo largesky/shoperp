@@ -22,7 +22,6 @@
             <Button Name="btnMarkDelivery" Margin="3" VerticalAlignment="Center" Width="60" Content="标记发货" Click="btnMarkDelivery_Click"/>
             <TextBlock Name="tbTotal" Margin="3" VerticalAlignment="Center" />
             <TextBlock Grid.Row="1" Name="tbMsg" Margin="3" VerticalAlignment="Center" />
-            <TextBlock Grid.Row="1" Name="tbMsg1" Margin="3" VerticalAlignment="Center" FontSize="16" Foreground="Red"/>
         </StackPanel>
         <DataGrid Grid.Row="1" Name="dgvOrders" Style="{StaticResource ResourceKey=OrderDataGridStyle}" Sorting="DgvOrders_Sorting" SelectionUnit="CellOrRowHeader" SelectionMode="Extended">
             <DataGrid.ContextMenu>

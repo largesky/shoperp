@@ -8,9 +8,13 @@ namespace ShopErp.App.Views.AttachUI
 {
     public interface IAttachUI
     {
-        event EventHandler<AttachUiOrderDownloadEventArgs> OrderDownload;
+        event EventHandler Start;
 
         event EventHandler<AttachUIOrderPreviewDownloadEventArgs> OrderPreviewDownload;
+
+        event EventHandler<AttachUiOrderDownloadEventArgs> OrderDownload;
+
+        event EventHandler End;
 
         void DownloadOrders();
 

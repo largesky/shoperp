@@ -65,22 +65,11 @@ namespace ShopErp.App.Views.Delivery
                 this.orders.Clear();
                 this.orderDownloadErrors = new List<OrderDownloadError>();
                 taobaoUserControl.DownloadOrders();
-                if (this.orderDownloadErrors == null || this.orderDownloadErrors.Count < 1)
-                {
-                    MessageBox.Show("没有找到待发货的订单");
-                    return;
-                }
-
-                //分析
-                foreach (var order in orders)
-                {
-                    if (order.Source.State == OrderState.SHIPPED)
-                    {
-                        order.IsChecked = true;
-                    }
-                    this.orders.Add(order);
-                }
                 this.tbTotal.Text = "当前共 : " + this.orders.Count + " 条记录";
+                foreach (var v in this.orders)
+                {
+                    v.IsChecked = v.Source.State == OrderState.SHIPPED;
+                }
                 if (this.orderDownloadErrors.Count > 0)
                 {
                     string msg = string.Format("下载失败订单列表：\r\n{0}", string.Join(Environment.NewLine, this.orderDownloadErrors.Select(obj => obj.PopOrderId + ":" + obj.Error)));
