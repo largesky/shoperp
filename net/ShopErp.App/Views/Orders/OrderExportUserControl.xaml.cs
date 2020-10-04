@@ -20,6 +20,7 @@ using ShopErp.Domain;
 using System.ComponentModel;
 using ShopErp.App.Service;
 using System.IO;
+using ShopErp.App.Service.Excel;
 
 namespace ShopErp.App.Views.Orders
 {
@@ -108,11 +109,22 @@ namespace ShopErp.App.Views.Orders
                 {
                     return;
                 }
+
+                Microsoft.Win32.SaveFileDialog sfd = new Microsoft.Win32.SaveFileDialog();
+                sfd.AddExtension = true;
+                sfd.DefaultExt = "xlsx";
+                sfd.Filter = "*.xlsx|Office 2007 文件";
+                sfd.FileName = "贾勇 " + DateTime.Now.ToString("MM-dd") + ".xlsx";
+                sfd.InitialDirectory = LocalConfigService.GetValue("OrderExportSaveDir_" + this.cbbShippers.Text.Trim(), "");
+                if (sfd.ShowDialog().Value == false)
+                {
+                    return;
+                }
+
                 double shippMoney = LocalConfigService.GetValueDouble(SystemNames.CONFIG_SHIPP_MONEY, 2.5);
                 var shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas;
                 var allGoods = ServiceContainer.GetService<GoodsService>().GetByAll(0, GoodsState.NONE, 0, DateTimeUtil.DbMinTime, DateTimeUtil.DbMinTime, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", "", "", 0, 0).Datas;
                 List<string[]> contents = new List<string[]>();
-                contents.Add(new string[] { "店铺", "付款时间", "商品信息", "快递单号", "备注", "姓名", "手机", "商品价格", "发货费" });
                 foreach (var order in orders)
                 {
                     var ogs = OrderService.FilterOrderGoodsCanbeSend(order);
@@ -133,19 +145,8 @@ namespace ShopErp.App.Views.Orders
                     }
                     contents.Add(ss);
                 }
-                Dictionary<string, string[][]> dicContents = new Dictionary<string, string[][]>();
-                dicContents.Add("订单", contents.ToArray());
-                Microsoft.Win32.SaveFileDialog sfd = new Microsoft.Win32.SaveFileDialog();
-                sfd.AddExtension = true;
-                sfd.DefaultExt = "xlsx";
-                sfd.Filter = "*.xlsx|Office 2007 文件";
-                sfd.FileName = "贾勇 " + DateTime.Now.ToString("MM-dd") + ".xlsx";
-                sfd.InitialDirectory = LocalConfigService.GetValue("OrderExportSaveDir_" + this.cbbShippers.Text.Trim(), "");
-                if (sfd.ShowDialog().Value == false)
-                {
-                    return;
-                }
-                Service.Excel.ExcelFile.WriteXlsx(sfd.FileName, dicContents);
+                var columns = new ExcelColumn[] { new ExcelColumn("店铺", false), new ExcelColumn("付款时间", false), new ExcelColumn("商品信息", false), new ExcelColumn("快递单号", false), new ExcelColumn("备注", false), new ExcelColumn("姓名", false), new ExcelColumn("手机", false), new ExcelColumn("商品价格", true), new ExcelColumn("发货费", true) };
+                new ExcelFile(sfd.FileName, "订单", columns, contents.ToArray()).WriteXlsx();
                 LocalConfigService.UpdateValue("OrderExportSaveDir_" + this.cbbShippers.Text.Trim(), new FileInfo(sfd.FileName).DirectoryName);
             }
             catch (Exception ex)

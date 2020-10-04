@@ -14,10 +14,6 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Grid.ColumnSpan="2">
-            <Ellipse Width="20" Height="20" Fill="Red" Margin="3" />
-            <TextBlock Text="已超时订单" Margin="3" VerticalAlignment="Center" />
-            <Ellipse Width="20" Height="20" Fill="Yellow" Margin="3" />
-            <TextBlock Text="1小时内超时订单" Margin="3" VerticalAlignment="Center" />
             <Button Name="btnRefresh" Margin="3" VerticalAlignment="Center" Width="60" Content="刷新" Click="btnRefresh_Click" />
             <Button Name="btnMarkDelivery" Margin="3" VerticalAlignment="Center" Width="60" Content="标记发货" Click="btnMarkDelivery_Click"/>
             <TextBlock Name="tbTotal" Margin="3" VerticalAlignment="Center" />

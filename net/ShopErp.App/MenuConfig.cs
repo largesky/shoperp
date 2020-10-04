@@ -86,7 +86,6 @@ namespace ShopErp.App
             mc.Add("淘宝关键词导入删除", typeof(TaobaoKeywordManagementUserControl));
             mc.Add("淘宝关键词统计", typeof(TaobaoKeywordCountUserControl));
             mc.Add("淘宝关键分日趋势", typeof(TaobaoKeywordStateUserControl));
-            mc.Add("淘宝搜索排行关键词", typeof(TaobaoTopKeywordUserControl));
             mcs.Add(mc);
 
 

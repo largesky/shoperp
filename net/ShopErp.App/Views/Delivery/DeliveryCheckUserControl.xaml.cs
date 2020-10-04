@@ -87,13 +87,10 @@ namespace ShopErp.App.Views.Delivery
                 foreach (var g in deliveryCompanyGroup)
                 {
                     var gs = g.Distinct(new DeliveryCheckViewModelComparer()).ToArray();
-                    var contents = gs.Select(obj => new string[]
-                    {
-                        obj.Source.DeliveryNumber, obj.Source.ReceiverName, obj.Source.ReceiverPhone,
-                        obj.Source.ReceiverMobile, obj.Source.ReceiverAddress
-                    }).ToList();
-                    contents.Insert(0, new string[] { "快递单号", "姓名", "座机", "手机", "地址" });
-                    ExcelFile.WriteXlsx(dir + "\\" + DateTime.Now.ToString("MM_dd") + g.Key + ".xlsx", contents.ToArray());
+                    var contents = gs.Select(obj => new string[] { obj.Source.DeliveryNumber, obj.Source.ReceiverName, obj.Source.ReceiverMobile, obj.Source.ReceiverAddress }).ToList();
+                    var columns = new ExcelColumn[] { new ExcelColumn("快递单号", false), new ExcelColumn("姓名", false), new ExcelColumn("手机", false), new ExcelColumn("地址", false) };
+                    ExcelFile excelFile = new ExcelFile(dir + "\\" + DateTime.Now.ToString("MM_dd") + g.Key + ".xlsx", "订单", columns, contents.ToArray());
+                    excelFile.WriteXlsx();
                 }
                 MessageBox.Show("保存成功");
             }

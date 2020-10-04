@@ -13,52 +13,28 @@ namespace ShopErp.App.Service.Excel
     {
         private Dictionary<string, string[][]> sheetDatas = new Dictionary<string, string[][]>();
 
+        private Dictionary<string, ExcelColumn[]> columns = new Dictionary<string, ExcelColumn[]>();
 
-        /// <summary>
-        /// 将数字列如 3 转换成 EXCEL 列 C
-        /// </summary>
-        /// <param name="columnNumber"></param>
-        /// <returns></returns>
-        public static string GetExcelColumnName(int columnNumber)
+        private string path = null;
+
+
+        public ExcelFile()
         {
-            int dividend = columnNumber;
-            string columnName = String.Empty;
-            int modulo;
 
-            if (columnNumber < 1)
-            {
-                throw new ArgumentException("columnNumber 不能小于1");
-            }
-
-            while (dividend > 0)
-            {
-                modulo = (dividend - 1) % 26;
-                columnName = Convert.ToChar(65 + modulo).ToString() + columnName;
-                dividend = (int)((dividend - modulo) / 26);
-            }
-
-            return columnName;
         }
 
-        /// <summary>
-        /// 将 EXCEL 列 C 转换成 数字列 3 
-        /// </summary>
-        /// <param name="columnNumber"></param>
-        /// <returns></returns>
-        public static int GetExcelColumnIndex(string colName)
+        public ExcelFile(string path, string sheetName, ExcelColumn[] columns, string[][] contents)
         {
-            if (string.IsNullOrWhiteSpace(colName))
-            {
-                throw new ArgumentException("colName不能为空");
-            }
+            this.path = path;
+            this.sheetDatas.Add(sheetName, contents);
+            this.columns.Add(sheetName, columns);
+        }
 
-            var colIndex = 0;
-            for (int ind = 0, pow = colName.Count() - 1; ind < colName.Count(); ++ind, --pow)
-            {
-                var cVal = Convert.ToInt32(colName[ind]) - 64; //col A is index 1
-                colIndex += cVal * ((int)Math.Pow(26, pow));
-            }
-            return colIndex;
+        public ExcelFile(string path, Dictionary<string, string[][]> sheetDatas, Dictionary<string, ExcelColumn[]> columns)
+        {
+            this.path = path;
+            this.sheetDatas = sheetDatas;
+            this.columns = columns;
         }
 
         /// <summary>
@@ -88,6 +64,55 @@ namespace ShopErp.App.Service.Excel
                 }
             }
             return -1;
+        }
+
+
+        public void WriteXlsx()
+        {
+            IWorkbook book = null;
+            if (this.path.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase))
+            {
+                book = new NPOI.XSSF.UserModel.XSSFWorkbook();
+            }
+            else
+            {
+                book = new NPOI.HSSF.UserModel.HSSFWorkbook();
+            }
+
+            foreach (var pair in sheetDatas)
+            {
+                ISheet sheet = book.CreateSheet(pair.Key);
+
+                //输出列标题
+                var row = sheet.CreateRow(0);
+                for (int i = 0; i < columns[pair.Key].Length; i++)
+                {
+                    var cell = row.CreateCell(i, CellType.String);
+                    cell.SetCellValue(columns[pair.Key][i].Name);
+                }
+
+                //数据
+                for (int i = 0; i < pair.Value.Length; i++)
+                {
+                    row = sheet.CreateRow(i + 1);
+                    for (int k = 0; k < pair.Value[i].Length; k++)
+                    {
+                        var cell = row.CreateCell(k, columns[pair.Key][k].IsNumber ? CellType.Numeric : CellType.String);
+                        if (columns[pair.Key][k].IsNumber)
+                        {
+                            cell.SetCellValue(double.Parse(pair.Value[i][k]));
+                        }
+                        else
+                        {
+                            cell.SetCellValue(pair.Value[i][k]);
+                        }
+                    }
+                }
+                using (FileStream fs = new FileStream(path, FileMode.Create))
+                {
+                    book.Write(fs);
+                }
+            }
         }
 
         /// <summary>
@@ -121,7 +146,7 @@ namespace ShopErp.App.Service.Excel
         /// <returns></returns>
         public static ExcelFile Open(string file, string sheetName = "Sheet1")
         {
-            ExcelFile xlsxFileReader = new ExcelFile();
+            ExcelFile excelFile = new ExcelFile();
             IWorkbook book = null;
 
             using (FileStream fs = new FileStream(file, FileMode.Open))
@@ -206,71 +231,10 @@ namespace ShopErp.App.Service.Excel
                             }
                         }
                     }
-                    xlsxFileReader.sheetDatas.Add(sheet.SheetName, datas.ToArray());
+                    excelFile.sheetDatas.Add(sheet.SheetName, datas.ToArray());
                 }
             }
-            return xlsxFileReader;
+            return excelFile;
         }
-
-        public static void WriteXlsx(string file, string[][] contents)
-        {
-            IWorkbook book = null;
-            if (file.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase))
-            {
-                book = new NPOI.XSSF.UserModel.XSSFWorkbook();
-            }
-            else
-            {
-                book = new NPOI.HSSF.UserModel.HSSFWorkbook();
-            }
-
-            ISheet sheet = book.CreateSheet("Sheet1");
-
-            for (int i = 0; i < contents.Length; i++)
-            {
-                var row = sheet.CreateRow(i);
-                for (int k = 0; k < contents[i].Length; k++)
-                {
-                    var cell = row.CreateCell(k, CellType.String);
-                    cell.SetCellValue(contents[i][k]);
-                }
-            }
-            using (FileStream fs = new FileStream(file, FileMode.Create))
-            {
-                book.Write(fs);
-            }
-        }
-
-        public static void WriteXlsx(string file, Dictionary<string, string[][]> sheetDatas)
-        {
-            IWorkbook book = null;
-            if (file.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase))
-            {
-                book = new NPOI.XSSF.UserModel.XSSFWorkbook();
-            }
-            else
-            {
-                book = new NPOI.HSSF.UserModel.HSSFWorkbook();
-            }
-            foreach (var pair in sheetDatas)
-            {
-                ISheet sheet = book.CreateSheet(pair.Key);
-
-                for (int i = 0; i < pair.Value.Length; i++)
-                {
-                    var row = sheet.CreateRow(i);
-                    for (int k = 0; k < pair.Value[i].Length; k++)
-                    {
-                        var cell = row.CreateCell(k, CellType.String);
-                        cell.SetCellValue(pair.Value[i][k]);
-                    }
-                }
-                using (FileStream fs = new FileStream(file, FileMode.Create))
-                {
-                    book.Write(fs);
-                }
-            }
-        }
-
     }
 }
