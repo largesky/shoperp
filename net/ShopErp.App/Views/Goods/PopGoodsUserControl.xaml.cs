@@ -35,7 +35,7 @@ namespace ShopErp.App.Views.Goods
         private Shop lastShop = null;
         private bool isStop;
         private Task task;
-        private System.Collections.ObjectModel.ObservableCollection<PopGoodsInfoViewModel> popGoodsInfoViewModels = new System.Collections.ObjectModel.ObservableCollection<PopGoodsInfoViewModel>();
+        private List<PopGoodsInfoViewModel> allPopGoodsInfoViewModels = new List<PopGoodsInfoViewModel>();
 
         public PopGoodsUserControl()
         {
@@ -52,7 +52,6 @@ namespace ShopErp.App.Views.Goods
                 }
                 this.cbbShops.ItemsSource = ServiceContainer.GetService<ShopService>().GetByAll().Datas;
                 this.cbbStatus.Bind<PopGoodsState>();
-                this.dgvGoods.ItemsSource = this.popGoodsInfoViewModels;
                 this.cbbPddShops.ItemsSource = ServiceContainer.GetService<ShopService>().GetByAll().Datas.Where(obj => obj.Enabled && obj.PopType == PopType.PINGDUODUO).ToArray();
                 this.myLoaded = true;
             }
@@ -74,22 +73,16 @@ namespace ShopErp.App.Views.Goods
 
         private void AppendDataToUi(List<PopGoods> goods, Shop shop)
         {
-            List<PopGoods> toAdd = goods.Where(obj => this.popGoodsInfoViewModels.Any(c => c.PopGoodsInfo.Id == obj.Id) == false).ToList();
+            List<PopGoods> toAdd = goods.Where(obj => this.allPopGoodsInfoViewModels.Any(c => c.PopGoodsInfo.Id == obj.Id) == false).ToList();
             //生成VM
             PopGoodsInfoViewModel[] vms = new PopGoodsInfoViewModel[toAdd.Count];
             var goodsTasks = ServiceContainer.GetService<GoodsTaskService>().GetByAll(shop.Id, 0, 0).Datas;
             for (int i = 0; i < vms.Length; i++)
             {
                 vms[i] = new PopGoodsInfoViewModel(toAdd[i]);
-                vms[i].UserNumber = this.popGoodsInfoViewModels.Count + i + 1;
+                vms[i].UserNumber = this.allPopGoodsInfoViewModels.Count + i + 1;
                 vms[i].GoodsTask = goodsTasks.FirstOrDefault(obj => obj.ShopId == shop.Id && obj.GoodsId == vms[i].PopGoodsInfo.Id);
-                vms[i].GoodsTask = vms[i].GoodsTask ?? new GoodsTask
-                {
-                    GoodsId = goods[i].Id,
-                    ShopId = shop.Id,
-                    Comment = "",
-                    Id = 0,
-                };
+                vms[i].GoodsTask = vms[i].GoodsTask ?? new GoodsTask { GoodsId = goods[i].Id, ShopId = shop.Id, Comment = "", Id = 0 };
             }
             var unSaved = vms.Where(obj => obj.GoodsTask != null && obj.GoodsTask.Id < 1).Select(obj => obj.GoodsTask).ToArray();
             if (unSaved.Length > 0)
@@ -100,21 +93,7 @@ namespace ShopErp.App.Views.Goods
                     unSaved[i].Id = retId.Datas[i];
                 }
             }
-            foreach (var v in vms)
-            {
-                this.popGoodsInfoViewModels.Add(v);
-            }
-            foreach (var v in this.popGoodsInfoViewModels)
-            {
-                if (v.PopGoodsInfo.Skus.Any(o => string.IsNullOrWhiteSpace(o.Code)))
-                {
-                    v.State = "有SKU库存编码为空";
-                }
-                if (this.popGoodsInfoViewModels.Any(obj => obj != v && obj.SkuCodesInfo.Equals(v.SkuCodesInfo, StringComparison.OrdinalIgnoreCase)))
-                {
-                    v.State += "商品重复";
-                }
-            }
+            this.allPopGoodsInfoViewModels.AddRange(vms);
         }
 
         private void OverlayTask(GoodsDownloadPauseEventArgs e)
@@ -179,7 +158,8 @@ namespace ShopErp.App.Views.Goods
                         }
                     }
                     goodsDownloadWorker = new GoodsDownloadWorker(this.lastShop, state);
-                    this.popGoodsInfoViewModels.Clear();
+                    this.allPopGoodsInfoViewModels.Clear();
+                    this.dgvGoods.ItemsSource = null;
                     goodsDownloadWorker.Download += GoodsDownloadWorker_Download;
                     goodsDownloadWorker.DownloadData += GoodsDownloadWorker_DownloadData;
                     goodsDownloadWorker.Pausing += GoodsDownloadWorker_Pausing;
@@ -225,31 +205,32 @@ namespace ShopErp.App.Views.Goods
                 this.btnQuery.Content = le.BtnQueryTitle;
                 this.btnStop.IsEnabled = le.BtnStopEnabled;
                 this.tbMsg.Text = le.Msg;
-                if (e.IsComppleted)
+                if (e.IsComppleted == false)
                 {
-                    for (int i = 0; i < this.popGoodsInfoViewModels.Count; i++)
-                    {
-                        var v = this.popGoodsInfoViewModels[i];
-                        if (v.PopGoodsInfo.Skus.Any(o => string.IsNullOrWhiteSpace(o.Code)))
-                        {
-                            v.State = "有SKU库存编码为空";
-                        }
-                        if (this.popGoodsInfoViewModels.Any(obj => obj != v && obj.SkuCodesInfo.Equals(v.SkuCodesInfo, StringComparison.OrdinalIgnoreCase)))
-                        {
-                            v.State += "商品重复";
-                        }
-                    }
-                    if (this.popGoodsInfoViewModels.Any(obj => string.IsNullOrWhiteSpace(obj.State) == false))
-                    {
-                        MessageBox.Show("下载完成，有商品库存编码为空或者商品重复");
-                    }
-                    else
-                    {
-                        MessageBox.Show("下载完成");
-                    }
-                    this.goodsDownloadWorker = null;
-                    this.dgvGoods.ItemsSource = this.popGoodsInfoViewModels.ToArray();
+                    return;
                 }
+                for (int i = 0; i < this.allPopGoodsInfoViewModels.Count; i++)
+                {
+                    var v = this.allPopGoodsInfoViewModels[i];
+                    if (v.PopGoodsInfo.Skus.Any(o => string.IsNullOrWhiteSpace(o.Code)))
+                    {
+                        v.State = "有SKU库存编码为空";
+                    }
+                    if (this.allPopGoodsInfoViewModels.Any(obj => obj != v && obj.SkuCodesInfo.Equals(v.SkuCodesInfo, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        v.State += "商品重复";
+                    }
+                }
+                if (this.allPopGoodsInfoViewModels.Any(obj => string.IsNullOrWhiteSpace(obj.State) == false))
+                {
+                    MessageBox.Show("下载完成，有商品库存编码为空或者商品重复");
+                }
+                else
+                {
+                    MessageBox.Show("下载完成");
+                }
+                this.goodsDownloadWorker = null;
+                this.dgvGoods.ItemsSource = this.allPopGoodsInfoViewModels.ToArray();
             }));
         }
 
@@ -503,7 +484,7 @@ namespace ShopErp.App.Views.Goods
             try
             {
                 var allGoods = ServiceContainer.GetService<GoodsService>().GetByAll(this.lastShop.Id, GoodsState.UPLOADED, 0, Utils.DateTimeUtil.DbMinTime, Utils.DateTimeUtil.DbMinTime, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", "", "", 0, 0).Datas.OrderBy(obj => obj.VendorId).ToList();
-                var popGoods = this.popGoodsInfoViewModels.ToList();
+                var popGoods = this.allPopGoodsInfoViewModels.ToList();
                 var vendors = ServiceContainer.GetService<VendorService>().GetByAll("", "", "", "", 0, 0).Datas.ToList();
 
                 List<ShopErp.Domain.Goods> unMatchGoods = new List<ShopErp.Domain.Goods>();
@@ -710,13 +691,13 @@ namespace ShopErp.App.Views.Goods
                 var item = ServiceContainer.GetService<GoodsTaskService>().GetByAll(lastShop.Id, 0, 0).Datas;
                 string content = System.IO.File.ReadAllText(ofd.FileName);
                 var arr = Newtonsoft.Json.JsonConvert.DeserializeObject<PopGoodsInfoViewModel[]>(content);
-                this.popGoodsInfoViewModels.Clear();
+                this.allPopGoodsInfoViewModels.Clear();
                 foreach (var v in arr)
                 {
                     v.GoodsTask = item.FirstOrDefault(obj => obj.GoodsId == v.PopGoodsInfo.Id);
-                    this.popGoodsInfoViewModels.Add(v);
+                    this.allPopGoodsInfoViewModels.Add(v);
                 }
-                this.dgvGoods.ItemsSource = this.popGoodsInfoViewModels.ToArray();
+                this.dgvGoods.ItemsSource = this.allPopGoodsInfoViewModels.ToArray();
             }
             catch (Exception ex)
             {
@@ -734,7 +715,7 @@ namespace ShopErp.App.Views.Goods
                 PopGoodsState state = this.cbbStatus.GetSelectedEnum<PopGoodsState>();
                 List<PopGoodsInfoViewModel> goods = new List<PopGoodsInfoViewModel>();
                 //第一步过滤
-                foreach (var v in this.popGoodsInfoViewModels)
+                foreach (var v in this.allPopGoodsInfoViewModels)
                 {
                     if (string.IsNullOrWhiteSpace(code) == false && v.PopGoodsInfo.Code != code)
                     {
