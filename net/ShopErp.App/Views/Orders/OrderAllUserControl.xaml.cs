@@ -489,7 +489,7 @@ namespace ShopErp.App.Views.Orders
             }
         }
 
-        private void btnPrintOrderGoodsButton_Click(object sender, RoutedEventArgs e)
+        private void btnModifyPriceButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -506,19 +506,7 @@ namespace ShopErp.App.Views.Orders
                     MessageBox.Show("Tag对象不为OrderGoods");
                     return;
                 }
-                var goodsTemplate = LocalConfigService.GetValue(SystemNames.CONFIG_GOODS_TEMPLATE, "");
-                if (string.IsNullOrWhiteSpace(goodsTemplate))
-                {
-                    throw new Exception("系统中没有配置商品模板不能打印");
-                }
-                var template = PrintTemplateService.GetAllLocal().FirstOrDefault(obj => obj.Type == PrintTemplate.TYPE_GOODS && obj.Name == goodsTemplate);
-                if (template == null)
-                {
-                    throw new Exception("系统中配置的商品模板:" + goodsTemplate + "不存在，或者类型不对");
-                }
-                var gpd = new GoodsPrintDocument();
-                string printer = LocalConfigService.GetValue(SystemNames.CONFIG_PRINTER_GOODS_BARCODE, "");
-                gpd.StartPrint(new OrderGoods[] { orderGoods }, printer, false, template);
+                new OrderGoodsModifyPriceWindow() { OrderGoods = orderGoods }.Show();
             }
             catch (Exception ex)
             {

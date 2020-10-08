@@ -75,7 +75,7 @@ namespace ShopErp.App.Views.Orders
                 }
                 this.isRunning = true;
                 this.Dispatcher.BeginInvoke(new Action(() => this.btnUpdate.Content = "停止"));
-                var shop = MainWindow.ProgramMainWindow.QueryUserControlInstance<AttachUI.TaobaoUserControl>().GetLoginShop();
+                var shop = MainWindow.ProgramMainWindow.QueryUserControlInstance<AttachUI.Taobao.TaobaoUserControl>().GetLoginShop();
                 var ors = ServiceContainer.GetService<OrderUpdateService>().GetByAll(new long[] { shop.Id }, popOrderId, startTime, endTime, 0, 0);
                 var orders = ors.Datas.Where(obj => string.IsNullOrWhiteSpace(obj.PopOrderId) == false).ToArray();
                 if (orders.Length < 1)

@@ -46,7 +46,7 @@ namespace ShopErp.App.Views.Delivery
 
         private void btnRefresh_Click(object sender, RoutedEventArgs e)
         {
-            AttachUI.TaobaoUserControl taobaoUserControl = null;
+            AttachUI.Taobao.TaobaoUserControl taobaoUserControl = null;
             try
             {
                 if (this.isRunning)
@@ -55,7 +55,7 @@ namespace ShopErp.App.Views.Delivery
                     return;
                 }
 
-                taobaoUserControl = MainWindow.ProgramMainWindow.QueryUserControlInstance<AttachUI.TaobaoUserControl>();
+                taobaoUserControl = MainWindow.ProgramMainWindow.QueryUserControlInstance<AttachUI.Taobao.TaobaoUserControl>();
                 taobaoUserControl.OrderDownload += TaobaoUserControl_OrderDownload;
                 taobaoUserControl.OrderPreviewDownload += TaobaoUserControl_OrderPreviewDownload;
 
@@ -119,7 +119,7 @@ namespace ShopErp.App.Views.Delivery
             e.Skip = true;
             if (odInDb.PopFlag != e.PopFlag)
             {
-                odInDb.PopSellerComment = (sender as AttachUI.IAttachUI).GetSellerComment(e.PopOrderId);
+                odInDb.PopSellerComment = (sender as AttachUI.IAttachUIOrder).GetSellerComment(e.PopOrderId);
                 odInDb.PopFlag = e.PopFlag;
                 ServiceContainer.GetService<OrderService>().Update(odInDb);
             }
@@ -189,7 +189,7 @@ namespace ShopErp.App.Views.Delivery
                             throw new Exception("快递单号为空");
                         }
                         var dc = dcs.FirstOrDefault(obj => obj.Name == o.DeliveryCompany).PopMapTaobao;
-                        MainWindow.ProgramMainWindow.QueryUserControlInstance<AttachUI.TaobaoUserControl>().MarkPopDelivery(o.Source.PopOrderId, dc, o.DeliveryNumber);
+                        MainWindow.ProgramMainWindow.QueryUserControlInstance<AttachUI.Taobao.TaobaoUserControl>().MarkPopDelivery(o.Source.PopOrderId, dc, o.DeliveryNumber);
                         o.State = "标记成功";
                         o.Background = null;
                     }

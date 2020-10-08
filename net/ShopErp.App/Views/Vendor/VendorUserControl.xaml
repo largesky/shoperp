@@ -31,6 +31,7 @@
             <Button Name="btnDelete" Content="删除" Margin="3" VerticalAlignment="Center" Width="60" FontSize="12"
                     Click="btnDelete_Click" />
             <Button Name="btnGenMarketAddressShort" Content="生成成都默认短地址" Margin="3" VerticalAlignment="Center" Width="120"  Click="BtnGenMarketAddressShort_Click"/>
+            <Button x:Name="btnUpdateVendor" Content="更新厂家信息" Margin="3" VerticalAlignment="Center" Width="120" Click="btnUpdateVendor_Click"/>
             <TextBlock Name="tbMsg" Margin="3"></TextBlock>
         </StackPanel>
 

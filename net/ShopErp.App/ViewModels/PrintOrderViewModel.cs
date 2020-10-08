@@ -164,7 +164,7 @@ namespace ShopErp.App.ViewModels
             this.ReceiverMobile = order.ReceiverMobile;
             this.ReceiverName = order.ReceiverName;
             this.ReceiverAddress = order.ReceiverAddress;
-            this.IsChecked = true;
+            this.IsChecked = order.Type == OrderType.SHUA ? false : true;
             this.UpdateDoorNumber();
             this.UpdateGoodsInfo();
         }

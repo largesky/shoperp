@@ -26,10 +26,10 @@ namespace ShopErp.App.Service.Net
             var timeout = System.Diagnostics.Debugger.IsAttached ? new TimeSpan(1, 23, 59, 59) : new TimeSpan(0, NETWORK_MAX_TIME_OUT, 0);
             var client = new System.Net.Http.HttpClient(new System.Net.Http.HttpClientHandler { UseCookies = false, AutomaticDecompression = System.Net.DecompressionMethods.GZip | System.Net.DecompressionMethods.Deflate }) { Timeout = timeout };
             var httpRequestMessage = new System.Net.Http.HttpRequestMessage(httpMethod, url);
-            httpRequestMessage.Headers.Add("Accept", "*/*");
-            httpRequestMessage.Headers.Add("Accept-Encoding", "gzip, deflate, br");
+            httpRequestMessage.Headers.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
+            httpRequestMessage.Headers.Add("Accept-Encoding", "gzip,deflate");
             httpRequestMessage.Headers.Add("Accept-Language", "zh-CN,zh;q=0.9");
-            httpRequestMessage.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36");
+            httpRequestMessage.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36 Edg/85.0.564.68");
 
             if (string.IsNullOrWhiteSpace(referer) == false)
             {

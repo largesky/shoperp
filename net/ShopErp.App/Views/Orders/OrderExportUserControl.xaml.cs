@@ -123,21 +123,11 @@ namespace ShopErp.App.Views.Orders
 
                 double shippMoney = LocalConfigService.GetValueDouble(SystemNames.CONFIG_SHIPP_MONEY, 2.5);
                 var shops = ServiceContainer.GetService<ShopService>().GetByAll().Datas;
-                var allGoods = ServiceContainer.GetService<GoodsService>().GetByAll(0, GoodsState.NONE, 0, DateTimeUtil.DbMinTime, DateTimeUtil.DbMinTime, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", "", "", 0, 0).Datas;
                 List<string[]> contents = new List<string[]>();
                 foreach (var order in orders)
                 {
-                    var ogs = OrderService.FilterOrderGoodsCanbeSend(order);
                     int goodsCount = OrderService.CountGoodsCanbeSend(order);
-                    int goodsMoney = 0;
-                    foreach (var og in ogs.Where(obj => obj.GoodsId > 0))
-                    {
-                        var g = allGoods.FirstOrDefault(obj => obj.Id == og.GoodsId);
-                        if (g != null)
-                        {
-                            goodsMoney += (int)g.Price + ((og.Edtion.Contains("加毛") || og.Edtion.Contains("厚毛") || og.Edtion.Contains("绒里")) ? g.JiamaoAddPrice : 0);
-                        }
-                    }
+                    int goodsMoney = (int)OrderService.FilterOrderGoodsCanbeSend(order).Select(obj => obj.Price).Sum();
                     string[] ss = new string[] { shops.FirstOrDefault(obj => obj.Id == order.ShopId).Mark, DateTimeUtil.FormatDateTime(order.PopPayTime), OrderService.FormatGoodsInfoCanbeSend(order), order.DeliveryNumber, order.PopSellerComment, order.ReceiverName, order.ReceiverMobile, goodsMoney.ToString(), (shippMoney * goodsCount).ToString("F1") };
                     if (order.PopType != ShopErp.Domain.PopType.TMALL)
                     {

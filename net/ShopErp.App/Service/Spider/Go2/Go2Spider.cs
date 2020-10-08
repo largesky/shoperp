@@ -12,9 +12,9 @@ namespace ShopErp.App.Service.Spider.Go2
     {
         private readonly Dictionary<string, string> empty_value_dic = new Dictionary<string, string>();
 
-        private HtmlAgilityPack.HtmlDocument GetHtmlDocWithRetry(string url)
+        private HtmlAgilityPack.HtmlDocument GetHtmlDocWithRetry(string url, Dictionary<string, string> httpHeaders)
         {
-            string html = MsHttpRestful.GetReturnString(url, null);
+            string html = MsHttpRestful.GetReturnString(url, httpHeaders);
             HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(html);
             return doc;
@@ -23,7 +23,7 @@ namespace ShopErp.App.Service.Spider.Go2
         public override Goods GetGoodsInfoByUrl(string url, ref string vendorHomePage, ref string videoUrl, bool raiseExceptionOnGoodsNotSale)
         {
             Goods g = new Goods { Comment = "", CreateTime = DateTime.Now, Image = "", Number = "", Price = 0, Type = 0, UpdateEnabled = true, UpdateTime = DateTime.Now, Url = url, VendorId = 0, Weight = 0, Id = 0, Colors = "", CreateOperator = "", Flag = ColorFlag.UN_LABEL, IgnoreEdtion = false, ImageDir = "", Material = "", Shops = new List<GoodsShop>(), JiamaoAddPrice = 0, VideoType = GoodsVideoType.NONE, Shipper = "CD" };
-            var htmlDoc = this.GetHtmlDocWithRetry(url);
+            var htmlDoc = this.GetHtmlDocWithRetry(url, null);
 
             //商品已删除 
             if (htmlDoc.DocumentNode.InnerHtml.Contains("该商品不存在或已删除"))
@@ -155,10 +155,10 @@ namespace ShopErp.App.Service.Spider.Go2
             return g;
         }
 
-        public override Vendor GetVendorInfoByUrl(string url)
+        public override Vendor GetVendorInfoByUrl(string url, Dictionary<string, string> httpHeaders)
         {
             Vendor ven = new Vendor { AveragePrice = 0, Count = 1, CreateTime = DateTime.Now, HomePage = "", Id = 0, MarketAddress = "", Name = "", PingyingName = "", Watch = false, Comment = "", Alias = "", MarketAddressShort = "" };
-            var doc = this.GetHtmlDocWithRetry(url);
+            var doc = this.GetHtmlDocWithRetry(url, httpHeaders);
             //获取厂家名称url地址
             var vendorUrlNode = doc.DocumentNode.SelectSingleNode("//a[contains(@class,'merchant-title')]");
             if (vendorUrlNode == null)

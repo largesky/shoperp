@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ShopErp.App.Views.AttachUI
 {
-    public interface IAttachUI
+    public interface IAttachUIOrder
     {
         event EventHandler Start;
 

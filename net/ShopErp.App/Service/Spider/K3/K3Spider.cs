@@ -96,10 +96,10 @@ namespace ShopErp.App.Service.Spider.K3
             return g;
         }
 
-        public override Vendor GetVendorInfoByUrl(string url)
+        public override Vendor GetVendorInfoByUrl(string url, Dictionary<string, string> httpHeaders)
         {
             var vendor = new Vendor { Alias = "", AveragePrice = 0, Comment = "", Count = 0, CreateTime = DateTime.Now, HomePage = "", Id = 0, MarketAddress = "", MarketAddressShort = "", Name = "", PingyingName = "", Watch = false };
-            string html = MsHttpRestful.GetReturnString(url, null);
+            string html = MsHttpRestful.GetReturnString(url, httpHeaders);
             HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(html);
 

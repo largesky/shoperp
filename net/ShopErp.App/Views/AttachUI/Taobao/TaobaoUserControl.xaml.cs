@@ -25,12 +25,12 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ShopErp.App.Views.AttachUI
+namespace ShopErp.App.Views.AttachUI.Taobao
 {
     /// <summary>
     /// TaobaoUserControl.xaml 的交互逻辑
     /// </summary>
-    public partial class TaobaoUserControl : UserControl, IAttachUI
+    public partial class TaobaoUserControl : UserControl, IAttachUIOrder
     {
         string jsgetua = "window.uabModule && window.uabModule.getUA({Token: window.UA_TOKEN})";
 

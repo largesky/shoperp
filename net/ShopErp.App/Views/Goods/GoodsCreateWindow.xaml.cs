@@ -139,7 +139,7 @@ namespace ShopErp.App.Views.Goods
                 }
                 if (vendor == null)
                 {
-                    vendor = SpiderBase.CreateSpider(url).GetVendorInfoByUrl(url);
+                    vendor = SpiderBase.CreateSpider(url).GetVendorInfoByUrl(url,null);
                     vendor.Id = ServiceContainer.GetService<VendorService>().Save(vendor);
                 }
                 goods.VendorId = vendor.Id;

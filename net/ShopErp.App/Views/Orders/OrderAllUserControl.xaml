@@ -50,8 +50,8 @@
         <Style x:Key="CreateReturnButton" TargetType="Button" BasedOn="{StaticResource TextButton}">
             <EventSetter Event="Click" Handler="btnCreateReturn_Click" />
         </Style>
-        <Style x:Key="PrintOrderGoodsButton" TargetType="Button" BasedOn="{StaticResource TextButton}">
-            <EventSetter Event="Click" Handler="btnPrintOrderGoodsButton_Click" />
+        <Style x:Key="ModifyPriceButton" TargetType="Button" BasedOn="{StaticResource TextButton}">
+            <EventSetter Event="Click" Handler="btnModifyPriceButton_Click" />
         </Style>
         <Style x:Key="CreateReturnCashButton" TargetType="Button" BasedOn="{StaticResource TextButton}">
             <EventSetter Event="Click" Handler="btnCreateReturnCashButton_Click" />
@@ -392,9 +392,9 @@
                                                                                             Grid.Row="2"
                                                                                             HorizontalAlignment="Right"
                                                                                             Orientation="Horizontal">
-                                                                                    <Button Content="打印信息"
-                                                                                            Name="btnPrintOrderGoods"
-                                                                                            Style="{StaticResource PrintOrderGoodsButton}"
+                                                                                    <Button Content="改批发价"
+                                                                                            Name="btnModifyPrice"
+                                                                                            Style="{StaticResource ModifyPriceButton}"
                                                                                             Tag="{Binding}" Margin="3"
                                                                                             VerticalAlignment="Center" />
                                                                                     <Button Content="缺货设置"

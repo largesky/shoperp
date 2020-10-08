@@ -104,7 +104,8 @@ namespace ShopErp.App
             mcs.Add(mc);
 
             mc = new MenuConfig("外接窗口", null);
-            mc.Add("淘宝登录", typeof(TaobaoUserControl));
+            mc.Add("淘宝登录", typeof(Views.AttachUI.Taobao.TaobaoUserControl));
+            mc.Add("GO2登录", typeof(Views.AttachUI.Go2.Go2UserControl));
             mcs.Add(mc);
             Menus = mcs.ToArray();
         }

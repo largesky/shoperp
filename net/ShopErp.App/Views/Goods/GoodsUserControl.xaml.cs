@@ -777,7 +777,7 @@ namespace ShopErp.App.Views.Goods
                 {
                     CheckPt(v);
                 }
-                var tu = MainWindow.ProgramMainWindow.QueryUserControlInstance<TaobaoUserControl>();
+                var tu = MainWindow.ProgramMainWindow.QueryUserControlInstance<AttachUI.Taobao.TaobaoUserControl>();
                 var shop = tu.GetLoginShop();
                 if (shop == null)
                 {
@@ -800,7 +800,7 @@ namespace ShopErp.App.Views.Goods
         {
             try
             {
-                var tu = MainWindow.ProgramMainWindow.QueryUserControlInstance<TaobaoUserControl>();
+                var tu = MainWindow.ProgramMainWindow.QueryUserControlInstance<AttachUI.Taobao.TaobaoUserControl>();
                 string webDir = LocalConfigService.GetValue(SystemNames.CONFIG_WEB_IMAGE_DIR);
                 this.Dispatcher.BeginInvoke(new Action(() => this.btnUploadImage.Content = "停止传图"));
                 this.isStop = false;

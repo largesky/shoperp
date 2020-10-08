@@ -344,10 +344,13 @@
     <Compile Include="ViewModels\PrintTemplateItemViewModelForRandom.cs" />
     <Compile Include="ViewModels\PrintTemplateItemViewModelForText.cs" />
     <Compile Include="ViewModels\ShopDownloadViewModel.cs" />
-    <Compile Include="Views\AttachUI\IAttachUI.cs" />
+    <Compile Include="Views\AttachUI\Go2\Go2UserControl.xaml.cs">
+      <DependentUpon>Go2UserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\AttachUI\IAttachUIOrder.cs" />
     <Compile Include="Views\AttachUI\AttachUiOrderDownloadEventArgs.cs" />
     <Compile Include="Views\AttachUI\AttachUIOrderPreviewDownloadEventArgs.cs" />
-    <Compile Include="Views\AttachUI\TaobaoUserControl.xaml.cs">
+    <Compile Include="Views\AttachUI\Taobao\TaobaoUserControl.xaml.cs">
       <DependentUpon>TaobaoUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Config\ConfigUserControl.xaml.cs">
@@ -378,6 +381,9 @@
     </Compile>
     <Compile Include="Views\Orders\OrderExportUserControl.xaml.cs">
       <DependentUpon>OrderExportUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Orders\OrderGoodsModifyPriceWindow.xaml.cs">
+      <DependentUpon>OrderGoodsModifyPriceWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Orders\OrderImportDeliveryUserControl.xaml.cs">
       <DependentUpon>OrderImportDeliveryUserControl.xaml</DependentUpon>
@@ -658,7 +664,11 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\AttachUI\TaobaoUserControl.xaml">
+    <Page Include="Views\AttachUI\Go2\Go2UserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\AttachUI\Taobao\TaobaoUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -691,6 +701,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Orders\OrderExportUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Orders\OrderGoodsModifyPriceWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

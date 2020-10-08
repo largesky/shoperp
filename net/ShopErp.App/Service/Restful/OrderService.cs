@@ -169,6 +169,14 @@ namespace ShopErp.App.Service.Restful
             return DoPost<ResponseBase>(para);
         }
 
+        public ResponseBase ModifyOrderGoodsPrice(long orderGoodsId, float price)
+        {
+            Dictionary<string, object> para = new Dictionary<string, object>();
+            para["orderGoodsId"] = orderGoodsId;
+            para["price"] = price;
+            return DoPost<ResponseBase>(para);
+        }
+
         public ResponseBase ResetPrintState(long orderId)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();

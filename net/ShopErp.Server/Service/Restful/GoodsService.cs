@@ -226,12 +226,10 @@ namespace ShopErp.Server.Service.Restful
             string stock = og.Number.Contains("&") || og.Number.Contains(" ") ? og.Number : og.Vendor + "&" + og.Number;
             string[] stocks = stock.Split(new char[] { '&', ' ' }, StringSplitOptions.RemoveEmptyEntries);
             string rawVendor = null, rawNumber = null;
-
             if (stocks.Length != 2)
             {
                 return null;
             }
-
             rawVendor = stocks[0].Trim();
             rawNumber = stocks[1].Trim();
             var g = ParseGoods(rawVendor, rawNumber).First;
@@ -239,12 +237,13 @@ namespace ShopErp.Server.Service.Restful
             {
                 return null;
             }
-
             og.Number = g.Number;
             og.GoodsId = g.Id;
             og.Image = g.Image;
             og.Weight = g.Weight;
-            og.Price = g.Price;
+            og.Price = g.Price + ((og.Edtion.Contains("加毛") || og.Edtion.Contains("厚毛") || og.Edtion.Contains("绒里")) ? g.JiamaoAddPrice : 0);
+            og.Shipper = g.Shipper;
+            og.Edtion = g.IgnoreEdtion ? string.Empty : og.Edtion;
             og.Vendor = ServiceContainer.GetService<VendorService>().GetVendorName(g.VendorId).data;
             return g;
         }

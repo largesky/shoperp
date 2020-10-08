@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -12,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ShopErp.App.CefSharpUtils;
 using ShopErp.App.Service.Restful;
 using ShopErp.App.Service.Spider;
 using ShopErp.App.Views.Extenstions;
@@ -269,6 +271,68 @@ namespace ShopErp.App.Views.Vendor
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void btnUpdateVendor_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var vendors = this.dgvVendors.ItemsSource as List<ShopErp.Domain.Vendor>;
+                if (vendors == null || vendors.Count < 1)
+                {
+                    throw new Exception("没有厂家数据，请先查询");
+                }
+
+                var cookie = CefCookieVisitor.GetCookieValue(".go2.cn");
+                int count = 0;
+                foreach (var v in vendors)
+                {
+                    if (string.IsNullOrWhiteSpace(v.HomePage))
+                    {
+                        continue;
+                    }
+                    var sb = SpiderBase.CreateSpider(v.HomePage);
+                    try
+                    {
+                        var nv = sb.GetVendorInfoByUrl(v.HomePage + '/', cookie);
+                        bool needUpdate = false;
+                        if (v.Name.Equals(nv.Name, StringComparison.OrdinalIgnoreCase) == false)
+                        {
+                            v.Name = nv.Name;
+                            v.PingyingName = "";
+                            needUpdate = true;
+                        }
+                        if (v.MarketAddress != nv.MarketAddress)
+                        {
+                            v.MarketAddress = nv.MarketAddress;
+                            if (v.MarketAddress.Contains("成都"))
+                            {
+                                v.MarketAddressShort = VendorService.FormatVendorDoor(v.MarketAddress);
+                            }
+                            needUpdate = true;
+                        }
+                        if (needUpdate)
+                        {
+                            ServiceContainer.GetService<VendorService>().Update(v);
+                        }
+                        v.Comment = needUpdate ? "更新成功" : "不需要更新";
+                    }
+                    catch (Exception ee)
+                    {
+                        v.Comment += ee.Message;
+                    }
+                    this.tbMsg.Text = String.Format("已经更新：{0}/{1},等待10秒后更新下一个", ++count, vendors.Count);
+                    for (int i = 0; i < 10; i++)
+                    {
+                        WPFHelper.DoEvents();
+                        Thread.Sleep(1000);
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message);
             }
         }
     }

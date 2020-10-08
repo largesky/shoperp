@@ -172,7 +172,7 @@ namespace ShopErp.App.Views.Goods
                     }
                     if (this.lastShop.AppEnabled == false)
                     {
-                        var ss = MainWindow.ProgramMainWindow.QueryUserControlInstance<AttachUI.TaobaoUserControl>().GetLoginShop();
+                        var ss = MainWindow.ProgramMainWindow.QueryUserControlInstance<AttachUI.Taobao.TaobaoUserControl>().GetLoginShop();
                         if (ss.Id != lastShop.Id)
                         {
                             throw new Exception("当前选择店铺与登录店铺不一样");
@@ -613,7 +613,7 @@ namespace ShopErp.App.Views.Goods
                 {
                     throw new Exception("只有淘宝天猫可以进行匹配");
                 }
-                var rsp = MainWindow.ProgramMainWindow.QueryUserControlInstance<AttachUI.TaobaoUserControl>().GetImageDirRsp();
+                var rsp = MainWindow.ProgramMainWindow.QueryUserControlInstance<AttachUI.Taobao.TaobaoUserControl>().GetImageDirRsp();
                 var imageDirs = rsp.module.dirs.children.FirstOrDefault(obj => obj.name == "商品图片").children.Select(obj => obj.name).ToArray();
                 var allGoods = ServiceContainer.GetService<GoodsService>().GetByAll((this.cbbShops.SelectedItem as Shop).Id, GoodsState.UPLOADED, 0, Utils.DateTimeUtil.DbMinTime, Utils.DateTimeUtil.DbMinTime, "", "", GoodsType.GOODS_SHOES_NONE, "", ColorFlag.None, GoodsVideoType.NONE, "", "", "", 0, 0).Datas.OrderBy(obj => obj.VendorId).ToList();
                 var vendors = ServiceContainer.GetService<VendorService>().GetByAll("", "", "", "", 0, 0).Datas.ToList();

@@ -181,15 +181,6 @@ namespace ShopErp.Server.Service.Restful
                     item.Edtion = string.IsNullOrWhiteSpace(edtion) ? item.Edtion : edtion;
                     item.Size = string.IsNullOrWhiteSpace(size) ? item.Size : size;
                     Goods g = ServiceContainer.GetService<GoodsService>().ParsePopOrderGoodsNumber(item);
-                    if (g != null)
-                    {
-                        item.Shipper = g.Shipper;
-                        item.Edtion = g.IgnoreEdtion ? string.Empty : item.Edtion;
-                    }
-                    else
-                    {
-                        item.Shipper = "";
-                    }
                 }
                 order.ParseResult = order.OrderGoodss.All(o => o.GoodsId > 0);
             }
@@ -934,6 +925,31 @@ namespace ShopErp.Server.Service.Restful
                     }
                     throw;
                 }
+                return ResponseBase.SUCCESS;
+            }
+            catch (WebFaultException<ResponseBase>)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new WebFaultException<ResponseBase>(new ResponseBase(ex.Message), System.Net.HttpStatusCode.OK);
+            }
+        }
+
+        [OperationContract]
+        [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/modifyordergoodsprice.html")]
+        public ResponseBase ModifyOrderGoodsPrice(long orderGoodsId, float price)
+        {
+            try
+            {
+                var og = this.ogDao.GetById(orderGoodsId);
+                if (og == null)
+                {
+                    throw new Exception("订单商品编号：" + orderGoodsId + " 未找到");
+                }
+                og.Price = price;
+                this.ogDao.Update(og);
                 return ResponseBase.SUCCESS;
             }
             catch (WebFaultException<ResponseBase>)
