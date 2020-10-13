@@ -323,7 +323,7 @@ namespace ShopErp.App.Service.Restful
             {
                 sb.Append(VendorService.FormatVendorName(goods.Vendor) + " " + goods.Number + goods.Edtion + goods.Color + goods.Size + " (" + goods.Count + ") ");
             }
-            return sb.ToString();
+            return sb.ToString().Trim();
         }
 
         public static int CountGoodsCanbeSend(Order order)

@@ -103,35 +103,14 @@ namespace ShopErp.App.Views.Print
                 vms[i] = vm;
             }
             this.tbTotalCount.Text = "当前订单总数: " + orders.Length;
-            CheckOrder(vms);
 
-            var groups = vms.GroupBy(obj => obj.DeliveryCompany).ToArray();
+            var groups = vms.GroupBy(obj => obj.Source.DeliveryCompany).ToArray();
             this.printOrderPages.Clear();
             foreach (var g in groups)
             {
                 var p = new PrintOrderPageViewModel(g.ToArray(), this.cbbShippers.Text.Trim());
                 this.printOrderPages.Add(p);
                 p.LoadBarValue();
-            }
-        }
-
-        private void CheckOrder(PrintOrderViewModel[] ovs)
-        {
-            bool notify = false;
-            foreach (var ov in ovs)
-            {
-                ov.State = "";
-                if (ov.Source.ParseResult == false)
-                {
-                    ov.Background = Brushes.Red;
-                    notify = true;
-                    ov.State = "商品解析失败";
-                }
-            }
-
-            if (notify)
-            {
-                MessageBox.Show("有异常订单修正后打印");
             }
         }
 
@@ -514,8 +493,6 @@ namespace ShopErp.App.Views.Print
                     item.ReceiverAddress = item.Source.ReceiverAddress;
                     item.ReceiverMobile = item.Source.ReceiverMobile;
                     item.ReceiverName = item.Source.ReceiverName;
-                    item.ReceiverPhone = item.Source.ReceiverPhone;
-                    CheckOrder(new PrintOrderViewModel[] { item });
                 }
             }
             catch (Exception ex)

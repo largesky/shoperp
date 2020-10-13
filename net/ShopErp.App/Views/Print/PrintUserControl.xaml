@@ -134,8 +134,8 @@
                                         <TextBox  Name="tbPrintServerAdd" Text="{Binding PrintServerAdd}" Margin="3" VerticalAlignment="Center" />
                                         <TextBlock Text="打印机：" Margin="3" VerticalAlignment="Center"/>
                                         <ComboBox x:Name="cbbPritners" ItemsSource="{Binding Printers}" SelectedItem="{Binding Printer}" Width="100" VerticalAlignment="Center"/>
+                                        <CheckBox IsChecked="{Binding AutoUpload}" Content="：自动上传" FlowDirection="RightToLeft" VerticalAlignment="Center" Margin="3"/>
                                         <Button Name="btnPrint" Content="{Binding PrintButtonString}"  VerticalAlignment="Center" Width="60" ClickMode="Release"  Click="btnPrint_Click" Margin="3"/>
-                                        <TextBlock Margin="3" Text="{Binding WorkStateMessage}"  VerticalAlignment="Center"/>
                                     </StackPanel>
 
                                     <DataGrid Grid.Row="1" IsReadOnly="True" Margin="3" Name="dgOrders" Sorting="DataGrid_Sorting"  Style="{StaticResource ResourceKey=OrderDataGridStyle}" ItemsSource="{Binding OrderViewModels}" Tag="{Binding}">
@@ -165,18 +165,14 @@
                                                 </DataGridCheckBoxColumn.HeaderTemplate>
                                             </DataGridCheckBoxColumn>
                                             <DataGridTextColumn Header="类型" Binding="{Binding Source.Type,Converter={StaticResource descriptionConverter}}" IsReadOnly="True"/>
-                                            <DataGridTextColumn Header="编号" Binding="{Binding Source.Id}" Width="Auto" IsReadOnly="True"/>
                                             <DataGridTextColumn Header="店铺" Binding="{Binding Source.ShopId,Converter={StaticResource shopMarkConverter}}" Width="Auto" IsReadOnly="True" />
                                             <DataGridTextColumn Header="买家账号" Binding="{Binding Source.PopBuyerId}" Width="Auto" IsReadOnly="True"/>
                                             <DataGridTextColumn Header="付款时间" Binding="{Binding Source.PopPayTime, Converter={StaticResource datetimeConverter}}" Width="Auto" IsReadOnly="True"/>
                                             <DataGridTextColumn Header="商品信息" Binding="{Binding Goods}" Width="250" IsReadOnly="True"/>
-                                            <DataGridTextColumn Header="门牌编号" Binding="{Binding DoorNumber}" Width="Auto" IsReadOnly="True"/>
-                                            <DataGridTextColumn Header="处理状态" Binding="{Binding State}" Width="Auto" IsReadOnly="True"/>
                                             <DataGridTextColumn Header="快递单号" Binding="{Binding DeliveryNumber}" Width="Auto" IsReadOnly="True"/>
                                             <DataGridTextColumn Header="卖家备注" Binding="{Binding Source.PopSellerComment}" Width="Auto" IsReadOnly="True"/>
                                             <DataGridTextColumn Header="买家备注" Binding="{Binding Source.PopBuyerComment}" Width="250" IsReadOnly="True"/>
                                             <DataGridTextColumn Header="收件人姓名" Binding="{Binding ReceiverName}" Width="Auto" IsReadOnly="True" />
-                                            <DataGridTextColumn Header="收件人电话" Binding="{Binding ReceiverPhone}" Width="Auto" IsReadOnly="True"/>
                                             <DataGridTextColumn Header="收件人手机" Binding="{Binding ReceiverMobile}" Width="Auto" IsReadOnly="True"/>
                                             <DataGridTextColumn Header="收件人地址" Binding="{Binding ReceiverAddress}" Width="Auto" IsReadOnly="True"/>
                                         </DataGrid.Columns>

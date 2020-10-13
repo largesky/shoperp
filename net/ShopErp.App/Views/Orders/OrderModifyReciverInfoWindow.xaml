@@ -19,8 +19,6 @@
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Grid.Column="0" Text="收货人姓名:" Margin="3" VerticalAlignment="Center" />
         <TextBox Grid.Row="0" Grid.Column="1" Name="tbReceiverName" Margin="3" VerticalAlignment="Center" />
-        <TextBlock Grid.Row="1" Grid.Column="0" Text="收货人座机:" Margin="3" VerticalAlignment="Center" />
-        <TextBox Grid.Row="1" Grid.Column="1" Name="tbReceiverPhone" Margin="3" VerticalAlignment="Center" />
         <TextBlock Grid.Row="2" Grid.Column="0" Text="收货人手机:" Margin="3" VerticalAlignment="Center" />
         <TextBox Grid.Row="2" Grid.Column="1" Name="tbReceiverMobile" Margin="3" VerticalAlignment="Center" />
         <TextBlock Grid.Row="3" Grid.Column="0" Text="收货人地址:" Margin="3" VerticalAlignment="Center" />

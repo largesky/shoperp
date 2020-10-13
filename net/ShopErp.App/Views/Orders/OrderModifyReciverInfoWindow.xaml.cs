@@ -34,7 +34,6 @@ namespace ShopErp.App.Views.Orders
             this.tbReceiverAddress.Text = this.Order.ReceiverAddress;
             this.tbReceiverMobile.Text = this.Order.ReceiverMobile;
             this.tbReceiverName.Text = this.Order.ReceiverName;
-            this.tbReceiverPhone.Text = this.Order.ReceiverPhone;
         }
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
@@ -43,11 +42,9 @@ namespace ShopErp.App.Views.Orders
             {
                 string add = this.tbReceiverAddress.Text.Trim();
                 string mobile = this.tbReceiverMobile.Text.Trim();
-                string phone = this.tbReceiverPhone.Text.Trim();
                 string name = this.tbReceiverName.Text.Trim();
 
-                if (add.Equals(this.Order.ReceiverAddress.Trim()) && mobile.Equals(Order.ReceiverMobile.Trim()) &&
-                    phone.Equals(Order.ReceiverPhone.Trim()) && name.Equals(Order.ReceiverName))
+                if (add.Equals(this.Order.ReceiverAddress.Trim()) && mobile.Equals(Order.ReceiverMobile.Trim())&& name.Equals(Order.ReceiverName))
                 {
                     throw new Exception("信息全部相同,未保存");
                 }
@@ -67,7 +64,6 @@ namespace ShopErp.App.Views.Orders
 
                 Order.ReceiverAddress = add;
                 Order.ReceiverMobile = mobile;
-                Order.ReceiverPhone = phone;
                 Order.ReceiverName = name;
                 ServiceContainer.GetService<OrderService>().Update(Order);
                 MessageBox.Show("修改成功");

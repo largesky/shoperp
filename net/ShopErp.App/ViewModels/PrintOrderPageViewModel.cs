@@ -31,8 +31,6 @@ namespace ShopErp.App.ViewModels
 {
     class PrintOrderPageViewModel : DependencyObject
     {
-        public static readonly DependencyProperty WorkStateMessageProperty = DependencyProperty.Register("WorkStateMessage", typeof(string), typeof(PrintOrderPageViewModel));
-
         public static readonly DependencyProperty PrintButtonStringProperty = DependencyProperty.Register("PrintButtonString", typeof(string), typeof(PrintOrderPageViewModel));
 
         public static readonly DependencyProperty SelectedCountProperty = DependencyProperty.Register("SelectedCount", typeof(int), typeof(PrintOrderPageViewModel));
@@ -57,6 +55,8 @@ namespace ShopErp.App.ViewModels
 
         public static readonly DependencyProperty YOffsetProperty = DependencyProperty.Register("YOffset", typeof(int), typeof(PrintOrderPageViewModel));
 
+        public static readonly DependencyProperty AutoUploadProperty = DependencyProperty.Register("AutoUpload", typeof(bool), typeof(PrintOrderPageViewModel));
+
         private PrintHistoryService printHistoryService = ServiceContainer.GetService<PrintHistoryService>();
 
         private OrderService orderService = ServiceContainer.GetService<OrderService>();
@@ -73,8 +73,6 @@ namespace ShopErp.App.ViewModels
 
         private DeliveryPrintDocument printDoc;
 
-        private Dictionary<Order, List<PrintOrderViewModel>> orderVmToOrder;
-
         private string shipper;
 
         public bool IsUserStop { get; set; }
@@ -85,12 +83,6 @@ namespace ShopErp.App.ViewModels
         {
             get { return (string)this.GetValue(TitleProperty); }
             set { this.SetValue(TitleProperty, value); }
-        }
-
-        public string WorkStateMessage
-        {
-            get { return (string)this.GetValue(WorkStateMessageProperty); }
-            private set { this.SetValue(WorkStateMessageProperty, value); }
         }
 
         public string PrintButtonString
@@ -122,7 +114,6 @@ namespace ShopErp.App.ViewModels
             get { return (WuliuPrintTemplate)this.GetValue(WuliuPrintTemplateProperty); }
             set { this.SetValue(WuliuPrintTemplateProperty, value); }
         }
-
 
         public WuliuBranch WuliuBranch
         {
@@ -160,6 +151,12 @@ namespace ShopErp.App.ViewModels
             set { this.SetValue(YOffsetProperty, value); }
         }
 
+        public bool AutoUpload
+        {
+            get { return (bool)this.GetValue(AutoUploadProperty); }
+            set { this.SetValue(AutoUploadProperty, value); }
+        }
+
         public PrintOrderPageViewModel(PrintOrderViewModel[] orders, string shipper)
         {
             this.OrderViewModels = new ObservableCollection<PrintOrderViewModel>();
@@ -174,20 +171,20 @@ namespace ShopErp.App.ViewModels
                 notiy.AddValueChanged(v, PrintOrderViewModelCheckedHandler);
             }
             this.OrderViewModels.CollectionChanged += OrderViewModels_CollectionChanged;
-            this.Title = (string.IsNullOrWhiteSpace(orders.First().DeliveryCompany) ? "未分配" : orders.First().DeliveryCompany) + "(" + orders.Length + ")";
+            this.Title = (string.IsNullOrWhiteSpace(orders.First().Source.DeliveryCompany) ? "未分配" : orders.First().Source.DeliveryCompany) + "(" + orders.Length + ")";
             this.Checked = true;
             this.SelectedCount = orders.Count(obj => obj.IsChecked);
             this.PrintButtonString = "打印";
             this.XOffset = 0;
             this.YOffset = 0;
             this.shipper = shipper;
+            this.AutoUpload = true;
         }
 
         private void OrderViewModels_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             //订单打印完，被删除后，会为空
-            var first = this.OrderViewModels.FirstOrDefault();
-            string title = first == null ? "未分配" : first.DeliveryCompany;
+            string title = this.OrderViewModels.Count < 1 ? "未分配" : this.OrderViewModels.FirstOrDefault().Source.DeliveryCompany;
             if (string.IsNullOrWhiteSpace(title))
             {
                 title = "未分配";
@@ -195,10 +192,27 @@ namespace ShopErp.App.ViewModels
             this.Title = title + "(" + this.OrderViewModels.Count + ")";
         }
 
+        private PrintOrderViewModel[] GetMatchPrintOrderViewModels(Order order)
+        {
+            PrintOrderViewModel[] printOrderViewModels = null;
+            if (order.OrderGoodss == null || order.OrderGoodss.Count < 1)
+            {
+                printOrderViewModels = this.OrderViewModels.Where(obj => obj.Source.Id == order.Id).ToArray();
+            }
+            else
+            {
+                printOrderViewModels = this.OrderViewModels.Where(obj => order.OrderGoodss.Any(o => o.OrderId == obj.Source.Id)).ToArray();
+            }
+            if (printOrderViewModels.Length < 1)
+            {
+                throw new Exception("编程错误：合并后的订单没有相应的PrintOrderViewModel:" + order.Id + "," + order.ReceiverAddress);
+            }
+            return printOrderViewModels;
+        }
+
         private string[] GetMatchOrderViewModelsWuliuId(Order order)
         {
-            var orders = this.orderVmToOrder[order].OrderBy(obj => obj.Source.Id).ToArray();
-            return orders.Select(obj => string.IsNullOrWhiteSpace(obj.Source.PopOrderId) ? obj.Source.Id.ToString() : obj.Source.PopOrderId).ToArray();
+            return GetMatchPrintOrderViewModels(order).Select(obj => string.IsNullOrWhiteSpace(obj.Source.PopOrderId) ? obj.Source.Id.ToString() : obj.Source.PopOrderId).ToArray();
         }
 
         private void PrintOrderViewModelCheckedHandler(object sender, EventArgs e)
@@ -321,7 +335,6 @@ namespace ShopErp.App.ViewModels
         {
             try
             {
-                this.orderVmToOrder = new Dictionary<Order, List<PrintOrderViewModel>>();
                 this.IsUserStop = false;
                 this.IsRunning = true;
                 this.PrintButtonString = "停止";
@@ -341,104 +354,52 @@ namespace ShopErp.App.ViewModels
                     throw new Exception("没有需要打印的订单");
                 }
 
-                this.WorkStateMessage = "第一步：正在检查是否打印过...";
                 WPFHelper.DoEvents();
                 foreach (var o in selectedOrderVMs)
                 {
                     if (printHistoryService.GetByAll(o.Source.Id, "", "", 0, DateTime.Now.AddDays(-30), DateTime.Now, 0, 0).Total > 0)
                     {
-                        o.State = "已经打印过，请先删除打印历史";
                         o.Background = Brushes.Red;
                         throw new Exception("订单编号:" + o.Source.Id + " 已经打印过，请先删除打印历史");
                     }
                     WPFHelper.DoEvents();
                 }
 
-                this.WorkStateMessage = "第二步：正在重置当前打印数据...";
-                WPFHelper.DoEvents();
                 foreach (var v in selectedOrderVMs)
                 {
                     v.WuliuNumber = null;
                     v.DeliveryNumber = "";
-                    v.DeliveryCompany = "";
-                    v.State = "";
                     v.Background = null;
                     WPFHelper.DoEvents();
                 }
 
-                this.WorkStateMessage = "第三步：正在合并订单数据...";
                 WPFHelper.DoEvents();
                 //在线支付，需要合并订单
-                var mergedOrders = new List<Order>();
-                if (selectedOrders[0].PopPayType == PopPayType.ONLINE)
-                {
-                    //合并相同订单
-                    foreach (var or in selectedOrders)
-                    {
-                        if (this.IsUserStop)
-                        {
-                            throw new Exception("用户已停止打印");
-                        }
-                        WPFHelper.DoEvents();
-                        var first = mergedOrders.FirstOrDefault(obj => OrderService.CanbeMerge(or, obj));
-                        if (first == null)
-                        {
-                            mergedOrders.Add(or);
-                            List<PrintOrderViewModel> vms = new List<PrintOrderViewModel>();
-                            vms.Add(this.OrderViewModels.First(obj => obj.Source.Id == or.Id));
-                            orderVmToOrder.Add(or, vms);
-                        }
-                        else
-                        {
-                            //合并商品，订单可能被重复打印，以前合并过的，不再合并
-                            foreach (var og in or.OrderGoodss)
-                            {
-                                if (first.OrderGoodss.Any(obj => obj.Id == og.Id) == false)
-                                {
-                                    first.OrderGoodss.Add(og);
-                                }
-                            }
-                            orderVmToOrder[first].Add(this.OrderViewModels.First(obj => obj.Source.Id == or.Id));
-                        }
-                    }
-                }
-                else
-                {
-                    mergedOrders.AddRange(selectedOrders);
-                    foreach (var mo in mergedOrders)
-                    {
-                        orderVmToOrder.Add(mo, this.OrderViewModels.Where(obj => obj.Source.Id == mo.Id).ToList());
-                    }
-                }
+                Order[] mergedOrders = selectedOrders[0].PopPayType == PopPayType.ONLINE ? OrderService.MergeOrders(selectedOrders) : selectedOrders;
                 //生成快递单号
-                var wuliuNumbers = new WuliuNumber[mergedOrders.Count];
+                var wuliuNumbers = new WuliuNumber[mergedOrders.Length];
                 for (int i = 0; i < wuliuNumbers.Length; i++)
                 {
                     if (this.IsUserStop)
                     {
                         throw new Exception("用户已停止打印");
                     }
-
+                    var printViewModels = this.GetMatchPrintOrderViewModels(mergedOrders[i]);
                     try
                     {
-                        this.WorkStateMessage = string.Format("第四步：正在获取快递单号{0}/{1}...", i + 1, wuliuNumbers.Length);
                         WPFHelper.DoEvents();
                         wuliuNumbers[i] = ServiceContainer.GetService<WuliuNumberService>().GenWuliuNumber(this.Shop, this.WuliuPrintTemplate, mergedOrders[i], GetMatchOrderViewModelsWuliuId(mergedOrders[i]), this.PackageId > 0 ? this.PackageId.ToString() : "", senderName, senderPhone, this.WuliuBranch.SenderAddress).First;
-                        foreach (var ov in this.orderVmToOrder[mergedOrders[i]])
+                        foreach (var ov in printViewModels)
                         {
                             ov.WuliuNumber = wuliuNumbers[i];
-                            ov.DeliveryCompany = wuliuNumbers[i].DeliveryCompany;
                             ov.DeliveryNumber = wuliuNumbers[i].DeliveryNumber;
-                            ov.State = "";
                             ov.PageNumber = i + 1;
                         }
                     }
-                    catch (Exception ex)
+                    catch
                     {
-                        var vms = this.orderVmToOrder[mergedOrders[i]];
-                        foreach (var v in vms)
+                        foreach (var v in printViewModels)
                         {
-                            v.State = ex.Message;
                             v.Background = Brushes.Red;
                         }
                         throw;
@@ -448,7 +409,7 @@ namespace ShopErp.App.ViewModels
                 var allShops = ServiceContainer.GetService<ShopService>().GetByAll().Datas;
                 var vs = ServiceContainer.GetService<VendorService>();
                 //生成自定义打印数据
-                var userDatas = new Dictionary<string, string>[mergedOrders.Count];
+                var userDatas = new Dictionary<string, string>[mergedOrders.Length];
                 for (int i = 0; i < userDatas.Length; i++)
                 {
                     if (this.IsUserStop)
@@ -456,7 +417,6 @@ namespace ShopErp.App.ViewModels
                         throw new Exception("用户已停止打印");
                     }
 
-                    this.WorkStateMessage = string.Format("第五步：正在生成自定义数据{0}/{1}...", i + 1, wuliuNumbers.Length);
                     WPFHelper.DoEvents();
                     userDatas[i] = new Dictionary<string, string>();
                     StringBuilder goods_commment = new StringBuilder();
@@ -476,11 +436,9 @@ namespace ShopErp.App.ViewModels
                     userDatas[i].Add("suminfo", string.Format("店:{0},数:{1},付:{2}", allShops.FirstOrDefault(obj => obj.Id == mergedOrders[i].ShopId).Mark, mergedOrders[i].OrderGoodss.Select(obj => obj.Count).Sum().ToString(), mergedOrders[i].PopPayTime.ToString("yyyy-MM-dd HH:mm:ss")));
                 }
 
-                this.WorkStateMessage = string.Format("第六步：输出打印数据...");
                 WPFHelper.DoEvents();
                 this.printDoc = new CainiaoPrintDocument(mergedOrders.ToArray(), wuliuNumbers, userDatas, this.WuliuPrintTemplate);
                 string file = printDoc.StartPrint(this.Printer, this.PrintServerAdd);
-                this.WorkStateMessage = string.Format("第七步：保存打印记录...");
                 WPFHelper.DoEvents();
                 UploadPrintHistory(selectedOrderVMs);
                 HandelPrintEnded();
@@ -527,7 +485,7 @@ namespace ShopErp.App.ViewModels
         private void HandelPrintEnded()
         {
             //删除所有成功的打印
-            var suOrders = this.OrderViewModels.Where(obj => obj.State == "打印成功").ToArray();
+            var suOrders = this.OrderViewModels.Where(obj => string.IsNullOrWhiteSpace(obj.DeliveryNumber) == false).ToArray();
             foreach (var v in suOrders)
             {
                 this.OrderViewModels.Remove(v);
@@ -537,7 +495,6 @@ namespace ShopErp.App.ViewModels
             this.printDoc = null;
             this.IsRunning = false;
             this.PrintButtonString = "打印";
-            this.WorkStateMessage = "已完成输出";
         }
 
         private void UploadPrintHistory(PrintOrderViewModel[] orderViewModels)
@@ -546,14 +503,14 @@ namespace ShopErp.App.ViewModels
             {
                 try
                 {
-                    if (string.IsNullOrWhiteSpace(vm.DeliveryCompany) || string.IsNullOrWhiteSpace(vm.DeliveryNumber))
+                    if (string.IsNullOrWhiteSpace(vm.WuliuNumber.DeliveryCompany) || string.IsNullOrWhiteSpace(vm.DeliveryNumber))
                     {
                         throw new Exception("上传打印信息失败：物流公司和编号为空");
                     }
                     PrintHistory ph = new PrintHistory
                     {
                         UploadTime = Utils.DateTimeUtil.DbMinTime,
-                        DeliveryCompany = vm.DeliveryCompany,
+                        DeliveryCompany = vm.WuliuNumber.DeliveryCompany,
                         DeliveryNumber = vm.DeliveryNumber,
                         DeliveryTemplate = this.WuliuPrintTemplate.Name,
                         Operator = OperatorService.LoginOperator.Number,
@@ -570,14 +527,17 @@ namespace ShopErp.App.ViewModels
                         PageNumber = vm.PageNumber,
                     };
                     this.printHistoryService.Save(ph);
-                    vm.State = "打印成功";
+                    if (this.AutoUpload)
+                    {
+                        this.printHistoryService.Upload(ph);
+                    }
                     vm.Background = null;
                     WPFHelper.DoEvents();
                 }
                 catch (Exception ee)
                 {
-                    vm.State = "保存打印记录失败：" + ee.Message;
                     vm.Background = Brushes.Red;
+                    MessageBox.Show("订单：" + vm.Source.Id + " 保存打印记录或者自动上传失败" + ee.Message);
                 }
             }
         }
