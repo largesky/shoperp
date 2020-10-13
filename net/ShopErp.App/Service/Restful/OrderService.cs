@@ -287,6 +287,7 @@ namespace ShopErp.App.Service.Restful
                 {
                     continue;
                 }
+                first.OrderGoodss = first.OrderGoodss ?? new List<OrderGoods>();
                 //合并过的，不再合并
                 foreach (var og in or.OrderGoodss)
                 {
