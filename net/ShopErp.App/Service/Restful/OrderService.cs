@@ -299,13 +299,12 @@ namespace ShopErp.App.Service.Restful
             return mergedOrders.ToArray();
         }
 
-        public static OrderGoods[] FilterOrderGoodsCanbeSend(Order order)
+        public static OrderGoods[] FilterOrderGoodsCanbeSend(Order order, bool onlnyNormal)
         {
-            if (order == null || order.OrderGoodss == null || order.OrderGoodss.Count < 1)
+            if (order == null || order.OrderGoodss == null || order.OrderGoodss.Count < 1 || (onlnyNormal && order.Type != OrderType.NORMAL))
             {
                 return new OrderGoods[0];
             }
-
             return order.OrderGoodss.Where(obj => obj.State == OrderState.PAYED || obj.State == OrderState.PRINTED || obj.State == OrderState.CHECKFAIL || obj.State == OrderState.GETED).ToArray();
         }
 
@@ -315,20 +314,20 @@ namespace ShopErp.App.Service.Restful
         /// </summary>
         /// <param name="order"></param>
         /// <returns></returns>
-        public static string FormatGoodsInfoCanbeSend(Order order)
+        public static string FormatGoodsInfoCanbeSend(Order order, bool onlnyNormal, bool usVendorPingying)
         {
-            var orderGoods = FilterOrderGoodsCanbeSend(order);
+            var orderGoods = FilterOrderGoodsCanbeSend(order, onlnyNormal);
             StringBuilder sb = new StringBuilder();
-            foreach (var goods in order.OrderGoodss)
+            foreach (var goods in orderGoods)
             {
-                sb.Append(VendorService.FormatVendorName(goods.Vendor) + " " + goods.Number + goods.Edtion + goods.Color + goods.Size + " (" + goods.Count + ") ");
+                sb.AppendLine(usVendorPingying ? ServiceContainer.GetService<VendorService>().GetVendorPingyingName(goods.Vendor).ToUpper() : VendorService.FormatVendorName(goods.Vendor) + " " + goods.Number + goods.Edtion + goods.Color + goods.Size + " (" + goods.Count + ") ");
             }
             return sb.ToString().Trim();
         }
 
-        public static int CountGoodsCanbeSend(Order order)
+        public static int CountGoodsCanbeSend(Order order, bool onlnyNormal)
         {
-            return FilterOrderGoodsCanbeSend(order).Select(obj => obj.Count).Sum();
+            return FilterOrderGoodsCanbeSend(order, onlnyNormal).Select(obj => obj.Count).Sum();
         }
     }
 }

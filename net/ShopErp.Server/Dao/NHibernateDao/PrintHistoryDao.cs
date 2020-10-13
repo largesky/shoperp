@@ -7,7 +7,7 @@ namespace ShopErp.Server.Dao.NHibernateDao
 {
     public class PrintHistoryDao : NHibernateDaoBase<PrintHistory>
     {
-        public DataCollectionResponse<PrintHistory> GetByAll(long orderId, string deliveryCompany, string deliveryNumber, int shopId,  bool? uploaded, DateTime startTime, DateTime endTime, int pageIndex, int pageSize)
+        public DataCollectionResponse<PrintHistory> GetByAll(long orderId, string deliveryCompany, string deliveryNumber, WuliuPrintTemplateSourceType deliverySourceType, DateTime startTime, DateTime endTime, int pageIndex, int pageSize)
         {
             string hsql = "from " + this.GetEntiyName() + " where ";
             List<object> objs = new List<object>();
@@ -15,8 +15,7 @@ namespace ShopErp.Server.Dao.NHibernateDao
             hsql += this.MakeQuery("OrderId", orderId);
             hsql += this.MakeQuery("DeliveryCompany", deliveryCompany, objs);
             hsql += this.MakeQuery("DeliveryNumber", deliveryNumber, objs);
-            hsql += this.MakeQuery("ShopId", shopId);
-            hsql += this.MakeQuery("Upload", uploaded);
+            hsql += this.MakeQuery("DeliverySourceType", (int)deliverySourceType, (int)(WuliuPrintTemplateSourceType.NONE));
             hsql += this.MakeQuery("CreateTime", startTime, true);
             hsql += this.MakeQuery("CreateTime", endTime, false);
 

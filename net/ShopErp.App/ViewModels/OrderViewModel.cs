@@ -13,11 +13,11 @@ namespace ShopErp.App.ViewModels
     {
         public static readonly DependencyProperty IsCheckedProperty = DependencyProperty.Register("IsChecked", typeof(bool), typeof(OrderViewModel));
 
+        public static readonly DependencyProperty BackgroundProperty = DependencyProperty.Register("Background", typeof(Brush), typeof(OrderViewModel));
+
         public static readonly DependencyProperty OrderFlagProperty = DependencyProperty.Register("OrderFlag", typeof(ColorFlag), typeof(OrderViewModel));
 
         public static readonly DependencyProperty PopSellerCommentProperty = DependencyProperty.Register("PopSellerComment", typeof(string), typeof(OrderViewModel));
-
-        public static readonly DependencyProperty BackgroundProperty = DependencyProperty.Register("Background", typeof(Brush), typeof(OrderViewModel));
 
         public static readonly DependencyProperty StateProperty = DependencyProperty.Register("State", typeof(string), typeof(OrderViewModel));
 
@@ -72,20 +72,7 @@ namespace ShopErp.App.ViewModels
         {
             get
             {
-                if (this.Source.OrderGoodss == null || this.Source.OrderGoodss.Count < 1)
-                {
-                    return "";
-                }
-
-                StringBuilder sb = new StringBuilder();
-                if (this.Source.OrderGoodss != null && this.Source.OrderGoodss.Count > 0)
-                {
-                    foreach (var goods in this.Source.OrderGoodss)
-                    {
-                        sb.Append(VendorService.FormatVendorName(goods.Vendor) + " " + goods.Number + goods.Edtion + goods.Color + goods.Size + " (" + goods.Count + ") ");
-                    }
-                }
-                return sb.ToString();
+                return OrderService.FormatGoodsInfoCanbeSend(Source, false, false);
             }
         }
 

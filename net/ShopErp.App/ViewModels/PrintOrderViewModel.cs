@@ -96,7 +96,7 @@ namespace ShopErp.App.ViewModels
             this.ReceiverName = order.ReceiverName;
             this.ReceiverAddress = order.ReceiverAddress;
             this.IsChecked = order.Type == OrderType.SHUA ? false : true;
-            this.Goods = OrderService.FormatGoodsInfoCanbeSend(order);
+            this.Goods = OrderService.FormatGoodsInfoCanbeSend(order, true, false);
         }
 
         public int CompareTo(PrintOrderViewModel other)

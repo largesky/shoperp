@@ -8,46 +8,6 @@
              xmlns:vms="clr-namespace:ShopErp.App.ViewModels"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="1200" Loaded="UserControl_Loaded" Name="ucPrint">
-    <UserControl.Resources>
-        <Style x:Key="OrderDataGridStyle" TargetType="{x:Type DataGrid}">
-            <Setter Property="AutoGenerateColumns" Value="false" />
-            <Setter Property="CanUserAddRows" Value="false" />
-            <Setter Property="CanUserDeleteRows" Value="false" />
-            <Setter Property="CanUserReorderColumns" Value="false" />
-            <Setter Property="CanUserResizeRows" Value="false" />
-            <Setter Property="IsReadOnly" Value="False" />
-            <Setter Property="RowDetailsVisibilityMode" Value="VisibleWhenSelected" />
-            <Setter Property="RowHeight" Value="20" />
-            <Setter Property="SelectionMode" Value="Extended" />
-            <Setter Property="SelectionUnit" Value="CellOrRowHeader" />
-            <Setter Property="RowHeaderWidth" Value="25" />
-            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
-            <Setter Property="RowStyle">
-                <Setter.Value>
-                    <Style TargetType="{x:Type DataGridRow}">
-                        <Setter Property="Background" Value="{Binding Background}" />
-                    </Style>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="CellStyle">
-                <Setter.Value>
-                    <Style TargetType="DataGridCell">
-                        <Style.Triggers>
-                            <MultiTrigger>
-                                <MultiTrigger.Conditions>
-                                    <Condition Property="IsReadOnly" Value="False" />
-                                    <Condition Property="IsMouseOver" Value="True" />
-                                </MultiTrigger.Conditions>
-                                <MultiTrigger.Setters>
-                                    <Setter Property="IsEditing" Value="True" />
-                                </MultiTrigger.Setters>
-                            </MultiTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -146,8 +106,8 @@
                                         </DataGrid.RowStyle>
                                         <DataGrid.ContextMenu>
                                             <ContextMenu>
-                                                <MenuItem Header="向前选择" Name="miSelectPre" Click="miSelectPre_Click" />
-                                                <MenuItem Header="向后选择" Name="miSelectForward" Click="miSelectForward_Click" />
+                                                <MenuItem Header="向前选择" Click="miSelect_Click" />
+                                                <MenuItem Header="向后选择" Click="miSelect_Click" />
                                                 <MenuItem Header="选择相同店铺" Name="miSelectSameShop" Click="MiSelectSameShop_Click"/>
                                                 <MenuItem Header="选择相同平台" Name="miSelectSamePop" Click="MiSelectSamePop_Click"/>
                                                 <MenuItem Header="选择相同厂家" Name="miSelectSameVendor" Click="MiSelectSameVendor_Click"/>

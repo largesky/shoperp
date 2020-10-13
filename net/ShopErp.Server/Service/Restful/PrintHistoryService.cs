@@ -78,11 +78,11 @@ namespace ShopErp.Server.Service.Restful
 
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, UriTemplate = "/getbyall.html")]
-        public DataCollectionResponse<PrintHistory> GetByAll(long orderId, string deliveryCompany, string deliveryNumber, int shopId, bool? uploaded, DateTime startTime, DateTime endTime, int pageIndex, int pageSize)
+        public DataCollectionResponse<PrintHistory> GetByAll(long orderId, string deliveryCompany, string deliveryNumber, WuliuPrintTemplateSourceType deliverySourceType, DateTime startTime, DateTime endTime, int pageIndex, int pageSize)
         {
             try
             {
-                return this.dao.GetByAll(orderId, deliveryCompany, deliveryNumber, shopId, uploaded, startTime, endTime, pageIndex, pageSize);
+                return this.dao.GetByAll(orderId, deliveryCompany, deliveryNumber, deliverySourceType, startTime, endTime, pageIndex, pageSize);
             }
             catch (Exception ex)
             {

@@ -6,13 +6,13 @@ namespace ShopErp.App.Service.Restful
 {
     public class PrintHistoryService : ServiceBase<PrintHistory>
     {
-        public DataCollectionResponse<PrintHistory> GetByAll(long orderId, string deliveryCompany, string deliveryNumber, long shopId, DateTime startTime, DateTime endTime, int pageIndex, int pageSize)
+        public DataCollectionResponse<PrintHistory> GetByAll(long orderId, string deliveryCompany, string deliveryNumber, WuliuPrintTemplateSourceType deliverySourceType, DateTime startTime, DateTime endTime, int pageIndex, int pageSize)
         {
-            System.Collections.Generic.Dictionary<string, object> para =
-                new System.Collections.Generic.Dictionary<string, object>();
+            System.Collections.Generic.Dictionary<string, object> para = new System.Collections.Generic.Dictionary<string, object>();
             para["orderId"] = orderId;
             para["deliveryCompany"] = deliveryCompany;
             para["deliveryNumber"] = deliveryNumber;
+            para["deliverySourceType"] = deliverySourceType;
             para["startTime"] = startTime;
             para["endTime"] = endTime;
             para["pageIndex"] = pageIndex;

@@ -152,6 +152,7 @@ namespace ShopErp.Server.Service.Restful
             order.DeliveryOperator = order.DeliveryOperator ?? string.Empty;
             order.CloseOperator = order.CloseOperator ?? string.Empty;
             order.ParseResult = true;
+            order.ReceiverAddress = new string(order.ReceiverAddress.Where(c => c != '\r' && c != '\n').ToArray());
             if (order.OrderGoodss != null && order.OrderGoodss.Count > 0)
             {
                 foreach (var item in order.OrderGoodss)

@@ -10,14 +10,14 @@
     <property name="ShopId">
       <column name="ShopId" sql-type="bigint(20)" not-null="true" />
     </property>
-    <property name="DeliveryTemplate">
-      <column name="DeliveryTemplate" sql-type="string" not-null="true" />
-    </property>
     <property name="DeliveryCompany">
       <column name="DeliveryCompany" sql-type="string" not-null="true" />
     </property>
     <property name="DeliveryNumber">
       <column name="DeliveryNumber" sql-type="string" not-null="true" />
+    </property>
+    <property name="DeliverySourceType">
+      <column name="DeliverySourceType" sql-type="int" not-null="true" />
     </property>
     <property name="Operator">
       <column name="Operator" sql-type="string" not-null="true" />

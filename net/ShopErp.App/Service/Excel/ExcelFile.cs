@@ -85,6 +85,7 @@ namespace ShopErp.App.Service.Excel
 
                 //输出列标题
                 var row = sheet.CreateRow(0);
+
                 for (int i = 0; i < columns[pair.Key].Length; i++)
                 {
                     var cell = row.CreateCell(i, CellType.String);
@@ -95,6 +96,8 @@ namespace ShopErp.App.Service.Excel
                 for (int i = 0; i < pair.Value.Length; i++)
                 {
                     row = sheet.CreateRow(i + 1);
+                    int maxNewLineCount = pair.Value[i].Select(obj => obj.Count(c => c == '\n')).Max();
+                    row.HeightInPoints = 25 * (maxNewLineCount + 1);
                     for (int k = 0; k < pair.Value[i].Length; k++)
                     {
                         var cell = row.CreateCell(k, columns[pair.Key][k].IsNumber ? CellType.Numeric : CellType.String);

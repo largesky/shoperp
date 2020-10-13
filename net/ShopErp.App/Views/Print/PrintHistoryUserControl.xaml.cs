@@ -1,7 +1,6 @@
 ﻿
 using ShopErp.App.Domain;
 using ShopErp.App.ViewModels;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +20,7 @@ using System.Printing;
 using ShopErp.App.Service.Restful;
 using ShopErp.Domain;
 using ShopErp.App.Service.Print;
+using ShopErp.App.Views.Extenstions;
 
 namespace ShopErp.App.Views.Print
 {
@@ -40,35 +40,31 @@ namespace ShopErp.App.Views.Print
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if (this.myLoaded)
+            try
             {
-                return;
+                if (this.myLoaded)
+                {
+                    return;
+                }
+                this.myLoaded = true;
+                var list = ServiceContainer.GetService<DeliveryCompanyService>().GetByAll().Datas.Select(obj => obj.Name).ToList();
+                list.Insert(0, "所有");
+                this.cbbDeliverySourceTypes.Bind<WuliuPrintTemplateSourceType>();
+                this.cbbDeliveryCompany.ItemsSource = list;
             }
-            this.myLoaded = true;
-            var list = ServiceContainer.GetService<DeliveryCompanyService>().GetByAll().Datas.Select(obj => obj.Name).ToList();
-            list.Insert(0, "所有");
-            this.cbbDeliveryCompany.ItemsSource = list;
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void ResetViewState(IEnumerable<PrintHistoryViewModel> ph)
         {
             foreach (var item in ph)
             {
-                item.State = "";
                 item.Background = null;
                 WPFHelper.DoEvents();
             }
-        }
-
-        private PrintHistoryViewModel[] GetSelected(object sender)
-        {
-            PrintHistoryGroupViewModel vm = (sender as FrameworkElement).Tag as PrintHistoryGroupViewModel;
-            PrintHistoryViewModel[] selected = vm.OrderViewModels.Where(obj => obj.IsChecked).ToArray();
-            if (selected.Length < 1)
-            {
-                MessageBox.Show("请选择要相应的打印信息");
-            }
-            return selected;
         }
 
         private void btnSearch_Click(object sender, RoutedEventArgs e)
@@ -77,6 +73,7 @@ namespace ShopErp.App.Views.Print
             {
                 string sId = this.tbOrderId.Text.Trim();
                 string deliveryNumber = this.tbDeliveryNumber.Text.Trim();
+                WuliuPrintTemplateSourceType wuliuPrintTemplateSourceType = this.cbbDeliverySourceTypes.GetSelectedEnum<WuliuPrintTemplateSourceType>();
                 DateTime startTime = this.dpStart.Value == null ? Utils.DateTimeUtil.DbMinTime : this.dpStart.Value.Value;
                 DateTime endTime = this.dpEnd.Value == null ? Utils.DateTimeUtil.DbMinTime : this.dpEnd.Value.Value;
                 long lId = string.IsNullOrWhiteSpace(sId) ? 0 : long.Parse(sId);
@@ -85,17 +82,14 @@ namespace ShopErp.App.Views.Print
                     MessageBox.Show("查询信息不能全为空");
                     return;
                 }
-                var item = ServiceContainer.GetService<PrintHistoryService>().GetByAll(lId, this.cbbDeliveryCompany.Text.Trim() == "所有" ? "" : this.cbbDeliveryCompany.Text.Trim(), deliveryNumber, 0, startTime, endTime, 0, 0);
-                var group = item.Datas.GroupBy(obj => obj.DeliveryTemplate);
-                var printGroup =
-                    group.Select(
-                        new Func<IGrouping<string, PrintHistory>, PrintHistoryGroupViewModel>(
-                            (gs) => new PrintHistoryGroupViewModel(gs.ToArray())));
-                this.tcOrderPages.ItemsSource = printGroup;
-                if (printGroup.Count() > 0)
+                var item = ServiceContainer.GetService<PrintHistoryService>().GetByAll(lId, this.cbbDeliveryCompany.Text.Trim() == "所有" ? "" : this.cbbDeliveryCompany.Text.Trim(), deliveryNumber, wuliuPrintTemplateSourceType, startTime, endTime, 0, 0);
+                var ps = item.Datas.Select(obj => new PrintHistoryViewModel(obj, null)).ToArray();
+                for (int i = 0; i < ps.Length; i++)
                 {
-                    this.tcOrderPages.SelectedIndex = 0;
+                    ps[i].Background = (i % 2 == 0) ? PrintHistoryViewModel.DEFAULTBACKGROUND_LIGHTGREEN : PrintHistoryViewModel.DEFAULTBACKGROUND_LIGHTPINK;
+                    ps[i].IsChecked = DateTimeUtil.IsDbMinTime(ps[i].Source.UploadTime);
                 }
+                this.dgvItems.ItemsSource = ps;
             }
             catch (Exception ex)
             {
@@ -103,66 +97,23 @@ namespace ShopErp.App.Views.Print
             }
         }
 
-        private void CheckBox_CheckedChanged(object sender, RoutedEventArgs e)
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             try
             {
-                CheckBox fe = sender as CheckBox;
-                if (fe == null)
+                var ps = this.dgvItems.ItemsSource as PrintHistoryViewModel[];
+                if (ps == null || ps.Length < 1)
                 {
-                    return;
+                    MessageBox.Show("没有数据");
                 }
-
-                PrintHistoryGroupViewModel vm = fe.Tag as PrintHistoryGroupViewModel;
-                if (vm == null)
+                foreach (var v in ps)
                 {
-                    return;
-                }
-
-                foreach (var item in vm.OrderViewModels)
-                {
-                    item.IsChecked = fe.IsChecked.Value;
+                    v.IsChecked = this.chkAll.IsChecked.Value;
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-            }
-        }
-
-        private void btnMarkPopDelivery_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var selected = this.GetSelected(sender);
-                this.ResetViewState(selected);
-                WPFHelper.DoEvents();
-                foreach (var item in selected)
-                {
-                    try
-                    {
-                        item.Background = Brushes.Yellow;
-                        item.State = "";
-                        ServiceContainer.GetService<OrderService>().MarkPopDelivery(item.Source.OrderId, "");
-                        ServiceContainer.GetService<PrintHistoryService>().Update(item.Source);
-                        item.State = "标记发货成功";
-                        item.Background = null;
-                    }
-                    catch (Exception ex)
-                    {
-                        item.State = ex.Message;
-                        item.Background = Brushes.Red;
-                    }
-                    finally
-                    {
-                        WPFHelper.DoEvents();
-                    }
-                }
-                MessageBox.Show("已完成");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("标记发货失败:" + ex.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -170,24 +121,23 @@ namespace ShopErp.App.Views.Print
         {
             try
             {
-                var printHistorys = this.GetSelected(sender);
-                if (printHistorys.Length < 1)
+                var ps = this.dgvItems.ItemsSource as PrintHistoryViewModel[];
+                if (ps == null || ps.Length < 1)
                 {
-                    return;
+                    MessageBox.Show("没有数据");
                 }
-                this.ResetViewState(printHistorys);
-                foreach (var item in printHistorys)
+                this.ResetViewState(ps);
+                foreach (var item in ps)
                 {
                     try
                     {
                         this.printHistoryService.Upload(item.Source);
-                        item.State = "上传成功";
                         item.Background = null;
                     }
                     catch (Exception ex)
                     {
                         item.Background = Brushes.Red;
-                        item.State = ex.Message;
+                        MessageBox.Show(ex.Message);
                     }
 
                     WPFHelper.DoEvents();
@@ -204,32 +154,31 @@ namespace ShopErp.App.Views.Print
         {
             try
             {
-                var printHistorys = this.GetSelected(sender);
-                if (printHistorys.Length < 1)
+                var ps = this.dgvItems.ItemsSource as PrintHistoryViewModel[];
+                if (ps == null || ps.Length < 1)
                 {
+                    MessageBox.Show("没有数据");
                     return;
                 }
 
-                if (MessageBox.Show("是否删除打印历史?", "警告", MessageBoxButton.YesNo, MessageBoxImage.Error) !=
-                    MessageBoxResult.Yes)
+                if (MessageBox.Show("是否删除打印历史?", "警告", MessageBoxButton.YesNo, MessageBoxImage.Error) != MessageBoxResult.Yes)
                 {
                     return;
                 }
-                this.ResetViewState(printHistorys);
-                foreach (var ph in printHistorys)
+                this.ResetViewState(ps);
+                foreach (var ph in ps)
                 {
-                    string state = "删除成功";
                     try
                     {
                         ServiceContainer.GetService<PrintHistoryService>().Delete(ph.Source.Id);
                     }
                     catch (Exception ex)
                     {
-                        state = ex.Message;
+                        ph.Background = Brushes.Red;
+                        MessageBox.Show(ex.Message);
                     }
                     finally
                     {
-                        ph.State = state;
                     }
                     WPFHelper.DoEvents();
                 }
@@ -245,30 +194,32 @@ namespace ShopErp.App.Views.Print
         {
             try
             {
-                if (MessageBox.Show("是否重置?", "警告", MessageBoxButton.YesNo, MessageBoxImage.Asterisk) !=
-                    MessageBoxResult.Yes)
+                var ps = this.dgvItems.ItemsSource as PrintHistoryViewModel[];
+                if (ps == null || ps.Length < 1)
+                {
+                    MessageBox.Show("没有数据");
+                    return;
+                }
+
+                if (MessageBox.Show("是否重置?", "警告", MessageBoxButton.YesNo, MessageBoxImage.Asterisk) != MessageBoxResult.Yes)
                 {
                     return;
                 }
 
                 OrderService os = ServiceContainer.GetService<OrderService>();
-                var printHistorys = this.GetSelected(sender);
-                if (printHistorys.Length < 1)
-                {
-                    return;
-                }
-                this.ResetViewState(printHistorys);
+
+                this.ResetViewState(ps);
                 WPFHelper.DoEvents();
-                foreach (var item in printHistorys)
+                foreach (var item in ps)
                 {
                     try
                     {
                         os.ResetPrintState(item.Source.OrderId);
-                        item.State = "重置成功";
                     }
                     catch (Exception ex)
                     {
-                        item.State = ex.Message;
+                        item.Background = Brushes.Red;
+                        MessageBox.Show(ex.Message);
                     }
                     WPFHelper.DoEvents();
                 }
@@ -280,70 +231,33 @@ namespace ShopErp.App.Views.Print
             }
         }
 
-        private void miSelectPre_Click(object sender, RoutedEventArgs e)
+        private void miSelect_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                MenuItem mi = sender as MenuItem;
-                var datas = mi.DataContext as PrintHistoryGroupViewModel;
-                if (datas == null)
+                var ps = this.dgvItems.ItemsSource as PrintHistoryViewModel[];
+                if (ps == null || ps.Length < 1)
                 {
-                    throw new Exception("没有任何数据");
+                    MessageBox.Show("没有数据");
+                    return;
                 }
+                MenuItem mi = sender as MenuItem;
                 var dg = ((ContextMenu)mi.Parent).PlacementTarget as DataGrid;
                 var cells = dg.SelectedCells;
                 if (cells.Count < 1)
                 {
                     return;
                 }
-
                 var item = cells[0].Item as PrintHistoryViewModel;
                 if (item == null)
                 {
-                    throw new Exception("数据对象不正确");
+                    throw new Exception("数据对象不正确，应为：" + typeof(PrintHistoryViewModel).FullName);
                 }
-
-                int index = datas.OrderViewModels.IndexOf(item);
-
-                for (int i = 0; i < datas.OrderViewModels.Count; i++)
+                bool isPre = mi.Header.ToString().Contains("向前选择");
+                int index = Array.IndexOf(ps, item);
+                for (int i = 0; i < ps.Length; i++)
                 {
-                    datas.OrderViewModels[i].IsChecked = i <= index ? true : false;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
-        }
-
-        private void miSelectForward_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                MenuItem mi = sender as MenuItem;
-                var datas = mi.DataContext as PrintHistoryGroupViewModel;
-                if (datas == null)
-                {
-                    throw new Exception("没有任何数据");
-                }
-                var dg = ((ContextMenu)mi.Parent).PlacementTarget as DataGrid;
-                var cells = dg.SelectedCells;
-                if (cells.Count < 1)
-                {
-                    return;
-                }
-
-                var item = cells[0].Item as PrintHistoryViewModel;
-                if (item == null)
-                {
-                    throw new Exception("数据对象不正确");
-                }
-
-                int index = datas.OrderViewModels.IndexOf(item);
-
-                for (int i = 0; i < datas.OrderViewModels.Count; i++)
-                {
-                    datas.OrderViewModels[i].IsChecked = i >= index ? true : false;
+                    ps[i].IsChecked = isPre ? (i <= index ? true : false) : (i >= index ? true : false);
                 }
             }
             catch (Exception ex)

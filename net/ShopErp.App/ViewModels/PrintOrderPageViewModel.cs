@@ -357,7 +357,7 @@ namespace ShopErp.App.ViewModels
                 WPFHelper.DoEvents();
                 foreach (var o in selectedOrderVMs)
                 {
-                    if (printHistoryService.GetByAll(o.Source.Id, "", "", 0, DateTime.Now.AddDays(-30), DateTime.Now, 0, 0).Total > 0)
+                    if (printHistoryService.GetByAll(o.Source.Id, "", "", WuliuPrintTemplateSourceType.NONE, DateTime.Now.AddDays(-30), DateTime.Now, 0, 0).Total > 0)
                     {
                         o.Background = Brushes.Red;
                         throw new Exception("订单编号:" + o.Source.Id + " 已经打印过，请先删除打印历史");
@@ -422,18 +422,12 @@ namespace ShopErp.App.ViewModels
                     StringBuilder goods_commment = new StringBuilder();
                     if (mergedOrders[i].Type == OrderType.NORMAL)
                     {
-                        if (mergedOrders[i].OrderGoodss != null && mergedOrders[i].OrderGoodss.Count > 0)
-                        {
-                            foreach (var goods in mergedOrders[i].OrderGoodss.Where(obj => (int)obj.State <= (int)OrderState.SUCCESS))
-                            {
-                                goods_commment.AppendLine(vs.GetVendorPingyingName(goods.Vendor).ToUpper() + " " + goods.Number + " " + goods.Edtion + " " + goods.Color + " " + goods.Size + " (" + goods.Count + ")");
-                            }
-                        }
+                        goods_commment.Append(OrderService.FormatGoodsInfoCanbeSend(mergedOrders[i], true, true));
                         if (mergedOrders[i].PopPayType != PopPayType.COD)
                             goods_commment.AppendLine(mergedOrders[i].PopSellerComment);
                     }
                     userDatas[i].Add("goodsInfoSellerComment", goods_commment.ToString());
-                    userDatas[i].Add("suminfo", string.Format("店:{0},数:{1},付:{2}", allShops.FirstOrDefault(obj => obj.Id == mergedOrders[i].ShopId).Mark, mergedOrders[i].OrderGoodss.Select(obj => obj.Count).Sum().ToString(), mergedOrders[i].PopPayTime.ToString("yyyy-MM-dd HH:mm:ss")));
+                    userDatas[i].Add("suminfo", string.Format("店:{0},数:{1},付:{2}", allShops.FirstOrDefault(obj => obj.Id == mergedOrders[i].ShopId).Mark, OrderService.CountGoodsCanbeSend(mergedOrders[i], true), mergedOrders[i].PopPayTime.ToString("yyyy-MM-dd HH:mm:ss")));
                 }
 
                 WPFHelper.DoEvents();
@@ -512,7 +506,7 @@ namespace ShopErp.App.ViewModels
                         UploadTime = Utils.DateTimeUtil.DbMinTime,
                         DeliveryCompany = vm.WuliuNumber.DeliveryCompany,
                         DeliveryNumber = vm.DeliveryNumber,
-                        DeliveryTemplate = this.WuliuPrintTemplate.Name,
+                        DeliverySourceType = vm.WuliuNumber.SourceType,
                         Operator = OperatorService.LoginOperator.Number,
                         OrderId = vm.Source.Id,
                         ReceiverAddress = vm.Source.ReceiverAddress,
@@ -526,7 +520,7 @@ namespace ShopErp.App.ViewModels
                         Id = 0,
                         PageNumber = vm.PageNumber,
                     };
-                    this.printHistoryService.Save(ph);
+                    ph.Id = this.printHistoryService.Save(ph);
                     if (this.AutoUpload)
                     {
                         this.printHistoryService.Upload(ph);

@@ -7,9 +7,10 @@ namespace ShopErp.Domain
         public long Id { get; set; }
         public long OrderId { get; set; }
         public long ShopId { get; set; }
-        public String DeliveryTemplate { get; set; }
         public String DeliveryCompany { get; set; }
         public String DeliveryNumber { get; set; }
+        public WuliuPrintTemplateSourceType DeliverySourceType { get; set; }
+
         public String Operator { get; set; }
         public String ReceiverName { get; set; }
         public String ReceiverPhone { get; set; }
@@ -20,5 +21,6 @@ namespace ShopErp.Domain
         public DateTime CreateTime { get; set; }
         public DateTime UploadTime { get; set; }
         public int PageNumber { get; set; }
+
     }
 }

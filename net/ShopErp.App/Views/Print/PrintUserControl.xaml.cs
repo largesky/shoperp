@@ -205,7 +205,7 @@ namespace ShopErp.App.Views.Print
                 var printTemplate = printOrderPage.WuliuPrintTemplate;
                 Grid grid = ((sender as Button).Parent as StackPanel).Parent as Grid;
                 DataGrid dg = grid.FindName("dgOrders") as DataGrid;
-                DataGridColumn goodsCol = dg.Columns.FirstOrDefault(col => col.Header != null && col.Header.ToString() == "门牌编号");
+                DataGridColumn goodsCol = dg.Columns.FirstOrDefault(col => col.Header != null && col.Header.ToString() == "商品信息");
 
                 if (printOrderPage.WuliuBranch == null)
                 {
@@ -229,7 +229,7 @@ namespace ShopErp.App.Views.Print
 
                 if (goodsCol == null)
                 {
-                    throw new Exception("无法找到列标题为: 门牌编号 的列");
+                    throw new Exception("无法找到列标题为: 商品信息 的列");
                 }
 
                 if (printTemplate.SourceType == WuliuPrintTemplateSourceType.PINDUODUO && selectedOrders.Any(obj => obj.PopType != PopType.PINGDUODUO))
@@ -361,7 +361,7 @@ namespace ShopErp.App.Views.Print
             return item;
         }
 
-        private void miSelectPre_Click(object sender, RoutedEventArgs e)
+        private void miSelect_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -369,10 +369,10 @@ namespace ShopErp.App.Views.Print
                 MenuItem mi = sender as MenuItem;
                 var orders = (((ContextMenu)mi.Parent).PlacementTarget as DataGrid).ItemsSource as ObservableCollection<PrintOrderViewModel>;
                 int index = orders.IndexOf(item);
-
+                bool isPre = mi.Header.ToString().Contains("向前选择");
                 for (int i = 0; i < orders.Count; i++)
                 {
-                    orders[i].IsChecked = i <= index ? true : false;
+                    orders[i].IsChecked = isPre ? (i <= index ? true : false) : (i >= index ? true : false);
                 }
             }
             catch (Exception ex)
@@ -380,27 +380,6 @@ namespace ShopErp.App.Views.Print
                 MessageBox.Show(ex.ToString());
             }
         }
-
-        private void miSelectForward_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var item = this.GetMIOrder(sender);
-                MenuItem mi = sender as MenuItem;
-                var orders = (((ContextMenu)mi.Parent).PlacementTarget as DataGrid).ItemsSource as ObservableCollection<PrintOrderViewModel>;
-                int index = orders.IndexOf(item);
-
-                for (int i = 0; i < orders.Count; i++)
-                {
-                    orders[i].IsChecked = i >= index ? true : false;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
-        }
-
 
         private void SelectGoods(object sender, Func<OrderGoods, OrderGoods, bool> predicate)
         {

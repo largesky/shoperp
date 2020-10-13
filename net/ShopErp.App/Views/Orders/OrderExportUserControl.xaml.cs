@@ -126,9 +126,9 @@ namespace ShopErp.App.Views.Orders
                 List<string[]> contents = new List<string[]>();
                 foreach (var order in orders)
                 {
-                    int goodsCount = OrderService.CountGoodsCanbeSend(order);
-                    int goodsMoney = (int)OrderService.FilterOrderGoodsCanbeSend(order).Select(obj => obj.Price).Sum();
-                    string[] ss = new string[] { shops.FirstOrDefault(obj => obj.Id == order.ShopId).Mark, DateTimeUtil.FormatDateTime(order.PopPayTime), OrderService.FormatGoodsInfoCanbeSend(order), order.DeliveryNumber, order.PopSellerComment, order.ReceiverName, order.ReceiverMobile, goodsMoney.ToString(), (shippMoney * goodsCount).ToString("F1") };
+                    int goodsCount = OrderService.CountGoodsCanbeSend(order, true);
+                    int goodsMoney = (int)OrderService.FilterOrderGoodsCanbeSend(order, true).Select(obj => obj.Price).Sum();
+                    string[] ss = new string[] { shops.FirstOrDefault(obj => obj.Id == order.ShopId).Mark, DateTimeUtil.FormatDateTime(order.PopPayTime), OrderService.FormatGoodsInfoCanbeSend(order, true, false), order.DeliveryNumber, order.PopSellerComment, order.ReceiverName, order.ReceiverMobile, goodsMoney.ToString(), (shippMoney * goodsCount).ToString("F1") };
                     if (order.PopType != ShopErp.Domain.PopType.TMALL)
                     {
                         ss[4] += "放拼多多好评卡";
@@ -158,7 +158,7 @@ namespace ShopErp.App.Views.Orders
                 //合并订单
                 foreach (var order in orders)
                 {
-                    string[] ss = new string[] { OrderService.FormatGoodsInfoCanbeSend(order), order.ReceiverName, string.Join(",", order.ReceiverMobile, order.ReceiverPhone), order.ReceiverAddress };
+                    string[] ss = new string[] { OrderService.FormatGoodsInfoCanbeSend(order, true, false), order.ReceiverName, string.Join(",", order.ReceiverMobile, order.ReceiverPhone), order.ReceiverAddress };
                     contents.Add(string.Join(" ", ss));
                 }
                 System.Windows.Forms.Clipboard.SetText(string.Join(Environment.NewLine, contents));
@@ -242,7 +242,7 @@ namespace ShopErp.App.Views.Orders
             return item;
         }
 
-        private void miSelectPre_Click(object sender, RoutedEventArgs e)
+        private void miSelect_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -250,30 +250,10 @@ namespace ShopErp.App.Views.Orders
                 MenuItem mi = sender as MenuItem;
                 var orders = (this.dgOrders.ItemsSource as OrderViewModel[]).ToList();
                 int index = orders.IndexOf(item);
-
+                bool isPre = mi.Header.ToString().Contains("向前选择");
                 for (int i = 0; i < orders.Count; i++)
                 {
-                    orders[i].IsChecked = i <= index ? true : false;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
-        }
-
-        private void miSelectForward_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var item = this.GetCurrentSelectedItem(sender);
-                MenuItem mi = sender as MenuItem;
-                var orders = (this.dgOrders.ItemsSource as OrderViewModel[]).ToList();
-                int index = orders.IndexOf(item);
-
-                for (int i = 0; i < orders.Count; i++)
-                {
-                    orders[i].IsChecked = i >= index ? true : false;
+                    orders[i].IsChecked = isPre ? (i <= index ? true : false) : (i >= index ? true : false);
                 }
             }
             catch (Exception ex)
@@ -431,6 +411,5 @@ namespace ShopErp.App.Views.Orders
         {
             SelectGoods(sender, (o1, o2) => o1.GoodsId == o2.GoodsId && o1.Edtion == o1.Edtion && o1.Color == o2.Color && o1.Size == o2.Size);
         }
-
     }
 }

@@ -330,7 +330,6 @@
     <Compile Include="ViewModels\OrderReturnViewModel.cs" />
     <Compile Include="ViewModels\OrderSpilteViewModel.cs" />
     <Compile Include="ViewModels\OrderViewModel.cs" />
-    <Compile Include="ViewModels\PrintHistoryGroupViewModel.cs" />
     <Compile Include="ViewModels\PrintHistoryViewModel.cs" />
     <Compile Include="ViewModels\PrintOrderPageViewModel.cs" />
     <Compile Include="ViewModels\PrintOrderViewModel.cs" />

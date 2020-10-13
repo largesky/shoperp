@@ -64,20 +64,17 @@
         <DataGrid Grid.Row="1" Name="dgvOrders"  Style="{StaticResource ResourceKey=OrderDataGridStyle}">
             <DataGrid.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="向前选择" Name="miSelectPre" Click="miSelectPre_Click" />
-                    <MenuItem Header="向后选择" Name="miSelectForward" Click="miSelectForward_Click" />
+                    <MenuItem Header="向前选择" Click="miSelect_Click" />
+                    <MenuItem Header="向后选择" Click="miSelect_Click" />
                 </ContextMenu>
             </DataGrid.ContextMenu>
             <DataGrid.Columns>
-                <DataGridCheckBoxColumn Header="选择"  Binding="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="False" ></DataGridCheckBoxColumn>
+                <DataGridCheckBoxColumn  Binding="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="False" >
+                    <DataGridCheckBoxColumn.Header>
+                        <CheckBox Checked="CheckBox_Checked" Unchecked="CheckBox_Checked"/>
+                    </DataGridCheckBoxColumn.Header>
+                </DataGridCheckBoxColumn>
                 <DataGridTextColumn Header="店铺" Binding="{Binding Source.ShopId,Converter={StaticResource shopMarkConverter}}" Width="Auto" IsReadOnly="True" />
-                <!--<DataGridTemplateColumn Header="旗帜" Width="Auto" CanUserSort="True" SortMemberPath="Source.PopFlag" IsReadOnly="True">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Image Source="{Binding Source.PopFlag,Converter={StaticResource flagImageConverter}}" Stretch="Fill" Width="14" Height="14" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>-->
                 <DataGridTextColumn Header="类型" Binding="{Binding Source.Type,Converter={StaticResource descriptionConverter}}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="订单编号" Binding="{Binding Source.Id}" Width="Auto" IsReadOnly="True"/>
                 <DataGridTextColumn Header="买家账号" Binding="{Binding Source.PopBuyerId}" Width="Auto" IsReadOnly="True"/>

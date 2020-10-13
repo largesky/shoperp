@@ -29,8 +29,8 @@
         <DataGrid Grid.Row="1" Name="dgOrders" Style="{StaticResource ResourceKey=OrderDataGridStyle}" Sorting="dgOrders_Sorting">
             <DataGrid.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="向前选择" Name="miSelectPre" Click="miSelectPre_Click" />
-                    <MenuItem Header="向后选择" Name="miSelectForward" Click="miSelectForward_Click" />
+                    <MenuItem Header="向前选择" Click="miSelect_Click" />
+                    <MenuItem Header="向后选择" Click="miSelect_Click" />
                     <MenuItem Header="选择相同店铺" Name="miSelectSameShop" Click="MiSelectSameShop_Click"/>
                     <MenuItem Header="选择相同平台" Name="miSelectSamePop" Click="MiSelectSamePop_Click"/>
                     <MenuItem Header="选择相同厂家" Name="miSelectSameVendor" Click="MiSelectSameVendor_Click"/>

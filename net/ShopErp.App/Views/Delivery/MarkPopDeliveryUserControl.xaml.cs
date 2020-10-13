@@ -107,8 +107,6 @@ namespace ShopErp.App.Views.Delivery
             }
         }
 
-        #region 前选 后选 
-
         private OrderViewModel GetMIOrder(object sender)
         {
             MenuItem mi = sender as MenuItem;
@@ -127,7 +125,7 @@ namespace ShopErp.App.Views.Delivery
             return item;
         }
 
-        private void miSelectPre_Click(object sender, RoutedEventArgs e)
+        private void miSelect_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -135,9 +133,10 @@ namespace ShopErp.App.Views.Delivery
                 MenuItem mi = sender as MenuItem;
                 var orders = this.orders;
                 int index = orders.IndexOf(item);
+                bool isPre = mi.Header.ToString().Contains("向前选择");
                 for (int i = 0; i < orders.Count; i++)
                 {
-                    orders[i].IsChecked = i <= index ? true : false;
+                    orders[i].IsChecked = isPre ? (i <= index ? true : false) : (i >= index ? true : false);
                 }
             }
             catch (Exception ex)
@@ -146,25 +145,24 @@ namespace ShopErp.App.Views.Delivery
             }
         }
 
-        private void miSelectForward_Click(object sender, RoutedEventArgs e)
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             try
             {
-                var item = this.GetMIOrder(sender);
-                MenuItem mi = sender as MenuItem;
-                var orders = this.orders;
-                int index = orders.IndexOf(item);
-
-                for (int i = 0; i < orders.Count; i++)
+                if (orders == null || orders.Count < 1)
                 {
-                    orders[i].IsChecked = i >= index ? true : false;
+                    return;
+                }
+                bool isChecked = ((CheckBox)sender).IsChecked.Value;
+                foreach (var item in orders)
+                {
+                    item.IsChecked = isChecked;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                MessageBox.Show(ex.Message);
             }
         }
-        #endregion
     }
 }
