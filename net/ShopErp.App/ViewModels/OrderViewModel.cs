@@ -72,7 +72,7 @@ namespace ShopErp.App.ViewModels
         {
             get
             {
-                return OrderService.FormatGoodsInfoCanbeSend(Source, false, false);
+                return OrderService.FormatGoodsInfoWithStateOk(Source, false, false);
             }
         }
 

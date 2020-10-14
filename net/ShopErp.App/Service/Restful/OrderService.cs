@@ -300,13 +300,13 @@ namespace ShopErp.App.Service.Restful
             return mergedOrders.ToArray();
         }
 
-        public static OrderGoods[] FilterOrderGoodsCanbeSend(Order order, bool onlnyNormal)
+        public static OrderGoods[] FilterOrderGoodsWithStateOk(Order order, bool onlnyNormal)
         {
             if (order == null || order.OrderGoodss == null || order.OrderGoodss.Count < 1 || (onlnyNormal && order.Type != OrderType.NORMAL))
             {
                 return new OrderGoods[0];
             }
-            return order.OrderGoodss.Where(obj => obj.State == OrderState.PAYED || obj.State == OrderState.PRINTED || obj.State == OrderState.CHECKFAIL || obj.State == OrderState.GETED).ToArray();
+            return order.OrderGoodss.Where(obj => (int)OrderState.PAYED <= (int)obj.State && (int)obj.State <= (int)OrderState.SUCCESS).ToArray();
         }
 
 
@@ -315,9 +315,9 @@ namespace ShopErp.App.Service.Restful
         /// </summary>
         /// <param name="order"></param>
         /// <returns></returns>
-        public static string FormatGoodsInfoCanbeSend(Order order, bool onlnyNormal, bool usVendorPingying)
+        public static string FormatGoodsInfoWithStateOk(Order order, bool onlnyNormal, bool usVendorPingying)
         {
-            var orderGoods = FilterOrderGoodsCanbeSend(order, onlnyNormal);
+            var orderGoods = FilterOrderGoodsWithStateOk(order, onlnyNormal);
             StringBuilder sb = new StringBuilder();
             foreach (var goods in orderGoods)
             {
@@ -326,9 +326,9 @@ namespace ShopErp.App.Service.Restful
             return sb.ToString().Trim();
         }
 
-        public static int CountGoodsCanbeSend(Order order, bool onlnyNormal)
+        public static int CountGoodsWithStateOk(Order order, bool onlnyNormal)
         {
-            return FilterOrderGoodsCanbeSend(order, onlnyNormal).Select(obj => obj.Count).Sum();
+            return FilterOrderGoodsWithStateOk(order, onlnyNormal).Select(obj => obj.Count).Sum();
         }
     }
 }

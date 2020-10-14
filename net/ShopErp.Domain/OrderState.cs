@@ -20,9 +20,6 @@
         [EnumDescription("已拿货")]
         GETED,
 
-        [EnumDescription("下架")]
-        NOTSALE,
-
         [EnumDescription("已发货")]
         SHIPPED = 50,
 
@@ -40,5 +37,8 @@
 
         [EnumDescription("已关闭")]
         CLOSED = 64,
+
+        [EnumDescription("已下架")]
+        NOTSALE = 65,
     }
 }

@@ -422,12 +422,12 @@ namespace ShopErp.App.ViewModels
                     StringBuilder goods_commment = new StringBuilder();
                     if (mergedOrders[i].Type == OrderType.NORMAL)
                     {
-                        goods_commment.Append(OrderService.FormatGoodsInfoCanbeSend(mergedOrders[i], true, true));
+                        goods_commment.Append(OrderService.FormatGoodsInfoWithStateOk(mergedOrders[i], true, true));
                         if (mergedOrders[i].PopPayType != PopPayType.COD)
                             goods_commment.AppendLine(mergedOrders[i].PopSellerComment);
                     }
                     userDatas[i].Add("goodsInfoSellerComment", goods_commment.ToString());
-                    userDatas[i].Add("suminfo", string.Format("店:{0},数:{1},付:{2}", allShops.FirstOrDefault(obj => obj.Id == mergedOrders[i].ShopId).Mark, OrderService.CountGoodsCanbeSend(mergedOrders[i], true), mergedOrders[i].PopPayTime.ToString("yyyy-MM-dd HH:mm:ss")));
+                    userDatas[i].Add("suminfo", string.Format("店:{0},数:{1},付:{2}", allShops.FirstOrDefault(obj => obj.Id == mergedOrders[i].ShopId).Mark, OrderService.CountGoodsWithStateOk(mergedOrders[i], true), mergedOrders[i].PopPayTime.ToString("yyyy-MM-dd HH:mm:ss")));
                 }
 
                 WPFHelper.DoEvents();

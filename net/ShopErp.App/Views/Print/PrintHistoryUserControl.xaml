@@ -55,6 +55,7 @@
                 <DataGridTextColumn Header="打印编号" Binding="{Binding Source.PageNumber}" Width="Auto" />
                 <DataGridTextColumn Header="打印时间" Binding="{Binding Source.CreateTime,Converter={StaticResource datetimeConverter}}" Width="Auto" />
                 <DataGridTextColumn Header="上传时间" Binding="{Binding Source.UploadTime,Converter={StaticResource datetimeConverter}}" Width="Auto" />
+                <DataGridTextColumn Header="快递平台" Binding="{Binding Source.DeliverySourceType,Converter={StaticResource descriptionConverter}}" Width="Auto" />
                 <DataGridTextColumn Header="快递单号" Binding="{Binding Source.DeliveryNumber}" Width="Auto" />
                 <DataGridTextColumn Header="商品信息" Binding="{Binding Source.GoodsInfo}" Width="Auto" />
                 <DataGridTextColumn Header="收件人姓名" Binding="{Binding Source.ReceiverName}" Width="Auto" />
