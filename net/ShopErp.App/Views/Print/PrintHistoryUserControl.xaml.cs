@@ -126,6 +126,7 @@ namespace ShopErp.App.Views.Print
                 {
                     MessageBox.Show("没有数据");
                 }
+                ps = ps.Where(obj => obj.IsChecked).ToArray();
                 this.ResetViewState(ps);
                 foreach (var item in ps)
                 {
@@ -160,7 +161,7 @@ namespace ShopErp.App.Views.Print
                     MessageBox.Show("没有数据");
                     return;
                 }
-
+                ps = ps.Where(obj => obj.IsChecked).ToArray();
                 if (MessageBox.Show("是否删除打印历史?", "警告", MessageBoxButton.YesNo, MessageBoxImage.Error) != MessageBoxResult.Yes)
                 {
                     return;
@@ -205,9 +206,8 @@ namespace ShopErp.App.Views.Print
                 {
                     return;
                 }
-
+                ps = ps.Where(obj => obj.IsChecked).ToArray();
                 OrderService os = ServiceContainer.GetService<OrderService>();
-
                 this.ResetViewState(ps);
                 WPFHelper.DoEvents();
                 foreach (var item in ps)

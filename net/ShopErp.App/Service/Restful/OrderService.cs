@@ -321,7 +321,7 @@ namespace ShopErp.App.Service.Restful
             StringBuilder sb = new StringBuilder();
             foreach (var goods in orderGoods)
             {
-                sb.AppendLine(usVendorPingying ? ServiceContainer.GetService<VendorService>().GetVendorPingyingName(goods.Vendor).ToUpper() : VendorService.FormatVendorName(goods.Vendor) + " " + goods.Number + goods.Edtion + goods.Color + goods.Size + " (" + goods.Count + ") ");
+                sb.AppendLine((usVendorPingying ? ServiceContainer.GetService<VendorService>().GetVendorPingyingName(goods.Vendor).ToUpper() : VendorService.FormatVendorName(goods.Vendor)) + " " + goods.Number + goods.Edtion + goods.Color + goods.Size + " (" + goods.Count + ") ");
             }
             return sb.ToString().Trim();
         }
