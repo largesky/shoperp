@@ -330,7 +330,7 @@ namespace ShopErp.App.Views.AttachUI.Taobao
             }
             if (state.Contains("交易关闭") || state.Contains("退款成功"))
             {
-                return OrderState.CANCLED;
+                return OrderState.CLOSED;
             }
             if (state.Contains("交易成功"))
             {
@@ -579,7 +579,7 @@ namespace ShopErp.App.Views.AttachUI.Taobao
 
                 if (so.operations != null && so.operations.FirstOrDefault(obj => obj.text.Trim() == "退款成功") != null)
                 {
-                    og.State = OrderState.CANCLED;
+                    og.State = OrderState.CLOSED;
                 }
                 else if (so.operations != null && so.operations.FirstOrDefault(obj => obj.text.Trim() == "请卖家处理" || obj.text.Trim() == "请退款") != null)
                 {
@@ -775,6 +775,58 @@ namespace ShopErp.App.Views.AttachUI.Taobao
             }
             TaobaoOrderSellerCommentResponse resp = Newtonsoft.Json.JsonConvert.DeserializeObject<TaobaoOrderSellerCommentResponse>(ret);
             return resp.tip;
+        }
+
+        public PopOrderState GetOrderState(string popOrderId)
+        {
+            var pos = new PopOrderState()
+            {
+                PopOrderId = popOrderId,
+                PopOrderStateValue = "",
+                State = OrderState.NONE
+            };
+            var shop = GetLoginShop();
+            //订单信息
+            string url = shop.PopType == PopType.TMALL ? "https://trade.tmall.com/detail/orderDetail.htm?bizOrderId=" : "https://trade.taobao.com/detail/orderDetail.htm?bizOrderId=";
+            var content = MsHttpRestful.GetReturnString(url + popOrderId, CefCookieVisitor.GetCookieValue(shop.PopType == PopType.TMALL ? "trade.tmall.com" : "trade.taobao.com"));
+            string title = shop.PopType == PopType.TMALL ? "var detailData" : "var data = JSON";
+
+            int si = content.IndexOf(title);
+            if (si <= 0)
+            {
+                throw new Exception("未找到订单详情数据开始标识" + title);
+            }
+            si = content.IndexOf('{', si);
+            if (si <= 0)
+            {
+                throw new Exception("未找到订单详情数据开始标识" + title);
+            }
+            int ei = content.IndexOf("</script>", si);
+            if (ei <= si)
+            {
+                throw new Exception("未找到详情结尾数据");
+            }
+            while (ei >= 0 && content[ei] != '}') ei--;
+            if (ei <= si)
+            {
+                throw new Exception("未找到详情结尾数据");
+            }
+            String orderInfo = content.Substring(si, ei - si + 1).Trim();
+
+            if (shop.PopType == PopType.TMALL)
+            {
+                var oi = Newtonsoft.Json.JsonConvert.DeserializeObject<TmallQueryOrderDetailResponse>(orderInfo);
+                pos.PopOrderStateValue = oi.overStatus.status.content[0].text;
+            }
+            else
+            {
+                orderInfo = Regex.Unescape(orderInfo);
+                var oi = Newtonsoft.Json.JsonConvert.DeserializeObject<TaobaoQueryOrderDetailResponse>(orderInfo);
+                pos.PopOrderStateValue = oi.mainOrder.statusInfo.text;
+            }
+            pos.State = ConvertState(pos.PopOrderStateValue);
+
+            return pos;
         }
 
         #endregion

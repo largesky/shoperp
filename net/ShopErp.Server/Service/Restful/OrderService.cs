@@ -22,10 +22,6 @@ namespace ShopErp.Server.Service.Restful
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Multiple, AddressFilterMode = AddressFilterMode.Exact)]
     public class OrderService : ServiceBase<Order, OrderDao>
     {
-        public const string UPDATE_RET_NOEXIST = "本地订单中不存在";
-        public const string UPDATE_RET_NOUPDATED = "未更新订单";
-        public const string UPDATE_RET_UPDATED = "已更新订单";
-
         protected static readonly char[] SPILTE_CHAR_COMMENT_L = new char[] { '(', '（' };
         protected static readonly char[] SPILTE_CHAR_COMMENT_R = new char[] { ')', '）' };
         protected static readonly char[] SPILTE_CHAR_EDTION_L = new char[] { '[', '【' };
@@ -713,7 +709,7 @@ namespace ShopErp.Server.Service.Restful
                     throw new Exception("该状态下不能关闭订单");
                 }
 
-                var ogs = or.OrderGoodss.Where(obj => obj.State != OrderState.SPILTED && obj.State != OrderState.CLOSED && obj.State != OrderState.CANCLED).ToList();
+                var ogs = or.OrderGoodss.Where(obj => obj.State != OrderState.SPILTED && obj.State != OrderState.CLOSED).ToList();
                 var og = ogs.FirstOrDefault(obj => obj.Id == orderGoodsId);
 
                 if (orderGoodsId > 0 && og == null)
@@ -995,7 +991,7 @@ namespace ShopErp.Server.Service.Restful
                 {
                     throw new Exception("店铺信息不存在");
                 }
-                if ((s.PopType == PopType.TMALL || s.PopType == PopType.TAOBAO) && string.IsNullOrWhiteSpace(s.AppAccessToken) == false && string.IsNullOrWhiteSpace(os.PopOrderId) == false && s.AppEnabled)
+                if (string.IsNullOrWhiteSpace(s.AppAccessToken) == false && string.IsNullOrWhiteSpace(os.PopOrderId) == false && s.AppEnabled)
                 {
                     this.ps.ModifyComment(s, os.PopOrderId, comment, flag);
                 }
@@ -1037,6 +1033,25 @@ namespace ShopErp.Server.Service.Restful
             catch (Exception e)
             {
                 throw new WebFaultException<ResponseBase>(new ResponseBase(e.Message), HttpStatusCode.OK);
+            }
+        }
+
+        [OperationContract]
+        [WebInvoke(ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, RequestFormat = WebMessageFormat.Json, UriTemplate = "/getpoporderstate.html")]
+        public DataCollectionResponse<PopOrderState> GetPopOrderState(Shop shop, string popOrderId)
+        {
+            try
+            {
+                if (shop.AppEnabled == false)
+                {
+                    throw new Exception("订单店铺没有开启接口功能无法获取订单状态");
+                }
+                var nor = ps.GetOrderState(shop, popOrderId);
+                return new DataCollectionResponse<PopOrderState>(nor);
+            }
+            catch (Exception ex)
+            {
+                throw new WebFaultException<ResponseBase>(new ResponseBase(ex.Message), HttpStatusCode.OK);
             }
         }
 
@@ -1165,8 +1180,8 @@ namespace ShopErp.Server.Service.Restful
         /// <param name="orderId"></param>
         /// <returns></returns>
         [OperationContract]
-        [WebInvoke(ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, RequestFormat = WebMessageFormat.Json, UriTemplate = "/updateordertogeted.html")]
-        public ResponseBase UpdateOrderToGeted(long orderId)
+        [WebInvoke(ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, RequestFormat = WebMessageFormat.Json, UriTemplate = "/updateordergoodstogeted.html")]
+        public ResponseBase UpdateOrderGoodsStateToGeted(long orderId)
         {
             try
             {
@@ -1205,7 +1220,6 @@ namespace ShopErp.Server.Service.Restful
             }
         }
 
-
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, RequestFormat = WebMessageFormat.Json, UriTemplate = "/updateorderstate.html")]
         public StringResponse UpdateOrderState(string popOrderid, OrderState onlineOrderState, OrderUpdate orderInDb, Shop shop)
@@ -1216,16 +1230,20 @@ namespace ShopErp.Server.Service.Restful
                 if (orderInDb == null)
                 {
                     //检测数据库是否存在
-                    var ret = ous.GetByAll(null, popOrderid, Utils.DateTimeUtil.DbMinTime, DateTime.Now.AddDays(1), 0, 0);
+                    var ret = ous.GetByAll(null, popOrderid, OrderType.NONE, Utils.DateTimeUtil.DbMinTime, DateTime.Now.AddDays(1), 0, 0);
                     if (ret == null || ret.Datas == null || ret.Datas.Count < 1)
                     {
-                        return new StringResponse(UPDATE_RET_NOEXIST);
+                        return new StringResponse("未找到本地订单");
                     }
                     orderInDb = ret.Datas[0];
                 }
+                if (orderInDb.State == OrderState.CLOSED)
+                {
+                    return new StringResponse("本地订单已关闭不需要更新");
+                }
                 if (onlineOrderState == orderInDb.State)
                 {
-                    return new StringResponse(UPDATE_RET_NOUPDATED);
+                    return new StringResponse("订单状态相同不需要更新");
                 }
 
                 OrderState targetState = orderInDb.State, dbState = orderInDb.State;
@@ -1303,17 +1321,12 @@ namespace ShopErp.Server.Service.Restful
                     throw new Exception("要更新成的订单状态不能为:" + targetState);
                 }
 
-                //本地已经关闭的订单则不允许更新状态
-                if (orderInDb.State != OrderState.CLOSED && orderInDb.State != OrderState.CANCLED)
+                if (targetState == orderInDb.State)
                 {
-                    if (targetState != orderInDb.State)
-                    {
-                        ous.UpdateOrderGoodsStateByOrderId(orderInDb.Id, targetState);
-                    }
-                    orderInDb.State = targetState;
+                    return new StringResponse("未更新");
                 }
-                ous.UpdateEx(orderInDb, true);
-                return new StringResponse(UPDATE_RET_UPDATED);
+                this.dao.UpdateOrderState(orderInDb.Id, targetState);
+                return new StringResponse("已更新");
             }
             catch (Exception e)
             {

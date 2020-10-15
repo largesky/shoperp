@@ -39,7 +39,6 @@ namespace ShopErp.App
             mc = new MenuConfig("订单管理", null);
             mc.Add("所有订单", typeof(OrderAllUserControl));
             mc.Add("订单同步", typeof(OrderSyncUserControl));
-            mc.Add("订单同步-网页", typeof(OrderSyncHtmlUserControl));
             mc.Add("退货管理", typeof(OrderReturnUserControl));
             mc.Add("退货出单", typeof(OrderReturnOutUserControl));
             mc.Add("货物统计", typeof(OrderGoodsCountUserControl));

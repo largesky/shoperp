@@ -1,4 +1,5 @@
-﻿using ShopErp.Domain;
+﻿using Microsoft.Win32;
+using ShopErp.Domain;
 using ShopErp.Domain.RestfulResponse;
 using System;
 using System.Collections.Generic;
@@ -39,9 +40,7 @@ namespace ShopErp.Server.Dao.NHibernateDao
             hsql += this.MakeQueryLike("Shipper", shipper, objs);
             if (ofs != null && ofs.Length > 0)
             {
-                hsql += "(";
-                hsql += string.Join(" or ", (ofs).Select(obj => "O0.PopFlag=" + (int)obj));
-                hsql += ") and ";
+                hsql += " O0.PopFlag in (" + string.Join(",", ofs.Select(obj => (int)obj)) + ")  and ";
             }
             hsql += this.MakeQuery("O0.ParseResult", parseResult, -1);
             hsql += this.MakeQueryLike("O0.PopSellerComment", comment, objs);
@@ -101,6 +100,25 @@ namespace ShopErp.Server.Dao.NHibernateDao
             var ret = this.GetPage(hsql, 0, 0, objs.ToArray());
 
             return ret;
+        }
+
+        public void UpdateOrderState(long orderId, OrderState state)
+        {
+            var s = this.OpenSession();
+            try
+            {
+                var query = s.CreateSQLQuery(string.Format("update OrderGoods set State={0} where OrderId={1} and  State<{2}", (int)state, orderId, (int)OrderState.CLOSED));
+                int ret = query.ExecuteUpdate();
+                query = s.CreateSQLQuery((string.Format("update `Order` set State={0} where Id={1} ", (int)state, orderId)));
+                ret = query.ExecuteUpdate();
+            }
+            finally
+            {
+                if (s != null)
+                {
+                    s.Close();
+                }
+            }
         }
     }
 }

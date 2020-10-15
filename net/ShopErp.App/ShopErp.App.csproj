@@ -309,8 +309,6 @@
     <Compile Include="Service\Spider\Go2\Go2Spider.cs" />
     <Compile Include="Service\Spider\K3\K3Spider.cs" />
     <Compile Include="Service\Spider\SpiderBase.cs" />
-    <Compile Include="Service\Sync\OrderSync.cs" />
-    <Compile Include="Service\Sync\SyncEventArgs.cs" />
     <Compile Include="Utils\CollectionsSpilteUtil.cs" />
     <Compile Include="Utils\CSV.cs" />
     <Compile Include="Utils\DateTimeUtil.cs" />
@@ -534,9 +532,6 @@
     </Compile>
     <Compile Include="Views\Orders\OrderSyncUserControl.xaml.cs">
       <DependentUpon>OrderSyncUserControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Orders\OrderSyncHtmlUserControl.xaml.cs">
-      <DependentUpon>OrderSyncHtmlUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Orders\OrderReturnProcessWindow.xaml.cs">
       <DependentUpon>OrderReturnProcessWindow.xaml</DependentUpon>
@@ -896,10 +891,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Orders\OrderSyncUserControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Orders\OrderSyncHtmlUserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

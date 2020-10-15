@@ -125,11 +125,11 @@ namespace ShopErp.App.Views.Delivery
             }
 
             var state = e.State;
-            if (odInDb.State == state || odInDb.State == OrderState.CLOSED || odInDb.State == OrderState.CANCLED)
+            if (odInDb.State == state || odInDb.State == OrderState.CLOSED)
             {
 
             }
-            else if (state == OrderState.RETURNING || state == OrderState.CLOSED || state == OrderState.CANCLED)
+            else if (state == OrderState.RETURNING || state == OrderState.CLOSED)
             {
                 odInDb.State = state;
                 ServiceContainer.GetService<OrderService>().Update(odInDb);

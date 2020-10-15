@@ -10,21 +10,6 @@
     <property name="PopOrderId">
       <column name="PopOrderId" sql-type="string" not-null="true" />
     </property>
-    <property name="PopCodSevFee">
-      <column name="PopCodSevFee" sql-type="DECIMAL(22,2)" not-null="true" />
-    </property>
-    <property name="PopOrderTotalMoney">
-      <column name="PopOrderTotalMoney" sql-type="DECIMAL(22,2)" not-null="true" />
-    </property>
-    <property name="PopState">
-      <column name="PopState" sql-type="string" not-null="true" />
-    </property>
-    <property name="PopCodNumber">
-      <column name="PopCodNumber" sql-type="string" not-null="true" />
-    </property>
-    <property name="PopPayTime">
-      <column name="PopPayTime" sql-type="datetime" not-null="true" />
-    </property>
     <property name="PrintTime">
       <column name="PrintTime" sql-type="datetime" not-null="true" />
     </property>

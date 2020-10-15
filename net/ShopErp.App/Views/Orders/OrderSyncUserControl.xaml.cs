@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ShopErp.App.Domain.TaobaoHtml.Order;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,9 +13,16 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using CefSharp;
+using ShopErp.App.Service;
 using ShopErp.App.Service.Restful;
-using ShopErp.App.Service.Sync;
+using ShopErp.App.Utils;
 using ShopErp.Domain;
+using ShopErp.Domain.Pop;
+using System.Text.RegularExpressions;
+using ShopErp.App.CefSharpUtils;
+using ShopErp.App.Service.Net;
+using ShopErp.App.Views.Extenstions;
 
 namespace ShopErp.App.Views.Orders
 {
@@ -23,8 +31,9 @@ namespace ShopErp.App.Views.Orders
     /// </summary>
     public partial class OrderSyncUserControl : UserControl
     {
+        private bool isRunning = false;
+        private bool isStop = false;
         private bool myLoaded = false;
-        private OrderSync orderSync = null;
 
         public OrderSyncUserControl()
         {
@@ -39,12 +48,13 @@ namespace ShopErp.App.Views.Orders
                 {
                     return;
                 }
-                var ret = ServiceContainer.GetService<ShopService>().GetByAll().Datas.Where(obj => obj.Enabled && obj.AppEnabled).ToList();
+                this.dpStart.Value = DateTime.Now.AddDays(-10);
+                this.dpEnd.Value = DateTime.Now;
+                this.cbbTypes.Bind<OrderType>();
+                var ret = ServiceContainer.GetService<ShopService>().GetByAll().Datas.Where(obj => obj.Enabled).ToList();
                 ret.Insert(0, new Shop { Mark = "所有", Id = 0, Enabled = true });
                 this.cbbShops.ItemsSource = ret;
                 this.cbbShops.SelectedIndex = 0;
-                this.dpStart.Value = DateTime.Now.AddDays(-10);
-                this.dpEnd.Value = DateTime.Now;
                 this.myLoaded = true;
             }
             catch (Exception ex)
@@ -53,20 +63,34 @@ namespace ShopErp.App.Views.Orders
             }
         }
 
-        private void btnSync_Click(object sender, RoutedEventArgs e)
+        private void AppendText(string text)
         {
-            this.Start();
+            this.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                if (this.tbMessage.LineCount > 10000)
+                {
+                    this.tbMessage.Text = "";
+                }
+                this.tbMessage.AppendText(text);
+                this.tbMessage.ScrollToEnd();
+            }));
         }
 
-        private void Start()
+        private void btnSync_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                if (this.orderSync != null)
+                if (this.isRunning)
                 {
-                    this.orderSync.Stop();
+                    this.isStop = true;
                     return;
                 }
+                this.isStop = false;
+                this.isRunning = true;
+                string popOrderId = this.tbPopOrderId.Text.Trim();
+                var dt = this.dpStart.Value.Value;
+                var end = this.dpEnd.Value.Value;
+                var ot = this.cbbTypes.GetSelectedEnum<OrderType>();
                 Shop[] shops = null;
                 var selectedShop = this.cbbShops.SelectedItem as Shop;
                 if (selectedShop == null || selectedShop.Id == 0)
@@ -77,50 +101,66 @@ namespace ShopErp.App.Views.Orders
                 {
                     shops = new Shop[] { selectedShop };
                 }
-
-                var popOrderId = this.tbPopOrderId.Text.Trim();
-                if (string.IsNullOrWhiteSpace(popOrderId) == false && this.cbbShops.SelectedIndex < 1)
-                {
-                    throw new Exception("订单编号不为空，则必须选择一个店铺");
-                }
-                this.orderSync = new OrderSync(shops, this.dpStart.Value.Value, this.dpEnd.Value.Value, popOrderId);
-                this.orderSync.SyncSarting += orderSync_SyncSarting;
-                this.orderSync.Syncing += orderSync_Syncing;
-                this.orderSync.SyncEnded += orderSync_SyncEnded;
-                this.orderSync.StartUpdate();
+                Task.Factory.StartNew(new Action(() => Start(shops, popOrderId, ot, dt, end)));
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+
         }
 
-        void orderSync_SyncEnded(object sender, EventArgs e)
+        private void Start(Shop[] shops, string popOrderId, OrderType orderType, DateTime startTime, DateTime endTime)
         {
-            this.Dispatcher.BeginInvoke(new Action(() => MessageBox.Show("同步完成")));
-            this.Dispatcher.BeginInvoke(new Action(() => this.btnUpdate.Content = "开始同步"));
-            orderSync.SyncSarting -= orderSync_SyncSarting;
-            orderSync.SyncEnded -= orderSync_SyncEnded;
-            orderSync.Syncing -= orderSync_SyncSarting;
-            this.orderSync = null;
-        }
-
-        void orderSync_Syncing(object sender, SyncEventArgs e)
-        {
-            this.Dispatcher.BeginInvoke(new Action(() =>
+            try
             {
-                if (this.tbMessage.LineCount > 10000)
+                if (this.isStop)
                 {
-                    this.tbMessage.Text = "";
+                    this.isRunning = false;
+                    return;
                 }
-                this.tbMessage.AppendText(DateTime.Now + ":" + e.Message + Environment.NewLine);
-                this.tbMessage.ScrollToEnd();
-            }));
-        }
-
-        void orderSync_SyncSarting(object sender, EventArgs e)
-        {
-            this.Dispatcher.BeginInvoke(new Action(() => this.btnUpdate.Content = "停止同步"));
+                this.isRunning = true;
+                this.Dispatcher.BeginInvoke(new Action(() => this.btnUpdate.Content = "停止"));
+                var ors = ServiceContainer.GetService<OrderUpdateService>().GetByAll(shops.Select(obj => obj.Id).ToArray(), popOrderId, orderType, startTime, endTime, 0, 0);
+                var orders = ors.Datas.Where(obj => string.IsNullOrWhiteSpace(obj.PopOrderId) == false).ToArray();
+                if (orders.Length < 1)
+                {
+                    throw new Exception("订单不存在");
+                }
+                int i = 0;
+                foreach (var o in orders)
+                {
+                    if (this.isStop)
+                    {
+                        return;
+                    }
+                    this.AppendText(DateTimeUtil.FormatDateTime(DateTime.Now) + ":" + "正在下载订单状态: " + (++i) + " / " + orders.Count() + "  " + o.PopOrderId + "  ");
+                    Shop shop = shops.FirstOrDefault(obj => obj.Id == o.ShopId);
+                    string ret = "";
+                    var state = OrderState.NONE;
+                    if (shop.AppEnabled)
+                    {
+                        state = ServiceContainer.GetService<OrderService>().GetPopOrderState(shop, o.PopOrderId).First.State;
+                    }
+                    else
+                    {
+                        state = MainWindow.ProgramMainWindow.QueryUserControlInstance<AttachUI.Taobao.TaobaoUserControl>().GetOrderState(o.PopOrderId).State;
+                    }
+                    ret = ServiceContainer.GetService<OrderService>().UpdateOrderState(o.PopOrderId, state, o, shop).data;
+                    this.AppendText(ret + Environment.NewLine);
+                }
+            }
+            catch (Exception ex)
+            {
+                this.AppendText(ex.Message);
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                this.isRunning = false;
+                this.isStop = false;
+                this.Dispatcher.BeginInvoke(new Action(() => this.btnUpdate.Content = "开始同步"));
+            }
         }
     }
 }

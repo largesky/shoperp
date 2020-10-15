@@ -41,7 +41,7 @@ namespace ShopErp.Server.Service.Pop.Taobao
             }
             else if (state == "CANCELED")
             {
-                return OrderState.CANCLED;
+                return OrderState.CLOSED;
             }
             else if (state == "SIGN_IN")
             {
@@ -73,7 +73,7 @@ namespace ShopErp.Server.Service.Pop.Taobao
             }
             else if (state == "TRADE_CLOSED_BY_TAOBAO")
             {
-                return OrderState.CANCLED;
+                return OrderState.CLOSED;
             }
             else if (state == "PAY_PENDING")
             {

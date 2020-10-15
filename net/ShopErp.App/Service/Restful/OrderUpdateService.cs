@@ -7,11 +7,12 @@ namespace ShopErp.App.Service.Restful
 {
     public class OrderUpdateService : ServiceBase<OrderUpdate>
     {
-        public DataCollectionResponse<OrderUpdate> GetByAll(long[] shopIds, string popOrderId, DateTime popPayTimeStart, DateTime popPayTimeEnd, int pageIndex, int pageSize)
+        public DataCollectionResponse<OrderUpdate> GetByAll(long[] shopIds, string popOrderId, OrderType orderType, DateTime popPayTimeStart, DateTime popPayTimeEnd, int pageIndex, int pageSize)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
             para["shopIds"] = shopIds;
             para["popOrderId"] = popOrderId;
+            para["orderType"] = orderType;
             para["popPayTimeStart"] = popPayTimeStart;
             para["popPayTimeEnd"] = popPayTimeEnd;
             para["pageIndex"] = pageIndex;

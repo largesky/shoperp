@@ -106,7 +106,7 @@ namespace ShopErp.App.Views.Orders
                 {
                     if ((int)order.State >= (int)OrderState.PAYED && (int)order.State < (int)OrderState.SHIPPED)
                     {
-                        this.os.UpdateOrderToGeted(order.Id);
+                        this.os.UpdateOrderGoodsStateToGeted(order.Id);
                     }
                     this.orders.Add(order);
                     Sound(true);

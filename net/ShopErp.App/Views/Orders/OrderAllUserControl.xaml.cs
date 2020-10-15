@@ -576,12 +576,6 @@ namespace ShopErp.App.Views.Orders
                     MessageBox.Show("Tag对象不为OrderGoods");
                     return;
                 }
-
-                if (orderGoods.State == OrderState.SPILTED && orderGoods.State == OrderState.CANCLED)
-                {
-                    throw new Exception("订单状态不正确");
-                }
-
                 var orderSample = ServiceContainer.GetService<OrderService>().GetById(orderGoods.OrderId);
                 if (orderSample.PopSellerComment.Contains("差价") || orderSample.PopSellerComment.Contains("钱"))
                 {

@@ -122,25 +122,7 @@ namespace ShopErp.App.Views.Orders
                         continue;
                     }
                     var oo = orders.Where(obj => obj.DeliveryNumber == first.DeliveryNumber).ToArray();
-                    int goodsCount = 0;
-                    foreach (var v in oo)
-                    {
-                        if (v.Type != OrderType.NORMAL)
-                        {
-                            continue;
-                        }
-                        if (v.OrderGoodss != null && v.OrderGoodss.Count > 0)
-                        {
-                            foreach (var og in v.OrderGoodss)
-                            {
-                                if (og.State == OrderState.CANCLED || og.State == OrderState.CLOSED || og.State == OrderState.RETURNING || og.State == OrderState.SPILTED || og.IsPeijian)
-                                {
-                                    continue;
-                                }
-                                goodsCount += og.Count;
-                            }
-                        }
-                    }
+                    int goodsCount = oo.Select(obj => OrderService.CountGoodsWithStateOk(obj, true)).Sum();
                     try
                     {
                         os.MarkDelivery(first.DeliveryNumber, goodsCount, true, true);

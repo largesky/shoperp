@@ -29,16 +29,13 @@
         [EnumDescription("退货中")]
         RETURNING = 60,
 
-        [EnumDescription("已拆分")]
-        SPILTED = 62,
-
-        [EnumDescription("已取消")]
-        CANCLED = 63,
-
         [EnumDescription("已关闭")]
         CLOSED = 64,
 
         [EnumDescription("已下架")]
         NOTSALE = 65,
+
+        [EnumDescription("已拆分")]
+        SPILTED = 66,
     }
 }

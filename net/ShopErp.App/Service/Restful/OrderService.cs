@@ -204,6 +204,14 @@ namespace ShopErp.App.Service.Restful
             return DoPost<OrderDownloadCollectionResponse>(para);
         }
 
+        public DataCollectionResponse<PopOrderState> GetPopOrderState(Shop shop, string popOrderId)
+        {
+            Dictionary<string, object> para = new Dictionary<string, object>();
+            para["shop"] = shop;
+            para["popOrderId"] = popOrderId;
+            return DoPost<DataCollectionResponse<PopOrderState>>(para);
+        }
+
         public OrderDownloadCollectionResponse SaveOrUpdateOrdersByPopOrderId(Shop shop, List<OrderDownload> orders)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
@@ -222,6 +230,13 @@ namespace ShopErp.App.Service.Restful
             return DoPost<ResponseBase>(para);
         }
 
+        public ResponseBase UpdateOrderGoodsStateToGeted(long orderId)
+        {
+            Dictionary<string, object> para = new Dictionary<string, object>();
+            para["orderId"] = orderId;
+            return DoPost<ResponseBase>(para);
+        }
+
         public StringResponse UpdateOrderState(string popOrderid, OrderState onlineOrderState, OrderUpdate orderInDb, Shop shop)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
@@ -232,12 +247,7 @@ namespace ShopErp.App.Service.Restful
             return DoPost<StringResponse>(para);
         }
 
-        public ResponseBase UpdateOrderToGeted(long orderId)
-        {
-            Dictionary<string, object> para = new Dictionary<string, object>();
-            para["orderId"] = orderId;
-            return DoPost<ResponseBase>(para);
-        }
+    
 
         /// <summary>
         /// 是否可以合并
