@@ -99,12 +99,11 @@
                 <Setter Property="CanUserDeleteRows" Value="false" />
                 <Setter Property="CanUserReorderColumns" Value="false" />
                 <Setter Property="CanUserResizeRows" Value="True" />
-                <Setter Property="IsReadOnly" Value="False" />
                 <Setter Property="RowDetailsVisibilityMode" Value="VisibleWhenSelected" />
-                <!--<Setter Property="RowHeight" Value="20" />-->
                 <Setter Property="SelectionMode" Value="Extended" />
                 <Setter Property="SelectionUnit" Value="CellOrRowHeader" />
-                <Setter Property="RowHeaderWidth" Value="45" />
+                <Setter Property="RowHeaderWidth" Value="20" />
+                <Setter Property="Margin" Value="3"/>
                 <Setter Property="RowStyle">
                     <Setter.Value>
                         <Style TargetType="{x:Type DataGridRow}">

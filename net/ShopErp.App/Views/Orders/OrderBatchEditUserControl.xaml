@@ -76,13 +76,6 @@
         <DataGrid Grid.Row="1" IsReadOnly="True" Margin="3" Name="dgOrders" Style="{StaticResource ResourceKey=OrderDataGridStyle}" >
             <DataGrid.Columns>
                 <DataGridTextColumn Header="店铺" Binding="{Binding Source.ShopId,Converter={StaticResource shopMarkConverter}}" Width="Auto" IsReadOnly="True" />
-                <!--<DataGridTemplateColumn Header="旗帜" Width="Auto" CanUserSort="True" SortMemberPath="Source.PopFlag" IsReadOnly="True">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Image Source="{Binding Source.PopFlag,Converter={StaticResource flagImageConverter}}" Stretch="Fill" Width="14" Height="14" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>-->
                 <DataGridTextColumn Header="类型" Binding="{Binding Source.Type,Converter={StaticResource descriptionConverter}}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="订单编号" Binding="{Binding Source.Id}" Width="Auto" IsReadOnly="True"/>
                 <DataGridTextColumn Header="买家账号" Binding="{Binding Source.PopBuyerId}" Width="Auto" IsReadOnly="True"/>

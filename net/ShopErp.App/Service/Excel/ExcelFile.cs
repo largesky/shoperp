@@ -111,6 +111,10 @@ namespace ShopErp.App.Service.Excel
                         }
                     }
                 }
+                for (int i = 0; i < columns[pair.Key].Length; i++)
+                {
+                    sheet.AutoSizeColumn(i);
+                }
                 using (FileStream fs = new FileStream(path, FileMode.Create))
                 {
                     book.Write(fs);

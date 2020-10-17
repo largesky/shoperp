@@ -39,15 +39,7 @@
 
         <TextBlock Grid.Row="1" Name="tbTotal" Margin="3" VerticalAlignment="Center" FontSize="13" />
 
-        <DataGrid Name="dgvItems" ItemsSource="{Binding Sources}" Grid.Row="2" IsReadOnly="True" Margin="3"
-                  HorizontalScrollBarVisibility="Auto" GridLinesVisibility="All"
-                  AutoGenerateColumns="False"
-                  CanUserAddRows="False"
-                  CanUserDeleteRows="False"
-                  CanUserResizeRows="False"
-                  RowHeaderWidth="25"
-                  SelectionMode="Extended"
-                  SelectionUnit="CellOrRowHeader">
+        <DataGrid Name="dgvItems" ItemsSource="{Binding Sources}" Grid.Row="2" IsReadOnly="True" Style="{StaticResource OrderDataGridStyle}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="店铺" Binding="{Binding ShopId,Converter={StaticResource shopMarkConverter}}" Width="Auto" />
                 <DataGridTextColumn Header="订单编号" Binding="{Binding OrderId}" Width="Auto" />
