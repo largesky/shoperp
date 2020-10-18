@@ -663,7 +663,7 @@ namespace ShopErp.App.Views.AttachUI.Taobao
                     {
                         state = OrderState.RETURNING;
                     }
-                    AttachUIOrderPreviewDownloadEventArgs orderPreviewDownloadEventArgs = new AttachUIOrderPreviewDownloadEventArgs { Current = currentCount, PopOrderId = v.id, Skip = false, Stop = false, Total = totalCount, State = state, PopFlag = ConvertFlag(v.extra.sellerFlag) };
+                    AttachUIOrderPreviewDownloadEventArgs orderPreviewDownloadEventArgs = new AttachUIOrderPreviewDownloadEventArgs { Current = currentCount, PopOrderId = v.id, Skip = false, Stop = false, Total = totalCount, State = state, PopFlag = ConvertFlag(v.extra.sellerFlag), Shop = shop };
                     this.OnOrderPreviewDownload(orderPreviewDownloadEventArgs);
                     if (orderPreviewDownloadEventArgs.Stop)
                     {

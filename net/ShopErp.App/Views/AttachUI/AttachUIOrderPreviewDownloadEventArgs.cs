@@ -15,6 +15,8 @@ namespace ShopErp.App.Views.AttachUI
 
         public ColorFlag PopFlag { get; set; }
 
+        public Shop Shop { get; set; }
+
         public int Current { get; set; }
 
         public int Total { get; set; }
