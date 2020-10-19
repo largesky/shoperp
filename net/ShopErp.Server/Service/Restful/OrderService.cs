@@ -1112,7 +1112,7 @@ namespace ShopErp.Server.Service.Restful
                         else
                         {
                             //本地已经有的需要更新，像退款的这些订单，也可能不需要更新但本地已经关闭，所以需要读取本地的
-                            string upRet = UpdateOrderState(or.Order.PopOrderId, or.Order.State, null, shop).data;
+                            UpdateOrderState(or.Order.PopOrderId, or.Order.State, null, shop);
                             or.Order = GetByPopOrderId(or.Order.PopOrderId).First;
                         }
                     }
@@ -1222,7 +1222,7 @@ namespace ShopErp.Server.Service.Restful
 
         [OperationContract]
         [WebInvoke(ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.WrappedRequest, RequestFormat = WebMessageFormat.Json, UriTemplate = "/updateorderstate.html")]
-        public StringResponse UpdateOrderState(string popOrderid, OrderState onlineOrderState, OrderUpdate orderInDb, Shop shop)
+        public DataOneResponse<OrderState> UpdateOrderState(string popOrderid, OrderState onlineOrderState, OrderUpdate orderInDb, Shop shop)
         {
             try
             {
@@ -1233,62 +1233,39 @@ namespace ShopErp.Server.Service.Restful
                     var ret = ous.GetByAll(null, popOrderid, OrderType.NONE, Utils.DateTimeUtil.DbMinTime, DateTime.Now.AddDays(1), 0, 0);
                     if (ret == null || ret.Datas == null || ret.Datas.Count < 1)
                     {
-                        return new StringResponse("未找到本地订单");
+                        return new DataOneResponse<OrderState>(OrderState.NONE);
                     }
                     orderInDb = ret.Datas[0];
                 }
-                if (orderInDb.State == OrderState.CLOSED)
+                if (orderInDb.State == OrderState.CLOSED || onlineOrderState == orderInDb.State)
                 {
-                    return new StringResponse("本地订单已关闭不需要更新");
-                }
-                if (onlineOrderState == orderInDb.State)
-                {
-                    return new StringResponse("订单状态相同不需要更新");
+                    return new DataOneResponse<OrderState>(orderInDb.State);
                 }
 
                 OrderState targetState = orderInDb.State, dbState = orderInDb.State;
 
-                if (onlineOrderState == OrderState.WAITPAY)
+                if (onlineOrderState == OrderState.PAYED)
                 {
-                    //待付款，不需要更新状态
-                }
-                else if (onlineOrderState == OrderState.PAYED)
-                {
-                    if (orderInDb.State == OrderState.WAITPAY)
+                    //这种情况，是退款取消了。
+                    if ((orderInDb.State == OrderState.RETURNING) && Utils.DateTimeUtil.IsDbMinTime(orderInDb.DeliveryTime))
                     {
-                        targetState = OrderState.PAYED;
-                    }
-                    else if ((orderInDb.State == OrderState.RETURNING) && Utils.DateTimeUtil.IsDbMinTime(orderInDb.DeliveryTime))
-                    {
-                        if (Utils.DateTimeUtil.IsDbMinTime(orderInDb.PrintTime) == false)
-                        {
-                            targetState = OrderState.PRINTED;
-                        }
-                        else
-                        {
-                            targetState = onlineOrderState;
-                        }
+                        targetState = Utils.DateTimeUtil.IsDbMinTime(orderInDb.PrintTime) ? OrderState.PAYED : OrderState.PRINTED;
                     }
                 }
                 else if (onlineOrderState == OrderState.SHIPPED)
                 {
-                    //如果在退款中，则标记为已发货
+                    //如果在退款中，则标记为已发货，退款已取消
                     if (orderInDb.State == OrderState.RETURNING)
                     {
-                        if (Utils.DateTimeUtil.IsDbMinTime(orderInDb.DeliveryTime))
-                        {
-                            targetState = OrderState.PRINTED;
-                        }
-                        else
-                        {
-                            targetState = onlineOrderState;
-                        }
+                        targetState = Utils.DateTimeUtil.IsDbMinTime(orderInDb.DeliveryTime) ? OrderState.PRINTED : OrderState.SHIPPED;
                     }
-
-                    //已发货,且系统中的打印时间，则说明该订单不是系统打印的，需要更新状态，且同步物流
-                    if (Utils.DateTimeUtil.IsDbMinTime(orderInDb.PrintTime))
+                    else
                     {
-                        targetState = onlineOrderState;
+                        //已发货,该订单不是系统打印的，是通过其它途径发货的，需要更新状态
+                        if (Utils.DateTimeUtil.IsDbMinTime(orderInDb.PrintTime))
+                        {
+                            targetState = OrderState.SHIPPED;
+                        }
                     }
                 }
                 else if (onlineOrderState == OrderState.SUCCESS)
@@ -1306,14 +1283,13 @@ namespace ShopErp.Server.Service.Restful
                         }
                     }
                 }
-                else if ((int)onlineOrderState > (int)OrderState.SHIPPED)
+                else if (onlineOrderState == OrderState.RETURNING || onlineOrderState == OrderState.CLOSED)
                 {
                     targetState = onlineOrderState;
                 }
                 else
                 {
-                    Logger.Log("更新订单失败未知状态[" + onlineOrderState + "]");
-                    return new StringResponse("更新订单失败未知状态[" + onlineOrderState + "]");
+                    throw new Exception("参数状态不对：" + onlineOrderState);
                 }
 
                 if (targetState == OrderState.NONE)
@@ -1323,10 +1299,10 @@ namespace ShopErp.Server.Service.Restful
 
                 if (targetState == orderInDb.State)
                 {
-                    return new StringResponse("未更新");
+                    return new DataOneResponse<OrderState>(orderInDb.State);
                 }
                 this.dao.UpdateOrderState(orderInDb.Id, targetState);
-                return new StringResponse("已更新");
+                return new DataOneResponse<OrderState>(targetState);
             }
             catch (Exception e)
             {

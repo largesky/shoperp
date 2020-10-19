@@ -312,10 +312,6 @@ namespace ShopErp.App.Views.AttachUI.Taobao
 
         private OrderState ConvertState(string state)
         {
-            if (state == "等待买家付款" || state.Contains("商品已拍下，等待买家付款"))
-            {
-                return OrderState.WAITPAY;
-            }
             if (state == "买家已付款" || state.Contains("买家已付款，等待商家发货"))
             {
                 return OrderState.PAYED;
@@ -336,8 +332,7 @@ namespace ShopErp.App.Views.AttachUI.Taobao
             {
                 return OrderState.SUCCESS;
             }
-
-            return OrderState.WAITPAY;
+            throw new Exception("订单状态不正确：" + state);
         }
 
         private ShopErp.Domain.Order ParseOrder(TaobaoQueryOrderListResponseOrder orderShort, Shop shop)

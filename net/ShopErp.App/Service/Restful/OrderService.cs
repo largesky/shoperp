@@ -237,17 +237,15 @@ namespace ShopErp.App.Service.Restful
             return DoPost<ResponseBase>(para);
         }
 
-        public StringResponse UpdateOrderState(string popOrderid, OrderState onlineOrderState, OrderUpdate orderInDb, Shop shop)
+        public DataOneResponse<OrderState> UpdateOrderState(string popOrderid, OrderState onlineOrderState, OrderUpdate orderInDb, Shop shop)
         {
             Dictionary<string, object> para = new Dictionary<string, object>();
             para["popOrderid"] = popOrderid;
             para["onlineOrderState"] = onlineOrderState;
             para["orderInDb"] = orderInDb;
             para["shop"] = shop;
-            return DoPost<StringResponse>(para);
+            return DoPost<DataOneResponse<OrderState>>(para);
         }
-
-    
 
         /// <summary>
         /// 是否可以合并

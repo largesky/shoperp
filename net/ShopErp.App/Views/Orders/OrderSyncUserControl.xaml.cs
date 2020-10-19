@@ -146,7 +146,15 @@ namespace ShopErp.App.Views.Orders
                     {
                         state = MainWindow.ProgramMainWindow.QueryUserControlInstance<AttachUI.Taobao.TaobaoUserControl>().GetOrderState(o.PopOrderId).State;
                     }
-                    ret = ServiceContainer.GetService<OrderService>().UpdateOrderState(o.PopOrderId, state, o, shop).data;
+                    var targetState = ServiceContainer.GetService<OrderService>().UpdateOrderState(o.PopOrderId, state, o, shop).data;
+                    if (targetState == OrderState.NONE)
+                    {
+                        ret = "订单不存在数据库中";
+                    }
+                    else
+                    {
+                        ret = targetState == o.State ? "未更新" : "已更新";
+                    }
                     this.AppendText(ret + Environment.NewLine);
                 }
             }

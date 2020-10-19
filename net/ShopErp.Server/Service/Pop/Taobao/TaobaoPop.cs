@@ -26,12 +26,8 @@ namespace ShopErp.Server.Service.Pop.Taobao
 
         private static OrderState ConvertPopStateToSystemState(string state)
         {
-            if (state == "NEW_CREATED")
-            {
-                return OrderState.WAITPAY;
-            }
-            else if (state == "ACCEPTED_BY_COMPANY" || state == "REJECTED_BY_COMPANY" || state == "RECIEVE_TIMEOUT" ||
-                state == "TAKEN_IN_FAILED" || state == "TAKEN_TIMEOUT" || state == "WAITING_TO_BE_SENT")
+            if (state == "ACCEPTED_BY_COMPANY" || state == "REJECTED_BY_COMPANY" || state == "RECIEVE_TIMEOUT" ||
+               state == "TAKEN_IN_FAILED" || state == "TAKEN_TIMEOUT" || state == "WAITING_TO_BE_SENT")
             {
                 return OrderState.PAYED;
             }
@@ -46,10 +42,6 @@ namespace ShopErp.Server.Service.Pop.Taobao
             else if (state == "SIGN_IN")
             {
                 return OrderState.SHIPPED;
-            }
-            else if (state == "TRADE_NO_CREATE_PAY" || state == "WAIT_BUYER_PAY")
-            {
-                return OrderState.WAITPAY;
             }
             else if (state == "WAIT_SELLER_SEND_GOODS")
             {
@@ -74,10 +66,6 @@ namespace ShopErp.Server.Service.Pop.Taobao
             else if (state == "TRADE_CLOSED_BY_TAOBAO")
             {
                 return OrderState.CLOSED;
-            }
-            else if (state == "PAY_PENDING")
-            {
-                return OrderState.WAITPAY;
             }
             else if (state == "WAIT_PRE_AUTH_CONFIRM")
             {

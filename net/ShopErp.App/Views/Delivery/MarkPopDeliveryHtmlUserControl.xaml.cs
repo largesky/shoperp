@@ -123,14 +123,9 @@ namespace ShopErp.App.Views.Delivery
                 odInDb.PopFlag = e.PopFlag;
                 ServiceContainer.GetService<OrderService>().ModifyPopSellerComment(odInDb.Id, odInDb.PopFlag, odInDb.PopSellerComment);
             }
-
-            if (odInDb.State == e.State || odInDb.State == OrderState.CLOSED)
+            if (odInDb.State != OrderState.CLOSED && odInDb.State != OrderState.RETURNING && e.State == OrderState.RETURNING)
             {
-            }
-            else
-            {
-                odInDb.State = e.State;
-                ServiceContainer.GetService<OrderService>().UpdateOrderState(e.PopOrderId, e.State, null, e.Shop);
+                odInDb.State = ServiceContainer.GetService<OrderService>().UpdateOrderState(e.PopOrderId, e.State, null, e.Shop).data;
             }
             this.Dispatcher.BeginInvoke(new Action(() => this.orders.Insert(0, new OrderViewModel(odInDb))));
         }

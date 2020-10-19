@@ -5,8 +5,8 @@
         [EnumDescription("所有")]
         NONE = 0,
 
-        [EnumDescription("待付款")]
-        WAITPAY = 10,
+        //[EnumDescription("待付款")]
+        //WAITPAY = 10,
 
         [EnumDescription("已付款")]
         PAYED = 20,
