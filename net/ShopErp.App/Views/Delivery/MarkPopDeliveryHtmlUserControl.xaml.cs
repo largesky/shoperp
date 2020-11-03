@@ -65,11 +65,7 @@ namespace ShopErp.App.Views.Delivery
                 this.orders.Clear();
                 this.orderDownloadErrors = new List<OrderDownloadError>();
                 taobaoUserControl.DownloadOrders();
-                this.tbTotal.Text = "当前共 : " + this.orders.Count + " 条记录";
-                foreach (var v in this.orders)
-                {
-                    v.IsChecked = v.Source.State == OrderState.SHIPPED;
-                }
+
                 if (this.orderDownloadErrors.Count > 0)
                 {
                     string msg = string.Format("下载失败订单列表：\r\n{0}", string.Join(Environment.NewLine, this.orderDownloadErrors.Select(obj => obj.PopOrderId + ":" + obj.Error)));
@@ -127,7 +123,7 @@ namespace ShopErp.App.Views.Delivery
             {
                 odInDb.State = ServiceContainer.GetService<OrderService>().UpdateOrderState(e.PopOrderId, e.State, null, e.Shop).data;
             }
-            this.Dispatcher.BeginInvoke(new Action(() => this.orders.Insert(0, new OrderViewModel(odInDb))));
+            this.AppendOrderToUi(odInDb);
         }
 
         private void TaobaoUserControl_OrderDownload(object sender, AttachUI.AttachUiOrderDownloadEventArgs e)
@@ -140,7 +136,7 @@ namespace ShopErp.App.Views.Delivery
                 var ret = ServiceContainer.GetService<OrderService>().SaveOrUpdateOrdersByPopOrderId(ServiceContainer.GetService<ShopService>().GetById(e.OrderDownload.Order.ShopId), downloads);
                 if (ret.First.Order != null)
                 {
-                    this.Dispatcher.BeginInvoke(new Action(() => this.orders.Insert(0, new OrderViewModel(ret.First.Order))));
+                    this.AppendOrderToUi(ret.First.Order);
                 }
                 else
                 {
@@ -198,6 +194,15 @@ namespace ShopErp.App.Views.Delivery
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void AppendOrderToUi(Order order)
+        {
+            this.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                this.orders.Insert(0, new OrderViewModel(order) { IsChecked = order.State == OrderState.SHIPPED });
+                this.tbTotal.Text = "当前共下载订单数：" + this.orders.Count;
+            }));
         }
 
         private OrderViewModel GetMIOrder(object sender)

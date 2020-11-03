@@ -86,6 +86,14 @@ namespace ShopErp.Server.Service.Restful
             }
         }
 
+        protected string FilterUnReadableChar(string str)
+        {
+            if (string.IsNullOrWhiteSpace(str))
+            {
+                return string.Empty;
+            }
+        }
+
         private void FillEmptyAndParseGoods(Order order)
         {
             if (order.State == OrderState.NONE)

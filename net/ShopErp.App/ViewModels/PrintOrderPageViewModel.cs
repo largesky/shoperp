@@ -326,8 +326,6 @@ namespace ShopErp.App.ViewModels
             this.Printer = LocalConfigService.GetValue(SystemNames.CONFIG_PRINTER_DELIVERY_HOT, "");
         }
 
-        #region 打印控制流程
-
         /// <summary>
         /// </summary>
         /// <returns></returns>
@@ -347,6 +345,7 @@ namespace ShopErp.App.ViewModels
                 {
                     throw new Exception("系统中没有配置发货姓名和电话无法打印");
                 }
+
                 var selectedOrderVMs = this.OrderViewModels.Where(obj => obj.IsChecked).ToArray();
                 var selectedOrders = selectedOrderVMs.Select(obj => obj.Source).ToArray();
                 if (selectedOrderVMs.Length < 1)
@@ -406,9 +405,8 @@ namespace ShopErp.App.ViewModels
                     }
                 }
 
-                var allShops = ServiceContainer.GetService<ShopService>().GetByAll().Datas;
-                var vs = ServiceContainer.GetService<VendorService>();
                 //生成自定义打印数据
+                var allShops = ServiceContainer.GetService<ShopService>().GetByAll().Datas;
                 var userDatas = new Dictionary<string, string>[mergedOrders.Length];
                 for (int i = 0; i < userDatas.Length; i++)
                 {
@@ -434,8 +432,6 @@ namespace ShopErp.App.ViewModels
                 this.printDoc = new CainiaoPrintDocument(mergedOrders.ToArray(), wuliuNumbers, userDatas, this.WuliuPrintTemplate);
                 string file = printDoc.StartPrint(this.Printer, this.PrintServerAdd);
                 WPFHelper.DoEvents();
-                UploadPrintHistory(selectedOrderVMs);
-                HandelPrintEnded();
                 if (this.WuliuPrintTemplate.SourceType == WuliuPrintTemplateSourceType.CAINIAO)
                 {
                     LocalConfigService.UpdateValue(SystemNames.CONFIG_PRINTSERVERADD_CAINIAO, this.PrintServerAdd);
@@ -448,10 +444,7 @@ namespace ShopErp.App.ViewModels
                 {
                     //下载文件
                     byte[] content = MsHttpRestful.GetReturnBytes(file);
-                    Microsoft.Win32.SaveFileDialog sfd = new Microsoft.Win32.SaveFileDialog();
-                    sfd.AddExtension = true;
-                    sfd.DefaultExt = "pdf";
-                    sfd.Filter = "*.pdf|PDF 文件";
+                    Microsoft.Win32.SaveFileDialog sfd = new Microsoft.Win32.SaveFileDialog() { AddExtension = true, DefaultExt = "pdf", Filter = "*.pdf|PDF 文件" };
                     sfd.FileName = "快递单 " + this.WuliuPrintTemplate.DeliveryCompany + " " + DateTime.Now.ToString("MM-dd") + ".pdf";
                     sfd.InitialDirectory = LocalConfigService.GetValue("PrintFileSaveDir_" + this.shipper, "");
                     if (sfd.ShowDialog().Value == false)
@@ -467,28 +460,21 @@ namespace ShopErp.App.ViewModels
                 string urlOffset = url + "," + XOffset + "," + YOffset;
                 offsets.RemoveAll(obj => obj.Contains(url));
                 offsets.Add(urlOffset);
-                string strOffsets = string.Join("###", offsets);
-                LocalConfigService.UpdateValue(SystemNames.CONFIG_PRINT_OFFSETS, strOffsets);
+                LocalConfigService.UpdateValue(SystemNames.CONFIG_PRINT_OFFSETS, string.Join("###", offsets));
+                UploadPrintHistory(selectedOrderVMs);
+                foreach (var v in this.OrderViewModels.Where(obj => string.IsNullOrWhiteSpace(obj.DeliveryNumber) == false).ToArray())
+                {
+                    this.OrderViewModels.Remove(v);
+                }
             }
             finally
             {
-                HandelPrintEnded();
+                this.PackageId = 0;
+                this.IsUserStop = false;
+                this.printDoc = null;
+                this.IsRunning = false;
+                this.PrintButtonString = "打印";
             }
-        }
-
-        private void HandelPrintEnded()
-        {
-            //删除所有成功的打印
-            var suOrders = this.OrderViewModels.Where(obj => string.IsNullOrWhiteSpace(obj.DeliveryNumber) == false).ToArray();
-            foreach (var v in suOrders)
-            {
-                this.OrderViewModels.Remove(v);
-            }
-            this.PackageId = 0;
-            this.IsUserStop = false;
-            this.printDoc = null;
-            this.IsRunning = false;
-            this.PrintButtonString = "打印";
         }
 
         private void UploadPrintHistory(PrintOrderViewModel[] orderViewModels)
@@ -540,7 +526,5 @@ namespace ShopErp.App.ViewModels
         {
             this.IsUserStop = true;
         }
-
-        #endregion
     }
 }
