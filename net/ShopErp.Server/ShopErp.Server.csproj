@@ -227,6 +227,7 @@
     <Compile Include="Utils\EnvironmentDirHelper.cs" />
     <Compile Include="Utils\FileUtil.cs" />
     <Compile Include="Utils\Md5Util.cs" />
+    <Compile Include="Utils\StringUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

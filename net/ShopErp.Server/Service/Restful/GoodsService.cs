@@ -220,7 +220,7 @@ namespace ShopErp.Server.Service.Restful
             }
         }
 
-        public Goods ParsePopOrderGoodsNumber(OrderGoods og)
+        public void ParsePopOrderGoodsNumber(OrderGoods og)
         {
             //上货时通常用&号，或者空格分开厂家货号
             string stock = og.Number.Contains("&") || og.Number.Contains(" ") ? og.Number : og.Vendor + "&" + og.Number;
@@ -228,14 +228,14 @@ namespace ShopErp.Server.Service.Restful
             string rawVendor = null, rawNumber = null;
             if (stocks.Length != 2)
             {
-                return null;
+                return ;
             }
             rawVendor = stocks[0].Trim();
             rawNumber = stocks[1].Trim();
             var g = ParseGoods(rawVendor, rawNumber).First;
             if (g == null)
             {
-                return null;
+                return ;
             }
             og.Number = g.Number;
             og.GoodsId = g.Id;
@@ -245,7 +245,6 @@ namespace ShopErp.Server.Service.Restful
             og.Shipper = g.Shipper;
             og.Edtion = g.IgnoreEdtion ? string.Empty : og.Edtion;
             og.Vendor = ServiceContainer.GetService<VendorService>().GetVendorName(g.VendorId).data;
-            return g;
         }
 
         private Vendor GetMostMatchVendor(long[] vendorIds, string vendor)

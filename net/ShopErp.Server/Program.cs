@@ -18,6 +18,12 @@ namespace ShopErp.Server
         static void Main()
         {
 
+            string c = "🎈";
+            for (int i = 0; i < c.Length; i++)
+            {
+                var cc = Char.GetUnicodeCategory(c[i]);
+            }
+
             if (Environment.UserInteractive)
             {
                 var vs = new ServiceContainer();

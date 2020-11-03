@@ -15,6 +15,7 @@ using ShopErp.Server.Service.Net;
 using System.IO;
 using NHibernate.Util;
 using ShopErp.Domain.RestfulResponse.DomainResponse;
+using ShopErp.Server.Utils;
 
 namespace ShopErp.Server.Service.Restful
 {
@@ -86,14 +87,6 @@ namespace ShopErp.Server.Service.Restful
             }
         }
 
-        protected string FilterUnReadableChar(string str)
-        {
-            if (string.IsNullOrWhiteSpace(str))
-            {
-                return string.Empty;
-            }
-        }
-
         private void FillEmptyAndParseGoods(Order order)
         {
             if (order.State == OrderState.NONE)
@@ -140,8 +133,8 @@ namespace ShopErp.Server.Service.Restful
             order.PopBuyerId = order.PopBuyerId ?? string.Empty;
             order.PopCodSevFee = order.PopCodSevFee < 0 ? 0 : order.PopCodSevFee;
             order.PopCodNumber = order.PopCodNumber ?? string.Empty;
-            order.PopSellerComment = order.PopSellerComment ?? string.Empty;
-            order.PopBuyerComment = order.PopBuyerComment ?? string.Empty;
+            order.PopSellerComment = StringUtils.FilterUnReadableChar(order.PopSellerComment);
+            order.PopBuyerComment = StringUtils.FilterUnReadableChar(order.PopBuyerComment);
             order.PopState = order.PopState ?? String.Empty;
             order.DeliveryCompany = order.DeliveryCompany ?? string.Empty;
             order.DeliveryNumber = order.DeliveryNumber ?? string.Empty;
@@ -156,7 +149,8 @@ namespace ShopErp.Server.Service.Restful
             order.DeliveryOperator = order.DeliveryOperator ?? string.Empty;
             order.CloseOperator = order.CloseOperator ?? string.Empty;
             order.ParseResult = true;
-            order.ReceiverAddress = new string(order.ReceiverAddress.Where(c => c != '\r' && c != '\n').ToArray());
+            order.ReceiverAddress = StringUtils.FilterUnReadableChar(new string(order.ReceiverAddress.Where(c => c != '\r' && c != '\n').ToArray()));
+            order.ReceiverName = StringUtils.FilterUnReadableChar(order.ReceiverName);
             if (order.OrderGoodss != null && order.OrderGoodss.Count > 0)
             {
                 foreach (var item in order.OrderGoodss)
@@ -185,7 +179,7 @@ namespace ShopErp.Server.Service.Restful
                     item.Color = String.IsNullOrWhiteSpace(color) ? item.Color : color;
                     item.Edtion = string.IsNullOrWhiteSpace(edtion) ? item.Edtion : edtion;
                     item.Size = string.IsNullOrWhiteSpace(size) ? item.Size : size;
-                    Goods g = ServiceContainer.GetService<GoodsService>().ParsePopOrderGoodsNumber(item);
+                    ServiceContainer.GetService<GoodsService>().ParsePopOrderGoodsNumber(item);
                 }
                 order.ParseResult = order.OrderGoodss.All(o => o.GoodsId > 0);
             }
