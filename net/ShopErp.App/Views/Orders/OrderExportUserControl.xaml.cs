@@ -135,6 +135,7 @@ namespace ShopErp.App.Views.Orders
                     }
                     contents.Add(ss);
                 }
+                contents.Sort((x, y) => x[2].CompareTo(y[2]));//根据商品信息排序
                 var columns = new ExcelColumn[] { new ExcelColumn("店铺", false), new ExcelColumn("付款时间", false), new ExcelColumn("商品信息", false), new ExcelColumn("快递单号", false), new ExcelColumn("备注", false), new ExcelColumn("姓名", false), new ExcelColumn("手机", false), new ExcelColumn("商品价格", true), new ExcelColumn("发货费", true) };
                 new ExcelFile(sfd.FileName, "订单", columns, contents.ToArray()).WriteXlsx();
                 LocalConfigService.UpdateValue("OrderExportSaveDir_" + this.cbbShippers.Text.Trim(), new FileInfo(sfd.FileName).DirectoryName);
