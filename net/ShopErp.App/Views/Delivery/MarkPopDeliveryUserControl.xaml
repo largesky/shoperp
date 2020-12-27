@@ -5,45 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="1200">
-    <UserControl.Resources>
-        <Style x:Key="OrderDataGridStyle" TargetType="{x:Type DataGrid}">
-            <Setter Property="AutoGenerateColumns" Value="false" />
-            <Setter Property="CanUserAddRows" Value="false" />
-            <Setter Property="CanUserDeleteRows" Value="false" />
-            <Setter Property="CanUserReorderColumns" Value="false" />
-            <Setter Property="CanUserResizeRows" Value="false" />
-            <Setter Property="IsReadOnly" Value="False" />
-            <Setter Property="RowDetailsVisibilityMode" Value="VisibleWhenSelected" />
-            <Setter Property="RowHeight" Value="18" />
-            <Setter Property="SelectionMode" Value="Extended" />
-            <Setter Property="SelectionUnit" Value="CellOrRowHeader" />
-            <Setter Property="RowHeaderWidth" Value="45" />
-            <Setter Property="RowStyle">
-                <Setter.Value>
-                    <Style TargetType="{x:Type DataGridRow}">
-                        <Setter Property="Background" Value="{Binding Background}" />
-                    </Style>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="CellStyle">
-                <Setter.Value>
-                    <Style TargetType="DataGridCell">
-                        <Style.Triggers>
-                            <MultiTrigger>
-                                <MultiTrigger.Conditions>
-                                    <Condition Property="IsReadOnly" Value="False" />
-                                    <Condition Property="IsMouseOver" Value="True" />
-                                </MultiTrigger.Conditions>
-                                <MultiTrigger.Setters>
-                                    <Setter Property="IsEditing" Value="True" />
-                                </MultiTrigger.Setters>
-                            </MultiTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -61,7 +22,7 @@
             </StackPanel>
         </StackPanel>
 
-        <DataGrid Grid.Row="1" Name="dgvOrders"  Style="{StaticResource ResourceKey=OrderDataGridStyle}">
+        <DataGrid Grid.Row="1" Name="dgvOrders"  Style="{StaticResource ResourceKey=OrderDataGridStyle}" >
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="向前选择" Click="miSelect_Click" />

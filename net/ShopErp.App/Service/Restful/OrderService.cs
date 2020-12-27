@@ -314,6 +314,12 @@ namespace ShopErp.App.Service.Restful
             {
                 return new OrderGoods[0];
             }
+
+            if (order.OrderGoodss.Count == 1)
+            {
+                return order.OrderGoodss.ToArray();
+            }
+
             return order.OrderGoodss.Where(obj => (int)OrderState.PAYED <= (int)obj.State && (int)obj.State <= (int)OrderState.SUCCESS).ToArray();
         }
 

@@ -99,10 +99,8 @@
                 <Setter Property="CanUserDeleteRows" Value="false" />
                 <Setter Property="CanUserReorderColumns" Value="false" />
                 <Setter Property="CanUserResizeRows" Value="True" />
-                <Setter Property="RowDetailsVisibilityMode" Value="VisibleWhenSelected" />
                 <Setter Property="SelectionMode" Value="Extended" />
                 <Setter Property="SelectionUnit" Value="CellOrRowHeader" />
-                <Setter Property="RowHeaderWidth" Value="20" />
                 <Setter Property="Margin" Value="3"/>
                 <Setter Property="RowStyle">
                     <Setter.Value>

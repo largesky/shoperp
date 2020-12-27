@@ -61,6 +61,7 @@
                     <DataGridTextColumn Header="卖出总数" Binding="{Binding PopGoodsInfo.SaleNum}" IsReadOnly="True" />
                     <DataGridTextColumn Header="商家编号" Binding="{Binding Path=PopGoodsInfo.Code}" IsReadOnly="True" MinWidth="60" />
                     <DataGridTextColumn Header="库存编码" Binding="{Binding Path=SkuCodesInfo}" IsReadOnly="True" MinWidth="60" />
+                    <DataGridTextColumn Header="流行元素" Binding="{Binding Path=Liuxinyuanshu}" IsReadOnly="True" MinWidth="60" />
                     <DataGridTextColumn Header="备注" Binding="{Binding Path=GoodsTask.Comment}" IsReadOnly="False" MinWidth="60" />
                     <DataGridTextColumn Header="状态" Binding="{Binding Path=State}" IsReadOnly="False" MinWidth="60" />
                     <DataGridHyperlinkColumn Header="查看连接(按住Ctrl打开Go2连接)" Binding="{Binding PopGoodsInfo.Title}">

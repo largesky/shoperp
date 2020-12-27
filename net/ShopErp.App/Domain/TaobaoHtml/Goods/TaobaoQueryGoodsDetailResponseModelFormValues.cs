@@ -9,6 +9,10 @@ namespace ShopErp.App.Domain.TaobaoHtml.Goods
 {
     class TaobaoQueryGoodsDetailResponseModelFormValues
     {
+
+        [JsonConverter(typeof(TitleConverter))]
+        public string title;
+
         public string outerId;
 
         /// <summary>
@@ -56,6 +60,6 @@ namespace ShopErp.App.Domain.TaobaoHtml.Goods
         /// </summary>
         public TaobaoQueryGoodsDetailResponseModelFormValuesModularDesc[] modularDesc;
 
-        public TaobaoQueryGoodsDetailResponseModelFormValuesTitle title;
+
     }
 }

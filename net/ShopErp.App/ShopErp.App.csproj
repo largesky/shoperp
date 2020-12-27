@@ -185,6 +185,7 @@
     <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsListResponseDataTableDataSourceManagerPrice.cs" />
     <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsListResponseDataTableDataSourceUpdateInfo.cs" />
     <Compile Include="Domain\TaobaoHtml\Goods\TaobaoQueryGoodsListResponseDataTableDataSourceUpdateInfoStatus.cs" />
+    <Compile Include="Domain\TaobaoHtml\Goods\TitleConverter.cs" />
     <Compile Include="Domain\TaobaoHtml\Goods\ValueTextArray.cs" />
     <Compile Include="Domain\TaobaoHtml\Goods\ValueTextArrayConverter.cs" />
     <Compile Include="Domain\TaobaoHtml\Goods\ValueTextArrayEntry.cs" />

@@ -48,6 +48,23 @@ namespace ShopErp.App.Views.Goods
             get { return this.PopGoodsInfo.Title.Select(c => char.IsLower(c) || char.IsUpper(c) || char.IsDigit(c) ? 1 : 2).Sum(); }
         }
 
+        public string Liuxinyuanshu
+        {
+            get
+            {
+                if (this.PopGoodsInfo.Properties == null)
+                {
+                    return "";
+                }
+                var item = this.PopGoodsInfo.Properties.FirstOrDefault(obj => obj.Key == "流行元素");
+                if (item == null)
+                {
+                    return "";
+                }
+                return item.Value;
+            }
+        }
+
         public string EditStr
         {
             get { return "前往编辑"; }

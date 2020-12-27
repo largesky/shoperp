@@ -8,6 +8,6 @@ namespace ShopErp.App.Domain.TaobaoHtml.Goods
 {
     class TaobaoQueryGoodsDetailResponseModelFormValuesTitle
     {
-        public string[] title;
+        public string title;
     }
 }

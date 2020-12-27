@@ -1084,7 +1084,7 @@ namespace ShopErp.App.Views.Goods
 
             //状态 
             pg.State = g.upShelfDate_m.status.text == "出售中" ? PopGoodsState.ONSALE : PopGoodsState.NOTSALE;
-            pg.Title = goodsDetail.models.formValues.title.title[0];
+            pg.Title = goodsDetail.models.formValues.title;
 
             //SKU
             foreach (var vSku in goodsDetail.models.formValues.sku)

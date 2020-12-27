@@ -19,7 +19,7 @@
             <TextBlock Name="tbTotal" Margin="3" VerticalAlignment="Center" />
             <TextBlock Grid.Row="1" Name="tbMsg" Margin="3" VerticalAlignment="Center" />
         </StackPanel>
-        <DataGrid Grid.Row="1" Name="dgvOrders" Style="{StaticResource ResourceKey=OrderDataGridStyle}" Sorting="DgvOrders_Sorting" SelectionUnit="CellOrRowHeader" SelectionMode="Extended">
+        <DataGrid Grid.Row="1" Name="dgvOrders" Style="{StaticResource ResourceKey=OrderDataGridStyle}" Sorting="DgvOrders_Sorting">
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="向前选择" Click="miSelect_Click" />
